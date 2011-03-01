@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Class-Path: aopalliance-1.0.jar commons-logging-1.1.1.jar ebuy-api.jar
+  ebuy-dao.jar ebuy-impl.jar spring-aop-3.0.2.RELEASE.jar spring-asm-3
+ .0.2.RELEASE.jar spring-beans-3.0.2.RELEASE.jar spring-context-3.0.2.
+ RELEASE.jar spring-context-support-3.0.2.RELEASE.jar spring-core-3.0.
+ 2.RELEASE.jar spring-expression-3.0.2.RELEASE.jar spring-web-3.0.2.RE
+ LEASE.jar spring-webmvc-3.0.2.RELEASE.jar
+
