@@ -16,6 +16,7 @@
 	
  	<mvc:annotation-driven />
 
+	<mvc:resources location="/templates/" mapping="/templates/**"/>
 <!-- 
 	<bean id="handlerMapping" class="com.nali.common.springplus.NaliAnnotationHandlerMapping">
 		<property name="addDirSuffix" value="true" />
