@@ -23,11 +23,6 @@
 	 
 	<listener>
 		<listener-class>
-			com.nali.test.web.WebContextListener
-		</listener-class>
-	</listener>
-	<listener>
-		<listener-class>
 			org.springframework.web.util.Log4jConfigListener
 		</listener-class>
 	</listener>
