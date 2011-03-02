@@ -1,9 +1,7 @@
 package com.nali.spreader.controller;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -20,16 +18,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.thoughtworks.xstream.XStream;
 
-
 @Controller
 public class ConfigController {
 	private XStream xtream = new XStream();
-	
+
 	public ConfigController() {
 		this.xtream.alias("SN", HashMap.class);
 	}
-	
-	@RequestMapping(value="config", method=RequestMethod.POST)
+
+	@RequestMapping(value = "config", method = RequestMethod.POST)
 	public void writeXml(HttpServletRequest request, Model model) {
 		Map requestParams = request.getParameterMap();
 		Map params = new HashMap(requestParams.size());
@@ -43,17 +40,21 @@ public class ConfigController {
 			}
 			params.put(name, valueStr);
 		}
-		
-		File file = new File("");
+
+		String path = request.getSession().getServletContext().getRealPath("/");
+		path = path + File.separator + "templates" + File.separator
+				+ "seed.xml";
+		File file = new File(path);
 		FileOutputStream out = null;
 		try {
 			out = new FileOutputStream(file);
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+					out, "UTF-8"));
 			this.xtream.toXML(params, writer);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}finally{
-			if(out != null) {
+		} finally {
+			if (out != null) {
 				try {
 					out.close();
 				} catch (IOException e) {
