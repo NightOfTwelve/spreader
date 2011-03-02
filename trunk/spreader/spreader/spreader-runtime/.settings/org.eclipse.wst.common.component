@@ -3,6 +3,10 @@
   <wb-module deploy-name="ebuy-runtime">
     <property name="context-root" value="ebuy-runtime"/>
     <wb-resource deploy-path="/" source-path="src/main/webapp"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
     <property name="java-output-path" value="/target/classes"/>
     <dependent-module archiveName="aopalliance-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/var/M2_REPO/aopalliance/aopalliance/1.0/aopalliance-1.0.jar">
       <dependency-type>uses</dependency-type>
