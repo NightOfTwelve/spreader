@@ -3,9 +3,12 @@
 	<name>spreader-runtime</name>
 	<comment>NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
 	<projects>
-		<project>ebuy-api</project>
-		<project>ebuy-dao</project>
-		<project>ebuy-impl</project>
+		<project>spreader-api</project>
+		<project>spreader-dao</project>
+		<project>spreader-impl</project>
+		<project>spreader-impl</project>
+		<project>spreader-dao</project>
+		<project>spreader-api</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -20,11 +23,6 @@
 		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.wst.validation.validationbuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.wst.jsdt.core.javascriptValidator</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
