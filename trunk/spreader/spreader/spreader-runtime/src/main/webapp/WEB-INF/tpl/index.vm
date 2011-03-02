@@ -1,0 +1,6 @@
+<form action="config.html" method="post">
+	Weibo:<input name="Weibo" type="text" value="$!Weibo"/><br>
+	Wuliu:<input name="Wuliu" type="text" value="$!{Wuliu}"/><br>
+	Renren:<input name="Renren" type="text" value="$!Renren"/><br>
+	<input type="submit" value="save"/>
+</form>

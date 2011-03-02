@@ -23,11 +23,48 @@ public class ConfigController {
 	private XStream xtream = new XStream();
 
 	public ConfigController() {
-		this.xtream.alias("SN", HashMap.class);
+		this.xtream.alias("SN", Params.class);
+//		this.xtream.aliasAttribute("Weibo", "weibo");
+//		this.xtream.aliasAttribute("56", "wuliu");
+//		this.xtream.aliasAttribute("Renren", "renren");
+		this.xtream.aliasField("Weibo", String.class, "weibo");
+		this.xtream.aliasField("56",  String.class, "wuliu");
+		this.xtream.aliasField("Renren",  String.class, "renren");
+	}
+	
+	private static class Params {
+		private String Weibo;
+		private String Wuliu;
+		private String Renren;
+		public Params() {
+		}
+		public String getWeibo() {
+			return Weibo;
+		}
+		public void setWeibo(String weibo) {
+			Weibo = weibo;
+		}
+		public String getWuliu() {
+			return Wuliu;
+		}
+		public void setWuliu(String wuliu) {
+			Wuliu = wuliu;
+		}
+		public String getRenren() {
+			return Renren;
+		}
+		public void setRenren(String renren) {
+			Renren = renren;
+		}
+	}
+	
+	@RequestMapping(value = "index")
+	public String index(HttpServletRequest request, Model model){
+		return "index";
 	}
 
 	@RequestMapping(value = "config", method = RequestMethod.POST)
-	public void writeXml(HttpServletRequest request, Model model) {
+	public String writeXml(HttpServletRequest request, Model model) {
 		Map requestParams = request.getParameterMap();
 		Map params = new HashMap(requestParams.size());
 		for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
@@ -40,9 +77,17 @@ public class ConfigController {
 			}
 			params.put(name, valueStr);
 		}
+		String weibo = request.getParameter("Weibo");
+		String wuliu = request.getParameter("Wuliu");
+		String renren = request.getParameter("Renren");
+		
+		Params paramsObj = new Params();
+		paramsObj.setWeibo(weibo);
+		paramsObj.setWuliu(wuliu);
+		paramsObj.setRenren(renren);
 
 		String path = request.getSession().getServletContext().getRealPath("/");
-		path = path + File.separator + "templates" + File.separator
+		path = path + "templates" + File.separator
 				+ "seed.xml";
 		File file = new File(path);
 		FileOutputStream out = null;
@@ -50,7 +95,7 @@ public class ConfigController {
 			out = new FileOutputStream(file);
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
 					out, "UTF-8"));
-			this.xtream.toXML(params, writer);
+			this.xtream.toXML(paramsObj, writer);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -62,5 +107,7 @@ public class ConfigController {
 				}
 			}
 		}
+		model.addAllAttributes(params);
+		return "index";
 	}
 }
