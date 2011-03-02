@@ -26,16 +26,5 @@
 			<artifactId>${parent.artifactId}-dao</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.nali.frm</groupId>
-			<artifactId>word</artifactId>
-			<version>1.0</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.nali.frm</groupId>
-			<artifactId>textsim</artifactId>
-			<version>1.0</version>
-		</dependency>
 	</dependencies>
 </project>
