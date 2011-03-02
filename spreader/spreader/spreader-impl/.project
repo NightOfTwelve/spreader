@@ -3,8 +3,8 @@
 	<name>spreader-impl</name>
 	<comment>NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
 	<projects>
-		<project>spreaderader-api</project>
-		<projspreaderspreader-dao</project>
+		<project>spreader-api</project>
+		<project>spreader-dao</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
