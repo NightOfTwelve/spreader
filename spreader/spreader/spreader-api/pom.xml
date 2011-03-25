@@ -17,7 +17,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.nali</groupId>
-			<artifactId>${parent.artifactId}-dao</artifactId>
+			<artifactId>spreader-dao</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
