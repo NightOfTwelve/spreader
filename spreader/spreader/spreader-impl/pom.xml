@@ -18,13 +18,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.nali</groupId>
-			<artifactId>${parent.artifactId}-api</artifactId>
-			<version>${project.version}</version>
+			<artifactId>spreader-api</artifactId>
+			<version>spreader</version>
 		</dependency>
 		<dependency>
 			<groupId>com.nali</groupId>
-			<artifactId>${parent.artifactId}-dao</artifactId>
-			<version>${project.version}</version>
+			<artifactId>spreader-dao</artifactId>
+			<version>spreader</version>
 		</dependency>
 	</dependencies>
 </project>
