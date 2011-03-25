@@ -109,14 +109,14 @@ create table tb_target_headers
 /*==============================================================*/
 create table tb_target_template
 (
-   id                   bigint not null comment 'Ö÷¼ü',
-   name                 varchar(50) not null comment 'Ä£°åÃû³Æ',
-   description          varchar(200) comment 'Ä£°åÃèÊö',
+   id                   bigint not null comment 'ä¸»é”®',
+   name                 varchar(50) not null comment 'æ¨¡æ¿åç§°',
+   description          varchar(200) comment 'æ¨¡æ¿æè¿°',
    url                  varchar(200) not null,
    created_time         timestamp not null,
    website_id           int not null,
-   has_problem          tinyint(1) not null comment 'ÊÇ·ñÓĞÎÊÌâ',
-   template_type        int comment 'Ä£°åÀàĞÍ£¬Ìû×Ó£¬Î¢±¡£¬ÊÓÆµ£¬ÕÕÆ¬µÈµÈ',
+   has_problem          tinyint(1) not null comment 'æ˜¯å¦æœ‰é—®é¢˜',
+   template_type        int comment 'æ¨¡æ¿ç±»å‹ï¼Œå¸–å­ï¼Œå¾®è–„ï¼Œè§†é¢‘ï¼Œç…§ç‰‡ç­‰ç­‰',
    last_modified_time   timestamp,
    use_cookie           int,
    redirect_type        int,
@@ -124,7 +124,7 @@ create table tb_target_template
    primary key (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_target_template comment '¸÷´óÍøÕ¾±íµ¥Ä£°å£¬²»ĞèÒªËùÓĞÄ£°å¶¼ºÍÍ¨ÓÃÄ£°åÓ³ÉäÉÏ£¬¿ÉÒÔÓĞÌØÊâµÄÃ»ÓĞÓ³ÉäÉÏµÄ¡£';
+alter table tb_target_template comment 'å„å¤§ç½‘ç«™è¡¨å•æ¨¡æ¿ï¼Œä¸éœ€è¦æ‰€æœ‰æ¨¡æ¿éƒ½å’Œé€šç”¨æ¨¡æ¿æ˜ å°„ä¸Šï¼Œå¯ä»¥æœ‰ç‰¹æ®Šçš„æ²¡æœ‰æ˜ å°„ä¸Šçš„ã€‚';
 
 /*==============================================================*/
 /* Table: tb_target_web_flow                                    */
@@ -150,7 +150,7 @@ create table tb_task
    primary key (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_task comment 'ÍøÕ¾ÈÎÎñÁĞ±í';
+alter table tb_task comment 'ç½‘ç«™ä»»åŠ¡åˆ—è¡¨';
 
 /*==============================================================*/
 /* Table: tb_template                                           */
@@ -167,7 +167,7 @@ create table tb_template
    primary key (template_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_template comment 'Í¨ÓÃÄ£°å£¬³éÏó¶¨Òå';
+alter table tb_template comment 'é€šç”¨æ¨¡æ¿ï¼ŒæŠ½è±¡å®šä¹‰';
 
 /*==============================================================*/
 /* Table: tb_web_content                                        */
@@ -185,7 +185,7 @@ create table tb_web_content
    primary key (id)
 );
 
-alter table tb_web_content comment 'Ä³ÍøÕ¾ÌØ¶¨µÄÄÚÈİ¿â';
+alter table tb_web_content comment 'æŸç½‘ç«™ç‰¹å®šçš„å†…å®¹åº“';
 
 /*==============================================================*/
 /* Table: tb_web_cookies                                        */
