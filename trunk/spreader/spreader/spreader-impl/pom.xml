@@ -19,12 +19,12 @@
 		<dependency>
 			<groupId>com.nali</groupId>
 			<artifactId>spreader-api</artifactId>
-			<version>spreader</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.nali</groupId>
 			<artifactId>spreader-dao</artifactId>
-			<version>spreader</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>
