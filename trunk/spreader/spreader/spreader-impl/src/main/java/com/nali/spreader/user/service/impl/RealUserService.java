@@ -10,10 +10,10 @@ import com.nali.spreader.dao.ICrudWorldRelationDao;
 import com.nali.spreader.model.RealUser;
 import com.nali.spreader.model.RealUserExample;
 import com.nali.spreader.model.WorldRelation;
-import com.nali.spreader.user.service.IReadUserService;
+import com.nali.spreader.user.service.IRealUserService;
 
 @Service
-public class ReadUserService implements IReadUserService {
+public class RealUserService implements IRealUserService {
 
 	@Autowired
 	private ICrudRealUserDao crudRealUserDao;

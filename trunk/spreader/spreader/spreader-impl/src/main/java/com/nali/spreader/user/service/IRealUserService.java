@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.nali.spreader.model.RealUser;
 
-public interface IReadUserService {
+public interface IRealUserService {
 
 	/**
 	 * 保存RealUser队列
