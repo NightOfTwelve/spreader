@@ -8,4 +8,6 @@ public interface ITaskAssginService {
 	List<TaskAssign> getUnAssignedTasks(int taskType, int start, int count);
 	
 	int getUnAssignTaskCount(int taskType);
+	
+	void generateUnAssigned(TaskAssign taskAssign);
 }

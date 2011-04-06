@@ -41,6 +41,9 @@ public class RealUserService implements IRealUserService {
 			String relationUidListStr = user.getRelationUidList();
 			saveRealtion(user.getWebsiteUid(), relationUidListStr);
 		}
+		
+		
+		
 	}
 	
 	private void saveRealtion(long websiteUid, String relationUidListStr) {
