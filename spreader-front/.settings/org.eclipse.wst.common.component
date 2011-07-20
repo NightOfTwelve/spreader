@@ -5,6 +5,9 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/resource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
+        <dependent-module archiveName="spreader-action-config.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spreader-action-config/spreader-action-config">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="spreader-front"/>
         <property name="java-output-path"/>
     </wb-module>
