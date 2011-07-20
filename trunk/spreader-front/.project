@@ -3,6 +3,7 @@
 	<name>spreader-front</name>
 	<comment></comment>
 	<projects>
+		<project>spreader-action-config</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

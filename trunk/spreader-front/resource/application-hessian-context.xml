@@ -17,13 +17,9 @@
 	<!-- for http hessian path -->
 	<bean id="hessianHandler" class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter"/>
 	
-	<bean name="/testService" class="org.springframework.remoting.caucho.HessianServiceExporter">
-	    <property name="service" ref="testService"/>
-	    <property name="serviceInterface" value="com.nali.spreader.front.ITestService"/>
+	<bean name="/remoteActionService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+	    <property name="service" ref="remoteActionService"/>
+	    <property name="serviceInterface" value="com.nali.spreader.service.remote.IRemoteActionService"/>
 	</bean>
 	
-	<bean name="/testService2" class="org.springframework.remoting.caucho.HessianServiceExporter">
-	    <property name="service" ref="testService2"/>
-	    <property name="serviceInterface" value="com.nali.spreader.front.ITestService2"/>
-	</bean>
 </beans>
