@@ -7,7 +7,7 @@
 		<version>1.0</version>
 	</parent>
 	<groupId>com.nali.spreader</groupId>
-	<artifactId>spreader-action-config</artifactId>
+	<artifactId>spreader-interface</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>

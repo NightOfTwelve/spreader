@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+  <settings useStatementNamespaces="true" enhancementEnabled="true" errorTracingEnabled="true" lazyLoadingEnabled="false" />
+  <sqlMap resource="ibatis/spreader_tb_action_step_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_client_action_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_client_task_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_task_batch_SqlMap.xml" />
+</sqlMapConfig>
+
