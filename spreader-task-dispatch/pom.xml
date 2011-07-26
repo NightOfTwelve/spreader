@@ -7,7 +7,7 @@
 		<version>1.0</version>
 	</parent>
 	<groupId>com.nali.spreader</groupId>
-	<artifactId>spreader-task-dispatcher</artifactId>
+	<artifactId>spreader-task-dispatch</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<dependencies>
 		<dependency>

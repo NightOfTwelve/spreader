@@ -7,5 +7,7 @@
   <sqlMap resource="ibatis/spreader_tb_client_action_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_client_task_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_task_batch_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_task.xml" />
+  <sqlMap resource="ibatis/spreader_tb_task_result_SqlMap.xml" />
 </sqlMapConfig>
 

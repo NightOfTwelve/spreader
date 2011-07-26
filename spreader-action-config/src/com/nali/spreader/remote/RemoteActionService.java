@@ -1,4 +1,4 @@
-package com.nali.spreader.service.remote;
+package com.nali.spreader.remote;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
