@@ -1,4 +1,4 @@
-package com.nali.spreader.service.remote;
+package com.nali.spreader.remote;
 
 import com.nali.spreader.model.ClientAction;
 

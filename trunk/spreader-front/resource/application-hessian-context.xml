@@ -19,7 +19,7 @@
 	
 	<bean name="/remoteActionService" class="org.springframework.remoting.caucho.HessianServiceExporter">
 	    <property name="service" ref="remoteActionService"/>
-	    <property name="serviceInterface" value="com.nali.spreader.service.remote.IRemoteActionService"/>
+	    <property name="serviceInterface" value="com.nali.spreader.remote.IRemoteActionService"/>
 	</bean>
 	
 </beans>
