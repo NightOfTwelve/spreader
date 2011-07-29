@@ -1,4 +1,4 @@
-package com.nali.spreader.so.sender;
+package com.nali.spreader.service;
 
 import com.nali.spreader.model.TaskResult;
 

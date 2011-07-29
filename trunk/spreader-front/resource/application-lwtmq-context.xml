@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		"
+	default-lazy-init="false">
+	<context:annotation-config />
+	<context:component-scan base-package="com.nali.lwtmq" />
+	<util:properties id="lwtmq" location="classpath:lwtmq.properties" />
+
+	<bean id="redisConnectionFactory"
+		class="com.nali.lwtmq.core.connection.JedisConnectionPoolFactory">
+		<property name="hostName" value="#{lwtmq['lwtmq.redis.host']}"></property>
+		<property name="password" value="#{lwtmq['lwtmq.redis.password']}"></property>
+		<property name="port" value="#{lwtmq['lwtmq.redis.port']}"></property>
+		<property name="timeout" value="#{lwtmq['lwtmq.redis.timeout']}"></property>
+		<property name="poolConfig">
+			<bean class="redis.clients.jedis.JedisPoolConfig">
+				<property name="maxActive" value="#{lwtmq['lwtmq.redis.connectionCount']}"></property>
+				<property name="minIdle" value="#{lwtmq['lwtmq.redis.connectionCount']}"></property>
+				<property name="maxIdle" value="#{lwtmq['lwtmq.redis.connectionCount']}"></property>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="clientTaskProtoStuffRedisSerializer" class="com.nali.lwtmq.protobuf.ProtoStuffRedisSerializer">
+		<property name="className" value="com.nali.spreader.model.ClientTask" />
+	</bean>
+	
+	<bean id="taskResultProtoStuffRedisSerializer" class="com.nali.lwtmq.protobuf.ProtoStuffRedisSerializer">
+		<property name="className" value="com.nali.spreader.model.TaskResult" />
+	</bean>
+	
+	<bean id="taskQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">
+		<property name="valueSerializer" ref="clientTaskProtoStuffRedisSerializer"></property>
+		<property name="connectionFactory" ref="redisConnectionFactory"></property>
+		<property name="name" value="taskQueue"></property>
+	</bean>
+	
+	<bean id="resultQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">
+		<property name="valueSerializer" ref="taskResultProtoStuffRedisSerializer"></property>
+		<property name="connectionFactory" ref="redisConnectionFactory"></property>
+		<property name="name" value="resultQueue"></property>
+	</bean>
+
+	<bean id="manager" class="com.nali.lwtmq.core.queue.redis.RedisManager">
+	</bean>
+	
+	<bean id="lwtmqResultSender" class="com.nali.lwtmq.sender.RedisSender">
+		<property name="queueName" value="resultQueue"></property>
+		<property name="manager" ref="manager"></property>
+	</bean>
+	
+	<bean id="asyncResultSender" class="com.nali.lwtmq.sender.AsyncSender">
+		<property name="sender" ref="lwtmqResultSender"></property>
+		<property name="concurrentSenders" value="#{lwtmq['lwtmq.resultQueue.concurrentSenders']}"></property>
+	</bean>
+	
+	<bean id="taskReceiver" class="com.nali.lwtmq.receiver.RedisReceiver">
+		<property name="queueName" value="taskQueue"></property>
+		<property name="manager" ref="manager"></property>
+	</bean>
+	
+	<bean id="listenerContainer" class="com.nali.lwtmq.receiver.container.PollingMessageListenerContainer">
+		<property name="concurrentListeners" value="#{lwtmq['lwtmq.taskQueue.concurrentListeners']}"></property>
+		<property name="receiver" ref="taskReceiver"></property>
+		<property name="concurrentTaskExecutors" value="#{lwtmq['lwtmq.taskQueue.concurrentTaskExecutors']}"></property>
+		<property name="listener" ref="taskListener"></property>
+	</bean>
+	
+</beans>

@@ -19,7 +19,6 @@ import com.nali.spreader.model.TaskBatch;
 import com.nali.spreader.model.TaskBatchExample;
 import com.nali.spreader.model.TaskResult;
 import com.nali.spreader.model.UserTaskCount;
-import com.nali.spreader.so.sender.IResultSender;
 import com.nali.spreader.util.CompareUtil;
 import com.nali.spreader.util.avg.ItemCount;
 
@@ -118,8 +117,9 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 	}
 
 	@Override
-	public void reportTask(List<TaskResult> rlts) {
+	public void reportTask(List<TaskResult> rlts, Long clientId) {
 		for (TaskResult taskResult : rlts) {
+			taskResult.setClientId(clientId);
 			resultSender.send(taskResult);
 		}
 	}

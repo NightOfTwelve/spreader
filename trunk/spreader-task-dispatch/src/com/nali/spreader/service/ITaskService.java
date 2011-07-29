@@ -15,6 +15,6 @@ public interface ITaskService {
 	
 	List<ClientTask> assignBatchTaskToClient(Long clientId);
 	
-	void reportTask(List<TaskResult> rlts);
+	void reportTask(List<TaskResult> rlts, Long clientId);
 
 }

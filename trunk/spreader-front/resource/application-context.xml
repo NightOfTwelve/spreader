@@ -14,10 +14,9 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd
 		"
-	default-lazy-init="false">
+	default-lazy-init="true">
 	<context:annotation-config />
 	<context:component-scan base-package="com.nali.spreader" />
-	
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -87,5 +86,5 @@
 			</list>
 		</property>
 	</bean>
-	
+	<import resource="classpath:application-lwtmq-context.xml"/>
 </beans>
