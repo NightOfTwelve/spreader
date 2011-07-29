@@ -1,4 +1,4 @@
-package com.nali.spreader.cronJob;
+package com.nali.spreader.cronjob;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
