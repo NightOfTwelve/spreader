@@ -25,7 +25,9 @@ public class RemoteTaskService implements IRemoteTaskService {
 
 	@Override
 	public void reportTask(List<TaskResult> rlts) {
-		taskService.reportTask(rlts);
+		ClientContext context = ClientContext.getCurrentContext();
+		Long clientId = context.getClientId();
+		taskService.reportTask(rlts, clientId);
 	}
 
 }
