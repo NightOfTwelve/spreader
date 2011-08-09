@@ -5,6 +5,11 @@ import java.util.Date;
 
 import com.nali.common.model.BaseModel;
 
+/**
+ * ClientTask<br>&nbsp;
+ * 目前逻辑上taskId只存在于前台，后台不关心具体id
+ * @author sam Created on 2011-8-1
+ */
 public class ClientTask extends BaseModel implements Serializable {
     private static final long serialVersionUID = 5144184626459560630L;
 

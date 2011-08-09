@@ -22,7 +22,7 @@ public class TaskDao implements ITaskDao {
 	}
 
 	@Override
-	public TaskBatch insertTaskBatch(TaskBatch batch) {
-		return (TaskBatch) sqlMap.insert("insertTaskBatch", batch);
+	public Long insertTaskBatch(TaskBatch batch) {
+		return (Long) sqlMap.insert("spreader.insertTaskBatch", batch);
 	}
 }

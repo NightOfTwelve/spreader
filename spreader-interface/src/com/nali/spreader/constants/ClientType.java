@@ -2,7 +2,6 @@ package com.nali.spreader.constants;
 
 public enum ClientType {
 	dotNet(1),
-	
 	;
 
 	private final Integer id;

@@ -24,6 +24,7 @@
 		<property name="hostName" value="#{lwtmq['lwtmq.redis.host']}"></property>
 		<property name="password" value="#{lwtmq['lwtmq.redis.password']}"></property>
 		<property name="port" value="#{lwtmq['lwtmq.redis.port']}"></property>
+		<property name="databaseIndex" value="#{lwtmq['lwtmq.redis.database']}"></property>
 		<property name="timeout" value="#{lwtmq['lwtmq.redis.timeout']}"></property>
 		<property name="poolConfig">
 			<bean class="redis.clients.jedis.JedisPoolConfig">
@@ -74,6 +75,7 @@
 	
 	<bean id="listenerContainer" class="com.nali.lwtmq.receiver.container.PollingMessageListenerContainer">
 		<property name="concurrentListeners" value="#{lwtmq['lwtmq.taskQueue.concurrentListeners']}"></property>
+		<property name="timeout" value="#{lwtmq['lwtmq.taskQueue.blockedTimeout']}"></property>
 		<property name="receiver" ref="taskReceiver"></property>
 		<property name="concurrentTaskExecutors" value="#{lwtmq['lwtmq.taskQueue.concurrentTaskExecutors']}"></property>
 		<property name="listener" ref="taskListener"></property>

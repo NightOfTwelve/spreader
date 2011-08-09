@@ -2,6 +2,9 @@ package com.nali.spreader.front;
 
 import java.util.Date;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nali.spreader.front.test.model.Book;
@@ -9,6 +12,17 @@ import com.nali.spreader.front.test.model.User;
 
 @Service
 public class TestService implements ITestService{
+	@Autowired
+	private ITestService2 t2;
+	
+	@PostConstruct
+	public void init() {
+		System.out.println("aaa");
+	}
+	
+	public ITestService2 forTest() {
+		return t2;
+	}
 
 	@Override
 	public String echo(int i) {
