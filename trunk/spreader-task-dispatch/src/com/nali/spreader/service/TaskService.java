@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import com.nali.spreader.util.avg.ItemCount;
 
 @Service
 public class TaskService implements ITaskRepository, ITaskService {//TODO cleanExpireTask
+	private static Logger logger = Logger.getLogger(TaskService.class);
 	@Autowired
 	private ICrudTaskBatchDao crudTaskBatchDao;
 	@Autowired
@@ -37,7 +39,11 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 	public void save(ClientTask task) {
 		task.setId(null);
 		task.setBatchId(null);
-		crudClientTaskDao.insertSelective(task);
+		try {
+			crudClientTaskDao.insertSelective(task);
+		} catch (Exception e) {
+			logger.error("receive task error, taskCode:" + task.getTaskCode(), e);
+		}
 	}
 
 	@Override
@@ -50,8 +56,7 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 	public void assignToBatch(Long uid, List<ItemCount<Long>> actionCounts) {
 		TaskBatch batch = new TaskBatch();
 		batch.setUid(uid);
-		batch = taskDao.insertTaskBatch(batch);
-		Long batchId = batch.getId();
+		Long batchId = taskDao.insertTaskBatch(batch);
 		Date expireTime = null;
 		for (ItemCount<Long> averageItem : actionCounts) {
 			Long actionId = averageItem.getItem();
@@ -71,7 +76,7 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 
 	private Date assignTaskAndReturnExpireTime(Long actionId, Long uid, int count, Long batchId) {
 		ClientTaskExample example = new ClientTaskExample();
-		example.createCriteria().andActionIdEqualTo(actionId).andUidEqualTo(uid);
+		example.createCriteria().andActionIdEqualTo(actionId).andUidEqualTo(uid).andBatchIdIsNull();
 		example.setLimit(Limit.newInstanceForLimit(0, count));
 		List<ClientTask> tasks = crudClientTaskDao.selectByExampleWithoutBLOBs(example);
 		Date expireTime = null;
@@ -97,7 +102,6 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 		example.createCriteria()
 			.andExpireTimeGreaterThan(new Date())
 			.andClientIdIsNull()
-			//.andAssignTime TODO
 			;
 		example.setLimit(Limit.newInstanceForLimit(0, 1));
 		List<TaskBatch> rltList = crudTaskBatchDao.selectByExample(example);
@@ -109,6 +113,7 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 		TaskBatch record = new TaskBatch();
 		record.setId(batchId);
 		record.setClientId(clientId);
+		record.setAssignTime(new Date());
 		crudTaskBatchDao.updateByPrimaryKeySelective(record);
 		
 		ClientTaskExample taskExample = new ClientTaskExample();
@@ -120,7 +125,11 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 	public void reportTask(List<TaskResult> rlts, Long clientId) {
 		for (TaskResult taskResult : rlts) {
 			taskResult.setClientId(clientId);
-			resultSender.send(taskResult);
+			try {
+				resultSender.send(taskResult);
+			} catch (Exception e) {
+				logger.error("handle result error, taskCode:" + taskResult.getTaskCode(), e);
+			}
 		}
 	}
 

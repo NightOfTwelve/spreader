@@ -8,5 +8,5 @@ import com.nali.spreader.model.UserTaskCount;
 public interface ITaskDao {
 	List<UserTaskCount> countUserTask();
 
-	TaskBatch insertTaskBatch(TaskBatch batch);
+	Long insertTaskBatch(TaskBatch batch);
 }

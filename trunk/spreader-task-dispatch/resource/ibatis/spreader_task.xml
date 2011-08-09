@@ -2,8 +2,9 @@
 <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
 <sqlMap namespace="spreader" >
 	<select id="countUserTask" resultClass="com.nali.spreader.model.UserTaskCount">
-		select uid, action_id, count(*) as count
+		select uid, action_id as actionId, count(*) as count
 		from spreader.tb_client_task
+		where batch_id is null
 		group by uid, action_id
 	</select>
 	<insert id="insertTaskBatch" parameterClass="com.nali.spreader.model.TaskBatch">
