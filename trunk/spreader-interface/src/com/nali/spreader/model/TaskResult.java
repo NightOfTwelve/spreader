@@ -5,6 +5,10 @@ import java.util.Date;
 
 public class TaskResult implements Serializable {
 	private static final long serialVersionUID = -2339466262209768957L;
+	public static final Integer STATUS_SUCCESS=0;
+	public static final Integer STATUS_FAILED=1;
+	public static final Integer STATUS_GIVED_UP=2;
+	public static final Integer STATUS_EXPIRED=3;
 	private Long taskId;
 	private Long clientId;
 	private String taskCode;
