@@ -61,8 +61,10 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 		for (ItemCount<Long> averageItem : actionCounts) {
 			Long actionId = averageItem.getItem();
 			int count = averageItem.getCount();
-			Date actionExpireTime = assignTaskAndReturnExpireTime(actionId, uid, count, batchId);
-			expireTime = CompareUtil.min(actionExpireTime, expireTime);
+			if(count!=0) {
+				Date actionExpireTime = assignTaskAndReturnExpireTime(actionId, uid, count, batchId);
+				expireTime = CompareUtil.min(actionExpireTime, expireTime);
+			}
 		}
 		updateBatchExpireTime(batchId, expireTime);
 	}
@@ -125,10 +127,18 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 	public void reportTask(List<TaskResult> rlts, Long clientId) {
 		for (TaskResult taskResult : rlts) {
 			taskResult.setClientId(clientId);
-			try {
-				resultSender.send(taskResult);
-			} catch (Exception e) {
-				logger.error("handle result error, taskCode:" + taskResult.getTaskCode(), e);
+			if(TaskResult.STATUS_SUCCESS.equals(taskResult.getStatus())) {
+				try {
+					resultSender.send(taskResult);
+				} catch (Exception e) {
+					logger.error("handle result error, taskCode:" + taskResult.getTaskCode(), e);
+				}
+			} else {
+				logger.error("task failed, id:" + taskResult.getTaskId()
+								+ ", status:" + taskResult.getStatus()
+								+ ", clientId:" + clientId
+								+ "\r\n" + taskResult.getResult()
+								);//TODO handle error
 			}
 		}
 	}

@@ -81,7 +81,7 @@ public class Average<T> implements Iterator<List<ItemCount<T>>> {
 			tempItems.add(floatItem);
 		}
 		for (CountDetail<T> solidItem : sortedItemCounts) {
-			rlt.add(new ItemCount<T>(solidItem.solidCount, solidItem.item));
+			rlt.add(new ItemCount<T>(solidItem.solidCount, solidItem.item));//TODO 0的不返回了？
 		}
 		for (CountDetail<T> tempItem : tempItems) {
 			sortedItemCounts.add(tempItem, tempItem.cannotAverageCount);
