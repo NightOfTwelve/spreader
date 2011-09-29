@@ -7,6 +7,7 @@ public class UserTaskCount implements Serializable {
 	private Long uid;
 	private Long actionId;
 	private Integer count;
+	private Integer taskType;
 	public Long getUid() {
 		return uid;
 	}
@@ -24,5 +25,11 @@ public class UserTaskCount implements Serializable {
 	}
 	public void setCount(Integer count) {
 		this.count = count;
+	}
+	public Integer getTaskType() {
+		return taskType;
+	}
+	public void setTaskType(Integer taskType) {
+		this.taskType = taskType;
 	}
 }

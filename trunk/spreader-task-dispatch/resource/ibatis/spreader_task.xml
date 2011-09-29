@@ -2,17 +2,44 @@
 <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
 <sqlMap namespace="spreader" >
 	<select id="countUserTask" resultClass="com.nali.spreader.model.UserTaskCount">
-		select uid, action_id as actionId, count(*) as count
+		select task_type as taskType, uid, action_id as actionId, count(*) as count
 		from spreader.tb_client_task
-		where batch_id is null
-		group by uid, action_id
+		where batch_id=0
+		group by task_type, uid, action_id
 	</select>
 	<insert id="insertTaskBatch" parameterClass="com.nali.spreader.model.TaskBatch">
-		insert into spreader.tb_task_batch (
-			uid
-		) values (
-			#uid#
-		)
+    insert into spreader$shard.databaseSuffix$.tb_task_batch$shard.tableSuffix$
+	    <dynamic prepend="(">
+	      <isNotNull prepend="," property="clientId">
+	        client_id
+	      </isNotNull>
+	      <isNotNull prepend="," property="expireTime">
+	        expire_time
+	      </isNotNull>
+	      <isNotNull prepend="," property="assignTime">
+	        assign_time
+	      </isNotNull>
+	      <isNotNull prepend="," property="taskType">
+	        task_type
+	      </isNotNull>
+	      )
+	    </dynamic>
+	    values
+	    <dynamic prepend="(">
+	      <isNotNull prepend="," property="clientId">
+	        #clientId:BIGINT#
+	      </isNotNull>
+	      <isNotNull prepend="," property="expireTime">
+	        #expireTime:TIMESTAMP#
+	      </isNotNull>
+	      <isNotNull prepend="," property="assignTime">
+	        #assignTime:TIMESTAMP#
+	      </isNotNull>
+	      <isNotNull prepend="," property="taskType">
+	        #taskType:INTEGER#
+	      </isNotNull>
+	      )
+	    </dynamic>
 		<selectKey resultClass="long" type="post" keyProperty="id">
 			select LAST_INSERT_ID() as value
 		</selectKey>

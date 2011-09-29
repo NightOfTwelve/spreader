@@ -14,6 +14,12 @@
         <dependent-module archiveName="spreader-interface.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spreader-interface/spreader-interface">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="spreader-login-config.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spreader-login-config/spreader-login-config">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="spreader-captcha.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spreader-captcha/spreader-captcha">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="spreader-front"/>
         <property name="java-output-path"/>
     </wb-module>

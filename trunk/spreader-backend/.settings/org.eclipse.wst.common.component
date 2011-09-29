@@ -14,6 +14,9 @@
         <dependent-module archiveName="spreader-task-user.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spreader-task-user/spreader-task-user">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="spreader-task-register.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spreader-task-register/spreader-task-register">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="spreader-backend"/>
         <property name="java-output-path"/>
     </wb-module>

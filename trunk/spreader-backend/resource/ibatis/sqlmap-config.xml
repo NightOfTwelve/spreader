@@ -3,11 +3,17 @@
 
 <sqlMapConfig>
   <settings useStatementNamespaces="true" enhancementEnabled="true" errorTracingEnabled="true" lazyLoadingEnabled="false" />
+  
+  <sqlMap resource="ibatis/spreader_user.xml" />
+  
   <sqlMap resource="ibatis/spreader_tb_career_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_education_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_user_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_user_tag_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_robot_user_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_user_relation_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_content_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_robot_register_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_register.xml" />
 </sqlMapConfig>
 

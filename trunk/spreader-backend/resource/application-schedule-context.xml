@@ -23,24 +23,37 @@
 		<property name="startDelay" value="2000"></property>
 		<property name="repeatCount" value="0"></property>
 	</bean>
-    <!-- refreshConsumeMsg -->
-	<bean id="produceTaskJobDetail" parent="abstractJobDetail">
-		<property name="targetObject" ref="produceJob" />
-		<property name="targetMethod" value="dailyJob" />
+    <!-- syncAllRobot -->
+	<bean id="syncAllRobotJobDetail" parent="abstractJobDetail">
+		<property name="targetObject" ref="syncAllRobot" />
+		<property name="targetMethod" value="execute" />
 	</bean>
-	<bean id="produceTaskInitTrigger" parent="abstractInitTrigger">
-		<property name="jobDetail" ref="produceTaskJobDetail"/>
+	<bean id="syncAllRobotInitTrigger" parent="abstractInitTrigger">
+		<property name="jobDetail" ref="syncAllRobotJobDetail"/>
 	</bean>
-	<bean id="produceTaskCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail" ref="produceTaskJobDetail"/>
-		<property name="cronExpression" value="#{jobs['cronTrigger.produceTask']}" />
+    <!-- produceTask -->
+	<bean id="regularTaskProduceJobDetail" parent="abstractJobDetail">
+		<property name="targetObject" ref="regularJob" />
+		<property name="targetMethod" value="startAll" />
+	</bean>
+	<bean id="regularTaskProduceInitTrigger" parent="abstractInitTrigger">
+		<property name="jobDetail" ref="regularTaskProduceJobDetail"/>
+	</bean>
+	<bean id="regularTaskProduceCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="regularTaskProduceJobDetail"/>
+		<property name="cronExpression" value="#{jobs['cronTrigger.regularTaskProduce']}" />
 	</bean>
 		
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="produceTaskInitTrigger" /><!-- TODO 移除 -->
-	    		<ref bean="produceTaskCronTrigger" />
+				<!--
+				<ref bean="syncAllRobotInitTrigger" />
+				 TODO 移除 -->
+				<ref bean="regularTaskProduceInitTrigger" /><!-- TODO 移除 -->
+				<!-- 
+	    		<ref bean="regularTaskProduceCronTrigger" />
+				 -->
 			</list>
 		</property>
 	</bean>

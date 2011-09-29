@@ -22,6 +22,8 @@
 		<property name="locations">
 			<list>
 				<value>classpath:jdbc.properties</value>
+				<value>classpath:urls.properties</value>
+				<value>classpath:env.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -86,6 +88,15 @@
 			</list>
 		</property>
 	</bean>
+	
+	<!-- remote -->
+	<bean id="loginConfigManageService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+		<property name="serviceUrl" value="${front.hessian}/internal/hessian/loginConfigManageService" />
+		<property name="serviceInterface" value="com.nali.spreader.remote.ILoginConfigManageService" />
+	</bean>
+	
+	<!-- remote end -->
+	
 	<import resource="classpath:application-lwtmq-context.xml"/>
 	<import resource="classpath:application-schedule-context.xml"/>
 </beans>

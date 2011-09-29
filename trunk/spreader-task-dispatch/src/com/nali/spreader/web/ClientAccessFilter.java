@@ -14,12 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import com.nali.spreader.common.ClientContext;
+import com.nali.spreader.front.ClientContext;
 
 @Component
 public class ClientAccessFilter implements Filter {
 	private static Logger logger = Logger.getLogger(ClientAccessFilter.class);
 	private static final String PARAM_CLIENT = "client";
+	private static final String PARAM_TASK_TYPE = "taskType";
 
 	@Override
 	public void destroy() {
@@ -28,12 +29,13 @@ public class ClientAccessFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		Long clientId = getClientId((HttpServletRequest) request);
+		Integer taskType = getTaskType((HttpServletRequest) request);
 		if(clientId==null) {
 			logger.warn("reject access:" + request.getRemoteAddr());
 			((HttpServletResponse)response).setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return;
 		}
-		ClientContext context = new ClientContext(clientId);
+		ClientContext context = new ClientContext(clientId, taskType);
 		ClientContext.setCurrentContext(context);
 		try {
 			chain.doFilter(request, response);
@@ -42,6 +44,18 @@ public class ClientAccessFilter implements Filter {
 		}
 	}
 	
+	private Integer getTaskType(HttpServletRequest request) {
+		String taskType = request.getParameter(PARAM_TASK_TYPE);//TODO 合法性校验
+		if(taskType != null) {
+			try {
+				return Integer.parseInt(taskType);
+			} catch (NumberFormatException e) {
+				logger.warn(e, e);
+			}
+		}
+		return null;
+	}
+
 	private Long getClientId(HttpServletRequest request) {
 		String client = request.getParameter(PARAM_CLIENT);//TODO 合法性校验
 		if(client != null) {
@@ -55,7 +69,7 @@ public class ClientAccessFilter implements Filter {
 	}
 
 	@Override
-	public void init(FilterConfig arg0) throws ServletException {
+	public void init(FilterConfig config) throws ServletException {
 	}
 
 }

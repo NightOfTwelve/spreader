@@ -42,20 +42,14 @@
 	<bean id="taskResultProtoStuffRedisSerializer" class="com.nali.lwtmq.protobuf.ProtoStuffRedisSerializer">
 		<property name="className" value="com.nali.spreader.model.TaskResult" />
 	</bean>
-	
-	<bean id="taskQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">
-		<property name="valueSerializer" ref="clientTaskProtoStuffRedisSerializer"></property>
-		<property name="connectionFactory" ref="redisConnectionFactory"></property>
-		<property name="name" value="taskQueue"></property>
+
+	<bean id="manager" class="com.nali.lwtmq.core.queue.redis.RedisManager">
 	</bean>
 	
 	<bean id="resultQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">
 		<property name="valueSerializer" ref="taskResultProtoStuffRedisSerializer"></property>
 		<property name="connectionFactory" ref="redisConnectionFactory"></property>
 		<property name="name" value="resultQueue"></property>
-	</bean>
-
-	<bean id="manager" class="com.nali.lwtmq.core.queue.redis.RedisManager">
 	</bean>
 	
 	<bean id="lwtmqResultSender" class="com.nali.lwtmq.sender.RedisSender">
@@ -66,6 +60,12 @@
 	<bean id="asyncResultSender" class="com.nali.lwtmq.sender.AsyncSender">
 		<property name="sender" ref="lwtmqResultSender"></property>
 		<property name="concurrentSenders" value="#{lwtmq['lwtmq.resultQueue.concurrentSenders']}"></property>
+	</bean>
+	
+	<bean id="taskQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">
+		<property name="valueSerializer" ref="clientTaskProtoStuffRedisSerializer"></property>
+		<property name="connectionFactory" ref="redisConnectionFactory"></property>
+		<property name="name" value="taskQueue"></property>
 	</bean>
 	
 	<bean id="taskReceiver" class="com.nali.lwtmq.receiver.RedisReceiver">
@@ -80,5 +80,36 @@
 		<property name="concurrentTaskExecutors" value="#{lwtmq['lwtmq.taskQueue.concurrentTaskExecutors']}"></property>
 		<property name="listener" ref="taskListener"></property>
 	</bean>
+	
+	<bean id="weiboNormalPassiveTaskQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">
+		<property name="valueSerializer" ref="clientTaskProtoStuffRedisSerializer"></property>
+		<property name="connectionFactory" ref="redisConnectionFactory"></property>
+		<property name="name" value="weiboNormalPassiveTaskQueue"></property>
+	</bean>
+	
+	<bean id="weiboNormalPassiveTaskReceiver" class="com.nali.lwtmq.receiver.RedisReceiver">
+		<property name="queueName" value="weiboNormalPassiveTaskQueue"></property>
+		<property name="manager" ref="manager"></property>
+	</bean>
+	
+	<bean id="weiboRegisterPassiveTaskQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">
+		<property name="valueSerializer" ref="clientTaskProtoStuffRedisSerializer"></property>
+		<property name="connectionFactory" ref="redisConnectionFactory"></property>
+		<property name="name" value="weiboRegisterPassiveTaskQueue"></property>
+	</bean>
+	
+	<bean id="weiboRegisterPassiveTaskReceiver" class="com.nali.lwtmq.receiver.RedisReceiver">
+		<property name="queueName" value="weiboRegisterPassiveTaskQueue"></property>
+		<property name="manager" ref="manager"></property>
+	</bean>
+	<!-- 
+	<bean id="passiveTaskListenerContainer" class="com.nali.lwtmq.receiver.container.PollingMessageListenerContainer">
+		<property name="concurrentListeners" value="#{lwtmq['lwtmq.passiveTaskQueue.concurrentListeners']}"></property>
+		<property name="timeout" value="#{lwtmq['lwtmq.passiveTaskQueue.blockedTimeout']}"></property>
+		<property name="receiver" ref="passiveTaskReceiver"></property>
+		<property name="concurrentTaskExecutors" value="#{lwtmq['lwtmq.passiveTaskQueue.concurrentTaskExecutors']}"></property>
+		<property name="listener" ref="passiveTaskListener"></property>
+	</bean>
+	-->
 	
 </beans>

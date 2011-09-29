@@ -25,6 +25,11 @@
 		    <artifactId>spreader-task-user</artifactId>
   			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.nali.spreader</groupId>
+		    <artifactId>spreader-task-register</artifactId>
+  			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
