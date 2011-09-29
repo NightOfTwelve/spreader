@@ -6,6 +6,7 @@
 		<project>spreader-interface</project>
 		<project>spreader-task-factory</project>
 		<project>spreader-task-user</project>
+		<project>spreader-task-register</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

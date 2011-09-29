@@ -6,6 +6,8 @@
 		<project>spreader-action-config</project>
 		<project>spreader-task-dispatch</project>
 		<project>spreader-interface</project>
+		<project>spreader-login-config</project>
+		<project>spreader-captcha</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

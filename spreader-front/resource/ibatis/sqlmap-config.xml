@@ -7,6 +7,9 @@
   <sqlMap resource="ibatis/spreader_tb_client_action_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_client_task_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_task_batch_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_login_config_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_captcha_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_task.xml" />
+  <sqlMap resource="ibatis/spreader_captcha.xml" />
 </sqlMapConfig>
 

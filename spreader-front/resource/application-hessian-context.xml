@@ -27,4 +27,19 @@
 	    <property name="serviceInterface" value="com.nali.spreader.remote.IRemoteTaskService"/>
 	</bean>
 	
+	<bean name="/remoteLoginConfigService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+	    <property name="service" ref="remoteLoginConfigService"/>
+	    <property name="serviceInterface" value="com.nali.spreader.remote.IRemoteLoginConfigService"/>
+	</bean>
+	
+	<bean name="/captchaBoard" class="org.springframework.remoting.caucho.HessianServiceExporter">
+	    <property name="service" ref="captchaBoard"/>
+	    <property name="serviceInterface" value="com.nali.spreader.remote.ICaptchaBoard"/>
+	</bean>
+	
+	<bean name="/captchaResultBoard" class="org.springframework.remoting.caucho.HessianServiceExporter">
+	    <property name="service" ref="captchaResultBoard"/>
+	    <property name="serviceInterface" value="com.nali.spreader.remote.ICaptchaResultBoard"/>
+	</bean>
+	
 </beans>

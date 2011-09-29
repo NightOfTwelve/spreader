@@ -38,7 +38,6 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 	@Override
 	public void save(ClientTask task) {
 		task.setId(null);
-		task.setBatchId(null);
 		try {
 			crudClientTaskDao.insertSelective(task);
 		} catch (Exception e) {
@@ -53,20 +52,36 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 
 	@Transactional
 	@Override
-	public void assignToBatch(Long uid, List<ItemCount<Long>> actionCounts) {
+	public void assignToBatch(Integer taskType, Long uid, List<ItemCount<Long>> actionCounts) {
 		TaskBatch batch = new TaskBatch();
-		batch.setUid(uid);
+		batch.setTaskType(taskType);
 		Long batchId = taskDao.insertTaskBatch(batch);
 		Date expireTime = null;
 		for (ItemCount<Long> averageItem : actionCounts) {
 			Long actionId = averageItem.getItem();
 			int count = averageItem.getCount();
 			if(count!=0) {
-				Date actionExpireTime = assignTaskAndReturnExpireTime(actionId, uid, count, batchId);
+				Date actionExpireTime = assignTaskAndReturnExpireTime(actionId, taskType, uid, count, batchId);
 				expireTime = CompareUtil.min(actionExpireTime, expireTime);
 			}
 		}
 		updateBatchExpireTime(batchId, expireTime);
+	}
+
+	@Transactional
+	@Override
+	public void assignToBatch(List<ClientTask> tasks, Integer taskType, Long clientId) {
+		TaskBatch batch = new TaskBatch();
+		batch.setClientId(clientId);
+		batch.setTaskType(taskType);
+		Date current = new Date();
+		batch.setAssignTime(current);
+		batch.setExpireTime(current);
+		Long batchId = taskDao.insertTaskBatch(batch);
+		for (ClientTask task : tasks) {
+			task.setBatchId(batchId);
+			crudClientTaskDao.insertSelective(task);
+		}
 	}
 
 	private void updateBatchExpireTime(Long batchId, Date expireTime) {
@@ -76,9 +91,12 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 		crudTaskBatchDao.updateByPrimaryKeySelective(record);
 	}
 
-	private Date assignTaskAndReturnExpireTime(Long actionId, Long uid, int count, Long batchId) {
+	private Date assignTaskAndReturnExpireTime(Long actionId, Integer taskType, Long uid, int count, Long batchId) {
 		ClientTaskExample example = new ClientTaskExample();
-		example.createCriteria().andActionIdEqualTo(actionId).andUidEqualTo(uid).andBatchIdIsNull();
+		example.createCriteria()
+			.andActionIdEqualTo(actionId)
+			.andUidEqualTo(uid).andTaskTypeEqualTo(taskType)
+			.andBatchIdEqualTo(ClientTask.DEFAULT_BATCH_ID);
 		example.setLimit(Limit.newInstanceForLimit(0, count));
 		List<ClientTask> tasks = crudClientTaskDao.selectByExampleWithoutBLOBs(example);
 		Date expireTime = null;
@@ -99,24 +117,27 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 
 	@Transactional
 	@Override
-	public List<ClientTask> assignBatchTaskToClient(Long clientId) {
-		TaskBatchExample example = new TaskBatchExample();
-		example.createCriteria()
+	public List<ClientTask> assignBatchTaskToClient(Integer taskType, Long clientId) {//TODO 锁问题
+		Long batchId;
+		synchronized(this) {
+			TaskBatchExample example = new TaskBatchExample();
+			example.createCriteria()
+			.andTaskTypeEqualTo(taskType)
 			.andExpireTimeGreaterThan(new Date())
-			.andClientIdIsNull()
-			;
-		example.setLimit(Limit.newInstanceForLimit(0, 1));
-		List<TaskBatch> rltList = crudTaskBatchDao.selectByExample(example);
-		if(rltList.size()==0) {
-			return Collections.emptyList();
+			.andClientIdIsNull();
+			example.setLimit(Limit.newInstanceForLimit(0, 1));
+			List<TaskBatch> rltList = crudTaskBatchDao.selectByExample(example);
+			if(rltList.size()==0) {
+				return Collections.emptyList();
+			}
+			
+			batchId = rltList.get(0).getId();
+			TaskBatch record = new TaskBatch();
+			record.setId(batchId);
+			record.setClientId(clientId);
+			record.setAssignTime(new Date());
+			crudTaskBatchDao.updateByPrimaryKeySelective(record);
 		}
-		
-		Long batchId = rltList.get(0).getId();
-		TaskBatch record = new TaskBatch();
-		record.setId(batchId);
-		record.setClientId(clientId);
-		record.setAssignTime(new Date());
-		crudTaskBatchDao.updateByPrimaryKeySelective(record);
 		
 		ClientTaskExample taskExample = new ClientTaskExample();
 		taskExample.createCriteria().andBatchIdEqualTo(batchId);
@@ -124,9 +145,10 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 	}
 
 	@Override
-	public void reportTask(List<TaskResult> rlts, Long clientId) {
+	public void reportTask(List<TaskResult> rlts, Integer taskType, Long clientId) {
 		for (TaskResult taskResult : rlts) {
 			taskResult.setClientId(clientId);
+			//TODO mark success&report fail
 			if(TaskResult.STATUS_SUCCESS.equals(taskResult.getStatus())) {
 				try {
 					resultSender.send(taskResult);
@@ -138,7 +160,7 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 								+ ", status:" + taskResult.getStatus()
 								+ ", clientId:" + clientId
 								+ "\r\n" + taskResult.getResult()
-								);//TODO handle error
+								);
 			}
 		}
 	}

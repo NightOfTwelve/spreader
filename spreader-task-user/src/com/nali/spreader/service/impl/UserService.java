@@ -1,6 +1,5 @@
 package com.nali.spreader.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -11,13 +10,16 @@ import com.nali.common.model.Limit;
 import com.nali.spreader.dao.ICrudCareerDao;
 import com.nali.spreader.dao.ICrudEducationDao;
 import com.nali.spreader.dao.ICrudUserDao;
+import com.nali.spreader.dao.ICrudUserRelationDao;
 import com.nali.spreader.dao.ICrudUserTagDao;
+import com.nali.spreader.dao.IUserDao;
 import com.nali.spreader.data.Career;
 import com.nali.spreader.data.CareerExample;
 import com.nali.spreader.data.Education;
 import com.nali.spreader.data.EducationExample;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserExample;
+import com.nali.spreader.data.UserRelation;
 import com.nali.spreader.data.UserTag;
 import com.nali.spreader.data.UserTagExample;
 import com.nali.spreader.exception.SpreaderDataException;
@@ -31,30 +33,34 @@ public class UserService extends WebsiteBaseService implements IUserService {
 	@Autowired
 	private ICrudUserDao crudUserDao;
 	@Autowired
+	private IUserDao userDao;
+	@Autowired
 	private ICrudCareerDao crudCareerDao;
 	@Autowired
 	private ICrudEducationDao crudEducationDao;
 	@Autowired
 	private ICrudUserTagDao crudUserTagDao;
+	@Autowired
+	private ICrudUserRelationDao crudUserRelationDao;
 
 	@Override
-	public void assignUser(Long websiteUid) {
+	public Long assignUser(Long websiteUid) {
 		UserExample example = new UserExample();
 		example.createCriteria().andWebsiteIdEqualTo(getWebsiteId())
 				.andWebsiteUidEqualTo(websiteUid);
 		List<User> existUsers = crudUserDao.selectByExample(example);
 		if (existUsers.size() != 0) {
-			return;
+			return null;
 		}
 		User user = new User();
 		user.setWebsiteId(getWebsiteId());
 		user.setWebsiteUid(websiteUid);
-		user.setCreateTime(new Date());
 		user.setIsRobot(false);
 		try {
-			crudUserDao.insertSelective(user);
+			return userDao.assignUser(user);
 		} catch (DuplicateKeyException e) {
 			logger.info("double insert.");
+			return null;
 		}
 	}
 
@@ -117,7 +123,7 @@ public class UserService extends WebsiteBaseService implements IUserService {
 
 	private UserExample getExpiredUserExample() {
 		UserExample example = new UserExample();
-		example.createCriteria().andUpdateTimeLessThan(SpecialDateUtil.afterToday(EXPIRED_DAY));
+		example.createCriteria().andUpdateTimeLessThan(SpecialDateUtil.afterToday(EXPIRED_DAY)).andWebsiteIdEqualTo(getWebsiteId());
 		return example;
 	}
 
@@ -145,10 +151,47 @@ public class UserService extends WebsiteBaseService implements IUserService {
 	public long getUninitializedUserCount() {
 		return crudUserDao.countByExample(getUninitializedUserExample());
 	}
+	
+	@Override
+	public long getUserCount() {
+		UserExample example = new UserExample();
+		example.createCriteria().andWebsiteIdEqualTo(getWebsiteId());
+		return crudUserDao.countByExample(example);
+	}
 
 	private UserExample getUninitializedUserExample() {
 		UserExample example = new UserExample();
-		example.createCriteria().andUpdateTimeIsNull();
+		example.createCriteria().andUpdateTimeIsNull().andWebsiteIdEqualTo(getWebsiteId());
 		return example;
+	}
+
+	@Override
+	public User getUserById(Long id) {
+		return crudUserDao.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public User getUserByWebsiteUid(Long websiteUid) {
+		UserExample example = new UserExample();
+		example.createCriteria().andWebsiteIdEqualTo(getWebsiteId()).andWebsiteUidEqualTo(websiteUid);
+		List<User> list = crudUserDao.selectByExample(example);
+		if(list.size()==0) {
+			return null;
+		}
+		return list.get(0);
+	}
+
+	@Override
+	public void createRelation(UserRelation relation) {
+		relation.setWebsiteId(getWebsiteId());
+		UserRelation rlt = crudUserRelationDao.selectByPrimaryKey(relation.getToUid(), relation.getType(), relation.getUid());
+		if(rlt!=null) {
+			return;
+		}
+		try {
+			crudUserRelationDao.insertSelective(relation);
+		} catch (DuplicateKeyException e) {
+			logger.info("double insert.");
+		}
 	}
 }

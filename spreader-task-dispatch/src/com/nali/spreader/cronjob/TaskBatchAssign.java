@@ -32,34 +32,38 @@ public class TaskBatchAssign {
 
 	public void execute() {
 		List<UserTaskCount> taskCounts = taskService.countUserTask();
+		Integer taskType = null;
 		Long uid = null;
 		List<UserTaskCount> userTaskList=null;
 		for (UserTaskCount userTaskCount : taskCounts) {
-			if(!userTaskCount.getUid().equals(uid)) {
-				assign(userTaskList, uid);
+			if(!userTaskCount.getTaskType().equals(taskType) || !userTaskCount.getUid().equals(uid)) {
+				assign(userTaskList, taskType, uid);
 				userTaskList = new LinkedList<UserTaskCount>();
+				taskType = userTaskCount.getTaskType();
 				uid = userTaskCount.getUid();
 			}
 			userTaskList.add(userTaskCount);
 		}
-		assign(userTaskList, uid);
+		assign(userTaskList, taskType, uid);
 	}
 	
 	protected int getBatchSize() {
 		return BATCH_SIZE;
 	}
 	
-	private void assign(List<UserTaskCount> userTaskList, Long uid) {
+	private void assign(List<UserTaskCount> userTaskList, Integer taskType, Long uid) {
 		if(userTaskList!=null) {
-			assignThreads.submit(new AssignTask(userTaskList, uid));
+			assignThreads.submit(new AssignTask(userTaskList, taskType, uid));
 		}
 	}
 	
 	private class AssignTask implements Runnable {
 		private final Long uid;
+		private final Integer taskType;
 		private Average<Long> average;
 
-		public AssignTask(List<UserTaskCount> userTaskList, Long uid) {
+		public AssignTask(List<UserTaskCount> userTaskList, Integer taskType, Long uid) {
+			this.taskType = taskType;
 			this.uid = uid;
 			List<ItemCount<Long>> actionCounts = new ArrayList<ItemCount<Long>>(userTaskList.size());
 			for (UserTaskCount userTaskCount : userTaskList) {
@@ -73,7 +77,7 @@ public class TaskBatchAssign {
 			while (average.hasNext()) {
 				List<ItemCount<Long>> actionCounts = average.next();
 				try {
-					taskService.assignToBatch(uid, actionCounts);
+					taskService.assignToBatch(taskType, uid, actionCounts);
 				} catch (Exception e) {
 					logger.error(e, e);
 				}

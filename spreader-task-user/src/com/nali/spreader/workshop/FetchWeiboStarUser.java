@@ -8,10 +8,14 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
-import com.nali.spreader.factory.SimpleWorkshopConfig;
-import com.nali.spreader.factory.TaskWorkshop;
-import com.nali.spreader.factory.sender.TaskSender;
+import com.nali.spreader.factory.RegularWorkshop;
+import com.nali.spreader.factory.SimpleActionConfig;
+import com.nali.spreader.factory.TaskProduceLine;
+import com.nali.spreader.factory.exporter.SingleTaskProducerImpl;
+import com.nali.spreader.factory.exporter.TaskExporter;
+import com.nali.spreader.factory.passive.TaskProduceLineFactory;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotUserService;
 import com.nali.spreader.service.IRobotUserServiceFactory;
@@ -20,19 +24,25 @@ import com.nali.spreader.service.IUserServiceFactory;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
-public class FetchWeiboStarUser implements TaskWorkshop<List<Long>> {
+public class FetchWeiboStarUser extends SingleTaskProducerImpl implements RegularWorkshop<List<Long>> {
 	private static Logger logger = Logger.getLogger(FetchWeiboStarUser.class);
-	private Integer websiteId = Website.weibo.getId();
-	private Long actionId = SimpleWorkshopConfig.fetchWeiboStarUser.getActionId();//TODO configable
-	private String code = SimpleWorkshopConfig.fetchWeiboStarUser.getTaskCode();
-	
+	private final long threshold = 100;
 	private IRobotUserService robotUserService;
-	
 	private IUserService userService;
+	private TaskProduceLine<Long> fetchWeiboUserMainPage;
+
+	public FetchWeiboStarUser() {
+		super(SimpleActionConfig.fetchWeiboStarUser, Website.weibo, Channel.normal);
+	}
 
 	@Autowired
 	public void initRobotUserService(IRobotUserServiceFactory robotUserServiceFactory) {
 		robotUserService = robotUserServiceFactory.getRobotUserService(websiteId);
+	}
+	
+	@Autowired
+	public void initTaskProduceLine(TaskProduceLineFactory taskProduceLineFactory) {
+		fetchWeiboUserMainPage = taskProduceLineFactory.getProduceLine("fetchWeiboUserMainPage");
 	}
 	
 	@Autowired
@@ -41,28 +51,29 @@ public class FetchWeiboStarUser implements TaskWorkshop<List<Long>> {
 	}
 
 	@Override
-	public String getCode() {
-		return code;
-	}
-
-	@Override
 	public void handleResult(Date updateTime, List<Long> websiteUids) {
-		// TODO 记录lastUpdateTime
-		for (Long websiteUid : websiteUids) {
-			userService.assignUser(websiteUid);
+		long userCount = userService.getUserCount();
+		if(userCount<threshold) {
+			// TODO 记录lastUpdateTime
+			for (Long websiteUid : websiteUids) {
+				Long uid = userService.assignUser(websiteUid);
+				if(uid!=null) {
+					fetchWeiboUserMainPage.send(uid);
+				}
+			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void work(TaskSender sender) {
+	public void work(TaskExporter exporter) {
 		List<RobotUser> users = robotUserService.getUsers(1);
 		if(users.size()==0) {
 			logger.error("not enough users for FetchWeiboStarUser");
 			return;
 		}
 		RobotUser user = users.get(0);
-		sender.send(actionId, Collections.EMPTY_MAP , user.getUid(), SpecialDateUtil.afterToday(3));
+		exporter.createTask(Collections.EMPTY_MAP , user.getUid(), SpecialDateUtil.afterToday(3));
 	}
 
 }

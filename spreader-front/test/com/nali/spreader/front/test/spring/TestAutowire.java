@@ -38,4 +38,20 @@ public class TestAutowire {
 		beans = context.getBeansOfType(TestService.class);
 		System.out.println(beans.size());
 	}
+	
+	@Test
+	public void test2() {
+//		Map<String, TestService> beans = context.getBeansOfType(TestService.class);
+//		System.out.println(beans.size());
+		AutowireCapableBeanFactory factory = context.getAutowireCapableBeanFactory();
+		TestService s = new TestService();
+//		factory.autowireBean(s);
+//		factory.autowireBeanProperties(s, AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, true);
+//		factory.applyBeanPostProcessorsAfterInitialization(s, "aa");
+//		factory.applyBeanPropertyValues(s, "aa");
+		factory.initializeBean(s, "aa");
+		System.out.println(s.forTest());
+//		beans = context.getBeansOfType(TestService.class);
+//		System.out.println(beans.size());
+	}
 }

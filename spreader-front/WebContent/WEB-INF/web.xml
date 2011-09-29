@@ -73,6 +73,23 @@
 		<servlet-name>hessian</servlet-name>
 		<url-pattern>/hessian/*</url-pattern>
 	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>internalHessian</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/classes/application-internalHessian-context.xml
+			</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>internalHessian</servlet-name>
+		<url-pattern>/internal/hessian/*</url-pattern>
+	</servlet-mapping>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.htm</welcome-file>

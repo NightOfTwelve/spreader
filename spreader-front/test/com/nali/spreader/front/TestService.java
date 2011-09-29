@@ -17,7 +17,7 @@ public class TestService implements ITestService{
 	
 	@PostConstruct
 	public void init() {
-		System.out.println("aaa");
+		System.out.println("init TestService");
 	}
 	
 	public ITestService2 forTest() {

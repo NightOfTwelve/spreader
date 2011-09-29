@@ -3,9 +3,12 @@ package com.nali.spreader.data;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
 import com.nali.common.model.BaseModel;
 
 public class User extends BaseModel implements Serializable {
+	public static final Integer GENDER_MALE=1;
+	public static final Integer GENDER_FEMALE=2;
 
     private static final long serialVersionUID = -6112071711622749869L;
 

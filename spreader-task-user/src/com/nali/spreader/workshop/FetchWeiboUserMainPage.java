@@ -10,11 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.nali.common.util.CollectionUtils;
+import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.User;
-import com.nali.spreader.factory.SimpleWorkshopConfig;
-import com.nali.spreader.factory.TaskWorkshop;
-import com.nali.spreader.factory.sender.TaskSender;
+import com.nali.spreader.factory.PassiveWorkshop;
+import com.nali.spreader.factory.SimpleActionConfig;
+import com.nali.spreader.factory.TaskProduceLine;
+import com.nali.spreader.factory.exporter.SingleTaskProducerImpl;
+import com.nali.spreader.factory.exporter.TaskExporter;
+import com.nali.spreader.factory.passive.TaskProduceLineFactory;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotUserService;
 import com.nali.spreader.service.IRobotUserServiceFactory;
@@ -25,14 +29,18 @@ import com.nali.spreader.util.NumberUtil;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
-public class FetchWeiboUserMainPage implements TaskWorkshop<User> {
+public class FetchWeiboUserMainPage extends SingleTaskProducerImpl implements PassiveWorkshop<Long, User> {//RegularWorkshop<User>,
 	private static Logger logger = Logger.getLogger(FetchWeiboUserMainPage.class);
-	private Integer websiteId = Website.weibo.getId();
-	private Long actionId = SimpleWorkshopConfig.fetchWeiboUserMainPage.getActionId();//TODO configable
-	private String code = SimpleWorkshopConfig.fetchWeiboUserMainPage.getTaskCode();
+	@Autowired
+	private WeiboRobotUserHolder weiboRobotUserHolder;
 	
 	private IRobotUserService robotUserService;
 	private IUserService userService;
+	private TaskProduceLine<Long> fetchUserAttentions;
+	
+	public FetchWeiboUserMainPage() {
+		super(SimpleActionConfig.fetchWeiboUserMainPage, Website.weibo, Channel.normal);
+	}
 
 	@Autowired
 	public void initRobotUserService(IRobotUserServiceFactory robotUserServiceFactory) {
@@ -43,20 +51,21 @@ public class FetchWeiboUserMainPage implements TaskWorkshop<User> {
 	public void initUserService(IUserServiceFactory userServiceFactory) {
 		userService = userServiceFactory.getUserService(websiteId);
 	}
-	
-	@Override
-	public String getCode() {
-		return code;
+
+	@Autowired
+	public void initTaskProduceLine(TaskProduceLineFactory taskProduceLineFactory) {
+		fetchUserAttentions = taskProduceLineFactory.getProduceLine("fetchUserAttentions");
 	}
 
 	@Override
 	public void handleResult(Date updateTime, User user) {
 		user.setUpdateTime(updateTime);
 		userService.updateUser(user);
+		fetchUserAttentions.send(user.getId());
 	}
 
-	@Override
-	public void work(TaskSender sender) {
+//	@Override
+	public void work(TaskExporter exporter) {//TODO 改的只剩下同步过期用户,同步未更新的机器人用户
 		final int threshold = 20;
 		//基本数据计算
 		long uninitializedUserCount = userService.getUninitializedUserCount();
@@ -88,31 +97,35 @@ public class FetchWeiboUserMainPage implements TaskWorkshop<User> {
 		while (uninitializedUserIterator.hasNext()) {
 			List<User> users = uninitializedUserIterator.next();
 			robotUser = robotIterator.next();
-			sendTask(robotUser.getUid(), users, sender);
+			createTasks(robotUser.getUid(), users, exporter);
 		}
 		//抓取过期用户
 		//之前未初始化用户最后一批的机器人可能未满batchSize，给予补足
 		long overfollow = uninitializedUserIterator.getOverfollow();
 		if(overfollow>0) {
 			List<User> users = userService.getExpiredUser(0, (int) overfollow);
-			sendTask(robotUser.getUid(), users, sender);
+			createTasks(robotUser.getUid(), users, exporter);
 		}
 		//循环剩下的过期用户
 		ExpiredUserIterator expiredUserIterator = new ExpiredUserIterator(expiredUserCount, overfollow, batchSize);
 		while (expiredUserIterator.hasNext()) {
 			List<User> users = expiredUserIterator.next();
 			robotUser = robotIterator.next();
-			sendTask(robotUser.getUid(), users, sender);
+			createTasks(robotUser.getUid(), users, exporter);
 		}
 	}
 
-	private void sendTask(Long robotUid, List<User> users, TaskSender sender) {
+	private void createTask(Long robotUid, User user, TaskExporter exporter, Date expiredTime) {
+		Map<String, Object> contents = CollectionUtils.newHashMap(2);
+		contents.put("id", user.getId());
+		contents.put("websiteUid", user.getWebsiteUid());
+		exporter.createTask(contents, robotUid, expiredTime);
+	}
+	
+	private void createTasks(Long robotUid, List<User> users, TaskExporter exporter) {
 		Date expiredTime = SpecialDateUtil.afterToday(2);
 		for (User user : users) {
-			Map<String, Object> contents = CollectionUtils.newHashMap(2);
-			contents.put("id", user.getId());
-			contents.put("websiteUid", user.getWebsiteUid());
-			sender.send(actionId, contents, robotUid, expiredTime);
+			createTask(robotUid, user, exporter, expiredTime);
 		}
 	}
 
@@ -140,5 +153,16 @@ public class FetchWeiboUserMainPage implements TaskWorkshop<User> {
 			return userService.getExpiredUser(offset, batchSize);
 		}
 		
+	}
+
+	@Override
+	public void work(Long uid, TaskExporter exporter) {
+		User user = userService.getUserById(uid);
+		if(user==null) {
+			logger.error("user does not exist,uid:" + uid);
+			return ;
+		}
+		Date expiredTime = SpecialDateUtil.afterToday(2);
+		createTask(weiboRobotUserHolder.getRobotUid(), user, exporter, expiredTime);
 	}
 }

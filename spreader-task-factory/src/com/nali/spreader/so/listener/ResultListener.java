@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.nali.lwtmq.core.queue.Queue;
 import com.nali.lwtmq.receiver.Listener;
-import com.nali.spreader.factory.ResultReceive;
+import com.nali.spreader.factory.result.ResultReceive;
 import com.nali.spreader.model.TaskResult;
 
 @Component
