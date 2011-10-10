@@ -97,6 +97,7 @@
 戴=Dai
 端木=DuanMu
 欧阳=OuYang
+欧=Ou
 全=Quan
 都=Du
 翟=Zhai
