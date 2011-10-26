@@ -23,15 +23,7 @@
 		<property name="startDelay" value="2000"></property>
 		<property name="repeatCount" value="0"></property>
 	</bean>
-    <!-- syncAllRobot -->
-	<bean id="syncAllRobotJobDetail" parent="abstractJobDetail">
-		<property name="targetObject" ref="syncAllRobot" />
-		<property name="targetMethod" value="execute" />
-	</bean>
-	<bean id="syncAllRobotInitTrigger" parent="abstractInitTrigger">
-		<property name="jobDetail" ref="syncAllRobotJobDetail"/>
-	</bean>
-    <!-- produceTask -->
+    <!-- produceTask
 	<bean id="regularTaskProduceJobDetail" parent="abstractJobDetail">
 		<property name="targetObject" ref="regularJob" />
 		<property name="targetMethod" value="startAll" />
@@ -43,15 +35,13 @@
 		<property name="jobDetail" ref="regularTaskProduceJobDetail"/>
 		<property name="cronExpression" value="#{jobs['cronTrigger.regularTaskProduce']}" />
 	</bean>
+     -->
 		
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<!--
-				<ref bean="syncAllRobotInitTrigger" />
-				 TODO 移除 -->
-				<ref bean="regularTaskProduceInitTrigger" /><!-- TODO 移除 -->
 				<!-- 
+				<ref bean="regularTaskProduceInitTrigger" />
 	    		<ref bean="regularTaskProduceCronTrigger" />
 				 -->
 			</list>

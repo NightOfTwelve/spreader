@@ -1,7 +1,7 @@
 package com.nali.spreader.factory.exporter;
 
 
-public interface SingleTaskProducer {
+public interface SingleTaskComponent {
 
 	String getCode();
 

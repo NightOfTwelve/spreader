@@ -4,12 +4,12 @@ import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.factory.SimpleActionConfig;
 
-public abstract class SingleTaskProducerImpl implements SingleTaskProducer {
+public abstract class SingleTaskComponentImpl implements SingleTaskComponent {
 	private SimpleActionConfig actionConfig;
 	private Integer taskType;
 	protected final Integer websiteId;
 	
-	public SingleTaskProducerImpl(SimpleActionConfig actionConfig, Website website, Channel channel) {
+	public SingleTaskComponentImpl(SimpleActionConfig actionConfig, Website website, Channel channel) {
 		this.actionConfig = actionConfig;
 		this.websiteId = website.getId();
 		this.taskType = websiteId * 100 + channel.getId();

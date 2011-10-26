@@ -14,6 +14,7 @@
   <sqlMap resource="ibatis/spreader_tb_user_relation_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_content_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_robot_register_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_category_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_register.xml" />
 </sqlMapConfig>
 
