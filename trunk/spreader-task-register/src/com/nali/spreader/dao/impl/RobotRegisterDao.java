@@ -19,7 +19,7 @@ public class RobotRegisterDao implements IRobotRegisterDao {
     
     @Autowired
     public void initRedisTemplate(RedisConnectionFactory connectionFactory) {
-    	redisTemplate = new RedisTemplate<String, Integer>(connectionFactory);//TODO stringSerializer
+    	redisTemplate = new RedisTemplate<String, Integer>(connectionFactory);
     	redisTemplate.setKeySerializer(new StringRedisSerializer());
     }
     

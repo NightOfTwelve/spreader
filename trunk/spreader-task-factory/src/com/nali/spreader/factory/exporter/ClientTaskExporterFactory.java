@@ -23,7 +23,7 @@ public class ClientTaskExporterFactory {
 		this(DEFAULT_CONTENT_SERIALIZER, taskSender);
 	}
 	
-	public TaskExporter getExporter(SingleTaskProducer taskProducer) {
+	public TaskExporter getExporter(SingleTaskComponent taskProducer) {
 		return getExporter(taskProducer.getCode(), taskProducer.getTaskType(), taskProducer.getActionId());
 	}
 

@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,8 @@ import com.nali.spreader.data.Province;
 import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.data.User;
 import com.nali.spreader.factory.TaskProduceLine;
+import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.passive.PassiveAnalyzer;
-import com.nali.spreader.factory.passive.TaskProduceLineFactory;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.AvgRandomer;
@@ -64,6 +64,7 @@ public class GenerateRobotUserInfo implements RegularAnalyzer, PassiveAnalyzer<O
 	
 	private Random random=new Random();
 
+	@AutowireProductLine
 	private TaskProduceLine<RobotRegister> registerRobotUserEmail;
 
 	public GenerateRobotUserInfo() throws IOException {
@@ -151,11 +152,6 @@ public class GenerateRobotUserInfo implements RegularAnalyzer, PassiveAnalyzer<O
 			datas.add(new Province(name, new AvgRandomer<String>(cities)));
 		}
 		provinceRandomer=new AvgRandomer<Province>(datas);
-	}
-
-	@Autowired
-	public void initTaskProduceLine(TaskProduceLineFactory taskProduceLineFactory) {
-		registerRobotUserEmail = taskProduceLineFactory.getProduceLine("registerRobotUserEmail");
 	}
 
 	@Override

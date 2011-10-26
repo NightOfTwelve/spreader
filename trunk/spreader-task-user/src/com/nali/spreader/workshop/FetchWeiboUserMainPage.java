@@ -16,9 +16,9 @@ import com.nali.spreader.data.User;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
-import com.nali.spreader.factory.exporter.SingleTaskProducerImpl;
+import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
 import com.nali.spreader.factory.exporter.TaskExporter;
-import com.nali.spreader.factory.passive.TaskProduceLineFactory;
+import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotUserService;
 import com.nali.spreader.service.IRobotUserServiceFactory;
@@ -29,13 +29,14 @@ import com.nali.spreader.util.NumberUtil;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
-public class FetchWeiboUserMainPage extends SingleTaskProducerImpl implements PassiveWorkshop<Long, User> {//RegularWorkshop<User>,
+public class FetchWeiboUserMainPage extends SingleTaskComponentImpl implements PassiveWorkshop<Long, User> {//RegularWorkshop<User>,
 	private static Logger logger = Logger.getLogger(FetchWeiboUserMainPage.class);
 	@Autowired
 	private WeiboRobotUserHolder weiboRobotUserHolder;
 	
 	private IRobotUserService robotUserService;
 	private IUserService userService;
+	@AutowireProductLine
 	private TaskProduceLine<Long> fetchUserAttentions;
 	
 	public FetchWeiboUserMainPage() {
@@ -50,11 +51,6 @@ public class FetchWeiboUserMainPage extends SingleTaskProducerImpl implements Pa
 	@Autowired
 	public void initUserService(IUserServiceFactory userServiceFactory) {
 		userService = userServiceFactory.getUserService(websiteId);
-	}
-
-	@Autowired
-	public void initTaskProduceLine(TaskProduceLineFactory taskProduceLineFactory) {
-		fetchUserAttentions = taskProduceLineFactory.getProduceLine("fetchUserAttentions");
 	}
 
 	@Override

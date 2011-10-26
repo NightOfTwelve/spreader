@@ -88,6 +88,16 @@
 			</list>
 		</property>
 	</bean>
+	<!-- autowire -->
+	<bean id="productLineAnnotationResolver" class="com.nali.spreader.factory.passive.ProductLinePostAnnotationResolver" />
+	<bean id="postAutowireProcessor" class="com.nali.spreader.util.autowire.PostAutowireProcessor">
+		<property name="annotationResolvers">
+			<list>
+				<ref bean="productLineAnnotationResolver" />
+			</list>
+		</property>
+	</bean>
+	<!-- end autowire -->
 	
 	<!-- remote -->
 	<bean id="loginConfigManageService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">

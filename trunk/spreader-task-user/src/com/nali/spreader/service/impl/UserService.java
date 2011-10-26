@@ -23,6 +23,7 @@ import com.nali.spreader.data.UserRelation;
 import com.nali.spreader.data.UserTag;
 import com.nali.spreader.data.UserTagExample;
 import com.nali.spreader.exception.SpreaderDataException;
+import com.nali.spreader.service.ICategoryService;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.WebsiteBaseService;
 import com.nali.spreader.util.SpecialDateUtil;
@@ -42,6 +43,8 @@ public class UserService extends WebsiteBaseService implements IUserService {
 	private ICrudUserTagDao crudUserTagDao;
 	@Autowired
 	private ICrudUserRelationDao crudUserRelationDao;
+	@Autowired
+	private ICategoryService categoryService;
 
 	@Override
 	public Long assignUser(Long websiteUid) {
@@ -92,6 +95,8 @@ public class UserService extends WebsiteBaseService implements IUserService {
 		crudUserTagDao.deleteByExample(example);
 		for (UserTag userTag : tags) {
 			userTag.setUid(uid);
+			Long cid = categoryService.getIdByName(userTag.getTag());
+			userTag.setCategoryId(cid);
 			crudUserTagDao.insertSelective(userTag);
 		}
 	}

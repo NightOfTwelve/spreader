@@ -21,9 +21,9 @@ import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
-import com.nali.spreader.factory.exporter.SingleTaskProducerImpl;
+import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
 import com.nali.spreader.factory.exporter.TaskExporter;
-import com.nali.spreader.factory.passive.TaskProduceLineFactory;
+import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.AvgRandomer;
@@ -34,14 +34,15 @@ import com.nali.spreader.util.WeightRandomer;
 import com.nali.spreader.words.Txt;
 
 @Component
-public class RegisterRobotUserEmail extends SingleTaskProducerImpl implements PassiveWorkshop<RobotRegister, KeyValue<Long, String>> {
+public class RegisterRobotUserEmail extends SingleTaskComponentImpl implements PassiveWorkshop<RobotRegister, KeyValue<Long, String>> {
 	private static final String FILE_EMAIL_SERVICE = "txt/email.txt";
 	private static final String FILE_QUESTION_SERVICE = "txt/question.txt";
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
 	
 	private Randomer<String> emailISPs;
-	
+
+	@AutowireProductLine
 	private TaskProduceLine<Long> registerWeiboAccount;
 	private Randomer<String> questions;
 	
@@ -49,11 +50,6 @@ public class RegisterRobotUserEmail extends SingleTaskProducerImpl implements Pa
 		super(SimpleActionConfig.registerRobotUserEmail, Website.weibo, Channel.intervention);
 		initEmailISPsRandomer();
 		initQuestionsRandomer();
-	}
-
-	@Autowired
-	public void initTaskProduceLine(TaskProduceLineFactory taskProduceLineFactory) {
-		registerWeiboAccount = taskProduceLineFactory.getProduceLine("registerWeiboAccount");
 	}
 
 	private void initQuestionsRandomer() throws IOException {

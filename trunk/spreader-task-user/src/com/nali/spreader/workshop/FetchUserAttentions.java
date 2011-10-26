@@ -15,19 +15,20 @@ import com.nali.spreader.data.UserRelation;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
-import com.nali.spreader.factory.exporter.SingleTaskProducerImpl;
+import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
 import com.nali.spreader.factory.exporter.TaskExporter;
-import com.nali.spreader.factory.passive.TaskProduceLineFactory;
+import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
-public class FetchUserAttentions extends SingleTaskProducerImpl implements PassiveWorkshop<Long, List<UserRelation>> {
+public class FetchUserAttentions extends SingleTaskComponentImpl implements PassiveWorkshop<Long, List<UserRelation>> {
 	@Autowired
 	private WeiboRobotUserHolder weiboRobotUserHolder;
 	
 	private IUserService userService;
+	@AutowireProductLine
 	private TaskProduceLine<Long> fetchWeiboUserMainPage;
 	
 	public FetchUserAttentions() {
@@ -37,11 +38,6 @@ public class FetchUserAttentions extends SingleTaskProducerImpl implements Passi
 	@Autowired
 	public void initUserService(IUserServiceFactory userServiceFactory) {
 		userService = userServiceFactory.getUserService(websiteId);
-	}
-
-	@Autowired
-	public void initTaskProduceLine(TaskProduceLineFactory taskProduceLineFactory) {
-		fetchWeiboUserMainPage = taskProduceLineFactory.getProduceLine("fetchWeiboUserMainPage");
 	}
 
 	@Override

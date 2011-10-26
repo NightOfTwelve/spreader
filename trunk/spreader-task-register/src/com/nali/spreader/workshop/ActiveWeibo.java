@@ -14,31 +14,26 @@ import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
-import com.nali.spreader.factory.exporter.SingleTaskProducerImpl;
+import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
 import com.nali.spreader.factory.exporter.TaskExporter;
-import com.nali.spreader.factory.passive.TaskProduceLineFactory;
+import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
-public class ActiveWeibo extends SingleTaskProducerImpl implements PassiveWorkshop<Long, KeyValue<Long, Long>> {
+public class ActiveWeibo extends SingleTaskComponentImpl implements PassiveWorkshop<Long, KeyValue<Long, Long>> {
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
-	
+	@AutowireProductLine
 	private TaskProduceLine<Object> generateRobotUserInfo;
+	@AutowireProductLine
 	private TaskProduceLine<KeyValue<RobotUser, String>> generateRobotUserAccount;
 
 	public ActiveWeibo() {
 		super(SimpleActionConfig.activeWeibo, Website.weibo, Channel.normal);
 	}
 
-	@Autowired
-	public void initTaskProduceLine(TaskProduceLineFactory taskProduceLineFactory) {
-		generateRobotUserInfo = taskProduceLineFactory.getProduceLine("generateRobotUserInfo");
-		generateRobotUserAccount = taskProduceLineFactory.getProduceLine("generateRobotUserAccount");
-	}
-	
 	@Override
 	public void handleResult(Date updateTime, KeyValue<Long, Long> userId) {
 		Long robotRegisterId = userId.getKey();

@@ -17,16 +17,17 @@ import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
-import com.nali.spreader.factory.exporter.SingleTaskProducerImpl;
+import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
 import com.nali.spreader.factory.exporter.TaskExporter;
-import com.nali.spreader.factory.passive.TaskProduceLineFactory;
+import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.words.naming.NamingMode;
 
 @Component
-public class RegisterWeiboAccount extends SingleTaskProducerImpl implements PassiveWorkshop<Long, KeyValue<Long, String>> {
+public class RegisterWeiboAccount extends SingleTaskComponentImpl implements PassiveWorkshop<Long, KeyValue<Long, String>> {
+	@AutowireProductLine
 	private TaskProduceLine<Object> activeWeibo;
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
@@ -34,11 +35,6 @@ public class RegisterWeiboAccount extends SingleTaskProducerImpl implements Pass
 
 	public RegisterWeiboAccount() {
 		super(SimpleActionConfig.registerWeibo, Website.weibo, Channel.intervention);
-	}
-
-	@Autowired
-	public void initTaskProduceLine(TaskProduceLineFactory taskProduceLineFactory) {
-		activeWeibo = taskProduceLineFactory.getProduceLine("activeWeibo");
 	}
 	
 	@Override

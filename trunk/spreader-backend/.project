@@ -3,10 +3,10 @@
 	<name>spreader-backend</name>
 	<comment></comment>
 	<projects>
-		<project>spreader-interface</project>
 		<project>spreader-task-factory</project>
 		<project>spreader-task-user</project>
 		<project>spreader-task-register</project>
+		<project>spreader-interface</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
