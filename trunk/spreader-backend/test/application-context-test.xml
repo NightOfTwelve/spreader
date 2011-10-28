@@ -88,6 +88,16 @@
 			</list>
 		</property>
 	</bean>
+	<!-- autowire -->
+	<bean id="productLineAnnotationResolver" class="com.nali.spreader.factory.passive.ProductLinePostAnnotationResolver" />
+	<bean id="postAutowireProcessor" class="com.nali.spreader.util.autowire.PostAutowireProcessor">
+		<property name="annotationResolvers">
+			<list>
+				<ref bean="productLineAnnotationResolver" />
+			</list>
+		</property>
+	</bean>
+	<!-- end autowire -->
 	
 	<!-- remote -->
 	<bean id="loginConfigManageService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
@@ -96,6 +106,18 @@
 	</bean>
 	
 	<!-- remote end -->
+	<!-- redisTemplate -->
+	<bean id="redisTemplate" class="org.springframework.data.keyvalue.redis.core.RedisTemplate">
+		<constructor-arg>
+			<ref bean="redisConnectionFactory"/>
+		</constructor-arg>
+		<property name="keySerializer" >
+			<bean class="org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer" />
+		</property>
+		<property name="hashKeySerializer" >
+			<bean class="org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer" />
+		</property>
+	</bean>
 	
 	<import resource="classpath:application-lwtmq-context.xml"/>
 </beans>
