@@ -17,6 +17,7 @@ import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableListener;
 import com.nali.spreader.factory.config.IConfigCenter;
+import com.nali.spreader.factory.regular.RegularObject;
 import com.nali.spreader.model.TaskResult;
 
 @SuppressWarnings("rawtypes")
@@ -36,6 +37,9 @@ public class ResultReceive {
 		processers = CollectionUtils.newHashMap(processerBeans.size());
 		for (Entry<String, ResultProcessor> beanEntry : processerBeans.entrySet()) {
 			ResultProcessor processer = beanEntry.getValue();
+			if (processer instanceof RegularObject) {//TODO 检查每个RegularObject都有对应的ResultProcessor
+				throw new IllegalArgumentException("ResultProcessor cannot be a RegularObject");
+			}
 			registerResultProcessor(beanEntry.getKey(), processer);
 		}
 	}

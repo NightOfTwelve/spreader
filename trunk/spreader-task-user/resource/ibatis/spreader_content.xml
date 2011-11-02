@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="spreader_content">
+  <insert id="insertContent" parameterClass="com.nali.spreader.data.Content">
+    insert into spreader$shard.databaseSuffix$.tb_content$shard.tableSuffix$
+    <dynamic prepend="(">
+      <isNotNull prepend="," property="id">
+        id
+      </isNotNull>
+      <isNotNull prepend="," property="type">
+        type
+      </isNotNull>
+      <isNotNull prepend="," property="websiteId">
+        website_id
+      </isNotNull>
+      <isNotNull prepend="," property="websiteContentId">
+        website_content_id
+      </isNotNull>
+      <isNotNull prepend="," property="websiteRefId">
+        website_ref_id
+      </isNotNull>
+      <isNotNull prepend="," property="websiteUid">
+        website_uid
+      </isNotNull>
+      <isNotNull prepend="," property="uid">
+        uid
+      </isNotNull>
+      <isNotNull prepend="," property="title">
+        title
+      </isNotNull>
+      <isNotNull prepend="," property="pubDate">
+        pub_date
+      </isNotNull>
+      <isNotNull prepend="," property="syncDate">
+        sync_date
+      </isNotNull>
+      <isNotNull prepend="," property="refCount">
+        ref_count
+      </isNotNull>
+      <isNotNull prepend="," property="replyCount">
+        reply_count
+      </isNotNull>
+      <isNotNull prepend="," property="content">
+        content
+      </isNotNull>
+      )
+    </dynamic>
+    values
+    <dynamic prepend="(">
+      <isNotNull prepend="," property="id">
+        #id:BIGINT#
+      </isNotNull>
+      <isNotNull prepend="," property="type">
+        #type:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="websiteId">
+        #websiteId:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="websiteContentId">
+        #websiteContentId:BIGINT#
+      </isNotNull>
+      <isNotNull prepend="," property="websiteRefId">
+        #websiteRefId:BIGINT#
+      </isNotNull>
+      <isNotNull prepend="," property="websiteUid">
+        #websiteUid:BIGINT#
+      </isNotNull>
+      <isNotNull prepend="," property="uid">
+        #uid:BIGINT#
+      </isNotNull>
+      <isNotNull prepend="," property="title">
+        #title:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="pubDate">
+        #pubDate:TIMESTAMP#
+      </isNotNull>
+      <isNotNull prepend="," property="syncDate">
+        #syncDate:TIMESTAMP#
+      </isNotNull>
+      <isNotNull prepend="," property="refCount">
+        #refCount:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="replyCount">
+        #replyCount:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="content">
+        #content:LONGVARCHAR#
+      </isNotNull>
+      )
+    </dynamic>
+	<selectKey resultClass="long" type="post" keyProperty="id">
+		select LAST_INSERT_ID() as value
+	</selectKey>
+  </insert>
+</sqlMap>

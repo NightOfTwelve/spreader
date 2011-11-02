@@ -7,6 +7,8 @@ public enum SimpleActionConfig {
 	registerRobotUserEmail(8L),
 	registerWeibo(9L),
 	activeWeibo(10L),
+	fetchWeiboContent(11L),
+	postWeiboContent(12L),
 	;
 	private Long actionId;
 	private String taskCode;

@@ -19,4 +19,66 @@
 		select LAST_INSERT_ID() as value
 	</selectKey>
   </insert>
+  <select id="findUidToWebsiteUidMapByDto" parameterClass="com.nali.spreader.config.UserDto" resultClass="com.nali.spreader.data.KeyValue">
+	select id as "key", website_uid as "value"
+	from spreader.tb_user
+	<dynamic prepend="where">
+		<isNotEmpty prepend="and" property="categories">
+			id in (
+				select uid from spreader.tb_user_tag where category_id in (
+					select id from spreader.tb_category where name in
+					<iterate property="categories" open="(" close=")" conjunction=",">
+						#categories[]#
+					</iterate>
+				)
+			)
+		</isNotEmpty>
+		<isNotNull prepend="and" property="isRobot">
+		  is_robot = #isRobot#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteId">
+		  website_id = #websiteId#
+		</isNotNull>
+		<isNotNull prepend="and" property="isRobot">
+		  is_robot = #isRobot#
+		</isNotNull>
+		<isNotNull prepend="and" property="gender">
+		  gender = #gender#
+		</isNotNull>
+		<isNotNull prepend="and" property="province">
+		  province = #province#
+		</isNotNull>
+		<isNotNull prepend="and" property="city">
+		  city = #city#
+		</isNotNull>
+		<isNotNull prepend="and" property="vType">
+		  v_type = #vType#
+		</isNotNull>
+		<isNotNull prepend="and" property="birthdayYear.gte">
+		  birthday_year &gt;= #birthdayYear.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="birthdayYear.lte">
+		  birthday_year &lt;= #birthdayYear.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="attentions.gte">
+		  attentions &gt;= #attentions.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="attentions.lte">
+		  attentions &lt;= #attentions.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="fans.gte">
+		  fans &gt;= #fans.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="fans.lte">
+		  fans &lt;= #fans.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="articles.gte">
+		   articles &gt;= #articles.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="articles.lte">
+		   articles &lt;= #articles.lte#
+		</isNotNull>
+	</dynamic>
+	limit 0, $limit$
+  </select>
 </sqlMap>

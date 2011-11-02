@@ -1,9 +1,7 @@
 package com.nali.spreader.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.keyvalue.redis.connection.RedisConnectionFactory;
 import org.springframework.data.keyvalue.redis.core.RedisTemplate;
-import org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer;
 import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -15,13 +13,8 @@ public class RobotRegisterDao implements IRobotRegisterDao {
     private static final String REGISTERING_ACCOUNT_KEY_PREFIX = "RegisteringAccount_";
 	@Autowired
     private SqlMapClientTemplate sqlMap;
+	@Autowired
     private RedisTemplate<String, Integer> redisTemplate;
-    
-    @Autowired
-    public void initRedisTemplate(RedisConnectionFactory connectionFactory) {
-    	redisTemplate = new RedisTemplate<String, Integer>(connectionFactory);
-    	redisTemplate.setKeySerializer(new StringRedisSerializer());
-    }
     
 	@Override
 	public Long saveRobotRegister(RobotRegister robotRegister) {

@@ -5,6 +5,10 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.keyvalue.redis.connection.RedisConnection;
+import org.springframework.data.keyvalue.redis.core.RedisCallback;
+import org.springframework.data.keyvalue.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -21,9 +25,18 @@ public class ReRegister {
 	private ICrudRobotRegisterDao crudRobotRegisterDao;
 	@AutowireProductLine
 	private TaskProduceLine<Long> registerWeiboAccount;
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
 	
 	@Test
 	public void test() {
+		redisTemplate.execute(new RedisCallback<Boolean>() {
+			@Override
+			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
+				connection.flushDb();
+				return true;
+			}
+		});
 		RobotRegisterExample example = new RobotRegisterExample();
 		example.createCriteria().andEmailIsNotNull();
 		List<RobotRegister> list = crudRobotRegisterDao.selectByExample(example);
