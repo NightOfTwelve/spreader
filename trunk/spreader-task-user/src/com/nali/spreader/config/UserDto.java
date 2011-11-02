@@ -7,7 +7,6 @@ public class UserDto implements Serializable {
 	private static final long serialVersionUID = -3118856576195136494L;
 	private List<String> categories;
     private Integer gender;
-    private Integer userCount;
     private Integer websiteId;
     private Boolean isRobot;
     private Integer vType;
@@ -30,12 +29,6 @@ public class UserDto implements Serializable {
 	}
 	public void setGender(Integer gender) {
 		this.gender = gender;
-	}
-	public Integer getUserCount() {
-		return userCount;
-	}
-	public void setUserCount(Integer userCount) {
-		this.userCount = userCount;
 	}
 	public Integer getWebsiteId() {
 		return websiteId;
