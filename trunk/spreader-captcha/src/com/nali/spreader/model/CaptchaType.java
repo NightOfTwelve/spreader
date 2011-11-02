@@ -3,6 +3,7 @@ package com.nali.spreader.model;
 public enum CaptchaType {
 	eyou,
 	weibo,
+	chinaCN,
 	;
 	public final int type;
 	
