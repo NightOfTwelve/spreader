@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 
 import com.nali.common.model.Limit;
+import com.nali.spreader.config.UserDto;
 import com.nali.spreader.dao.ICrudCareerDao;
 import com.nali.spreader.dao.ICrudEducationDao;
 import com.nali.spreader.dao.ICrudUserDao;
@@ -17,6 +18,7 @@ import com.nali.spreader.data.Career;
 import com.nali.spreader.data.CareerExample;
 import com.nali.spreader.data.Education;
 import com.nali.spreader.data.EducationExample;
+import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserExample;
 import com.nali.spreader.data.UserRelation;
@@ -198,5 +200,11 @@ public class UserService extends WebsiteBaseService implements IUserService {
 		} catch (DuplicateKeyException e) {
 			logger.info("double insert.");
 		}
+	}
+
+	@Override
+	public List<KeyValue<Long, Long>> findUidToWebsiteUidMapByDto(UserDto dto) {
+		dto.setWebsiteId(getWebsiteId());
+		return userDao.findUidToWebsiteUidMapByDto(dto);
 	}
 }

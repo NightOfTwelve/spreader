@@ -107,6 +107,19 @@
 	
 	<!-- remote end -->
 	
+	<!-- redisTemplate -->
+	<bean id="redisTemplate" class="org.springframework.data.keyvalue.redis.core.RedisTemplate">
+		<constructor-arg>
+			<ref bean="redisConnectionFactory"/>
+		</constructor-arg>
+		<property name="keySerializer" >
+			<bean class="org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer" />
+		</property>
+		<property name="hashKeySerializer" >
+			<bean class="org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer" />
+		</property>
+	</bean>
+	
 	<import resource="classpath:application-lwtmq-context.xml"/>
 	<import resource="classpath:application-schedule-context.xml"/>
 </beans>

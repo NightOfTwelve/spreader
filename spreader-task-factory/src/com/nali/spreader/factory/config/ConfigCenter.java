@@ -3,6 +3,7 @@ package com.nali.spreader.factory.config;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -10,9 +11,11 @@ import org.springframework.stereotype.Service;
 @SuppressWarnings("unchecked")
 @Service
 public class ConfigCenter implements IConfigCenter {
+	private static Logger logger = Logger.getLogger(ConfigCenter.class);
 	@Autowired
 	private IConfigStore configStore;
 	private Map<String, ConfigableUnit<?>> configables = new LinkedHashMap<String, ConfigableUnit<?>>();
+	@Autowired
 	private ApplicationContext context;
 
 	@Override
@@ -20,7 +23,11 @@ public class ConfigCenter implements IConfigCenter {
 		ConfigableUnit<?> existsConfigable = configables.get(name);
 		if(existsConfigable==null) {
 			T config = configStore.getConfig(name);
-			configable.init(config);
+			if(config!=null) {
+				configable.init(config);
+			} else {
+				logger.warn("not find config:" + name);
+			}
 			configables.put(name, new ConfigableUnit<Configable<T>>(name, configable, context.getAutowireCapableBeanFactory()));
 			return true;
 		} else {

@@ -11,11 +11,9 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.nali.common.util.CollectionUtils;
-import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.Constellation;
 import com.nali.spreader.data.Province;
 import com.nali.spreader.data.RobotRegister;
@@ -23,7 +21,6 @@ import com.nali.spreader.data.User;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.passive.PassiveAnalyzer;
-import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.AvgRandomer;
 import com.nali.spreader.util.Randomer;
@@ -33,15 +30,13 @@ import com.nali.spreader.util.WeightRandomer;
 import com.nali.spreader.words.Txt;
 
 @Component
-public class GenerateRobotUserInfo implements RegularAnalyzer, PassiveAnalyzer<Object> {
+public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 	private static final String FILE_TOP_FIRST_NAME = "txt/top-first.txt";
 	private static final String FILE_PROVINCE = "txt/province.txt";
 	private static final String FILE_YEAR = "txt/year.txt";
 	private static final String FILE_PINYIN = "txt/py-all.txt";
 	private static final String FILE_FIRST_NAME_PINYIN = "txt/py-first.txt";
 	private static Logger logger = Logger.getLogger(GenerateRobotUserInfo.class);
-	@Value("${GenerateRobotUserInfo.minActiveCount}")
-	private int minActiveCount;
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
 	// Randomers
@@ -155,18 +150,6 @@ public class GenerateRobotUserInfo implements RegularAnalyzer, PassiveAnalyzer<O
 	}
 
 	@Override
-	public void work() {
-		int accountRegistering = robotRegisterService.countRegisteringAccount(Website.weibo.getId());
-		int emailRegistering = robotRegisterService.countNoEmail();
-		if (accountRegistering + emailRegistering < minActiveCount) {
-			int addCount = (int)(minActiveCount * 1.1) - (accountRegistering + emailRegistering);
-			for (int i = 0; i < addCount; i++) {
-				generateRobot();
-			}
-		}
-	}
-
-	@Override
 	public void work(Object data) {
 		generateRobot();
 	}
@@ -217,7 +200,17 @@ public class GenerateRobotUserInfo implements RegularAnalyzer, PassiveAnalyzer<O
 		return robot;
 	}
 
-	private String makePwd(RobotRegister robot) {//TODO 长度最好大于9个
+	private String makePwd(RobotRegister robot) {//TODO 更合理的方式处理密码长度
+		String pwd = makePwdInner(robot);
+		if(pwd.length()<6) {
+			pwd += "123abc";
+			pwd = pwd.substring(0, 6);
+		} else if(pwd.length()>15) {
+			pwd = pwd.substring(0, 15);
+		}
+		return pwd;
+	}
+	private String makePwdInner(RobotRegister robot) {
 		Integer pwdModel = pwdRandomer.get();
 		switch (pwdModel) {
 		case 1:

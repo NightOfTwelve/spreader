@@ -6,9 +6,7 @@ import java.io.InputStream;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.keyvalue.redis.connection.RedisConnectionFactory;
 import org.springframework.data.keyvalue.redis.core.RedisTemplate;
-import org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -16,15 +14,9 @@ public class ConfigStore implements IConfigStore {
 	private static Logger logger = Logger.getLogger(ConfigStore.class);
     private static final String CONFIG_INIT_DIR = "configInit/";
 	private static final String CONFIG_STORE_KEY = "ConfigStore";
+	@Autowired
 	private RedisTemplate<String, Integer> redisTemplate;
 	private ObjectMapper objectMapper = new ObjectMapper();
-    
-    @Autowired
-    public void initRedisTemplate(RedisConnectionFactory connectionFactory) {
-    	redisTemplate = new RedisTemplate<String, Integer>(connectionFactory);
-    	redisTemplate.setKeySerializer(new StringRedisSerializer());
-    	redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-    }
 
 	@SuppressWarnings("unchecked")
 	@Override

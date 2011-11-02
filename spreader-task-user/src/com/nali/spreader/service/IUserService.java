@@ -2,6 +2,8 @@ package com.nali.spreader.service;
 
 import java.util.List;
 
+import com.nali.spreader.config.UserDto;
+import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserRelation;
 
@@ -32,4 +34,9 @@ public interface IUserService {
 
 	void createRelation(UserRelation relation);
 
+	/**
+	 * key是用户id
+	 * value是网站用户id
+	 */
+	List<KeyValue<Long, Long>> findUidToWebsiteUidMapByDto(UserDto dto);
 }
