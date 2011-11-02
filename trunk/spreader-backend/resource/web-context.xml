@@ -11,9 +11,8 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-<!--	<context:annotation-config />-->
-<!--	<context:component-scan base-package="com.nali.pay.controller" />-->
-<!--	<context:component-scan base-package="com.nali.pay.joint.wuyi.controller" />-->
+	<context:annotation-config />
+	<context:component-scan base-package="com.nali.spreader.controller" />
 
 	<mvc:resources mapping="/css/**" location="/css/"></mvc:resources>
 	<mvc:resources mapping="/images/**" location="/images/"></mvc:resources>

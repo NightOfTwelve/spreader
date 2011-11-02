@@ -1,0 +1,3 @@
+Ext.BLANK_IMAGE_URL = $CONFIG.BLANK_IMAGE_URL;
+Ext.chart.Chart.CHART_URL = $CONFIG.CHART_URL;
+Ext.QuickTips.init();
