@@ -18,6 +18,7 @@
 <script type="text/javascript" src="$StaticConfig.u('/js/component/strategytreepanelcp.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/component/strategyeditgridcp.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/utils/extutils.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/utils/transformtreedatafn.js')"></script>
 </head>
 <body>
 </body>

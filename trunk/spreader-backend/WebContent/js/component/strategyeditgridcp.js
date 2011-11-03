@@ -1,37 +1,37 @@
 // 可编辑的属性GRID
 var pptGrid = new Ext.grid.PropertyGrid({
-	id : 'pptGrid',
-	title : '相关属性',
-	autoHeight : true,
-	width : 300,
-//	propertyNames : rendpptname()
-//	,
-	tools : [{ // 生成面板右上角的工具栏
-		id : "save",
-		handler : function() {
-			Ext.Msg.alert('提示', '保存成功');
-		} // 点击工具栏调用些方法
-	}, {
-		id : "help",
-		handler : function() {
-			Ext.Msg.alert('帮助', 'please help me!');
-		}
-	}, {
-		id : "close",
-		handler : function() {
-			Ext.getCmp('pptGrid').disabled;
-		}
-	}, {
-		id : "refresh",
-		handler : function() {
-			Ext.Msg.alert('提示', '刷新');
-		}
-	}]
-		// ,
-		// source : {
-		// "名称" : "那里"
-		// }
-	})
+			id : 'pptGrid',
+			title : '相关属性',
+			autoHeight : true,
+			width : 300,
+			// propertyNames : rendpptname(),
+			// ,
+			tools : [{ // 生成面板右上角的工具栏
+				id : "save",
+				handler : function() {
+					//TODO
+					Ext.Msg.alert('提示', '保存成功');
+				} // 点击工具栏调用些方法
+			}, {
+				id : "help",
+				handler : function() {
+					//TODO
+					Ext.Msg.alert('帮助', 'please help me!');
+				}
+			}, {
+				id : "close",
+				handler : function() {
+					//TODO
+					Ext.getCmp('pptGrid').disabled;
+				}
+			}, {
+				id : "refresh",
+				handler : function() {
+					//TODO
+					Ext.Msg.alert('提示', '刷新');
+				}
+			}]
+		})
 // pptGrid.setSource(vstore);
 // pptGrid.on('beforepropertychange', function(source, recordId, value,
 // oldValue) {
