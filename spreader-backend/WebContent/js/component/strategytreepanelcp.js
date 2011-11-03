@@ -2,16 +2,19 @@
 var treedata = [{
 			id : '1',
 			text : '用户A',
-			def : {
-				name : {
-					name : "名字",
-					type : "String"
-				},
-				age : {
-					name : "年龄",
-					type : "int"
-				}
-			},
+			def : [{
+						"propertyDefinition" : {
+							"type" : "String"
+						},
+						"name" : "姓名",
+						"propertyName" : "name"
+					}, {
+						"propertyDefinition" : {
+							"type" : "String"
+						},
+						"name" : "年龄",
+						"propertyName" : "age"
+					}],
 			data : {
 				name : "xf",
 				age : 11
@@ -22,6 +25,7 @@ var treedata = [{
 						children : [{
 									id : '111',
 									text : 'ExtJS设计',
+									qtip : '书的内容十分详细',
 									data : {
 										title : "ExtJS设计",
 										page : 112
@@ -73,20 +77,11 @@ var stgtree = new Ext.tree.TreePanel({
 	singleExpand : true,
 	useArrows : true,
 	rootVisible : true,
-	root : stgroot
-		// ,
-		// // 添加监听事件
-		// listeners : {
-		// 'click' : function(view, rec) {
-		// var nodeurl = view.attributes.url;
-		// var nodetext = view.attributes.text;
-		// var nodeid = view.attributes.id;
-		// var leaf = view.attributes.leaf;
-		// // if (leaf) {
-		// // addTabNew(nodeurl, nodetext, nodeid, nodetext, '');
-		// // }
-		// }
-		// }
+	root : stgroot,
+	loader : stgroot
+		// new Ext.tree.TreeLoader({
+		// dataUrl : '../strategy/createtree'
+		// })
 	});
 
 stgtree.expand(true, true);
@@ -206,45 +201,72 @@ function appendNodeAction() {
 						}, 10);
 			});// 将上级树形展开
 }
-// 构建一个属性表格的数据源并绑定到pptGrid
+/**
+ * 绑定PropertyGrid数据源的相关函数
+ * 
+ * @param {}
+ *            node 当前的节点对象
+ */
 function renderPropertyGrid(node) {
 	// 获取数据
 	var data = node.attributes.data;
 	// 获取数据对应的表结构
 	var def = node.attributes.def;
+	// 获取布局组件
 	var pptgridcmp = Ext.getCmp('pptgridmanage');
+	// 获取PropertyGrid组件
 	var pptgrid = Ext.getCmp('pptGrid');
-	var selectedNode = stgtree.getSelectionModel().getSelectedNode();// 得到选中的节点
+	// 得到构造好的propertyNames对象
+	var pptnameobj = createPptGridStore(data, def);
+	// 设置propertyNames
+	pptgrid.propertyNames = pptnameobj;
+	// 设置数据源
 	pptgrid.setSource(data);
-	// pptgrid.store.data.items[0].data.name.setValue('年龄');
+	// 绑定到布局页面
 	pptgridcmp.add(pptgrid);
 	pptgridcmp.doLayout();
 }
 
-// 构造propertyNames对象
+/**
+ * 构造propertyNames对象
+ * 
+ * @param {}
+ *            data 数据
+ * @param {}
+ *            def 结构
+ * @return {}
+ */
 function createPptGridStore(data, def) {
-	// 创建propertyNames对象
-	// var pptname = new Object();
-	// pptname = "{";
+	// 创建propertyNames的字符串需要JSON格式
+	var pptname = null;
+	findDataAndDef();
+	pptname = "{";
 	// //循环def获取属性对应的名称和TYPE
-	// for (var datakey in data) {
-	// //data的值
-	// var datavalue = data[datakey];
-	// for (var defkey in def) {
-	// var defvalue = def[defkey];
-	// for (var keychild in defvalue) {
-	// var kcvalue = keyref[keychild];
-	//				
-	// }
-	// }
-	// }
+	for (var i = 0; i < def.length; i++) {
+		var relname = def[i].propertyName;
+		pptname += relname + ":";
+		var showname = def[i].name;
+		pptname += "'" + showname + "'";
+		pptname += ",";
+	}
+	pptname = pptname.substring(0, pptname.length - 1);
+	pptname += "}";
+	// 创建JSON对象
+	var pptobj = new Object();
+	// 将String转换成JSON
+	pptobj = Ext.util.JSON.decode(pptname);
+	return pptobj;
 }
 
-function rendpptname() {
-	var ss = new Object();
-	ss = {
-		name : '姓名',
-		age : '年龄'
-	};
-	return ss;
+function findDataAndDef() {
+	Ext.Ajax.request({
+				url : '../strategy/createtree',
+				success : function(res) {
+					var sjson = Ext.util.JSON.decode(res.responseText);
+					var obj = transformdata(sjson.id,sjson.name,sjson.def,sjson.data);
+				},
+				failure : function(res){
+					var sjson2 = Ext.util.JSON.decode(res.responseText);
+				}
+			});
 }
