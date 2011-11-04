@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nali.spreader.config.Range;
 import com.nali.spreader.config.UserDto;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.DescriptionResolve;
@@ -37,6 +38,10 @@ public class StrategyManageController {
 		data.setWebsiteId(1);
 		data.setLimit(100);
 		data.setProvince("上海");
+		Range<Long> fans = new Range<Long>();
+		fans.setGte(1L);
+		fans.setLte(100L);
+		data.setFans(fans);
 		data.setCategories(Arrays.asList("互联网", "愤青", "民工"));
 		
 //		List<Map> list = new ArrayList<Map>();
