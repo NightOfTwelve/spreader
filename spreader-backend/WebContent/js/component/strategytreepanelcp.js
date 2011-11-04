@@ -1,88 +1,115 @@
 // 模拟本地JSON数据，用于构造树结构
-var treedata = [{
-			id : '1',
-			text : '用户A',
-			def : [{
-						"propertyDefinition" : {
-							"type" : "String"
-						},
-						"name" : "姓名",
-						"propertyName" : "name"
-					}, {
-						"propertyDefinition" : {
-							"type" : "String"
-						},
-						"name" : "年龄",
-						"propertyName" : "age"
-					}],
-			data : {
-				name : "xf",
-				age : 11
-			},
-			children : [{
-						id : '11',
-						text : '图书',
-						children : [{
-									id : '111',
-									text : 'ExtJS设计',
-									qtip : '书的内容十分详细',
-									data : {
-										title : "ExtJS设计",
-										page : 112
-									},
-									leaf : true
-								}, {
-									id : '112',
-									text : 'JAVA设计',
-									data : {
-										title : "JAVA设计",
-										page : 115
-									},
-									leaf : true
-								}]
-					}, {
-						id : '12',
-						text : '手机',
-						children : [{
-									id : '121',
-									text : '诺基亚',
-									data : {
-										weight : 22,
-										type : 1
-									},
-									leaf : true
-								}, {
-									id : '122',
-									text : '摩托罗拉',
-									data : {
-										weight : 25,
-										type : 2
-									},
-									leaf : true
-								}]
-					}]
-		}];
+var treedata = new Object();
+
+// [{
+// id : '1',
+// text : '用户A',
+// def : [{
+// "propertyDefinition" : {
+// "type" : "String"
+// },
+// "name" : "姓名",
+// "propertyName" : "name"
+// }, {
+// "propertyDefinition" : {
+// "type" : "String"
+// },
+// "name" : "年龄",
+// "propertyName" : "age"
+// }],
+// data : {
+// name : "xf",
+// age : 11
+// },
+// children : [{
+// id : '11',
+// text : '图书',
+// children : [{
+// id : '111',
+// text : 'ExtJS设计',
+// qtip : '书的内容十分详细',
+// data : {
+// title : "ExtJS设计",
+// page : 112
+// },
+// leaf : true
+// }, {
+// id : '112',
+// text : 'JAVA设计',
+// data : {
+// title : "JAVA设计",
+// page : 115
+// },
+// leaf : true
+// }]
+// }, {
+// id : '12',
+// text : '手机',
+// children : [{
+// id : '121',
+// text : '诺基亚',
+// data : {
+// weight : 22,
+// type : 1
+// },
+// leaf : true
+// }, {
+// id : '122',
+// text : '摩托罗拉',
+// data : {
+// weight : 25,
+// type : 2
+// },
+// leaf : true
+// }]
+// }]
+// }];
+// store
+var treestore = new Ext.data.Tree()
 // 构造树的根节点ROOT
 var stgroot = new Ext.tree.AsyncTreeNode({
-			id : '-1',
-			text : '配置列表',
-			children : treedata
-		});
+	id : '-1',
+	text : '配置列表'
+		// ,
+		// children : [treedata]
+	});
 // 策略列表树
 var stgtree = new Ext.tree.TreePanel({
-	id : 'stgtree',
-	autoScroll : false,
-	autoHeight : true,
-	expanded : true,
-	singleExpand : true,
-	useArrows : true,
-	rootVisible : true,
-	root : stgroot,
-	loader : stgroot
-		// new Ext.tree.TreeLoader({
-		// dataUrl : '../strategy/createtree'
-		// })
-	});
+			id : 'stgtree',
+			autoScroll : false,
+			autoHeight : true,
+			expanded : true,
+			singleExpand : true,
+			useArrows : true,
+			rootVisible : true,
+			root : stgroot,
+			loader : new Ext.tree.TreeLoader({
+						dataUrl : '../strategy/createtree',
+						processResponse : function(response, node, callback,
+								scope) {
+							var json = response.responseText;
+							var respObj = Ext.util.JSON.decode(json);
+							try {
+								var o = [tranNodeConfig(respObj.id,
+										respObj.name, respObj.def, respObj.data)];
+								// var o = response.responseData ||
+								// Ext.decode(json);
+								node.beginUpdate();
+								for (var i = 0, len = o.length; i < len; i++) {
+									var n = this.createNode(o[i]);
+									if (n) {
+										node.appendChild(n);
+									}
+								}
+								node.endUpdate();
+								this.runCallback(callback, scope || node,
+										[node]);
+							} catch (e) {
+								this.handleFailure(response);
+							}
+						}
+					})
+		});
 
 stgtree.expand(true, true);
 // 树形编辑器
@@ -259,14 +286,18 @@ function createPptGridStore(data, def) {
 }
 
 function findDataAndDef() {
+	var obj = new Object();
 	Ext.Ajax.request({
 				url : '../strategy/createtree',
 				success : function(res) {
 					var sjson = Ext.util.JSON.decode(res.responseText);
-					var obj = transformdata(sjson.id,sjson.name,sjson.def,sjson.data);
+					obj = transformdata(sjson.id, sjson.name, sjson.def,
+							sjson.data);
 				},
-				failure : function(res){
+				failure : function(res) {
 					var sjson2 = Ext.util.JSON.decode(res.responseText);
+					return;
 				}
 			});
+	return obj;
 }
