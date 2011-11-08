@@ -8,7 +8,7 @@ Ext.onReady(function() {
 									region : 'north',
 //									title : '查询条件',
 									split : true,
-									width : 1000,
+//									width : 1000,
 									height : 100,
 //									minWidth : 175,
 //									maxWidth : 400,
@@ -19,7 +19,7 @@ Ext.onReady(function() {
 									header : false,
 									collapsible : true,
 									split : true,
-									width : 1000,
+//									width : 1000,
 									height : 500,
 									items : [stglistgrid]
 								}]

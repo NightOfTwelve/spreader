@@ -15,9 +15,9 @@ var stggridform = new Ext.form.FormPanel({
 							columnWidth : .3, // 该列有整行中所占百分比
 							layout : "form", // 从上往下的布局
 							items : [{
-										xtype : "textfield",
+										xtype : "datefield",
 										fieldLabel : "日期",
-										width : 50
+										width : 100
 									}]
 						}, {
 							columnWidth : .3,
@@ -25,7 +25,7 @@ var stggridform = new Ext.form.FormPanel({
 							items : [{
 										xtype : "textfield",
 										fieldLabel : "策略名称",
-										width : 50
+										width : 100
 									}]
 						}, {
 							columnWidth : .3,
@@ -33,8 +33,15 @@ var stggridform = new Ext.form.FormPanel({
 							items : [{
 										xtype : "textfield",
 										fieldLabel : "其他条件",
-										width : 50
+										width : 100
 									}]
 						}]
-			}]
+			}],
+			buttonAlign : "center",
+			buttons : [{
+						text : "查询"
+					}, {
+						text : "重置"
+					}]
+
 		});

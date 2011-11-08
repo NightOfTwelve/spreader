@@ -2,22 +2,30 @@ package com.nali.spreader.controller;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.UserDto;
+import com.nali.spreader.factory.config.IConfigCenter;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
+import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.config.desc.DescriptionResolve;
 
 @Controller
 public class StrategyManageController {
 	private static ObjectMapper jacksonMapper = new ObjectMapper();
+	@Autowired
+	private IConfigCenter cfgService;
 
 	/**
 	 * 初始化进入策略详细配置
@@ -37,6 +45,24 @@ public class StrategyManageController {
 	@RequestMapping(value = "/strategy/showlist")
 	public String showStgList() {
 		return "/show/main/strategylistshow";
+	}
+
+	/**
+	 * 构造GRID的STROE
+	 * 
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/strategy/stggridstore")
+	public String stgGridStore() throws JsonGenerationException,
+			JsonMappingException, IOException {
+		List<ConfigableInfo> list = cfgService.listAllConfigableInfo();
+		Map<String, List<ConfigableInfo>> jsonMap = new HashMap<String, List<ConfigableInfo>>();
+		jsonMap.put("data", list);
+		return jacksonMapper.writeValueAsString(jsonMap);
 	}
 
 	/**
