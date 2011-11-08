@@ -1,11 +1,7 @@
 package com.nali.spreader.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -23,15 +19,39 @@ import com.nali.spreader.factory.config.desc.DescriptionResolve;
 public class StrategyManageController {
 	private static ObjectMapper jacksonMapper = new ObjectMapper();
 
+	/**
+	 * 初始化进入策略详细配置
+	 * 
+	 * @return
+	 */
 	@RequestMapping(value = "/strategy/showinit")
 	public String indexPageInit() {
 		return "/show/main/strategyshow";
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	/**
+	 * 策略列表的显示页
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/strategy/showlist")
+	public String showStgList() {
+		return "/show/main/strategylistshow";
+	}
+
+	/**
+	 * 构建树结构的数据源
+	 * 
+	 * @param name
+	 * @return
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/createtree")
-	public String createStgTreeData() throws JsonGenerationException, JsonMappingException, IOException {
+	public String createStgTreeData(String name)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		ConfigDefinition def = DescriptionResolve.get(UserDto.class);
 		UserDto data = new UserDto();
 		data.setGender(2);
@@ -43,27 +63,17 @@ public class StrategyManageController {
 		fans.setLte(100L);
 		data.setFans(fans);
 		data.setCategories(Arrays.asList("互联网", "愤青", "民工"));
-		
-//		List<Map> list = new ArrayList<Map>();
-//		Map m = new HashMap();
-//		m.put("id", "a1");
-//		m.put("text", "Extjs设计");
-//		m.put("leaf", true);
-//		list.add(m);
-//		m = new HashMap();
-//		m.put("id", "a2");
-//		m.put("text", "JAVA设计");
-//		m.put("leaf", true);
-//		list.add(m);
-//		return jacksonMapper.writeValueAsString(list);
-		return jacksonMapper.writeValueAsString(new DefAndData("user", "用户", def, data));
+
+		return jacksonMapper.writeValueAsString(new DefAndData("user", "用户",
+				def, data));
 	}
-	
+
 	public static class DefAndData {
 		private String id;
 		private String name;
 		private ConfigDefinition def;
 		private Object data;
+
 		public DefAndData(String id, String name, ConfigDefinition def,
 				Object data) {
 			this.id = id;
@@ -71,15 +81,19 @@ public class StrategyManageController {
 			this.def = def;
 			this.data = data;
 		}
+
 		public String getId() {
 			return id;
 		}
+
 		public String getName() {
 			return name;
 		}
+
 		public ConfigDefinition getDef() {
 			return def;
 		}
+
 		public Object getData() {
 			return data;
 		}

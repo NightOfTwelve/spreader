@@ -1,12 +1,17 @@
 package com.nali.spreader.factory.config;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+
+import com.nali.spreader.factory.config.desc.ConfigableInfo;
 
 @SuppressWarnings("unchecked")
 @Service
@@ -17,6 +22,7 @@ public class ConfigCenter implements IConfigCenter {
 	private Map<String, ConfigableUnit<?>> configables = new LinkedHashMap<String, ConfigableUnit<?>>();
 	@Autowired
 	private ApplicationContext context;
+	private List<ConfigableInfo> infoList;
 
 	@Override
 	public <T> boolean register(String name, Configable<T> configable) {
@@ -78,6 +84,22 @@ public class ConfigCenter implements IConfigCenter {
 	public <T> T getConfig(String name) {
 		getConfigableUnit(name);//test exists
 		return configStore.getConfig(name);
+	}
+
+	@Override
+	public List<ConfigableInfo> listAllConfigableInfo() {
+		if(infoList==null) {
+			synchronized(this) {
+				if(infoList==null) {
+					Collection<ConfigableUnit<?>> units = configables.values();
+					infoList = new ArrayList<ConfigableInfo>(units.size());
+					for (ConfigableUnit<?> unit : units) {
+						infoList.add(unit.getConfigableInfo());
+					}
+				}
+			}
+		}
+		return infoList;
 	}
 
 }
