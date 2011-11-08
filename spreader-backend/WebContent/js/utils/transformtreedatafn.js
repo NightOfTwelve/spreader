@@ -44,7 +44,8 @@ function tranNodeConfig(id, name, def, data) {
 			id : id,
 			text : name,
 			getChildConfig : getChildConfig,
-			children : collectionChildren
+			children : collectionChildren,
+			isCollection:true
 		};
 	} else if (def.type == "Map") {
 		// TODO
@@ -99,6 +100,7 @@ function transformdata(id, name, def, data) {
 		treeObj['data'] = basedataobj;
 		treeObj['children'] = conarray;
 		treeObj['leaf'] = conarray == null || conarray.length == 0;
+		treeObj['isObject'] = true;
 	} else {
 		return;
 	}

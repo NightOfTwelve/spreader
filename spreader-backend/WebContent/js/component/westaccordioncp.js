@@ -14,7 +14,8 @@ var menuTree_1 = new Ext.tree.TreePanel({
 									id : 'node1',
 									text : "策略调整",
 									leaf : true,
-									url : '../strategy/showinit'
+//									url : '../strategy/showinit'
+									url : '../strategy/showlist'
 								}, {
 									id : 'node2',
 									text : "用户设置",

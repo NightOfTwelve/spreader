@@ -1,70 +1,5 @@
-// 模拟本地JSON数据，用于构造树结构
-var treedata = new Object();
-
-// [{
-// id : '1',
-// text : '用户A',
-// def : [{
-// "propertyDefinition" : {
-// "type" : "String"
-// },
-// "name" : "姓名",
-// "propertyName" : "name"
-// }, {
-// "propertyDefinition" : {
-// "type" : "String"
-// },
-// "name" : "年龄",
-// "propertyName" : "age"
-// }],
-// data : {
-// name : "xf",
-// age : 11
-// },
-// children : [{
-// id : '11',
-// text : '图书',
-// children : [{
-// id : '111',
-// text : 'ExtJS设计',
-// qtip : '书的内容十分详细',
-// data : {
-// title : "ExtJS设计",
-// page : 112
-// },
-// leaf : true
-// }, {
-// id : '112',
-// text : 'JAVA设计',
-// data : {
-// title : "JAVA设计",
-// page : 115
-// },
-// leaf : true
-// }]
-// }, {
-// id : '12',
-// text : '手机',
-// children : [{
-// id : '121',
-// text : '诺基亚',
-// data : {
-// weight : 22,
-// type : 1
-// },
-// leaf : true
-// }, {
-// id : '122',
-// text : '摩托罗拉',
-// data : {
-// weight : 25,
-// type : 2
-// },
-// leaf : true
-// }]
-// }]
-// }];
-// store
+//全局对象ID
+var submitid;
 var treestore = new Ext.data.Tree()
 // 构造树的根节点ROOT
 var stgroot = new Ext.tree.AsyncTreeNode({
@@ -82,6 +17,19 @@ var stgtree = new Ext.tree.TreePanel({
 			singleExpand : true,
 			useArrows : true,
 			rootVisible : true,
+			tbar : [ {
+				text : '保存修改',
+				iconCls : 'addIcon',
+				handler : function() {
+					submitTreeData();
+				}
+			}, '-', {
+				text : '修改',
+				iconCls : 'edit1Icon',
+				handler : function() {
+					editInit();
+				}
+			}],
 			root : stgroot,
 			loader : new Ext.tree.TreeLoader({
 						dataUrl : '../strategy/createtree',
@@ -90,7 +38,8 @@ var stgtree = new Ext.tree.TreePanel({
 							var json = response.responseText;
 							var respObj = Ext.util.JSON.decode(json);
 							try {
-								var o = [tranNodeConfig(respObj.id,
+								submitid = respObj.id;
+								var o = [tranNodeConfig('data',
 										respObj.name, respObj.def, respObj.data)];
 								// var o = response.responseData ||
 								// Ext.decode(json);
@@ -300,4 +249,14 @@ function findDataAndDef() {
 				}
 			});
 	return obj;
+}
+
+function submitTreeData(){
+	//获取ROOT数组
+	var treearray = stgtree.root.childNodes;
+	//循环ROOT数组
+	for(var i = 0;i<treearray.length;i++){
+		var arrayobj = treearray[i].attributes;
+		treejson2str(arrayobj)
+	}
 }
