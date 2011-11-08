@@ -4,29 +4,45 @@
 // 定义表格数据源
 var store = new Ext.data.Store({
 			proxy : new Ext.data.HttpProxy({
-						url : './organization.ered?reqCode=queryDeptsForManage'
+						url : '../strategy/stggridstore'
 					}),
 			reader : new Ext.data.JsonReader({
 						totalProperty : 'TOTALCOUNT',
-						root : 'ROOT'
+						root : 'data'
 					}, [{
-								name : 'deptid'
-							}])
+								name : 'name'
+							}, {
+								name : 'displayName'
+							}, {
+								name : 'description'
+							}]),
+			autoLoad : true
 		});
 // 定义表格列CM
-var cm = new Ext.grid.ColumnModel([{
+var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 			header : '策略名称',
-			dataIndex : 'deptname',
+			dataIndex : 'name',
 			width : 100
 		}, {
 			header : '显示列1',
-			dataIndex : 'customid',
+			dataIndex : 'displayName',
 			width : 100
 		}, {
 			header : '显示列2',
-			dataIndex : 'parentdeptname',
+			dataIndex : 'description',
+			width : 100
+		}, {
+			header : '相关操作',
+			renderer : function showbutton(value) {
+				var returnStr = "<INPUT type='button' value='配置' onclick=showbutton("+value+")>";
+				return returnStr;
+			},
 			width : 100
 		}]);
+// 按钮触发事件
+var showbutton = function(value) {
+	alert("value:"+value);
+}
 // 分页菜单
 var bbar = new Ext.PagingToolbar({
 			pageSize : 10,
@@ -37,7 +53,7 @@ var bbar = new Ext.PagingToolbar({
 		});
 // 定义grid表格
 var stglistgrid = new Ext.grid.GridPanel({
-//			title : '<span class="commoncss">策略配置列表</span>',
+			// title : '<span class="commoncss">策略配置列表</span>',
 			// iconCls : 'buildingIcon',
 			height : 500,
 			autoWidth : true,
