@@ -45,7 +45,7 @@ function tranNodeConfig(id, name, def, data) {
 			text : name,
 			getChildConfig : getChildConfig,
 			children : collectionChildren,
-			isCollection:true
+			isCollection : true
 		};
 	} else if (def.type == "Map") {
 		// TODO
@@ -80,7 +80,9 @@ function transformdata(id, name, def, data) {
 			var isleaf = isPrimitive(typeid);
 			if (isleaf) {
 				var tmppptname = pptitem.propertyName;
-				basedataobj[tmppptname] = data[tmppptname];
+				if (data != null) {
+					basedataobj[tmppptname] = data[tmppptname];
+				}
 				basedefarray.push(pptitem);
 			} else {
 				// 对象的实际ID
