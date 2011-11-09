@@ -1,8 +1,8 @@
 // WEST导航的Tree菜单
 var menuTree_1 = new Ext.tree.TreePanel({
 			id : 'menuTree_1',
-//			autoScroll : true,
-			autoHeight:true,
+			// autoScroll : true,
+			autoHeight : true,
 			expanded : true,
 			singleExpand : true,
 			useArrows : true,
@@ -14,13 +14,13 @@ var menuTree_1 = new Ext.tree.TreePanel({
 									id : 'node1',
 									text : "策略调整",
 									leaf : true,
-//									url : '../strategy/showinit'
+									// url : '../strategy/showinit'
 									url : '../strategy/showlist'
 								}, {
 									id : 'node2',
-									text : "用户设置",
+									text : "详细设置",
 									leaf : true,
-									url : 'http://www.qq.com'
+									url : '../strategy/showinit'
 								}]
 					}),
 			// 添加监听事件
@@ -43,19 +43,22 @@ var accordPanel = new Ext.Panel({
 			frame : true,
 			header : false,
 			height : 500,
-			// autoHeight : true,
+			animate : true,
 			width : 200,
+			collapsible : true,
+			minSize : 200,
+			maxSize : 350,
+			split : true,
 			bodyPadding : 5,
-			layoutConfig : {
-				titleCollapse : true,
-				animate : true,
-				activeOnTop : false
-			},
 			items : [{
+						autoScroll : true,
+						border : false,
 						title : '系统设置',
 						iconCls : 'folder_cameraIcon',
 						items : [menuTree_1]
 					}, {
+						autoScroll : true,
+						border : false,
 						title : '系统查询',
 						html : '系统查询'
 					}]

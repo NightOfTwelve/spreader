@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.UserDto;
+import com.nali.spreader.factory.config.Configable;
+import com.nali.spreader.factory.config.ConfigableUnit;
 import com.nali.spreader.factory.config.IConfigCenter;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
@@ -68,7 +70,8 @@ public class StrategyManageController {
 	/**
 	 * 构建树结构的数据源
 	 * 
-	 * @param name
+	 * @param name		
+	 * @param disname 用于显示的名称
 	 * @return
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
@@ -78,20 +81,7 @@ public class StrategyManageController {
 	@RequestMapping(value = "/strategy/createtree")
 	public String createStgTreeData(String name)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		ConfigDefinition def = DescriptionResolve.get(UserDto.class);
-		UserDto data = new UserDto();
-		data.setGender(2);
-		data.setWebsiteId(1);
-		data.setLimit(100);
-		data.setProvince("上海");
-		Range<Long> fans = new Range<Long>();
-		fans.setGte(1L);
-		fans.setLte(100L);
-		data.setFans(fans);
-		data.setCategories(Arrays.asList("互联网", "愤青", "民工"));
-
-		return jacksonMapper.writeValueAsString(new DefAndData("user", "用户",
-				def, data));
+		return jacksonMapper.writeValueAsString(new DefAndData(cfgService.getConfigableUnit(name), cfgService.getConfig(name)));
 	}
 
 	public static class DefAndData {
@@ -100,12 +90,19 @@ public class StrategyManageController {
 		private ConfigDefinition def;
 		private Object data;
 
-		public DefAndData(String id, String name, ConfigDefinition def,
-				Object data) {
+		public DefAndData(String id, String name, ConfigDefinition def, Object data) {
 			this.id = id;
 			this.name = name;
 			this.def = def;
 			this.data = data;
+		}
+
+		public DefAndData(ConfigableUnit<Configable<?>> configableUnit,
+				Object config) {
+			this(configableUnit.getConfigableInfo().getName(), 
+				configableUnit.getConfigableInfo().getDisplayName(),
+				configableUnit.getConfigDefinition(),
+				config);
 		}
 
 		public String getId() {

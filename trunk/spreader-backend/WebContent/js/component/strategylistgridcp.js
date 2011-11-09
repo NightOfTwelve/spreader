@@ -33,16 +33,12 @@ var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 			width : 100
 		}, {
 			header : '相关操作',
-			renderer : function showbutton(value) {
-				var returnStr = "<INPUT type='button' value='配置' onclick=showbutton("+value+")>";
+			renderer : function showbutton() {
+				var returnStr = "<input type='button' value='配置'/>";
 				return returnStr;
 			},
 			width : 100
 		}]);
-// 按钮触发事件
-var showbutton = function(value) {
-	alert("value:"+value);
-}
 // 分页菜单
 var bbar = new Ext.PagingToolbar({
 			pageSize : 10,
@@ -98,5 +94,66 @@ var stglistgrid = new Ext.grid.GridPanel({
 							store.reload();
 						}
 					}],
-			bbar : bbar
+			bbar : bbar,
+			onCellClick : function(grid, rowIndex, columnIndex, e) {
+				// 找出表格中‘配置’按钮
+				if (e.target.defaultValue == '配置') {
+					var record = grid.getStore().getAt(rowIndex);
+					var data = record.data;
+					GDISNAME = data.displayName;
+					GOBJID = data.name;
+					editstgWindow.show();
+				}
+			}
+
+		});
+// 注册事件
+stglistgrid.on('cellclick', stglistgrid.onCellClick, stglistgrid);
+// 创建策略维护的窗口组件
+var editstgWindow = new Ext.Window({
+			layout : 'border',
+			width : document.documentElement.clientWidth - 200,
+			height : document.documentElement.clientHeight - 200,
+			resizable : true,
+			draggable : true,
+			closeAction : 'hide',
+			title : '<span class="commoncss">策略详细配置</span>',
+			iconCls : 'app_rightIcon',
+			modal : true,
+			collapsible : true,
+			maximizable : true,
+			animCollapse : true,
+			animateTarget : document.head,
+			buttonAlign : 'right',
+			constrain : true,
+			border : false,
+			items : [{
+						region : 'center',
+						id : 'pptgridmanage',
+						header : false,
+						// TODO
+						collapsible : true,
+						split : true,
+						height : 100
+					}, {
+						region : 'west',
+						title : '选择配置',
+						split : true,
+						width : 200,
+						minWidth : 175,
+						maxWidth : 400,
+						items : [stgtree]
+					}],
+			buttons : [{
+						text : '关闭',
+						iconCls : 'deleteIcon',
+						handler : function() {
+							editstgWindow.hide();
+						}
+					}]
+		});
+
+ editstgWindow.on('show', function() {
+			stgtree.getRootNode().reload();
+			stgtree.root.select();
 		});

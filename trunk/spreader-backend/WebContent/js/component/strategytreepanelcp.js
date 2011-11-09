@@ -1,23 +1,18 @@
-//全局对象ID
-var submitid;
-var treestore = new Ext.data.Tree()
 // 构造树的根节点ROOT
 var stgroot = new Ext.tree.AsyncTreeNode({
-	id : '-1',
-	text : '配置列表'
-		// ,
-		// children : [treedata]
-	});
+			id : '-1',
+			text : '配置列表'
+		});
 // 策略列表树
 var stgtree = new Ext.tree.TreePanel({
-			id : 'stgtree',
-			autoScroll : false,
-			autoHeight : true,
-			expanded : true,
-			singleExpand : true,
-			useArrows : true,
-			rootVisible : true,
-			tbar : [ {
+	id : 'stgtree',
+	autoScroll : false,
+	autoHeight : true,
+	expanded : true,
+	singleExpand : true,
+	useArrows : true,
+	rootVisible : true,
+	tbar : [{
 				text : '保存修改',
 				iconCls : 'addIcon',
 				handler : function() {
@@ -30,36 +25,41 @@ var stgtree = new Ext.tree.TreePanel({
 					editInit();
 				}
 			}],
-			root : stgroot,
-			loader : new Ext.tree.TreeLoader({
-						dataUrl : '../strategy/createtree',
-						processResponse : function(response, node, callback,
-								scope) {
-							var json = response.responseText;
-							var respObj = Ext.util.JSON.decode(json);
-							try {
-								submitid = respObj.id;
-								var o = [tranNodeConfig('data',
-										respObj.name, respObj.def, respObj.data)];
-								// var o = response.responseData ||
-								// Ext.decode(json);
-								node.beginUpdate();
-								for (var i = 0, len = o.length; i < len; i++) {
-									var n = this.createNode(o[i]);
-									if (n) {
-										node.appendChild(n);
-									}
-								}
-								node.endUpdate();
-								this.runCallback(callback, scope || node,
-										[node]);
-							} catch (e) {
-								this.handleFailure(response);
+	root : stgroot,
+	loader : new Ext.tree.TreeLoader({
+				dataUrl : '../strategy/createtree?time=' + new Date().getTime(),
+				processResponse : function(response, node, callback, scope) {
+					var json = response.responseText;
+					var respObj = Ext.util.JSON.decode(json);
+					try {
+						submitid = respObj.id;
+						var o = [tranNodeConfig('data', respObj.name,
+								respObj.def, respObj.data)];
+						// var o = response.responseData ||
+						// Ext.decode(json);
+						node.beginUpdate();
+						for (var i = 0, len = o.length; i < len; i++) {
+							var n = this.createNode(o[i]);
+							if (n) {
+								node.appendChild(n);
 							}
 						}
-					})
-		});
-
+						node.endUpdate();
+						this.runCallback(callback, scope || node, [node]);
+					} catch (e) {
+						this.handleFailure(response);
+					}
+				},
+				listeners : {
+					"beforeload" : function(treeloader, node) {
+						treeloader.baseParams = {
+							name : GOBJID,
+							disname : GDISNAME
+						};
+					}
+				}
+			})
+});
 stgtree.expand(true, true);
 // 树形编辑器
 var treeEditor = new Ext.tree.TreeEditor(Ext.getCmp('stgtree'), {
@@ -251,11 +251,11 @@ function findDataAndDef() {
 	return obj;
 }
 
-function submitTreeData(){
-	//获取ROOT数组
+function submitTreeData() {
+	// 获取ROOT数组
 	var treearray = stgtree.root.childNodes;
-	//循环ROOT数组
-	for(var i = 0;i<treearray.length;i++){
+	// 循环ROOT数组
+	for (var i = 0; i < treearray.length; i++) {
 		var arrayobj = treearray[i].attributes;
 		treejson2str(arrayobj)
 	}
