@@ -14,11 +14,10 @@
 	var GDISNAME = null;
 </script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/adapter/ext/ext-base.js')" ></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all.js')" ></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all-debug.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-lang-zh_CN.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/pubjs/includeinit.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/component/strategytreepanelcp.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/component/strategyeditgridcp.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/utils/transformtreedatafn.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/utils/treedata2stringfn.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/layout/strategygridlayout.js')"></script>

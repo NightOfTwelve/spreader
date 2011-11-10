@@ -16,7 +16,6 @@
 <script type="text/javascript" src="$StaticConfig.u('/js/pubjs/includeinit.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/layout/strategylayout.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/component/strategytreepanelcp.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/component/strategyeditgridcp.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/utils/extutils.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/utils/transformtreedatafn.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/utils/treedata2stringfn.js')"></script>

@@ -192,12 +192,23 @@ function renderPropertyGrid(node) {
 	var pptgridcmp = Ext.getCmp('pptgridmanage');
 	// 获取PropertyGrid组件
 	var pptgrid = Ext.getCmp('pptGrid');
+	if (pptgrid == null) {
+		// 可编辑的属性GRID
+		pptgrid = new Ext.grid.PropertyGrid({
+					id : 'pptGrid',
+					title : '相关属性',
+					autoHeight : true,
+					width : 300
+				})
+	}
 	// 得到构造好的propertyNames对象
-	var pptnameobj = createPptGridStore(data, def);
+	var pptnameobj = createPptGridStoreDef(def);
 	// 设置propertyNames
 	pptgrid.propertyNames = pptnameobj;
+	var newdata = createPptGridStoreData(data, def);
 	// 设置数据源
-	pptgrid.setSource(data);
+	// pptgrid.setSource(newdata);
+	pptgrid.source = newdata;
 	// 绑定到布局页面
 	pptgridcmp.add(pptgrid);
 	pptgridcmp.doLayout();
@@ -212,10 +223,10 @@ function renderPropertyGrid(node) {
  *            def 结构
  * @return {}
  */
-function createPptGridStore(data, def) {
+function createPptGridStoreDef(def) {
 	// 创建propertyNames的字符串需要JSON格式
 	var pptname = null;
-	findDataAndDef();
+	// findDataAndDef();
 	pptname = "{";
 	// //循环def获取属性对应的名称和TYPE
 	for (var i = 0; i < def.length; i++) {
@@ -233,7 +244,26 @@ function createPptGridStore(data, def) {
 	pptobj = Ext.util.JSON.decode(pptname);
 	return pptobj;
 }
-
+/**
+ * 重新构造一遍data，因为有可能data是null，导致不能与propertyNames匹配不能显示
+ * 
+ * @param {}
+ *            data
+ */
+function createPptGridStoreData(data, def) {
+	if (data != null && def != null) {
+		for (var i = 0; i < def.length; i++) {
+			var defname = def[i].propertyName;
+			if (!data.hasOwnProperty(defname)) {
+				data[defname] = '';
+			}
+		}
+		return data;
+	} else {
+		Ext.MessageBox.alert("提示", "对象获取错误");
+		return;
+	}
+}
 function findDataAndDef() {
 	var obj = new Object();
 	Ext.Ajax.request({
@@ -257,6 +287,26 @@ function submitTreeData() {
 	// 循环ROOT数组
 	for (var i = 0; i < treearray.length; i++) {
 		var arrayobj = treearray[i].attributes;
-		treejson2str(arrayobj)
+		var submitStr = treejson2str(arrayobj);
+		Ext.Ajax.request({
+					url : '../strategy/cfgsave',
+					params : {
+						'name' : GOBJID,
+						'config' : submitStr
+					},
+					scope : stgtree,
+					success : function(response) {
+						var result = Ext.decode(response.responseText);
+						if (result.success) {
+							stgtree.getRootNode().reload();
+							Ext.Msg.alert("提示", "保存成功");
+						} else {
+							Ext.Msg.alert("提示", "保存失败");
+						}
+					},
+					failure : function() {
+						Ext.Msg.alert("提示", "保存失败");
+					}
+				});
 	}
 }
