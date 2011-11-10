@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -25,6 +28,8 @@ import com.nali.spreader.factory.config.desc.DescriptionResolve;
 
 @Controller
 public class StrategyManageController {
+	public static final Logger LOGGER = Logger
+			.getLogger(StrategyManageController.class);
 	private static ObjectMapper jacksonMapper = new ObjectMapper();
 	@Autowired
 	private IConfigCenter cfgService;
@@ -70,8 +75,9 @@ public class StrategyManageController {
 	/**
 	 * 构建树结构的数据源
 	 * 
-	 * @param name		
-	 * @param disname 用于显示的名称
+	 * @param name
+	 * @param disname
+	 *            用于显示的名称
 	 * @return
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
@@ -81,7 +87,37 @@ public class StrategyManageController {
 	@RequestMapping(value = "/strategy/createtree")
 	public String createStgTreeData(String name)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		return jacksonMapper.writeValueAsString(new DefAndData(cfgService.getConfigableUnit(name), cfgService.getConfig(name)));
+		return jacksonMapper.writeValueAsString(new DefAndData(cfgService
+				.getConfigableUnit(name), cfgService.getConfig(name)));
+	}
+
+	/**
+	 * 保存前台编辑的配置对象
+	 * 
+	 * @param name
+	 * @param config
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/strategy/cfgsave")
+	public String saveStrategyConfig(String name, Object config)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		Map<String, Boolean> message = new HashMap<String, Boolean>();
+		message.put("success", false);
+		if (!StringUtils.isEmpty(name) && config != null) {
+			try {
+				cfgService.saveConfig(name, config);
+				message.put("success", true);
+			} catch (Exception e) {
+				LOGGER.error("保存策略配置失败", e);
+			}
+		} else {
+			LOGGER.info("前台对象获取错误,name为空或config为空");
+		}
+		return jacksonMapper.writeValueAsString(message);
 	}
 
 	public static class DefAndData {
@@ -90,7 +126,8 @@ public class StrategyManageController {
 		private ConfigDefinition def;
 		private Object data;
 
-		public DefAndData(String id, String name, ConfigDefinition def, Object data) {
+		public DefAndData(String id, String name, ConfigDefinition def,
+				Object data) {
 			this.id = id;
 			this.name = name;
 			this.def = def;
@@ -99,10 +136,9 @@ public class StrategyManageController {
 
 		public DefAndData(ConfigableUnit<Configable<?>> configableUnit,
 				Object config) {
-			this(configableUnit.getConfigableInfo().getName(), 
-				configableUnit.getConfigableInfo().getDisplayName(),
-				configableUnit.getConfigDefinition(),
-				config);
+			this(configableUnit.getConfigableInfo().getName(), configableUnit
+					.getConfigableInfo().getDisplayName(), configableUnit
+					.getConfigDefinition(), config);
 		}
 
 		public String getId() {

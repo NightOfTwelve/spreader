@@ -7,7 +7,7 @@
 function treejson2str(rootobj) {
 	if (rootobj != null) {
 		var str = Ext.util.JSON.encode(createNodeData(rootobj))
-		alert(str);
+		return str;
 	} else {
 		return null;
 	}

@@ -4,8 +4,6 @@ var pptGrid = new Ext.grid.PropertyGrid({
 			title : '相关属性',
 			autoHeight : true,
 			width : 300,
-			// propertyNames : rendpptname(),
-			// ,
 			tools : [{ // 生成面板右上角的工具栏
 				id : "save",
 				handler : function() {

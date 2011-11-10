@@ -152,8 +152,14 @@ var editstgWindow = new Ext.Window({
 						}
 					}]
 		});
-
- editstgWindow.on('show', function() {
+//show事件，需先删除组件，再重新创建PPTGRID
+editstgWindow.on('show', function() {
 			stgtree.getRootNode().reload();
 			stgtree.root.select();
+			var pptGrid = Ext.getCmp("pptGrid");
+			var pptMgr = Ext.getCmp("pptgridmanage");
+			if (pptGrid != null) {
+				pptMgr.remove(pptGrid);
+			}
+			pptMgr.doLayout();
 		});
