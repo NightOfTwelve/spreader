@@ -22,5 +22,13 @@ public class TestJackson {
 		System.out.println(readValue);
 		System.out.println(readValue.getClass());
 		System.out.println(((List<?>)readValue).get(0).getClass());
+		
+		Foo foo = new Foo();
+		foo.name = "test";
+		Xoo xoo = new Xoo();
+		xoo.name = "test2";
+		foo.x = xoo;
+		xoo.f = foo;
+//		System.out.println(jacksonMapper.writeValueAsString(foo)); //error
 	}
 }
