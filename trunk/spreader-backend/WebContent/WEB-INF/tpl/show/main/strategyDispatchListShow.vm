@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>策略调度列表</title>
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/extjs3/resources/css/ext-all.css')" />
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/ext_icon.css')" />
+<script>
+	$CONFIG = {
+		BLANK_IMAGE_URL:"$StaticConfig.u('/js/extjs3/resources/images/default/s.gif')",
+		CHART_URL:"$StaticConfig.u('/js/extjs3/resources/charts.swf')"
+	};
+	// 全局对象ID
+	var GOBJID = null;
+	var GDISNAME = null;
+</script>
+<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/adapter/ext/ext-base.js')" ></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all-debug.js')" ></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-lang-zh_CN.js')" ></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/pubjs/includeinit.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/component/stgTreePanelcp.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/utils/transformtreedatafn.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/utils/treedata2stringfn.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/layout/strategyDispatchGridLayout.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/component/stgDispatchGridQueryFormcp.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/component/stgDispatchListGridcp.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/utils/extutils.js')"></script>
+</head>
+<body>
+</body>
+</html>
