@@ -18,9 +18,9 @@ var menuTree_1 = new Ext.tree.TreePanel({
 									url : '../strategy/showlist'
 								}, {
 									id : 'node2',
-									text : "详细设置",
+									text : "策略调度",
 									leaf : true,
-									url : '../strategy/showinit'
+									url : '../strategy/dispatchlist'
 								}]
 					}),
 			// 添加监听事件
