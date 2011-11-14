@@ -98,13 +98,15 @@ public class StrategyManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/cfgsave")
-	public String saveStrategyConfig(String name, Object config)
+	public String saveStrategyConfig(String name, String config)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
 		message.put("success", false);
 		if (!StringUtils.isEmpty(name) && config != null) {
+			Class<?> configClass = cfgService.getConfigableUnit(name).getConfigClass();
+			Object configObject = jacksonMapper.readValue(config, configClass);
 			try {
-				cfgService.saveConfig(name, config);
+				cfgService.saveConfig(name, configObject);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存策略配置失败", e);

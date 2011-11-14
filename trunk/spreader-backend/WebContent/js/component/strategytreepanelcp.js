@@ -15,6 +15,8 @@ var stgtree = new Ext.tree.TreePanel({
 	tbar : [{
 				text : '保存修改',
 				iconCls : 'addIcon',
+				tooltip : '<button type="button" value="增加">增加</button>',
+				tooltipType : 'qtip',
 				handler : function() {
 					submitTreeData();
 				}
@@ -117,7 +119,12 @@ var rightMenu = new Ext.menu.Menu({
 		});
 // 添加点击事件
 stgtree.on('click', function(node) {
-			renderPropertyGrid(node);
+			var isCollection = node.attributes.isCollection;
+			if (isCollection) {
+				collectionRender(node);
+			} else {
+				renderPropertyGrid(node);
+			}
 		});
 
 // 增加右键弹出事件
@@ -190,59 +197,90 @@ function renderPropertyGrid(node) {
 	var def = node.attributes.def;
 	// 获取布局组件
 	var pptgridcmp = Ext.getCmp('pptgridmanage');
-	// 获取PropertyGrid组件
-	var pptgrid = Ext.getCmp('pptGrid');
-	if (pptgrid == null) {
-		// 可编辑的属性GRID
-		pptgrid = new Ext.grid.PropertyGrid({
-					id : 'pptGrid',
-					title : '相关属性',
-					autoHeight : true,
-					width : 300
-				})
-	}
+	// 创建一个PropertyGrid
+	var pptgrid = new Ext.grid.PropertyGrid({
+				id : 'pptGrid',
+				title : '相关属性',
+				autoHeight : true,
+				width : 300
+			})
 	// 得到构造好的propertyNames对象
 	var pptnameobj = createPptGridStoreDef(def);
 	// 设置propertyNames
 	pptgrid.propertyNames = pptnameobj;
+	// 构造数据源对象
 	var newdata = createPptGridStoreData(data, def);
+	// 构造编辑属性对象
+	var custEdit = createPptGridCustEdit(data, def);
 	// 设置数据源
-	// pptgrid.setSource(newdata);
 	pptgrid.source = newdata;
+	pptgrid.customEditors = custEdit;
+	// 删除添加的组件，防止重复出现
+	pptgridcmp.removeAll(pptgrid);
 	// 绑定到布局页面
 	pptgridcmp.add(pptgrid);
 	pptgridcmp.doLayout();
 }
-
+/**
+ * 如果是collection节点则需创建子节点的展示菜单 TODO
+ * 
+ * @param {}
+ *            node
+ */
+function collectionRender(node) {
+	// 获取数据
+	var data = node.attributes.data;
+	// 获取数据对应的表结构
+	var def = node.attributes.def;
+	// 获取布局组件
+	var pptgridcmp = Ext.getCmp('pptgridmanage');
+	// 创建一个PropertyGrid
+	var pptgrid = new Ext.Panel({
+				id : 'collPanle',
+				layout : 'form',
+				title : '相关操作',
+				autoHeight : true,
+				width : 300,
+				tbar : [{
+							text : '请增加子节点',
+							iconCls : 'addIcon',
+							handler : function() {
+								submitTreeData();
+							}
+						}, '-']
+			});
+	// // 得到构造好的propertyNames对象
+	// var pptnameobj = createPptGridStoreDef(def);
+	// // 设置propertyNames
+	// pptgrid.propertyNames = pptnameobj;
+	// // 构造数据源对象
+	// var newdata = createPptGridStoreData(data, def);
+	// // 构造编辑属性对象
+	// var custEdit = createPptGridCustEdit(data, def);
+	// // 设置数据源
+	// pptgrid.source = newdata;
+	// pptgrid.customEditors = custEdit;
+	// 删除添加的组件，防止重复出现
+	pptgridcmp.removeAll(pptgrid);
+	// 绑定到布局页面
+	pptgridcmp.add(pptgrid);
+	pptgridcmp.doLayout();
+}
 /**
  * 构造propertyNames对象
  * 
- * @param {}
- *            data 数据
  * @param {}
  *            def 结构
  * @return {}
  */
 function createPptGridStoreDef(def) {
-	// 创建propertyNames的字符串需要JSON格式
-	var pptname = null;
-	// findDataAndDef();
-	pptname = "{";
-	// //循环def获取属性对应的名称和TYPE
+	// 创建propertyNames的对象
+	var pptNameObj = {};
 	for (var i = 0; i < def.length; i++) {
 		var relname = def[i].propertyName;
-		pptname += relname + ":";
-		var showname = def[i].name;
-		pptname += "'" + showname + "'";
-		pptname += ",";
+		pptNameObj[relname] = def[i].name;
 	}
-	pptname = pptname.substring(0, pptname.length - 1);
-	pptname += "}";
-	// 创建JSON对象
-	var pptobj = new Object();
-	// 将String转换成JSON
-	pptobj = Ext.util.JSON.decode(pptname);
-	return pptobj;
+	return pptNameObj;
 }
 /**
  * 重新构造一遍data，因为有可能data是null，导致不能与propertyNames匹配不能显示
@@ -251,14 +289,16 @@ function createPptGridStoreDef(def) {
  *            data
  */
 function createPptGridStoreData(data, def) {
+	var tdata = {};
 	if (data != null && def != null) {
 		for (var i = 0; i < def.length; i++) {
-			var defname = def[i].propertyName;
+			var defObj = def[i];
+			var defname = defObj.propertyName;
 			if (!data.hasOwnProperty(defname)) {
-				data[defname] = '';
+				tdata[defname] = '';
 			}
 		}
-		return data;
+		return tdata;
 	} else {
 		Ext.MessageBox.alert("提示", "对象获取错误");
 		return;
@@ -280,7 +320,26 @@ function findDataAndDef() {
 			});
 	return obj;
 }
-
+function createPptGridCustEdit(data, def) {
+	var custEdit = {};
+	if (data != null && def != null) {
+		for (var i = 0; i < def.length; i++) {
+			var defObj = def[i];
+			var defname = defObj.propertyName;
+			var pType = defObj.propertyDefinition.type;
+			if (!data.hasOwnProperty(defname)) {
+				custEdit[defname] = getTypeDefaultEdit(pType);
+			}
+		}
+		return custEdit;
+	} else {
+		Ext.MessageBox.alert("提示", "对象获取错误");
+		return;
+	}
+}
+/**
+ * 提交树的数据对象
+ */
 function submitTreeData() {
 	// 获取ROOT数组
 	var treearray = stgtree.root.childNodes;

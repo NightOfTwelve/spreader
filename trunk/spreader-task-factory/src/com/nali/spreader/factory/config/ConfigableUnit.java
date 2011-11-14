@@ -17,12 +17,17 @@ public class ConfigableUnit<T extends Configable> {
 	private AutowireCapableBeanFactory beanFactory;
 	private ConfigDefinition configDefinition;
 	private ConfigableInfo configableInfo;
+	private Class<?> configClass;
+
+	public Class<?> getConfigClass() {
+		return configClass;
+	}
 
 	public ConfigableUnit(String name, T configable, AutowireCapableBeanFactory beanFactory) {
 		this.configable = configable;
 		this.beanFactory = beanFactory;
 		Class<?> clazz = configable.getClass();
-		Class<?> configClass = GenericTypeResolver.resolveTypeArgument(clazz, Configable.class);
+		configClass = GenericTypeResolver.resolveTypeArgument(clazz, Configable.class);
 		//TODO 应该返回configType
 		configDefinition = DescriptionResolve.get(configClass);
 		configableInfo = DescriptionResolve.getConfigableInfo(clazz, name);

@@ -124,3 +124,23 @@ function isPrimitive(type) {
 	}
 	return false;
 }
+/**
+ * 构造对应类型的编辑框
+ * 
+ * @param {}
+ *            stype
+ * @return {}
+ */
+function getTypeDefaultEdit(stype) {
+	var defValue = new Ext.grid.GridEditor(new Ext.form.TextField());
+	if (stype != null) {
+		if (stype == 'Integer') {
+			defValue = new Ext.grid.GridEditor(new Ext.form.NumberField());
+		} else if (stype == 'Float') {
+			defValue = new Ext.grid.GridEditor(new Ext.form.NumberField());
+		} else if (stype == 'Date') {
+			defValue = new Ext.grid.GridEditor(new Ext.form.DateField());
+		}
+	}
+	return defValue;
+}
