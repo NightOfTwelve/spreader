@@ -16,7 +16,7 @@ function tranNodeConfig(id, name, def, data) {
 			def : [{
 						propertyName : 'data',
 						name : '值',
-						type : def.type
+						propertyDefinition : {type : def.type}
 					}],
 			data : {
 				data : data

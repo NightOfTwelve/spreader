@@ -168,14 +168,18 @@ function insertNode() {
 			}, 10);
 };
 // 添加子节点事件实现
-function appendNodeAction() {
-	var selectedNode = stgtree.getSelectionModel().getSelectedNode();
-	if (selectedNode.isLeaf()) {
-		selectedNode.leaf = false;
+// TODO
+function appendNodeAction(node) {
+	// var selectedNode = stgtree.getSelectionModel().getSelectedNode();
+	if (node.isLeaf()) {
+		node.leaf = false;
 	}
-	var newNode = selectedNode.appendChild(new Ext.tree.TreeNode({
-				text : '新建节点' + selectedNode.id
-			}));
+	// var newNode = node.appendChild(new Ext.tree.TreeNode({
+	// text : node.id
+	// }));
+	 var newNode = node.appendChild(node.attributes.getChildConfig());
+	 node.attributes.children.push(newNode);
+//	var newNode = node.attributes.getChildConfig;
 	newNode.parentNode.expand(true, true, function() {
 				stgtree.getSelectionModel().select(newNode);
 				setTimeout(function() {
@@ -245,7 +249,7 @@ function collectionRender(node) {
 							text : '请增加子节点',
 							iconCls : 'addIcon',
 							handler : function() {
-								submitTreeData();
+								appendNodeAction(node);
 							}
 						}, '-']
 			});
@@ -289,36 +293,20 @@ function createPptGridStoreDef(def) {
  *            data
  */
 function createPptGridStoreData(data, def) {
-	var tdata = {};
+//	var data = {};
 	if (data != null && def != null) {
 		for (var i = 0; i < def.length; i++) {
 			var defObj = def[i];
 			var defname = defObj.propertyName;
-			if (!data.hasOwnProperty(defname)) {
-				tdata[defname] = '';
+			if (data[defname] == null) {
+				data[defname] = '';
 			}
 		}
-		return tdata;
+		return data;
 	} else {
 		Ext.MessageBox.alert("提示", "对象获取错误");
 		return;
 	}
-}
-function findDataAndDef() {
-	var obj = new Object();
-	Ext.Ajax.request({
-				url : '../strategy/createtree',
-				success : function(res) {
-					var sjson = Ext.util.JSON.decode(res.responseText);
-					obj = transformdata(sjson.id, sjson.name, sjson.def,
-							sjson.data);
-				},
-				failure : function(res) {
-					var sjson2 = Ext.util.JSON.decode(res.responseText);
-					return;
-				}
-			});
-	return obj;
 }
 function createPptGridCustEdit(data, def) {
 	var custEdit = {};
@@ -327,7 +315,8 @@ function createPptGridCustEdit(data, def) {
 			var defObj = def[i];
 			var defname = defObj.propertyName;
 			var pType = defObj.propertyDefinition.type;
-			if (!data.hasOwnProperty(defname)) {
+//			if (!data.hasOwnProperty(defname)) {
+			if (data[defname]==null) {
 				custEdit[defname] = getTypeDefaultEdit(pType);
 			}
 		}
