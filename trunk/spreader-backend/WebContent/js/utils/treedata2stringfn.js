@@ -41,6 +41,12 @@ function createNodeData(node) {
 			var dt = node.data;
 			var datavalue = dt["data"];
 			return datavalue;
+		} else {
+			if (node.attributes.isPrimitive) {
+				var dt = node.attributes.data;
+				var datavalue = dt["data"];
+				return datavalue;
+			}
 		}
 	}
 }
