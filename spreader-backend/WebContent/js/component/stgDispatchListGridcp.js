@@ -208,9 +208,10 @@ var simpleDispForm = new Ext.form.FormPanel({
 			}],
 			buttonAlign : "center",
 			buttons : [{
-						text : "提交"
-					}, {
-						text : "重置"
+						text : "重置",
+						handler : function() { // 按钮响应函数
+							simpleDispForm.form.reset();
+						}
 					}]
 		});
 // 表达式配置FORM
@@ -229,16 +230,17 @@ var triggerDispForm = new Ext.form.FormPanel({
 							layout : "form", // 从上往下的布局
 							items : [{
 										xtype : "textfield",
-										fieldLabel : "参数一",
+										fieldLabel : "表达式",
 										width : 100
 									}]
 						}]
 			}],
 			buttonAlign : "center",
 			buttons : [{
-						text : "提交"
-					}, {
-						text : "重置"
+						text : "重置",
+						handler : function() { // 按钮响应函数
+							triggerDispForm.form.reset();
+						}
 					}]
 		});
 // 首先创建一个card布局的Panel
@@ -366,7 +368,7 @@ var editstgWindow = new Ext.Window({
 						title : '调度配置',
 						split : true,
 						width : 300,
-						height : 100,
+						height : 180,
 						items : [radioForm, cardPanel]
 					}],
 			buttons : [{
