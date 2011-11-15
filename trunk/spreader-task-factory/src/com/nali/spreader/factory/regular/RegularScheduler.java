@@ -8,6 +8,7 @@ import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableUnit;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.model.RegularJob;
+import com.nali.spreader.model.RegularJob.JobDto;
 
 public interface RegularScheduler {
 	
@@ -45,5 +46,5 @@ public interface RegularScheduler {
 	/**
 	 * 获取已有配置
 	 */
-	Object getConfig(Long id);
+	JobDto getConfig(Long id);
 }
