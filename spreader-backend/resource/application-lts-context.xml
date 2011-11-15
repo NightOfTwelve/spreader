@@ -28,7 +28,6 @@
 		<property name="ltsDataSource" ref="dbDataSource"></property>
 		<property name="ltsTablePrefix" value=""></property>
 		<property name="quartzTablePrefix" value="QRTZ_"></property>
-		<property name="systemTriggerFiles" value="systemTriggers.xml"></property>
 	</bean>
 	
 	<bean id="ltsRegularSchedulerTask" class="com.nali.lts.configuration.TaskConfig">
