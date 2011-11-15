@@ -14,11 +14,45 @@
 			<groupId>com.nali</groupId>
 			<artifactId>lwtmq</artifactId>
 			<version>0.9</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jredis</groupId>
+					<artifactId>jredis-anthonylauzon</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.nali.spreader</groupId>
 			<artifactId>spreader-interface</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.nali</groupId>
+			<artifactId>lts</artifactId>
+			<version>0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms-api</artifactId>
+			<version>1.1-rev-1</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.transaction</groupId>
+			<artifactId>jta</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.4</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>6.0.33</version>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 	<build>

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 
-public interface IConfigCenter {
+public interface ISingletonConfigCenter {
 	/**
 	 * 注册并初始化（如果有必要），可以重复注册相同的bean
 	 */
@@ -12,10 +12,6 @@ public interface IConfigCenter {
 	
 	<T extends Configable<?>> void listen(String name, ConfigableListener<T>... listeners);
 
-	<T extends Configable<?>> T get(String name);
-	
-	<T> Configable<T> getCopy(String name, T config);
-	
 	/**
 	 * 保存data
 	 */
@@ -34,5 +30,5 @@ public interface IConfigCenter {
 	/**
 	 * 按名字取ConfigableUnit（内含ConfigDefinition和ConfigableInfo）
 	 */
-	<T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(String name);
+	<T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(String name);//TODO 直接暴露ConfigableUnit不太好
 }

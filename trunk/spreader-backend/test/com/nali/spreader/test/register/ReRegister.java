@@ -20,7 +20,7 @@ import com.nali.spreader.factory.passive.AutowireProductLine;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
-public class ReRegister {
+public class ReRegister {//重新注册帐号
 	@Autowired
 	private ICrudRobotRegisterDao crudRobotRegisterDao;
 	@AutowireProductLine

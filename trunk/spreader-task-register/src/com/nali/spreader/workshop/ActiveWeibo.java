@@ -35,7 +35,7 @@ public class ActiveWeibo extends SingleTaskComponentImpl implements PassiveWorks
 	}
 
 	@Override
-	public void handleResult(Date updateTime, KeyValue<Long, Long> userId) {
+	public void handleResult(Date updateTime, KeyValue<Long, Long> userId) {//TODO 48小时内必须激活
 		Long robotRegisterId = userId.getKey();
 		Long websiteUid = userId.getValue();
 		String nickname = robotRegisterService.getRegisteringAccount(websiteId, robotRegisterId);

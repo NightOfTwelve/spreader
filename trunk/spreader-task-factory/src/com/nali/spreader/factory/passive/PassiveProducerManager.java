@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableListener;
-import com.nali.spreader.factory.config.IConfigCenter;
+import com.nali.spreader.factory.config.ISingletonConfigCenter;
 import com.nali.spreader.factory.exporter.ClientTaskExporterFactory;
 import com.nali.spreader.factory.exporter.TaskExporter;
 
@@ -15,7 +15,7 @@ import com.nali.spreader.factory.exporter.TaskExporter;
 public class PassiveProducerManager {
 	private static Logger logger = Logger.getLogger(PassiveProducerManager.class);
 	@Autowired
-	private IConfigCenter configCenter;
+	private ISingletonConfigCenter singletonConfigCenter;
 	@Autowired
 	private ClientTaskExporterFactory passiveTaskExporterFactory;
 
@@ -25,8 +25,8 @@ public class PassiveProducerManager {
 			AnalyzerProduceLine produceLine = new AnalyzerProduceLine((PassiveAnalyzer)passive);
 			if (passive instanceof Configable) {
 				Configable<?> configable = (Configable<?>) passive;
-				configCenter.register(beanName, configable);
-				configCenter.listen(beanName, new AnalyzerProduceLineReplace(produceLine));
+				singletonConfigCenter.register(beanName, configable);
+				singletonConfigCenter.listen(beanName, new AnalyzerProduceLineReplace(produceLine));
 			}
 			return produceLine;
 		} else if (passive instanceof PassiveTaskProducer) {
@@ -35,8 +35,8 @@ public class PassiveProducerManager {
 			TaskProducerProduceLine produceLine = new TaskProducerProduceLine(passiveTaskProducer, exporter);
 			if (passive instanceof Configable) {
 				Configable<?> configable = (Configable<?>) passive;
-				configCenter.register(beanName, configable);
-				configCenter.listen(beanName, new TaskProducerProduceLineReplace(produceLine));
+				singletonConfigCenter.register(beanName, configable);
+				singletonConfigCenter.listen(beanName, new TaskProducerProduceLineReplace(produceLine));
 			}
 			return produceLine;
 		} else {
