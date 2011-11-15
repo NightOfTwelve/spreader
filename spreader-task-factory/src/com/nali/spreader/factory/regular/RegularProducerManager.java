@@ -12,7 +12,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.nali.spreader.factory.config.Configable;
-import com.nali.spreader.factory.config.IConfigCenter;
+import com.nali.spreader.factory.config.ConfigableUnit;
+import com.nali.spreader.factory.config.IPrototypeConfigCenter;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.config.desc.DescriptionResolve;
 import com.nali.spreader.factory.exporter.ClientTaskExporterFactory;
@@ -23,7 +24,7 @@ import com.nali.spreader.factory.result.ResultProcessor;
 @Lazy(false)
 public class RegularProducerManager {
 	@Autowired
-	private IConfigCenter configCenter;
+	private IPrototypeConfigCenter prototypeConfigCenter;
 	@Autowired
 	private ClientTaskExporterFactory passiveTaskExporterFactory;
 	private Map<String, RegularObject> unConfigables = new HashMap<String, RegularObject>();
@@ -43,8 +44,8 @@ public class RegularProducerManager {
 				if (configable instanceof ResultProcessor) {
 					throw new InternalError("regularObject cannot implements ResultProcessor");
 				}
-				configCenter.register(beanName, configable);
-				configableInfo = configCenter.getConfigableUnit(beanName).getConfigableInfo();
+				prototypeConfigCenter.register(beanName, configable);
+				configableInfo = prototypeConfigCenter.getConfigableUnit(beanName).getConfigableInfo();
 			} else {
 				unConfigables.put(beanName, regularObject);
 				configableInfo = DescriptionResolve.getConfigableInfo(regularObject.getClass(), beanName);
@@ -56,7 +57,7 @@ public class RegularProducerManager {
 	public<T> void invokeRegularObject(String name, T params) throws Exception {
 		RegularObject regularObject = unConfigables.get(name);
 		if(regularObject==null) {
-			Configable<?> configable = configCenter.getCopy(name, params);
+			Configable<T> configable = prototypeConfigCenter.getCopy(name, params);
 			regularObject = (RegularObject)configable;
 		}
 		execute(regularObject);
@@ -73,12 +74,24 @@ public class RegularProducerManager {
 			throw new IllegalArgumentException("illegal bean type:" + regularObject.getClass());
 		}
 	}
-	
-	public RegularJob getRegularJob(String name) throws Exception {
-		RegularObject unConfigable = unConfigables.get(name);
-		if(unConfigable!=null) {
-			return null;
+
+	public Class<?> getConfigMetaInfo(String name) {
+		RegularObject regularObject = unConfigables.get(name);
+		if(regularObject==null) {
+			return prototypeConfigCenter.getConfigableUnit(name).getConfigClass();
 		}
-		return new RegularJob(name, configCenter.getConfig(name));
+		return null;
+	}
+
+	public Map<String, ConfigableInfo> getRegularObjectInfos() {
+		return regularObjectInfos;
+	}
+	
+	public <T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(String name) {
+		RegularObject regularObject = unConfigables.get(name);
+		if(regularObject==null) {
+			return prototypeConfigCenter.getConfigableUnit(name);
+		}
+		return null;
 	}
 }

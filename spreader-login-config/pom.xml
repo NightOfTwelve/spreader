@@ -13,6 +13,12 @@
 			<groupId>com.nali</groupId>
 			<artifactId>lwtmq</artifactId><!-- TODO 仅需依赖jackson -->
 			<version>0.9</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jredis</groupId>
+					<artifactId>jredis-anthonylauzon</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.nali.spreader</groupId>

@@ -115,11 +115,8 @@
 		<property name="keySerializer" >
 			<bean class="org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer" />
 		</property>
-		<property name="hashKeySerializer" >
-			<bean class="org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer" />
-		</property>
 	</bean>
 	
 	<import resource="classpath:application-lwtmq-context.xml"/>
-	<import resource="classpath:application-schedule-context.xml"/>
+	<import resource="classpath:application-lts-context.xml"/>
 </beans>

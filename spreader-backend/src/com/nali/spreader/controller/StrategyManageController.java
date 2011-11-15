@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableUnit;
-import com.nali.spreader.factory.config.IConfigCenter;
+import com.nali.spreader.factory.config.ISingletonConfigCenter;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 
@@ -27,7 +27,7 @@ public class StrategyManageController {
 			.getLogger(StrategyManageController.class);
 	private static ObjectMapper jacksonMapper = new ObjectMapper();
 	@Autowired
-	private IConfigCenter cfgService;
+	private ISingletonConfigCenter cfgService;
 
 	/**
 	 * 初始化进入策略详细配置

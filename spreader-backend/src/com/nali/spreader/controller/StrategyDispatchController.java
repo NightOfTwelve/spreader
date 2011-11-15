@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableUnit;
-import com.nali.spreader.factory.config.IConfigCenter;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
+import com.nali.spreader.factory.regular.RegularScheduler;
 
 @Controller
 public class StrategyDispatchController {
@@ -28,7 +28,7 @@ public class StrategyDispatchController {
 			.getLogger(StrategyDispatchController.class);
 	private static ObjectMapper jacksonMapper = new ObjectMapper();
 	@Autowired
-	private IConfigCenter cfgService;
+	private RegularScheduler cfgService;
 
 	/**
 	 * 策略调度列表的显示页
@@ -52,7 +52,7 @@ public class StrategyDispatchController {
 	@RequestMapping(value = "/strategy/stgdispgridstore")
 	public String stgGridStore() throws JsonGenerationException,
 			JsonMappingException, IOException {
-		List<ConfigableInfo> list = cfgService.listAllConfigableInfo();
+		List<ConfigableInfo> list = cfgService.listRegularObjectInfos();
 		Map<String, List<ConfigableInfo>> jsonMap = new HashMap<String, List<ConfigableInfo>>();
 		jsonMap.put("data", list);
 		return jacksonMapper.writeValueAsString(jsonMap);
@@ -71,10 +71,10 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/createdisptree")
-	public String createStgTreeData(String name)
+	public String createStgTreeData(Long id)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		return jacksonMapper.writeValueAsString(new DefAndData(cfgService
-				.getConfigableUnit(name), cfgService.getConfig(name)));
+				.getConfigableUnit(id), cfgService.getConfig(id)));
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class StrategyDispatchController {
 		message.put("success", false);
 		if (!StringUtils.isEmpty(name) && config != null) {
 			try {
-				cfgService.saveConfig(name, config);
+//				cfgService.saveConfig(name, config);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存策略配置失败", e);

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="spreader_regular_job" >
+  <insert id="insert" parameterClass="com.nali.spreader.model.RegularJob">
+    insert into spreader$shard.databaseSuffix$.tb_regular_job$shard.tableSuffix$
+    <dynamic prepend="(">
+      <isNotNull prepend="," property="id">
+        id
+      </isNotNull>
+      <isNotNull prepend="," property="name">
+        name
+      </isNotNull>
+      <isNotNull prepend="," property="triggerType">
+        trigger_type
+      </isNotNull>
+      <isNotNull prepend="," property="triggerInfo">
+        trigger_info
+      </isNotNull>
+      <isNotNull prepend="," property="description">
+        description
+      </isNotNull>
+      <isNotNull prepend="," property="config">
+        config
+      </isNotNull>
+      )
+    </dynamic>
+    values
+    <dynamic prepend="(">
+      <isNotNull prepend="," property="id">
+        #id:BIGINT#
+      </isNotNull>
+      <isNotNull prepend="," property="name">
+        #name:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="triggerType">
+        #triggerType:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="triggerInfo">
+        #triggerInfo:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="description">
+        #description:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="config">
+        #config:LONGVARCHAR#
+      </isNotNull>
+      )
+    </dynamic>
+	<selectKey resultClass="long" type="post" keyProperty="id">
+		select LAST_INSERT_ID() as value
+	</selectKey>
+  </insert>
+</sqlMap>
