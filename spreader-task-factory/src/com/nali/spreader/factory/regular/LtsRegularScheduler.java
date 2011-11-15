@@ -32,6 +32,7 @@ import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableUnit;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.model.RegularJob;
+import com.nali.spreader.model.RegularJob.JobDto;
 import com.nali.spreader.model.RegularJobExample;
 import com.nali.spreader.model.RegularJobExample.Criteria;
 
@@ -146,14 +147,22 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 	}
 
 	@Override
-	public Object getConfig(Long id) {
+	@SuppressWarnings("unchecked")
+	public JobDto getConfig(Long id) {
 		RegularJob regularJob = getRegularJob(id);
+		JobDto rlt = new JobDto();
+		rlt.setDescription(regularJob.getDescription());
+		rlt.setTriggerType(regularJob.getTriggerType());
 		try {
-			return unSerialize(regularJob.getConfig(), regularJob.getName());
+			Object config = unSerialize(regularJob.getConfig(), regularJob.getName());
+			rlt.setConfig(config);
+			Map<String, Object> triggerInfo = objectMapper.readValue(regularJob.getTriggerInfo(), Map.class);
+			rlt.setTriggerInfo(triggerInfo);
 		} catch (Exception e) {
 			logger.error(e, e);
 			throw new RuntimeException(e);
 		}
+		return rlt;
 	}
 
 	private RegularJob getRegularJob(Long id) {
