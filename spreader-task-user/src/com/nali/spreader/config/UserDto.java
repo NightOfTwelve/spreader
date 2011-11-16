@@ -3,19 +3,33 @@ package com.nali.spreader.config;
 import java.io.Serializable;
 import java.util.List;
 
+import com.nali.spreader.factory.config.desc.PropertyDescription;
+
 public class UserDto implements Serializable {
 	private static final long serialVersionUID = -3118856576195136494L;
+	@PropertyDescription("分类")
 	private List<String> categories;
+	@PropertyDescription("性别")
     private Integer gender;
+	@PropertyDescription("网站id")
     private Integer websiteId;
+	@PropertyDescription("是否机器人")
     private Boolean isRobot;
+	@PropertyDescription("加v类型")
     private Integer vType;
+	@PropertyDescription("省份")
     private String province;
+	@PropertyDescription("城市")
     private String city;
+	@PropertyDescription("出生年份")
     private Range<Integer> birthdayYear;
+	@PropertyDescription("关注人数")
     private Range<Long> attentions;
+	@PropertyDescription("粉丝数")
     private Range<Long> fans;
+	@PropertyDescription("文章数")
     private Range<Long> articles;
+	@PropertyDescription("数量上限")
     private Integer limit;
     
 	public List<String> getCategories() {
