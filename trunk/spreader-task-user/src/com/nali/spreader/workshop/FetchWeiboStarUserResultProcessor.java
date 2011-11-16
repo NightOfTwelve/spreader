@@ -15,7 +15,6 @@ import com.nali.spreader.service.IUserServiceFactory;
 
 @Service
 public class FetchWeiboStarUserResultProcessor extends RegularResultProcessor<List<Long>, FetchWeiboStarUser> {
-	private final long threshold = 100;
 	private IUserService userService;
 	@AutowireProductLine
 	private TaskProduceLine<Long> fetchWeiboUserMainPage;
@@ -27,14 +26,14 @@ public class FetchWeiboStarUserResultProcessor extends RegularResultProcessor<Li
 	
 	@Override
 	public void handleResult(Date updateTime, List<Long> websiteUids) {
-		long userCount = userService.getUserCount();
-		if(userCount<threshold) {
-			// TODO 记录lastUpdateTime
-			for (Long websiteUid : websiteUids) {
-				Long uid = userService.assignUser(websiteUid);
-				if(uid!=null) {
-					fetchWeiboUserMainPage.send(uid);
-				}
+//		long userCount = userService.getUserCount();
+//		if(userCount<threshold) {
+//		}
+		// TODO 记录lastUpdateTime
+		for (Long websiteUid : websiteUids) {
+			Long uid = userService.assignUser(websiteUid);
+			if(uid!=null) {
+				fetchWeiboUserMainPage.send(uid);
 			}
 		}
 	}

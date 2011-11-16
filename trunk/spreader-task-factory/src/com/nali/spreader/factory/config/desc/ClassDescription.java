@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ClassDescription {
 	String value();
-	String description();
+	String description() default "";
 }

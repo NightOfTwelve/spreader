@@ -16,6 +16,8 @@ import com.nali.spreader.data.User;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
+import com.nali.spreader.factory.config.Configable;
+import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
 import com.nali.spreader.factory.exporter.TaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
@@ -29,7 +31,8 @@ import com.nali.spreader.util.NumberUtil;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
-public class FetchWeiboUserMainPage extends SingleTaskComponentImpl implements PassiveWorkshop<Long, User> {//RegularWorkshop<User>,
+@ClassDescription("爬取用户关注的用户")
+public class FetchWeiboUserMainPage extends SingleTaskComponentImpl implements PassiveWorkshop<Long, User>, Configable<Boolean> {//RegularWorkshop<User>,
 	private static Logger logger = Logger.getLogger(FetchWeiboUserMainPage.class);
 	@Autowired
 	private WeiboRobotUserHolder weiboRobotUserHolder;
@@ -38,6 +41,7 @@ public class FetchWeiboUserMainPage extends SingleTaskComponentImpl implements P
 	private IUserService userService;
 	@AutowireProductLine
 	private TaskProduceLine<Long> fetchUserAttentions;
+	private Boolean fetchAttention=true;
 	
 	public FetchWeiboUserMainPage() {
 		super(SimpleActionConfig.fetchWeiboUserMainPage, Website.weibo, Channel.normal);
@@ -57,12 +61,14 @@ public class FetchWeiboUserMainPage extends SingleTaskComponentImpl implements P
 	public void handleResult(Date updateTime, User user) {
 		user.setUpdateTime(updateTime);
 		userService.updateUser(user);
-		fetchUserAttentions.send(user.getId());
+		if(fetchAttention) {
+			fetchUserAttentions.send(user.getId());
+		}
 	}
 
 //	@Override
 	public void work(TaskExporter exporter) {//TODO 改的只剩下同步过期用户,同步未更新的机器人用户
-		final int threshold = 20;
+		final int threshold = 20;//TODO 改为任意机器人类型任务
 		//基本数据计算
 		long uninitializedUserCount = userService.getUninitializedUserCount();
 		long expiredUserCount = userService.getExpiredUserCount();
@@ -160,5 +166,10 @@ public class FetchWeiboUserMainPage extends SingleTaskComponentImpl implements P
 		}
 		Date expiredTime = SpecialDateUtil.afterToday(2);
 		createTask(weiboRobotUserHolder.getRobotUid(), user, exporter, expiredTime);
+	}
+
+	@Override
+	public void init(Boolean fetchAttention) {
+		this.fetchAttention = fetchAttention;
 	}
 }
