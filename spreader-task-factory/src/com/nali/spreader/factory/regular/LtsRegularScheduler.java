@@ -153,15 +153,19 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 		JobDto rlt = new JobDto();
 		rlt.setDescription(regularJob.getDescription());
 		rlt.setTriggerType(regularJob.getTriggerType());
+		Map<String, Object> triggerInfo;
 		try {
 			Object config = unSerialize(regularJob.getConfig(), regularJob.getName());
 			rlt.setConfig(config);
-			Map<String, Object> triggerInfo = objectMapper.readValue(regularJob.getTriggerInfo(), Map.class);
-			rlt.setTriggerInfo(triggerInfo);
+			triggerInfo = objectMapper.readValue(regularJob.getTriggerInfo(), Map.class);
 		} catch (Exception e) {
 			logger.error(e, e);
 			throw new RuntimeException(e);
 		}
+		rlt.setCron((String) triggerInfo.get("cron"));
+		rlt.setStart((Date) triggerInfo.get("start"));
+		rlt.setRepeatInternal((Integer) triggerInfo.get("repeatInternal"));
+		rlt.setRepeatTimes((Integer) triggerInfo.get("repeatTimes"));
 		return rlt;
 	}
 
