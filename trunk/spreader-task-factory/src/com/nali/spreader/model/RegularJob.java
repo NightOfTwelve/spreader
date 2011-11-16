@@ -1,7 +1,7 @@
 package com.nali.spreader.model;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.Date;
 
 import com.nali.common.model.BaseModel;
 
@@ -15,27 +15,20 @@ public class RegularJob extends BaseModel implements Serializable {
 
     public static class JobDto {
     	private Object config;
-    	private Map<String, Object> triggerInfo;
     	private String description;
     	private Integer triggerType;
-//    	private String cron;
-//    	private Date start;
-//    	private int repeatTimes;
-//    	private int repeatInternal;
+    	private String cron;
+    	private Date start;
+    	private int repeatTimes;
+    	private int repeatInternal;
 		public void setConfig(Object config) {
 			this.config = config;
-		}
-		public void setTriggerInfo(Map<String, Object> triggerInfo) {
-			this.triggerInfo = triggerInfo;
 		}
 		public void setTriggerType(Integer triggerType) {
 			this.triggerType = triggerType;
 		}
 		public Object getConfig() {
 			return config;
-		}
-		public Map<String, Object> getTriggerInfo() {
-			return triggerInfo;
 		}
 		public Integer getTriggerType() {
 			return triggerType;
@@ -45,6 +38,30 @@ public class RegularJob extends BaseModel implements Serializable {
 		}
 		public void setDescription(String description) {
 			this.description = description;
+		}
+		public String getCron() {
+			return cron;
+		}
+		public void setCron(String cron) {
+			this.cron = cron;
+		}
+		public Date getStart() {
+			return start;
+		}
+		public void setStart(Date start) {
+			this.start = start;
+		}
+		public int getRepeatTimes() {
+			return repeatTimes;
+		}
+		public void setRepeatTimes(int repeatTimes) {
+			this.repeatTimes = repeatTimes;
+		}
+		public int getRepeatInternal() {
+			return repeatInternal;
+		}
+		public void setRepeatInternal(int repeatInternal) {
+			this.repeatInternal = repeatInternal;
 		}
     }
     /**
