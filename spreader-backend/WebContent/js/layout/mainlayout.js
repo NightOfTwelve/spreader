@@ -14,16 +14,14 @@ Ext.onReady(function() {
 					// height="70"src="$StaticConfig.u('../images/logo.jpg')"
 					// ></img>',
 					collapsible : true,
+					border : false,
+					layout : 'fit',
 					height : 100
 				}, {
 					region : 'center',
-					// title : '主操作区域',
 					header : false,
-					// TODO
-					collapsible : true,
+//					collapsible : true,
 					split : true,
-					// height : 200,
-					// autoHeight:true,
 					autoScroll : false,
 					layout : 'fit',
 					items : [mainTabPanel]
@@ -31,6 +29,7 @@ Ext.onReady(function() {
 					region : 'west',
 					title : '系统导航',
 					split : true,
+					collapsible : true,
 					width : 200,
 					height : 200,
 					// minWidth : 175,

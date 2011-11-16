@@ -12,13 +12,13 @@ var menuTree_1 = new Ext.tree.TreePanel({
 						text : '相关配置',
 						children : [{
 									id : 'node1',
-									text : "策略调整",
+									text : "策略配置",
 									leaf : true,
 									// url : '../strategy/showinit'
 									url : '../strategy/showlist'
 								}, {
 									id : 'node2',
-									text : "策略调度",
+									text : "调度配置",
 									leaf : true,
 									url : '../strategy/dispatchlist'
 								}]
@@ -42,8 +42,10 @@ var accordPanel = new Ext.Panel({
 			layout : 'accordion',
 			frame : true,
 			header : false,
-			height : 500,
-			animate : true,
+			height : document.documentElement.clientHeight-120,
+			layoutConfig : {
+				animate : true
+			},
 			width : 200,
 			collapsible : true,
 			minSize : 200,
@@ -60,6 +62,7 @@ var accordPanel = new Ext.Panel({
 						autoScroll : true,
 						border : false,
 						title : '系统查询',
+						iconCls : 'folder_cameraIcon',
 						html : '系统查询'
 					}]
 		});

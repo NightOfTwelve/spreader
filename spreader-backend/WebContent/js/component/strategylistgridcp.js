@@ -51,7 +51,8 @@ var bbar = new Ext.PagingToolbar({
 var stglistgrid = new Ext.grid.GridPanel({
 			// title : '<span class="commoncss">策略配置列表</span>',
 			// iconCls : 'buildingIcon',
-			height : 500,
+			height : 540,
+			// height : document.documentElement.clientHeight,
 			autoWidth : true,
 			autoScroll : true,
 			region : 'center',
@@ -152,7 +153,7 @@ var editstgWindow = new Ext.Window({
 						}
 					}]
 		});
-//show事件，需先删除组件，再重新创建PPTGRID
+// show事件，需先删除组件，再重新创建PPTGRID
 editstgWindow.on('show', function() {
 			stgtree.getRootNode().reload();
 			stgtree.root.select();

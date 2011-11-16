@@ -2,6 +2,7 @@ package com.nali.spreader.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,12 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import com.nali.common.pagination.PageResult;
 
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableUnit;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.regular.RegularScheduler;
+import com.nali.spreader.model.RegularJob;
+import com.nali.spreader.model.RegularJob.JobDto;
 
 @Controller
 public class StrategyDispatchController {
@@ -50,10 +54,20 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/stgdispgridstore")
-	public String stgGridStore() throws JsonGenerationException,
-			JsonMappingException, IOException {
-		List<ConfigableInfo> list = cfgService.listRegularObjectInfos();
-		Map<String, List<ConfigableInfo>> jsonMap = new HashMap<String, List<ConfigableInfo>>();
+	public String stgGridStore(String dispname, Integer triggerType, int start,
+			int limit) throws JsonGenerationException, JsonMappingException,
+			IOException {
+		if (limit <= 0)
+			limit = 20;
+		if (start <= 0)
+			start = start / limit + 1;
+		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname,
+				triggerType, 1, 10);
+		List<RegularJob> list = pr.getList();
+		int rowcount = pr.getTotalCount();
+		// List<ConfigableInfo> list = cfgService.listRegularObjectInfos();
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		jsonMap.put("cnt", rowcount);
 		jsonMap.put("data", list);
 		return jacksonMapper.writeValueAsString(jsonMap);
 	}
@@ -71,10 +85,28 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/createdisptree")
-	public String createStgTreeData(Long id)
+	public String createStgTreeData(String name)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		return jacksonMapper.writeValueAsString(new DefAndData(cfgService
-				.getConfigableUnit(id), cfgService.getConfig(id)));
+		return jacksonMapper.writeValueAsString(new DispatchData(null,
+				cfgService.getConfigableInfo(name).getDisplayName(), cfgService
+						.getConfigDefinition(name), null));
+	}
+
+	/**
+	 * 获取调度参数
+	 * 
+	 * @param id
+	 * @return
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/strategy/settgrparam")
+	public String settingTriggerParam(Long id) throws JsonGenerationException,
+			JsonMappingException, IOException {
+		return jacksonMapper.writeValueAsString(new DispatchData(cfgService
+				.getConfig(id)));
 	}
 
 	/**
@@ -89,19 +121,29 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/dispsave")
-	public String saveStrategyConfig(String name, Object config)
+	public String saveStrategyConfig(String name, Object config,
+			Integer triggerType, String description, Date start,
+			int repeatTimes, int repeatInternal, String cron)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
 		message.put("success", false);
-		if (!StringUtils.isEmpty(name) && config != null) {
+		if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
 			try {
-//				cfgService.saveConfig(name, config);
+				cfgService.scheduleSimpleTrigger(name, config, description,
+						start, repeatTimes, repeatInternal);
 				message.put("success", true);
 			} catch (Exception e) {
-				LOGGER.error("保存策略配置失败", e);
+				LOGGER.error("保存SimpleTrigger失败", e);
+			}
+		} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
+			try {
+				cfgService.scheduleCronTrigger(name, config, description, cron);
+				message.put("success", true);
+			} catch (Exception e) {
+				LOGGER.error("保存CronTrigger失败", e);
 			}
 		} else {
-			LOGGER.info("前台对象获取错误,name为空或config为空");
+			LOGGER.info("调度类型获取错误保存失败");
 		}
 		return jacksonMapper.writeValueAsString(message);
 	}
@@ -118,54 +160,77 @@ public class StrategyDispatchController {
 	@RequestMapping(value = "/strategy/combstore")
 	public String createStgCombStore() throws JsonGenerationException,
 			JsonMappingException, IOException {
-		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("value", "fetchWeiboContent");
-		map.put("text", "fetchWeiboContentdis");
-		list.add(map);
-		map = new HashMap<String, String>();
-		map.put("value", "postWeiboContent");
-		map.put("text", "postWeiboContentdis");
-		list.add(map);
+		List<ConfigableInfo> list = cfgService.listRegularObjectInfos();
 		return jacksonMapper.writeValueAsString(list);
 	}
 
-	public static class DefAndData {
-		private String id;
-		private String name;
+	/**
+	 * 
+	 * @author xiefei
+	 * 
+	 */
+	public static class DispatchData {
+		// 树节点ID
+		private String treeid;
+		// TEXT
+		private String treename;
+		// 属性配置
 		private ConfigDefinition def;
+		// 节点数据
 		private Object data;
+		private JobDto jobdto;
 
-		public DefAndData(String id, String name, ConfigDefinition def,
-				Object data) {
-			this.id = id;
-			this.name = name;
+		public DispatchData(String treeid, String treename,
+				ConfigDefinition def, Object data) {
+			this.treeid = treeid;
+			this.treename = treename;
 			this.def = def;
 			this.data = data;
 		}
 
-		public DefAndData(ConfigableUnit<Configable<?>> configableUnit,
-				Object config) {
-			this(configableUnit.getConfigableInfo().getName(), configableUnit
-					.getConfigableInfo().getDisplayName(), configableUnit
-					.getConfigDefinition(), config);
+		public DispatchData(JobDto jobdto) {
+			this.jobdto = jobdto;
 		}
 
-		public String getId() {
-			return id;
+		public String getTreeid() {
+			return treeid;
 		}
 
-		public String getName() {
-			return name;
+		public void setTreeid(String treeid) {
+			this.treeid = treeid;
+		}
+
+		public String getTreename() {
+			return treename;
+		}
+
+		public void setTreename(String treename) {
+			this.treename = treename;
 		}
 
 		public ConfigDefinition getDef() {
 			return def;
 		}
 
+		public void setDef(ConfigDefinition def) {
+			this.def = def;
+		}
+
 		public Object getData() {
 			return data;
 		}
-	}
 
+		public void setData(Object data) {
+			this.data = data;
+		}
+
+		public JobDto getJobdto() {
+			return jobdto;
+		}
+
+		public void setJobdto(JobDto jobdto) {
+			this.jobdto = jobdto;
+		}
+
+	}
 }

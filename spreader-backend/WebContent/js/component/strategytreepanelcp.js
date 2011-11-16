@@ -177,9 +177,9 @@ function appendNodeAction(node) {
 	// var newNode = node.appendChild(new Ext.tree.TreeNode({
 	// text : node.id
 	// }));
-	 var newNode = node.appendChild(node.attributes.getChildConfig());
-	 node.attributes.children.push(newNode);
-//	var newNode = node.attributes.getChildConfig;
+	var newNode = node.appendChild(node.attributes.getChildConfig());
+	node.attributes.children.push(newNode);
+	// var newNode = node.attributes.getChildConfig;
 	newNode.parentNode.expand(true, true, function() {
 				stgtree.getSelectionModel().select(newNode);
 				setTimeout(function() {
@@ -187,144 +187,6 @@ function appendNodeAction(node) {
 							treeEditor.startEdit(newNode.ui.textNode);
 						}, 10);
 			});// 将上级树形展开
-}
-/**
- * 绑定PropertyGrid数据源的相关函数
- * 
- * @param {}
- *            node 当前的节点对象
- */
-function renderPropertyGrid(node) {
-	// 获取数据
-	var data = node.attributes.data;
-	// 获取数据对应的表结构
-	var def = node.attributes.def;
-	// 获取布局组件
-	var pptgridcmp = Ext.getCmp('pptgridmanage');
-	// 创建一个PropertyGrid
-	var pptgrid = new Ext.grid.PropertyGrid({
-				id : 'pptGrid',
-				title : '相关属性',
-				autoHeight : true,
-				width : 300
-			})
-	// 得到构造好的propertyNames对象
-	var pptnameobj = createPptGridStoreDef(def);
-	// 设置propertyNames
-	pptgrid.propertyNames = pptnameobj;
-	// 构造数据源对象
-	var newdata = createPptGridStoreData(data, def);
-	// 构造编辑属性对象
-	var custEdit = createPptGridCustEdit(data, def);
-	// 设置数据源
-	pptgrid.source = newdata;
-	pptgrid.customEditors = custEdit;
-	// 删除添加的组件，防止重复出现
-	pptgridcmp.removeAll(pptgrid);
-	// 绑定到布局页面
-	pptgridcmp.add(pptgrid);
-	pptgridcmp.doLayout();
-}
-/**
- * 如果是collection节点则需创建子节点的展示菜单 TODO
- * 
- * @param {}
- *            node
- */
-function collectionRender(node) {
-	// 获取数据
-	var data = node.attributes.data;
-	// 获取数据对应的表结构
-	var def = node.attributes.def;
-	// 获取布局组件
-	var pptgridcmp = Ext.getCmp('pptgridmanage');
-	// 创建一个PropertyGrid
-	var pptgrid = new Ext.Panel({
-				id : 'collPanle',
-				layout : 'form',
-				title : '相关操作',
-				autoHeight : true,
-				width : 300,
-				tbar : [{
-							text : '请增加子节点',
-							iconCls : 'addIcon',
-							handler : function() {
-								appendNodeAction(node);
-							}
-						}, '-']
-			});
-	// // 得到构造好的propertyNames对象
-	// var pptnameobj = createPptGridStoreDef(def);
-	// // 设置propertyNames
-	// pptgrid.propertyNames = pptnameobj;
-	// // 构造数据源对象
-	// var newdata = createPptGridStoreData(data, def);
-	// // 构造编辑属性对象
-	// var custEdit = createPptGridCustEdit(data, def);
-	// // 设置数据源
-	// pptgrid.source = newdata;
-	// pptgrid.customEditors = custEdit;
-	// 删除添加的组件，防止重复出现
-	pptgridcmp.removeAll(pptgrid);
-	// 绑定到布局页面
-	pptgridcmp.add(pptgrid);
-	pptgridcmp.doLayout();
-}
-/**
- * 构造propertyNames对象
- * 
- * @param {}
- *            def 结构
- * @return {}
- */
-function createPptGridStoreDef(def) {
-	// 创建propertyNames的对象
-	var pptNameObj = {};
-	for (var i = 0; i < def.length; i++) {
-		var relname = def[i].propertyName;
-		pptNameObj[relname] = def[i].name;
-	}
-	return pptNameObj;
-}
-/**
- * 重新构造一遍data，因为有可能data是null，导致不能与propertyNames匹配不能显示
- * 
- * @param {}
- *            data
- */
-function createPptGridStoreData(data, def) {
-//	var data = {};
-	if (data != null && def != null) {
-		for (var i = 0; i < def.length; i++) {
-			var defObj = def[i];
-			var defname = defObj.propertyName;
-			if (data[defname] == null) {
-				data[defname] = '';
-			}
-		}
-		return data;
-	} else {
-		Ext.MessageBox.alert("提示", "对象获取错误");
-		return;
-	}
-}
-function createPptGridCustEdit(data, def) {
-	var custEdit = {};
-	if (data != null && def != null) {
-		for (var i = 0; i < def.length; i++) {
-			var defObj = def[i];
-			var defname = defObj.propertyName;
-			var pType = defObj.propertyDefinition.type;
-//			if (!data.hasOwnProperty(defname)) {
-			if (data[defname]==null) {
-				custEdit[defname] = getTypeDefaultEdit(pType);
-			}
-		}
-		return custEdit;
-	} else {
-		Ext.MessageBox.alert("提示", "对象获取错误");
-		return;
-	}
 }
 /**
  * 提交树的数据对象
