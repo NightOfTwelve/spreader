@@ -20,7 +20,8 @@ Ext.onReady(function() {
 									collapsible : true,
 									split : true,
 //									width : 1000,
-									height : 500,
+//									height : 500,
+									height : document.documentElement.clientHeight-100,
 									items : [stglistgrid]
 								}]
 					});

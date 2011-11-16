@@ -7,28 +7,46 @@ var store = new Ext.data.Store({
 						url : '../strategy/stgdispgridstore'
 					}),
 			reader : new Ext.data.JsonReader({
-						totalProperty : 'TOTALCOUNT',
+						totalProperty : 'cnt',
 						root : 'data'
 					}, [{
+								name : 'id'
+							}, {
 								name : 'name'
 							}, {
-								name : 'displayName'
+								name : 'triggerType'
+							}, {
+								name : 'triggerInfo'
 							}, {
 								name : 'description'
 							}]),
-			autoLoad : true
+			autoLoad : {
+				params : {
+					start : 0,
+					limit : 25
+				}
+			}
+
 		});
 // 定义表格列CM
 var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
-			header : '策略名称',
+			header : '调度编号',
 			dataIndex : 'name',
 			width : 100
 		}, {
-			header : '显示列1',
+			header : '调度名称',
 			dataIndex : 'displayName',
 			width : 100
 		}, {
-			header : '显示列2',
+			header : '调度类型',
+			dataIndex : 'triggerType',
+			width : 100
+		}, {
+			header : '调度备注',
+			dataIndex : 'triggerInfo',
+			width : 100
+		}, {
+			header : '描述',
 			dataIndex : 'description',
 			width : 100
 		}, {
@@ -39,19 +57,29 @@ var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 			},
 			width : 100
 		}]);
+// 页数
+var numtext = new Ext.form.TextField({
+			id : 'maxpage',
+			name : 'maxpage',
+			width : 60,
+			emptyText : '每页条数',
+			enableKeyEvents : true
+		});
+var number = parseInt(numtext.getValue());
 // 分页菜单
 var bbar = new Ext.PagingToolbar({
-			pageSize : 10,
+			pageSize : number,
 			store : store,
 			displayInfo : true,
 			displayMsg : '显示{0}条到{1}条,共{2}条',
-			emptyMsg : "没有符合条件的记录"
+			emptyMsg : "没有符合条件的记录",
+			items : ['-', '&nbsp;&nbsp;', numtext]
 		});
 // 定义grid表格
 var stgdisplistgrid = new Ext.grid.GridPanel({
 			// title : '<span class="commoncss">策略配置列表</span>',
 			// iconCls : 'buildingIcon',
-			height : 500,
+			height : 540,
 			autoWidth : true,
 			autoScroll : true,
 			region : 'center',
@@ -121,9 +149,9 @@ var stgCmbStore = new Ext.data.Store({
 					}),
 			// 读取模式
 			reader : new Ext.data.JsonReader({}, [{
-								name : 'value'
+								name : 'name'
 							}, {
-								name : 'text'
+								name : 'displayName'
 							}])
 		});
 // 选择策略的COMB
@@ -134,8 +162,8 @@ var stgSelectCombo = new Ext.form.ComboBox({
 			emptyText : '请选择策略...',
 			triggerAction : 'all',
 			store : stgCmbStore,
-			displayField : 'text',
-			valueField : 'value',
+			displayField : 'displayName',
+			valueField : 'name',
 			loadingText : '正在加载数据...',
 			mode : 'remote', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取
 			forceSelection : true,
@@ -184,24 +212,28 @@ var simpleDispForm = new Ext.form.FormPanel({
 							columnWidth : .3, // 该列有整行中所占百分比
 							layout : "form", // 从上往下的布局
 							items : [{
-										xtype : "textfield",
-										fieldLabel : "参数一",
+										xtype : "datefield",
+										format : 'Y-m-d',
+										fieldLabel : "开始日期",
+										name : 'start',
 										width : 100
 									}]
 						}, {
 							columnWidth : .3,
 							layout : "form",
 							items : [{
-										xtype : "textfield",
-										fieldLabel : "参数二",
+										xtype : "numberfield",
+										fieldLabel : "重复次数",
+										name : 'repeatTimes',
 										width : 100
 									}]
 						}, {
 							columnWidth : .3,
 							layout : "form",
 							items : [{
-										xtype : "textfield",
-										fieldLabel : "参数三",
+										xtype : "numberfield",
+										fieldLabel : "毫秒数",
+										name : 'repeatInternal',
 										width : 100
 									}]
 						}]
@@ -222,7 +254,7 @@ var triggerDispForm = new Ext.form.FormPanel({
 			frame : true,
 			layout : "form", // 整个大的表单是form布局
 			labelWidth : 100,
-			labelAlign : "right",
+			labelAlign : "left",
 			items : [{ // 行1
 				layout : "column", // 从左往右的布局
 				items : [{
@@ -231,6 +263,7 @@ var triggerDispForm = new Ext.form.FormPanel({
 							items : [{
 										xtype : "textfield",
 										fieldLabel : "表达式",
+										name : 'cron',
 										width : 100
 									}]
 						}]
@@ -260,7 +293,7 @@ var cardPanel = new Ext.Panel({
 var radioForm = new Ext.form.FormPanel({
 			// width : 200,
 			frame : true,
-			height : 50,
+			height : 80,
 			labelWidth : 65,
 			labelAlign : "left",
 			items : [{
@@ -271,14 +304,14 @@ var radioForm = new Ext.form.FormPanel({
 									boxLabel : '简单调度',
 									inputValue : '1',
 									width : 50,
-									name : 'dispcfg',
+									name : 'triggerType',
 									checked : true
 								}, {
 									xtype : 'radio',
 									boxLabel : '配置表达式',
 									width : 50,
 									inputValue : '2',
-									name : 'dispcfg'
+									name : 'triggerType'
 								}],
 						listeners : {
 							'change' : function(group, ck) {
@@ -291,6 +324,11 @@ var radioForm = new Ext.form.FormPanel({
 								}
 							}
 						}
+					}, {
+						xtype : "textfield",
+						fieldLabel : "备注信息",
+						name : 'description',
+						width : 100
 					}]
 		});
 // 弹出窗口
@@ -300,7 +338,7 @@ var stgCmbWindow = new Ext.Window({
 			closeAction : 'hide',
 			layout : 'fit', // 设置窗口布局模式
 			width : 300, // 窗口宽度
-			height : 250, // 窗口高度
+			height : 150, // 窗口高度
 			// closable : true, // 是否可关闭
 			collapsible : true, // 是否可收缩
 			maximizable : true, // 设置是否可以最大化
@@ -314,12 +352,17 @@ var stgCmbWindow = new Ext.Window({
 				iconCls : 'tbar_synchronizeIcon', // 按钮图标
 				handler : function() { // 按钮响应函数
 					// TODO
+					GOBJID = stgSelectCombo.getValue();
+					GDISNAME = stgSelectCombo.lastSelectionText;
+					// alert("name:"+GOBJID+",dis:"+GDISNAME);
+					editstgWindow.show();
+					stgCmbWindow.hide();
 				}
 			}, {	// 窗口底部按钮配置
 						text : '重置', // 按钮文本
 						iconCls : 'tbar_synchronizeIcon', // 按钮图标
 						handler : function() { // 按钮响应函数
-							firstForm.form.reset();
+							stgCmbForm.form.reset();
 						}
 					}, {
 						text : '关闭',
@@ -390,3 +433,39 @@ editstgWindow.on('show', function() {
 			}
 			pptMgr.doLayout();
 		});
+
+function settingCreateTrigger() {
+	Ext.Ajax.request({
+				url : '../strategy/settgrparam',
+				params : {
+					'id' : 0
+				},
+				success : function(response) {
+					var result = Ext.decode(response.responseText);
+					var description = result.description;
+					var triggerType = result.triggerType;
+					var cron = result.cron;
+					var start = result.start;
+					var repeatTimes = result.repeatTimes;
+					var repeatInternal = result.repeatInternal;
+					var description = result.description;
+					// 获取FORM
+					var tradioForm = radioForm.getForm();
+					var ttriggerDispForm = triggerDispForm.getForm();
+					var tsimpleDispForm = simpleDispForm.getForm();
+					// 设置参数
+					tradioForm.findField("triggerType").setValue(triggerType);
+					tradioForm.findField("description").setValue(description);
+					tsimpleDispForm.findField("start").setValue(start);
+					tsimpleDispForm.findField("repeatTimes")
+							.setValue(repeatTimes);
+					tsimpleDispForm.findField("repeatInternal")
+							.setValue(repeatInternal);
+					ttriggerDispForm.findField("cron").setValue(cron);
+				},
+				failure : function() {
+					Ext.Msg.alert("提示", "数据获取异常");
+				}
+			});
+
+}

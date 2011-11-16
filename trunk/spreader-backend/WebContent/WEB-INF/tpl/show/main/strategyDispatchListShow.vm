@@ -18,8 +18,8 @@
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-lang-zh_CN.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/pubjs/includeinit.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/component/stgTreePanelcp.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/utils/transformtreedatafn.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/utils/treedata2stringfn.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/functions/TreeDataTransFormFn.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/functions/PropertyGridDataShowFn.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/layout/strategyDispatchGridLayout.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/component/stgDispatchGridQueryFormcp.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/component/stgDispatchListGridcp.js')"></script>
