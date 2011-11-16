@@ -41,7 +41,7 @@ public interface RegularScheduler {
 	/**
 	 * 按名字取ConfigableUnit（内含ConfigDefinition和ConfigableInfo）
 	 */
-	<T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(Long id);//TODO 直接暴露ConfigableUnit不太好
+	<T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(String name);//TODO 直接暴露ConfigableUnit不太好
 
 	/**
 	 * 获取已有配置

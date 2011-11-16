@@ -226,9 +226,8 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 	}
 
 	@Override
-	public <T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(Long id) {
-		RegularJob regularJob = getRegularJob(id);
-		return regularProducerManager.getConfigableUnit(regularJob.getName());
+	public <T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(String name) {
+		return regularProducerManager.getConfigableUnit(name);
 	}
 	
 }

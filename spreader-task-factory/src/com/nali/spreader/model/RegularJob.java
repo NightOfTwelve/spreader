@@ -14,6 +14,7 @@ public class RegularJob extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1340715782719822254L;
 
     public static class JobDto {
+    	private String name;
     	private Object config;
     	private String description;
     	private Integer triggerType;
@@ -62,6 +63,12 @@ public class RegularJob extends BaseModel implements Serializable {
 		}
 		public void setRepeatInternal(int repeatInternal) {
 			this.repeatInternal = repeatInternal;
+		}
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
 		}
     }
     /**
