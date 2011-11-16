@@ -4,8 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.nali.common.pagination.PageResult;
-import com.nali.spreader.factory.config.Configable;
-import com.nali.spreader.factory.config.ConfigableUnit;
+import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.model.RegularJob;
 import com.nali.spreader.model.RegularJob.JobDto;
@@ -39,9 +38,14 @@ public interface RegularScheduler {
 	List<ConfigableInfo> listRegularObjectInfos();
 
 	/**
-	 * 按名字取ConfigableUnit（内含ConfigDefinition和ConfigableInfo）
+	 * 按名字取ConfigDefinition，如果不是一个有参数的调度，则返回null
 	 */
-	<T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(String name);//TODO 直接暴露ConfigableUnit不太好
+	ConfigDefinition getConfigDefinition(String name);
+	
+	/**
+	 * 按名字取ConfigableInfo
+	 */
+	ConfigableInfo getConfigableInfo(String name);
 
 	/**
 	 * 获取已有配置

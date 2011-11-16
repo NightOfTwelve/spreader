@@ -30,6 +30,7 @@ import com.nali.spreader.dao.ICrudRegularJobDao;
 import com.nali.spreader.dao.IRegularJobDao;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableUnit;
+import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.model.RegularJob;
 import com.nali.spreader.model.RegularJob.JobDto;
@@ -225,9 +226,22 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 		beanName = name;
 	}
 
-	@Override
-	public <T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(String name) {
+	private <T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(String name) {
 		return regularProducerManager.getConfigableUnit(name);
+	}
+
+	@Override
+	public ConfigDefinition getConfigDefinition(String name) {
+		ConfigableUnit<Configable<?>> configableUnit = getConfigableUnit(name);
+		if(configableUnit==null) {
+			return null;
+		}
+		return configableUnit.getConfigDefinition();
+	}
+
+	@Override
+	public ConfigableInfo getConfigableInfo(String name) {
+		return regularProducerManager.getConfigableInfo(name);
 	}
 	
 }

@@ -87,6 +87,10 @@ public class RegularProducerManager {
 		return regularObjectInfos;
 	}
 	
+	public ConfigableInfo getConfigableInfo(String name) {
+		return regularObjectInfos.get(name);
+	}
+	
 	public <T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(String name) {
 		RegularObject regularObject = unConfigables.get(name);
 		if(regularObject==null) {
