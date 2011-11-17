@@ -79,6 +79,8 @@
 		   articles &lt;= #articles.lte#
 		</isNotNull>
 	</dynamic>
-	limit 0, $limit$
+	<isNotNull prepend="and" property="limit">
+		limit 0, $limit$
+	</isNotNull>
   </select>
 </sqlMap>

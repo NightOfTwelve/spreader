@@ -26,7 +26,7 @@ public class TestAccount {
 	ICrudRobotRegisterDao crudRobotRegisterDao;
 	@Test
 	public void getAccont() {
-    	RedisTemplate<String, Integer> redisTemplate = new RedisTemplate<String, Integer>(connectionFactory);//TODO stringSerializer
+    	RedisTemplate<String, Integer> redisTemplate = new RedisTemplate<String, Integer>(connectionFactory);
     	redisTemplate.setKeySerializer(new StringRedisSerializer());
     	Map<Object, Object> entries = redisTemplate.opsForHash().entries("RegisteringAccount_1");
     	Set<Entry<Object, Object>> entrySet = entries.entrySet();
