@@ -148,25 +148,19 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public JobDto getConfig(Long id) {
 		RegularJob regularJob = getRegularJob(id);
-		JobDto rlt = new JobDto();
-		rlt.setDescription(regularJob.getDescription());
-		rlt.setTriggerType(regularJob.getTriggerType());
-		Map<String, Object> triggerInfo;
+		JobDto rlt;
 		try {
+			rlt = objectMapper.readValue(regularJob.getTriggerInfo(), JobDto.class);
 			Object config = unSerialize(regularJob.getConfig(), regularJob.getName());
 			rlt.setConfig(config);
-			triggerInfo = objectMapper.readValue(regularJob.getTriggerInfo(), Map.class);
 		} catch (Exception e) {
 			logger.error(e, e);
 			throw new RuntimeException(e);
 		}
-		rlt.setCron((String) triggerInfo.get("cron"));
-		rlt.setStart((Date) triggerInfo.get("start"));
-		rlt.setRepeatInternal((Integer) triggerInfo.get("repeatInternal"));
-		rlt.setRepeatTimes((Integer) triggerInfo.get("repeatTimes"));
+		rlt.setDescription(regularJob.getDescription());
+		rlt.setTriggerType(regularJob.getTriggerType());
 		return rlt;
 	}
 
