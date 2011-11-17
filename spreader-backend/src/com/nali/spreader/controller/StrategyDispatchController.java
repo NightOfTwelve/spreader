@@ -153,6 +153,42 @@ public class StrategyDispatchController {
 	}
 
 	/**
+	 * 批量删除调度信息
+	 * 
+	 * @param idstr
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/strategy/deletetrg")
+	public String deleteTrigger(String idstr) throws JsonGenerationException,
+			JsonMappingException, IOException {
+		// 操作记录数
+		int count = 0;
+		// 返回消息
+		Map<String, String> map = new HashMap<String, String>();
+		if (StringUtils.isNotEmpty(idstr)) {
+			String[] idarray = idstr.split("[,]");
+			if (idarray.length > 0) {
+				for (int i = 0; i < idarray.length; i++) {
+					try {
+						cfgService.unSchedule(Long.parseLong(idarray[i]));
+						count++;
+					} catch (Exception e) {
+						LOGGER.error("调度删除异常", e);
+					}
+				}
+			}
+		} else {
+			map.put("message", "删除失败");
+		}
+		map.put("message", "成功删除" + count + "条记录");
+		return jacksonMapper.writeValueAsString(map);
+	}
+
+	/**
 	 * 构造ComboBox的数据源
 	 * 
 	 * @return

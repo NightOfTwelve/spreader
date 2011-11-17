@@ -28,8 +28,10 @@ var store = new Ext.data.Store({
 			}
 
 		});
+// 定义Checkbox
+var sm = new Ext.grid.CheckboxSelectionModel();
 // 定义表格列CM
-var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
+var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), sm, {
 			header : '调度编号',
 			dataIndex : 'id',
 			width : 80
@@ -46,12 +48,12 @@ var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 		}, {
 			header : '调度备注',
 			dataIndex : 'triggerInfo',
-			renderer:renderBrief,
+			renderer : renderBrief,
 			width : 100
 		}, {
 			header : '描述',
 			dataIndex : 'description',
-			renderer:renderBrief,
+			renderer : renderBrief,
 			width : 100
 		}, {
 			header : '相关操作',
@@ -95,6 +97,7 @@ var bbar = new Ext.PagingToolbar({
 			emptyMsg : "没有符合条件的记录",
 			items : ['-', '&nbsp;&nbsp;', numtext]
 		});
+
 // 定义grid表格
 var stgdisplistgrid = new Ext.grid.GridPanel({
 			// title : '<span class="commoncss">策略配置列表</span>',
@@ -110,6 +113,7 @@ var stgdisplistgrid = new Ext.grid.GridPanel({
 			// stripeRows : true,
 			frame : true,
 			// autoExpandColumn : 'remark',
+			sm : sm,
 			cm : cm,
 			tbar : [{
 						text : '新增',
@@ -118,22 +122,16 @@ var stgdisplistgrid = new Ext.grid.GridPanel({
 							stgCmbWindow.show();
 						}
 					}, '-', {
-						text : '修改',
-						iconCls : 'page_edit_1Icon',
-						handler : function() {
-							editInit();
-						}
-					}, '-', {
 						text : '删除',
 						iconCls : 'page_delIcon',
 						handler : function() {
-							deleteDeptItems('1', '');
+							// TODO
+							deleteData();
 						}
 					}, {
 						text : '查询',
 						iconCls : 'previewIcon',
 						handler : function() {
-							queryDeptItem();
 						}
 					}, '-', {
 						text : '刷新',
@@ -151,7 +149,6 @@ var stgdisplistgrid = new Ext.grid.GridPanel({
 					GDISNAME = data.displayName;
 					GOBJID = data.name;
 					var trgid = data.id;
-					// TODO
 					settingCreateTrigger(trgid);
 					editstgWindow.show();
 				}
@@ -262,6 +259,11 @@ var simpleDispForm = new Ext.form.FormPanel({
 			}],
 			buttonAlign : "center",
 			buttons : [{
+						text : '保存',
+						handler : function() {
+							submitTreeData();
+						}
+					}, {
 						text : "重置",
 						handler : function() { // 按钮响应函数
 							simpleDispForm.form.reset();
@@ -292,6 +294,11 @@ var triggerDispForm = new Ext.form.FormPanel({
 			}],
 			buttonAlign : "center",
 			buttons : [{
+						text : '保存',
+						handler : function() {
+							submitTreeData();
+						}
+					}, {
 						text : "重置",
 						handler : function() { // 按钮响应函数
 							triggerDispForm.form.reset();
@@ -373,10 +380,8 @@ var stgCmbWindow = new Ext.Window({
 				text : '确定', // 按钮文本
 				iconCls : 'tbar_synchronizeIcon', // 按钮图标
 				handler : function() { // 按钮响应函数
-					// TODO
 					GOBJID = stgSelectCombo.getValue();
 					GDISNAME = stgSelectCombo.lastSelectionText;
-					// alert("name:"+GOBJID+",dis:"+GDISNAME);
 					editstgWindow.show();
 					stgCmbWindow.hide();
 				}
@@ -416,7 +421,6 @@ var editstgWindow = new Ext.Window({
 						region : 'center',
 						id : 'pptgridmanage',
 						header : false,
-						// TODO
 						collapsible : true,
 						split : true,
 						height : 100
@@ -456,6 +460,12 @@ editstgWindow.on('show', function() {
 			pptMgr.doLayout();
 		});
 
+/**
+ * 设置调度配置的相关参数
+ * 
+ * @param {}
+ *            trgid
+ */
 function settingCreateTrigger(trgid) {
 	Ext.Ajax.request({
 				url : '../strategy/settgrparam',
@@ -467,7 +477,8 @@ function settingCreateTrigger(trgid) {
 					var description = result.description;
 					var triggerType = result.triggerType;
 					var cron = result.cron;
-					var start = result.start.dateFormat('Y/m/d H:i:s');
+					var start = result.start;
+					var sdate = new Date(start);
 					var repeatTimes = result.repeatTimes;
 					var repeatInternal = result.repeatInternal;
 					var description = result.description;
@@ -478,7 +489,7 @@ function settingCreateTrigger(trgid) {
 					// 设置参数
 					tradioForm.findField("triggerType").setValue(triggerType);
 					tradioForm.findField("description").setValue(description);
-					tsimpleDispForm.findField("start").setValue(start);
+					tsimpleDispForm.findField("start").setValue(sdate);
 					tsimpleDispForm.findField("repeatTimes")
 							.setValue(repeatTimes);
 					tsimpleDispForm.findField("repeatInternal")
@@ -486,11 +497,54 @@ function settingCreateTrigger(trgid) {
 					ttriggerDispForm.findField("cron").setValue(cron);
 				},
 				failure : function() {
-//					Ext.Msg.alert("提示", "数据获取异常");
+					// Ext.Msg.alert("提示", "数据获取异常");
 				}
 			});
 }
-
+/**
+ * 删除调度信息
+ * 
+ * @param {}
+ *            id
+ */
+function deleteData() {
+	// TODO
+	// 获取选中行
+	var rows = stgdisplistgrid.getSelectionModel().getSelections();
+	// 可能是批量删除，需循环所有的选中行
+	if (rows.length > 0) {
+		var tmpstr = '';
+		for (var i = 0; i < rows.length; i++) {
+			var trgid = rows[i].data.id;
+			tmpstr += trgid + ',';
+		}
+		var idstr = subStrLastId(tmpstr);
+		Ext.Msg.confirm('提示',
+				'<span style="color:red"><b>提示:</b></span><br>确定删除？', function(
+						btn, text) {
+					if (btn == 'yes') {
+						Ext.Ajax.request({
+									url : '../strategy/deletetrg',
+									params : {
+										'idstr' : idstr
+									},
+									scope : stgdisplistgrid,
+									success : function(response) {
+										var result = Ext.decode(response.responseText);
+										Ext.Msg.alert("提示", result.message);
+										store.reload();
+									},
+									failure : function() {
+										Ext.Msg.alert("提示", "删除失败");
+									}
+								});
+					}
+				});
+	} else {
+		Ext.Msg.alert("提示", "请选择要删除的调度");
+		return;
+	}
+}
 /**
  * 渲染策略名称为中文名
  * 

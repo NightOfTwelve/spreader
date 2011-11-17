@@ -12,19 +12,21 @@ var stgdisptree = new Ext.tree.TreePanel({
 			singleExpand : true,
 			useArrows : true,
 			rootVisible : true,
-			tbar : [{
-						text : '保存修改',
-						iconCls : 'addIcon',
-						handler : function() {
-							submitTreeData();
-						}
-					}, '-', {
-						text : '修改',
-						iconCls : 'edit1Icon',
-						handler : function() {
-							editInit();
-						}
-					}],
+			tbar : [
+					// {
+					// text : '保存修改',
+					// iconCls : 'addIcon',
+					// handler : function() {
+					// submitTreeData();
+					// }
+					// }, '-',
+					{
+				text : '修改',
+				iconCls : 'edit1Icon',
+				handler : function() {
+					editInit();
+				}
+			}],
 			root : stgroot,
 			loader : new Ext.tree.TreeLoader({
 						dataUrl : '../strategy/createdisptree?time='
@@ -187,7 +189,9 @@ function appendNodeAction(node) {
 						}, 10);
 			});// 将上级树形展开
 }
-
+/**
+ * 提交数据的函数
+ */
 function submitTreeData() {
 	// 获取ROOT数组
 	var treearray = stgdisptree.root.childNodes;
