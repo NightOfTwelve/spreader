@@ -14,6 +14,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.core.GenericTypeResolver;
 
+import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ObjectDefinition.ObjectProperty;
 import com.nali.spreader.util.reflect.GenericInfo;
 
@@ -186,6 +187,7 @@ public class DescriptionResolve {
 		if(info.displayName==null) {
 			info.displayName = beanName;
 		}
+		info.dataClass=GenericTypeResolver.resolveTypeArgument(clazz, Configable.class);
 		return info;
 	}
 }

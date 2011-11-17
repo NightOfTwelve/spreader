@@ -4,6 +4,13 @@ public class ConfigableInfo {
 	String displayName;
 	String description;
 	String name;
+	Class<?> dataClass;
+	public Class<?> getDataClass() {
+		return dataClass;
+	}
+	public void setDataClass(Class<?> dataClass) {
+		this.dataClass = dataClass;
+	}
 	public String getDisplayName() {
 		return displayName;
 	}
