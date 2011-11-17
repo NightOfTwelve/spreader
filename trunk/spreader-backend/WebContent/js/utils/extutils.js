@@ -91,3 +91,17 @@ function renderBrief(value, p, record) {
 		return "";
 	}
 }
+/**
+ * 截取最后一个分隔符
+ * 
+ * @param {}
+ *            id
+ * @return {}
+ */
+function subStrLastId(id) {
+	if (id != null) {
+		var str = '';
+		str = id.substring(0, id.length - 1);
+		return str;
+	}
+}
