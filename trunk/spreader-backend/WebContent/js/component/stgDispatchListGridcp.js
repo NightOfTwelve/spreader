@@ -148,6 +148,7 @@ var stgdisplistgrid = new Ext.grid.GridPanel({
 					var data = record.data;
 					GDISNAME = data.displayName;
 					GOBJID = data.name;
+					GDISPID = data.id;
 					var trgid = data.id;
 					settingCreateTrigger(trgid);
 					editstgWindow.show();

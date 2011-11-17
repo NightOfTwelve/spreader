@@ -84,11 +84,13 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/createdisptree")
-	public String createStgTreeData(String name)
+	public String createStgTreeData(String name, Long id)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		return jacksonMapper.writeValueAsString(new DispatchData(null,
 				cfgService.getConfigableInfo(name).getDisplayName(), cfgService
-						.getConfigDefinition(name), null));
+						.getConfigDefinition(name),
+				id != null && id > 0 ? cfgService.getConfig(id).getConfig()
+						: null));
 	}
 
 	/**
@@ -121,8 +123,12 @@ public class StrategyDispatchController {
 	@RequestMapping(value = "/strategy/dispsave")
 	public String saveStrategyConfig(String name, String config,
 			Integer triggerType, String description, Date start,
-			Integer repeatTimes, Integer repeatInternal, String cron)
+			Integer repeatTimes, Integer repeatInternal, String cron, Long id)
 			throws JsonGenerationException, JsonMappingException, IOException {
+		// 如果是编辑则先删除
+		if (id != null && id > 0) {
+			cfgService.unSchedule(id);
+		}
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
 		message.put("success", false);
 		Class<?> dataClass = cfgService.getConfigableInfo(name).getDataClass();

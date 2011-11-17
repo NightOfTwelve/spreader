@@ -60,7 +60,9 @@ var stgdisptree = new Ext.tree.TreePanel({
 							"beforeload" : function(treeloader, node) {
 								treeloader.baseParams = {
 									name : GOBJID,
-									disname : GDISNAME
+									disname : GDISNAME,
+									//TODO
+									id:GDISPID
 								};
 							}
 						}
@@ -198,6 +200,7 @@ function submitTreeData() {
 	var tparam = {};
 	tparam['name'] = GOBJID;
 	tparam['_time'] = new Date().getTime();
+	tparam['id'] = GDISPID;
 	if (treearray.length > 0) {
 		var arrayobj = treearray[0].attributes;
 		var submitStr = treejson2str(arrayobj);
