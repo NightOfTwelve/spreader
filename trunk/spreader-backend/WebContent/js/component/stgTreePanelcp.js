@@ -198,7 +198,7 @@ function submitTreeData() {
 		var arrayobj = treearray[0].attributes;
 		var submitStr = treejson2str(arrayobj);
 		tparam['config'] = submitStr;
-	} 
+	}
 	// 获取调度FORM
 	var tradioForm = radioForm.getForm();
 	var ttriggerDispForm = triggerDispForm.getForm();
@@ -210,9 +210,12 @@ function submitTreeData() {
 	tparam['triggerType'] = triggerType;
 	if (triggerType == 1) {
 		var start = tsimpleDispForm.findField("start").getValue();
+		var fstart = start.dateFormat('Y/m/d H:i:s');
+		// alert(fstart);
 		var repeatTimes = tsimpleDispForm.findField("repeatTimes").getValue();
 		var repeatInternal = tsimpleDispForm.findField("repeatInternal")
 				.getValue();
+		tparam['start'] = fstart;
 		tparam['repeatTimes'] = repeatTimes;
 		tparam['repeatInternal'] = repeatInternal;
 	} else {
@@ -226,8 +229,10 @@ function submitTreeData() {
 				success : function(response) {
 					var result = Ext.decode(response.responseText);
 					if (result.success) {
-						stgdisptree.getRootNode().reload();
+						// stgdisptree.getRootNode().reload();
 						Ext.Msg.alert("提示", "保存成功");
+						editstgWindow.hide();
+						store.reload();
 					} else {
 						Ext.Msg.alert("提示", "保存失败");
 					}

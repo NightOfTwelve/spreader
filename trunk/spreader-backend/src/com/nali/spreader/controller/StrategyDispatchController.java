@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -53,18 +54,19 @@ public class StrategyDispatchController {
 	public String stgGridStore(String dispname, Integer triggerType, int start,
 			int limit) throws JsonGenerationException, JsonMappingException,
 			IOException {
-		if (limit <= 0)
+		if (limit <= 0) {
 			limit = 20;
-		if (start <= 0)
-			start = start / limit + 1;
+		}
+		start = start / limit + 1;
 		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname,
-				triggerType, 1, 10);
+				triggerType, start, limit);
 		List<RegularJob> list = pr.getList();
+		List<ConfigableInfo> dispnamelist = cfgService.listRegularObjectInfos();
 		int rowcount = pr.getTotalCount();
-		// List<ConfigableInfo> list = cfgService.listRegularObjectInfos();
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("cnt", rowcount);
 		jsonMap.put("data", list);
+		jsonMap.put("dispname", dispnamelist);
 		return jacksonMapper.writeValueAsString(jsonMap);
 	}
 
@@ -124,7 +126,10 @@ public class StrategyDispatchController {
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
 		message.put("success", false);
 		Class<?> dataClass = cfgService.getConfigableInfo(name).getDataClass();
-		Object configObj = jacksonMapper.readValue(config, dataClass);
+		Object configObj = null;
+		if (StringUtils.isNotEmpty(config)) {
+			configObj = jacksonMapper.readValue(config, dataClass);
+		}
 		if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
 			try {
 				cfgService.scheduleSimpleTrigger(name, configObj, description,
@@ -135,7 +140,8 @@ public class StrategyDispatchController {
 			}
 		} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
 			try {
-				cfgService.scheduleCronTrigger(name, configObj, description, cron);
+				cfgService.scheduleCronTrigger(name, configObj, description,
+						cron);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存CronTrigger失败", e);
@@ -230,5 +236,31 @@ public class StrategyDispatchController {
 			this.jobdto = jobdto;
 		}
 
+	}
+
+	public static class GridListStore {
+		private String displayName;
+		private RegularJob job;
+
+		public GridListStore(RegularJob job, String displayName) {
+			this.displayName = displayName;
+			this.job = job;
+		}
+
+		public String getDisplayName() {
+			return displayName;
+		}
+
+		public void setDisplayName(String displayName) {
+			this.displayName = displayName;
+		}
+
+		public RegularJob getJob() {
+			return job;
+		}
+
+		public void setJob(RegularJob job) {
+			this.job = job;
+		}
 	}
 }
