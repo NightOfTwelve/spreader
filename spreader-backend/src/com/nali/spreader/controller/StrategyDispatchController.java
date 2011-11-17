@@ -121,15 +121,17 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/dispsave")
-	public String saveStrategyConfig(String name, Object config,
+	public String saveStrategyConfig(String name, String config,
 			Integer triggerType, String description, Date start,
-			int repeatTimes, int repeatInternal, String cron)
+			Integer repeatTimes, Integer repeatInternal, String cron)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
 		message.put("success", false);
+		Class<?> dataClass = cfgService.getConfigableInfo(name).getDataClass();
+		Object configObj = jacksonMapper.readValue(config, dataClass);
 		if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
 			try {
-				cfgService.scheduleSimpleTrigger(name, config, description,
+				cfgService.scheduleSimpleTrigger(name, configObj, description,
 						start, repeatTimes, repeatInternal);
 				message.put("success", true);
 			} catch (Exception e) {
@@ -137,7 +139,7 @@ public class StrategyDispatchController {
 			}
 		} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
 			try {
-				cfgService.scheduleCronTrigger(name, config, description, cron);
+				cfgService.scheduleCronTrigger(name, configObj, description, cron);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存CronTrigger失败", e);

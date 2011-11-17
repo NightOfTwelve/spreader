@@ -193,13 +193,12 @@ function submitTreeData() {
 	var treearray = stgdisptree.root.childNodes;
 	var tparam = {};
 	tparam['name'] = GOBJID;
+	tparam['_time'] = new Date().getTime();
 	if (treearray.length > 0) {
 		var arrayobj = treearray[0].attributes;
 		var submitStr = treejson2str(arrayobj);
 		tparam['config'] = submitStr;
-	} else {
-		tparam['config'] = null;
-	}
+	} 
 	// 获取调度FORM
 	var tradioForm = radioForm.getForm();
 	var ttriggerDispForm = triggerDispForm.getForm();
@@ -207,23 +206,17 @@ function submitTreeData() {
 	// 获取调度参数
 	var triggerType = tradioForm.findField("triggerType").inputValue;
 	var description = tradioForm.findField("description").getValue();
-	var start = tsimpleDispForm.findField("start").getValue();
-	var repeatTimes = tsimpleDispForm.findField("repeatTimes")
-			.getValue();
-	var repeatInternal = tsimpleDispForm.findField("repeatInternal")
-			.getValue();
-	var cron = ttriggerDispForm.findField("cron").getValue();
 	tparam['description'] = description;
 	tparam['triggerType'] = triggerType;
 	if (triggerType == 1) {
-		tparam['start'] = start;
+		var start = tsimpleDispForm.findField("start").getValue();
+		var repeatTimes = tsimpleDispForm.findField("repeatTimes").getValue();
+		var repeatInternal = tsimpleDispForm.findField("repeatInternal")
+				.getValue();
 		tparam['repeatTimes'] = repeatTimes;
 		tparam['repeatInternal'] = repeatInternal;
-		tparam['cron'] = null;
 	} else {
-		tparam['start'] = null;
-		tparam['repeatTimes'] = null;
-		tparam['repeatInternal'] = null;
+		var cron = ttriggerDispForm.findField("cron").getValue();
 		tparam['cron'] = cron;
 	}
 	Ext.Ajax.request({

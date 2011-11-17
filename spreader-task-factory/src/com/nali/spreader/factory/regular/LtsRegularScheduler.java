@@ -212,7 +212,7 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 
 	private void ltsSchedule(String name, Long id, TriggerScheduleInfo scheInfo) {
 		String triggerName = getTriggerName(name, id);
-		TriggerMetaInfo metaInfo = new TriggerMetaInfo(triggerName, name, beanName ,null, TriggerType.INDEPENDENT_TRIGGER);
+		TriggerMetaInfo metaInfo = new TriggerMetaInfo(triggerName, name, beanName+"Task" ,null, TriggerType.INDEPENDENT_TRIGGER);
 		Trigger trigger = TriggerFactory.getInstance().generateTrigger(metaInfo, scheInfo);
 		try {
 			SchedulerFactory.getInstance().getScheduler().scheduleTask(trigger);
