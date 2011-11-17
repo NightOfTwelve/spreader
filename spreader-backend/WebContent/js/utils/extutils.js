@@ -68,3 +68,26 @@ function unmaskCenterPanel() {
 	// 如果对centerPanel进行遮罩,则可以出现阴影
 	Ext.getCmp('centerPanel').getEl().unmask();
 }
+/**
+ * 鼠标悬浮显示细节函数
+ * 
+ * @param {}
+ *            value
+ * @param {}
+ *            p
+ * @param {}
+ *            record
+ * @return {}
+ */
+function renderBrief(value, p, record) {
+	if (!Ext.isEmpty(value)) {
+		var bk = '<div title="' + value + '">' + value.substr(0, 50);
+		if (value.length > 50) {
+			bk = bk + "...";
+		}
+		bk = bk + "</div>";
+		return bk;
+	} else {
+		return "";
+	}
+}
