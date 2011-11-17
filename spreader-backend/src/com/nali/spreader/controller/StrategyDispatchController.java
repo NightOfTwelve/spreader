@@ -1,6 +1,7 @@
 package com.nali.spreader.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -103,8 +104,7 @@ public class StrategyDispatchController {
 	@RequestMapping(value = "/strategy/settgrparam")
 	public String settingTriggerParam(Long id) throws JsonGenerationException,
 			JsonMappingException, IOException {
-		return jacksonMapper.writeValueAsString(new DispatchData(cfgService
-				.getConfig(id)));
+		return jacksonMapper.writeValueAsString(cfgService.getConfig(id));
 	}
 
 	/**
