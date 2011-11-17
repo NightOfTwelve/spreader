@@ -31,16 +31,18 @@ var store = new Ext.data.Store({
 // 定义表格列CM
 var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 			header : '调度编号',
-			dataIndex : 'name',
+			dataIndex : 'id',
 			width : 100
 		}, {
 			header : '调度名称',
-			dataIndex : 'displayName',
+			dataIndex : 'name',
+			renderer : rendDispName,
 			width : 100
 		}, {
 			header : '调度类型',
 			dataIndex : 'triggerType',
-			width : 100
+			width : 100,
+			renderer : rendTrigger
 		}, {
 			header : '调度备注',
 			dataIndex : 'triggerInfo',
@@ -58,14 +60,30 @@ var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 			width : 100
 		}]);
 // 页数
+var number = 20;
 var numtext = new Ext.form.TextField({
 			id : 'maxpage',
 			name : 'maxpage',
 			width : 60,
 			emptyText : '每页条数',
-			enableKeyEvents : true
+			// 激活键盘事件
+			enableKeyEvents : true,
+			listeners : {
+				specialKey : function(field, e) {
+					if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
+						bbar.pageSize = parseInt(numtext.getValue());
+						number = parseInt(numtext.getValue());
+						store.reload({
+									params : {
+										start : 0,
+										limit : bbar.pageSize
+									}
+								});
+					}
+				}
+			}
 		});
-var number = parseInt(numtext.getValue());
+
 // 分页菜单
 var bbar = new Ext.PagingToolbar({
 			pageSize : number,
@@ -130,6 +148,8 @@ var stgdisplistgrid = new Ext.grid.GridPanel({
 					var data = record.data;
 					GDISNAME = data.displayName;
 					GOBJID = data.name;
+					// TODO
+					settingCreateTrigger();
 					editstgWindow.show();
 				}
 			}
@@ -212,11 +232,10 @@ var simpleDispForm = new Ext.form.FormPanel({
 							columnWidth : .3, // 该列有整行中所占百分比
 							layout : "form", // 从上往下的布局
 							items : [{
-										xtype : "datefield",
-										format : 'Y-m-d',
-										fieldLabel : "开始日期",
+										xtype : "datetimefield",
+										fieldLabel : "开始时间",
 										name : 'start',
-										width : 100
+										width : 150
 									}]
 						}, {
 							columnWidth : .3,
@@ -467,5 +486,35 @@ function settingCreateTrigger() {
 					Ext.Msg.alert("提示", "数据获取异常");
 				}
 			});
+}
 
+/**
+ * 渲染策略名称为中文名
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function rendDispName(value) {
+	var list = store.reader.jsonData.dispname;
+	for (var idx in list) {
+		var tmp = list[idx].name;
+		var dname = list[idx].displayName;
+		if (value == tmp) {
+			return dname;
+		}
+	}
+}
+/**
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function rendTrigger(value) {
+	if (value == 1) {
+		return '简单调度';
+	} else {
+		return '复杂调度';
+	}
 }
