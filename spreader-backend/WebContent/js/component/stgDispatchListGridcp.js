@@ -32,7 +32,7 @@ var store = new Ext.data.Store({
 var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 			header : '调度编号',
 			dataIndex : 'id',
-			width : 100
+			width : 80
 		}, {
 			header : '调度名称',
 			dataIndex : 'name',
@@ -46,10 +46,12 @@ var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 		}, {
 			header : '调度备注',
 			dataIndex : 'triggerInfo',
+			renderer:renderBrief,
 			width : 100
 		}, {
 			header : '描述',
 			dataIndex : 'description',
+			renderer:renderBrief,
 			width : 100
 		}, {
 			header : '相关操作',
@@ -148,8 +150,9 @@ var stgdisplistgrid = new Ext.grid.GridPanel({
 					var data = record.data;
 					GDISNAME = data.displayName;
 					GOBJID = data.name;
+					var trgid = data.id;
 					// TODO
-					settingCreateTrigger();
+					settingCreateTrigger(trgid);
 					editstgWindow.show();
 				}
 			}
@@ -453,18 +456,18 @@ editstgWindow.on('show', function() {
 			pptMgr.doLayout();
 		});
 
-function settingCreateTrigger() {
+function settingCreateTrigger(trgid) {
 	Ext.Ajax.request({
 				url : '../strategy/settgrparam',
 				params : {
-					'id' : 0
+					'id' : trgid
 				},
 				success : function(response) {
 					var result = Ext.decode(response.responseText);
 					var description = result.description;
 					var triggerType = result.triggerType;
 					var cron = result.cron;
-					var start = result.start;
+					var start = result.start.dateFormat('Y/m/d H:i:s');
 					var repeatTimes = result.repeatTimes;
 					var repeatInternal = result.repeatInternal;
 					var description = result.description;
@@ -483,7 +486,7 @@ function settingCreateTrigger() {
 					ttriggerDispForm.findField("cron").setValue(cron);
 				},
 				failure : function() {
-					Ext.Msg.alert("提示", "数据获取异常");
+//					Ext.Msg.alert("提示", "数据获取异常");
 				}
 			});
 }
