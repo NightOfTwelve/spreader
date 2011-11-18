@@ -79,7 +79,7 @@
 		   articles &lt;= #articles.lte#
 		</isNotNull>
 	</dynamic>
-	<isNotNull prepend="and" property="limit">
+	<isNotNull property="limit">
 		limit 0, $limit$
 	</isNotNull>
   </select>

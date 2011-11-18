@@ -2,6 +2,7 @@ package com.nali.spreader.test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -30,5 +31,7 @@ public class TestJackson {
 		foo.x = xoo;
 		xoo.f = foo;
 //		System.out.println(jacksonMapper.writeValueAsString(foo)); //error
+		System.out.println(jacksonMapper.writeValueAsString(new Date()));
+		System.out.println(jacksonMapper.readValue("1321514663578", Date.class));
 	}
 }

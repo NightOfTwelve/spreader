@@ -96,7 +96,7 @@ public class GenericInfo<T> {
 		GenericInfo child = superGenericInfo.applyArguments0(actualArguments);
 		child.representingClass = clazz;
 		if(addInterfaceGeneric) {
-			addGenericInterfaces(clazz);
+			child.addGenericInterfaces(clazz);
 		}
 		return child;
 	}
@@ -106,8 +106,9 @@ public class GenericInfo<T> {
 		for (Type genericInterface : genericInterfaces) {
 			if (genericInterface instanceof ParameterizedType) {
 				ParameterizedType pt = (ParameterizedType) genericInterface;
-				doApplyArguments((Class<?>)pt.getRawType(), pt.getActualTypeArguments());
-				addGenericInterfaces((Class<?>) pt.getRawType());
+				Class<?> interf = (Class<?>) pt.getRawType();
+				addGenericInterfaces(interf);
+				doApplyArguments(interf, pt.getActualTypeArguments());
 			}
 		}
 	}
