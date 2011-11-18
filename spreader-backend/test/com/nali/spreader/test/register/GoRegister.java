@@ -29,6 +29,7 @@ public class GoRegister {
 				return true;
 			}
 		});
+		r.init(20);
 		r.work();
 	}
 }

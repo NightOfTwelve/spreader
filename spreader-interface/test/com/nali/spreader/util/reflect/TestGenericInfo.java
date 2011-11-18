@@ -14,24 +14,29 @@ import com.nali.spreader.util.reflect.GenericInfo;
 
 public class TestGenericInfo {
 	public static void main(String[] args) {
-		print(CC.class);
-		GenericInfo<BB> bb = GenericInfo.get(BB.class);
-		GenericInfo<DD> dd = bb.build(DD.class);
-		print(bb);
-		print(dd);
-		GenericInfo<EE> ee = bb.build(EE.class);
-		print(ee);
-		print(PP.class);
-		print(QQ.class);
-		print(UU.class);
-		
-		
-		print(FF.class);
-		print(GG.class);
-		print(HH.class);
-		print(II.class);
-		print(KK.class);
-		print(WW.class);
+//		print(CC.class);
+//		GenericInfo<BB> bb = GenericInfo.get(BB.class);
+//		GenericInfo<DD> dd = bb.build(DD.class);
+//		print(bb);
+//		print(dd);
+//		GenericInfo<EE> ee = bb.build(EE.class);
+//		print(ee);
+//		print(PP.class);
+//		print(QQ.class);
+//		print(UU.class);
+//		
+//		
+//		print(FF.class);
+//		print(GG.class);
+//		print(HH.class);
+//		print(II.class);
+//		print(KK.class);//两个参数变成一个 K,V --> Map<K, V>[]
+//		print(WW.class);
+//		print(List.class);
+		print(TestInterface.class);//测接口的泛型参数
+		print(TestInterface2.class);//测接口的泛型参数
+		System.out.println(TestInterface2.class.getGenericInterfaces().length);
+		System.out.println(TestInterface3.class.getGenericInterfaces().length);
 	}
 	
 
@@ -107,3 +112,10 @@ class TD<X> {
 	X x;
 	X[] xx;
 }
+interface IA<E,F> {}
+interface IB<E,F> extends IA<E,F> {}
+interface IC<E,F> extends IB<E,F> {}
+class TestInterface implements IC<String, Integer> {}
+interface ID<E> extends IC<E,Long> {}
+class TestInterface2 implements ID<Double> {}
+class TestInterface3 extends TestInterface2 {}
