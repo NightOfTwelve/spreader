@@ -148,7 +148,10 @@ stgdisptree.on('contextmenu', function(node, event) {
 function deleteNode() {
 	// 得到选中的节点
 	var selectedNode = stgdisptree.getSelectionModel().getSelectedNode();
-	selectedNode.remove();
+	var parent = selectedNode.parentNode;
+	parent.removeChild(selectedNode);
+	parent.attributes.children.pop(selectedNode);
+//	selectedNode.remove();
 };
 // 修改节点事件实现
 function modifNode() {
