@@ -26,7 +26,7 @@ public class RegularProducerManager {
 	@Autowired
 	private IPrototypeConfigCenter prototypeConfigCenter;
 	@Autowired
-	private ClientTaskExporterFactory passiveTaskExporterFactory;
+	private ClientTaskExporterFactory regularTaskExporterFactory;
 	private Map<String, RegularObject> unConfigables = new HashMap<String, RegularObject>();
 	private Map<String, ConfigableInfo> regularObjectInfos = new HashMap<String, ConfigableInfo>();
 	@Autowired
@@ -68,7 +68,7 @@ public class RegularProducerManager {
 			((RegularAnalyzer) regularObject).work();
 		} else if (regularObject instanceof RegularTaskProducer) {
 			RegularTaskProducer regularTaskProducer = (RegularTaskProducer)regularObject;
-			TaskExporter exporter = passiveTaskExporterFactory.getExporter(regularTaskProducer);
+			TaskExporter exporter = regularTaskExporterFactory.getExporter(regularTaskProducer);
 			regularTaskProducer.work(exporter);
 		} else {
 			throw new IllegalArgumentException("illegal bean type:" + regularObject.getClass());
