@@ -77,6 +77,19 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 		Date current = new Date();
 		batch.setAssignTime(current);
 		batch.setExpireTime(current);
+		assignToBatch(batch, tasks);
+	}
+
+	@Transactional
+	@Override
+	public void assignToBatch(List<ClientTask> tasks, Integer taskType, Date expireTime) {
+		TaskBatch batch = new TaskBatch();
+		batch.setTaskType(taskType);
+		batch.setExpireTime(expireTime);
+		assignToBatch(batch, tasks);
+	}
+
+	private void assignToBatch(TaskBatch batch, List<ClientTask> tasks) {
 		Long batchId = taskDao.insertTaskBatch(batch);
 		for (ClientTask task : tasks) {
 			task.setBatchId(batchId);

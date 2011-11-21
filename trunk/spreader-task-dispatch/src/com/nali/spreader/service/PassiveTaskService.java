@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.nali.lwtmq.receiver.Receiver;
-import com.nali.spreader.constants.TaskType;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.util.TogglingFlag;
 
@@ -45,10 +44,13 @@ public class PassiveTaskService implements IPassiveTaskService {
 			return Collections.emptyList();
 		}
 	}
+	
+	public void setBatchSize(int batchSize) {
+		this.batchSize = batchSize;
+	}
 
-	public void setTaskType(TaskType taskType) {
-		flag = new TogglingFlag(taskType.getPassiveFetchPercent());
-		batchSize = taskType.getPassiveFetchSize();
+	public void setPassiveFetchPercent(int percent) {
+		flag = new TogglingFlag(percent);
 	}
 
 	public void setPassiveTaskReceiver(Receiver<ClientTask> passiveTaskReceiver) {

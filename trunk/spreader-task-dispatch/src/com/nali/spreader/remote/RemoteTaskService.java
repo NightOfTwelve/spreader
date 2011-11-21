@@ -39,7 +39,8 @@ public class RemoteTaskService implements IRemoteTaskService {//TODO 减少queue
 			PassiveTaskService service = context.getAutowireCapableBeanFactory().createBean(PassiveTaskService.class);
 			Receiver<ClientTask> receiver = context.getBean(taskType.getPassiveTaskReceiverBeanName(), Receiver.class);
 			service.setPassiveTaskReceiver(receiver);
-			service.setTaskType(taskType);
+			service.setPassiveFetchPercent(taskType.getPassiveFetchPercent());
+			service.setBatchSize(taskType.getPassiveFetchSize());
 			passiveTaskServices.put(taskType.getId(), service);
 		}
 	}
