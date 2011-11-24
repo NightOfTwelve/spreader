@@ -179,14 +179,15 @@ function appendNodeAction(node) {
 	// }));
 	var newNode = node.appendChild(node.attributes.getChildConfig());
 	node.attributes.children.push(newNode);
+	newNode.parentNode.reload();
 	// var newNode = node.attributes.getChildConfig;
-	newNode.parentNode.expand(true, true, function() {
-				stgtree.getSelectionModel().select(newNode);
-				setTimeout(function() {
-							treeEditor.editNode = newNode;
-							treeEditor.startEdit(newNode.ui.textNode);
-						}, 10);
-			});// 将上级树形展开
+//	newNode.parentNode.expand(true, true, function() {
+////				stgtree.getSelectionModel().select(newNode);
+//				setTimeout(function() {
+//							treeEditor.editNode = newNode;
+//							treeEditor.startEdit(newNode.ui.textNode);
+//						}, 10);
+//			});// 将上级树形展开
 }
 /**
  * 提交树的数据对象
