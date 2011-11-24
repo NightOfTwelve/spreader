@@ -82,25 +82,27 @@ stgdisptree.on('rightMenu', stgdisptree.rightMenu, stgdisptree);
 // 定义右键菜单
 var rightMenu = new Ext.menu.Menu({
 			id : 'rightMenu',
-			items : [{
-						id : 'addNode',
-						text : '添加',
-						// 增加菜单点击事件
-						menu : [{
-									id : 'insertNode',
-									text : '添加兄弟节点',
-									handler : function(tree) {
-										insertNode();
-									}
-
-								}, {
-									id : 'appendNode',
-									text : '添加儿子节点',
-									handler : function(tree) {
-										appendNodeAction();
-									}
-								}]
-					}, '-', {
+			items : [
+//				{
+//						id : 'addNode',
+//						text : '添加',
+//						// 增加菜单点击事件
+//						menu : [{
+//									id : 'insertNode',
+//									text : '添加兄弟节点',
+//									handler : function(tree) {
+//										insertNode();
+//									}
+//
+//								}, {
+//									id : 'appendNode',
+//									text : '添加儿子节点',
+//									handler : function(tree) {
+//										appendNodeAction();
+//									}
+//								}]
+//					}, '-', 
+						{
 						id : 'delNode',
 						text : '删除',
 						handler : function(tree) {
@@ -118,7 +120,6 @@ var rightMenu = new Ext.menu.Menu({
 						id : 'viewNode',
 						text : '查看',
 						handler : function(tree) {
-
 							veiwNodeAction();
 						}
 					}]
@@ -185,14 +186,15 @@ function appendNodeAction(node) {
 	}
 	var newNode = node.appendChild(node.attributes.getChildConfig());
 	node.attributes.children.push(newNode);
+	newNode.parentNode.reload();
 	// var newNode = node.attributes.getChildConfig;
-	newNode.parentNode.expand(true, true, function() {
-				stgtree.getSelectionModel().select(newNode);
-				setTimeout(function() {
-							treeEditor.editNode = newNode;
-							treeEditor.startEdit(newNode.ui.textNode);
-						}, 10);
-			});// 将上级树形展开
+//	newNode.parentNode.expand(true, true, function() {
+////				stgtree.getSelectionModel().select(newNode);
+//				setTimeout(function() {
+//							treeEditor.editNode = newNode;
+//							treeEditor.startEdit(newNode.ui.textNode);
+//						}, 10);
+//			});// 将上级树形展开
 }
 /**
  * 提交数据的函数
