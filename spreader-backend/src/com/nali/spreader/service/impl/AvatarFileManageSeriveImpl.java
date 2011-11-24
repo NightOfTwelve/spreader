@@ -39,7 +39,10 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 
 	public static void main(String arge[]) throws IOException {
 		AvatarFileManageSeriveImpl afs = new AvatarFileManageSeriveImpl();
-		// afs.initCreatePhotoFileDirectory(new Date(), 10);
+//		Sardine sardine = SardineFactory.begin();
+		String webDav ="http://192.168.3.61:8080/slide/files/";
+		afs.syncAvatarFileData(webDav);
+//		 afs.initCreatePhotoFileDirectory(new Date(), 10);
 		// afs.createTypeFileDir("");
 		// String webDav =
 		// "http://192.168.3.61:8080/slide/files/20111124/male/other/";
@@ -220,7 +223,7 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 		// 获取初始化日期集合
 		List<String> dateList = findFileDateList(date, k);
 		// 获取webdav的配置文件信息
-		Map<Object, Object> serviceMap = getPropertiesMap("/webDavService.properties");
+		Map<Object, Object> serviceMap = getPropertiesMap("/avatarconfig/webDavService.properties");
 		// 提取服务器地址
 		String webDav = serviceMap.get("url").toString();
 		long start = System.currentTimeMillis();
@@ -238,12 +241,58 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 		LOGGER.info("头像库目录创建结束,耗时:" + end + "s");
 	}
 
-	private void syncAvatarFileData() throws SardineException {
-		String webDav = "http://192.168.3.61:8080/slide/files/20111124/";
+	private void syncAvatarFileData(String url) throws SardineException {
 		Sardine sardine = SardineFactory.begin();
-		List<DavResource> davres = sardine.getResources(webDav);
-		for (DavResource dav : davres) {
+		List<DavResource> resDate = sardine.getResources(url);
+		//日期
+		for (DavResource davDate : resDate) {
+			if(!davDate.isDirectory()) {
+				String genUrl= davDate.getAbsoluteUrl();
+				List<DavResource> resGender = sardine.getResources(genUrl+"/");
+				//性别
+				for(DavResource davGender:resGender) {
+					if(!davGender.isDirectory()) {
+						String typeUrl = davGender.getAbsoluteUrl();
+						List<DavResource> resType = sardine.getResources(typeUrl+"/");
+						for(DavResource davType:resType) {
+							if(!davType.isDirectory()) {
+								String imgUrl = davType.getAbsoluteUrl();
+								List<DavResource> resImage = sardine.getResources(imgUrl+"/");
+								for(DavResource davImg:resImage) {
+									if(!davImg.isDirectory()) {
+										System.out.println(davImg.getAbsoluteUrl());
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+//			String fname = dav.getName();
+//			Date fdate = dav.getModified();
+//			if (dav.isDirectory()) {
+//				
+//			} else {
+//				System.out.println(dav.getAbsoluteUrl());
+//				syncAvatarFileData(sardine,dav.getAbsoluteUrl());
+//				
+//			}
+		}
+	}
 
+	private void recursiveQueryFileData(Sardine sardine, String url)
+			throws SardineException {
+		sardine = SardineFactory.begin();
+		List<DavResource> davres = sardine.getResources(url);
+		for (DavResource dav : davres) {
+			String uri = dav.getAbsoluteUrl();
+//			String fname = dav.getName();
+//			Date fdate = dav.getModified();
+			if (dav.isDirectory()) {
+				recursiveQueryFileData(sardine,uri);
+			} else {
+				System.out.println(dav.getAbsoluteUrl());
+			}
 		}
 	}
 }
