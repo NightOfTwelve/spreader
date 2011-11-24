@@ -12,7 +12,6 @@ import com.nali.spreader.dao.ICrudCareerDao;
 import com.nali.spreader.dao.ICrudEducationDao;
 import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.ICrudUserRelationDao;
-import com.nali.spreader.dao.ICrudUserTagDao;
 import com.nali.spreader.dao.IUserDao;
 import com.nali.spreader.data.Career;
 import com.nali.spreader.data.CareerExample;
@@ -23,9 +22,8 @@ import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserExample;
 import com.nali.spreader.data.UserRelation;
 import com.nali.spreader.data.UserTag;
-import com.nali.spreader.data.UserTagExample;
 import com.nali.spreader.exception.SpreaderDataException;
-import com.nali.spreader.service.ICategoryService;
+import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.WebsiteBaseService;
 import com.nali.spreader.util.SpecialDateUtil;
@@ -42,11 +40,9 @@ public class UserService extends WebsiteBaseService implements IUserService {
 	@Autowired
 	private ICrudEducationDao crudEducationDao;
 	@Autowired
-	private ICrudUserTagDao crudUserTagDao;
-	@Autowired
 	private ICrudUserRelationDao crudUserRelationDao;
 	@Autowired
-	private ICategoryService categoryService;
+	private IGlobalUserService globalUserService;
 
 	@Override
 	public Long assignUser(Long websiteUid) {
@@ -87,19 +83,7 @@ public class UserService extends WebsiteBaseService implements IUserService {
 		}
 		List<UserTag> tags = user.getTags();
 		if (tags != null) {
-			updateUserTags(uid, tags);
-		}
-	}
-
-	private void updateUserTags(Long uid, List<UserTag> tags) {
-		UserTagExample example = new UserTagExample();
-		example.createCriteria().andUidEqualTo(uid);
-		crudUserTagDao.deleteByExample(example);
-		for (UserTag userTag : tags) {
-			userTag.setUid(uid);
-			Long cid = categoryService.getIdByName(userTag.getTag());
-			userTag.setCategoryId(cid);
-			crudUserTagDao.insertSelective(userTag);
+			globalUserService.updateUserTags(uid, tags);
 		}
 	}
 
@@ -191,6 +175,28 @@ public class UserService extends WebsiteBaseService implements IUserService {
 	@Override
 	public void createRelation(UserRelation relation) {
 		relation.setWebsiteId(getWebsiteId());
+		if(relation.getWebsiteUid()==null) {
+			Long uid = relation.getUid();
+			if(uid==null) {
+				throw new IllegalArgumentException("uid is null");
+			}
+			User user = crudUserDao.selectByPrimaryKey(uid);
+			if(user==null) {
+				throw new IllegalArgumentException("cannot find user:" + uid);
+			}
+			relation.setWebsiteUid(user.getWebsiteUid());
+		}
+		if(relation.getToWebsiteUid()==null) {
+			Long toUid = relation.getToUid();
+			if(toUid==null) {
+				throw new IllegalArgumentException("toUid is null");
+			}
+			User user = crudUserDao.selectByPrimaryKey(toUid);
+			if(user==null) {
+				throw new IllegalArgumentException("cannot find user:" + toUid);
+			}
+			relation.setToWebsiteUid(user.getWebsiteUid());
+		}
 		UserRelation rlt = crudUserRelationDao.selectByPrimaryKey(relation.getToUid(), relation.getType(), relation.getUid());
 		if(rlt!=null) {
 			return;
@@ -200,11 +206,25 @@ public class UserService extends WebsiteBaseService implements IUserService {
 		} catch (DuplicateKeyException e) {
 			logger.info("double insert.");
 		}
+		Boolean isRobotUser = relation.getIsRobotUser();
+		if(isRobotUser!=null && isRobotUser && UserRelation.TYPE_ATTENTION.equals(relation.getType())) {
+			increaseRobotFans(relation.getToUid());
+		}
+	}
+
+	private void increaseRobotFans(Long uid) {
+		userDao.increaseRobotFans(uid);
 	}
 
 	@Override
 	public List<KeyValue<Long, Long>> findUidToWebsiteUidMapByDto(UserDto dto) {
 		dto.setWebsiteId(getWebsiteId());
 		return userDao.findUidToWebsiteUidMapByDto(dto);
+	}
+
+	@Override
+	public List<User> findUserAttentions(UserDto dto) {
+		dto.setWebsiteId(getWebsiteId());
+		return userDao.findUserAttentions(dto);
 	}
 }

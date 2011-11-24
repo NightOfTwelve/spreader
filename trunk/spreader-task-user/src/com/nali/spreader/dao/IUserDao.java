@@ -21,4 +21,8 @@ public interface IUserDao {
 	Date getAndTouchLastFetchTime(Long uid);
 
 	Long insertContent(Content content);
+
+	List<User> findUserAttentions(UserDto dto);
+
+	void increaseRobotFans(Long uid);
 }

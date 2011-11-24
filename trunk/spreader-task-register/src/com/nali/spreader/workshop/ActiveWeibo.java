@@ -26,8 +26,6 @@ public class ActiveWeibo extends SingleTaskComponentImpl implements PassiveWorks
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
 	@AutowireProductLine
-	private TaskProduceLine<Object> generateRobotUserInfo;
-	@AutowireProductLine
 	private TaskProduceLine<KeyValue<RobotUser, String>> generateRobotUserAccount;
 
 	public ActiveWeibo() {
@@ -49,7 +47,6 @@ public class ActiveWeibo extends SingleTaskComponentImpl implements PassiveWorks
 		robotUser.setLoginPwd(robotRegister.getPwd());
 		generateRobotUserAccount.send(new KeyValue<RobotUser, String>(robotUser, nickname));
 		robotRegisterService.removeRegisteringAccount(websiteId, robotRegisterId);
-		generateRobotUserInfo.send(null);
 	}
 
 	@Override

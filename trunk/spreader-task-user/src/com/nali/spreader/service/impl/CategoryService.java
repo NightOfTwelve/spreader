@@ -18,11 +18,16 @@ public class CategoryService implements ICategoryService {
 
 	@Override
 	public Long getIdByName(String name) {
+		return getCategoryByName(name).getId();
+	}
+
+	@Override
+	public Category getCategoryByName(String name) {
 		CategoryExample example = new CategoryExample();
 		example.createCriteria().andNameEqualTo(name);
 		List<Category> rlt = crudCategoryDao.selectByExample(example);
 		if(rlt.size()!=0) {
-			return rlt.get(0).getId();
+			return rlt.get(0);
 		} else {
 			Category record = new Category();
 			record.setName(name);
@@ -30,7 +35,7 @@ public class CategoryService implements ICategoryService {
 				crudCategoryDao.insertSelective(record);
 			} catch (DuplicateKeyException e) {
 			}
-			return getIdByName(name);
+			return getCategoryByName(name);
 		}
 	}
 
