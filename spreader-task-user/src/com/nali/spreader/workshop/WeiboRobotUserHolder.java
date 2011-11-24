@@ -18,9 +18,9 @@ public class WeiboRobotUserHolder {
 	private Long currentUid;
 	private int robotLeftTime=0;
 	final private int robotUsedTime=20;
-
+	
 	@Autowired
-	public WeiboRobotUserHolder(IRobotUserServiceFactory robotUserServiceFactory) {
+	public void setRobotUserServiceFactory(IRobotUserServiceFactory robotUserServiceFactory) {
 		robotUserService = robotUserServiceFactory.getRobotUserService(websiteId);
 		allRobotUsers = robotUserService.browseAllUser(true);
 	}

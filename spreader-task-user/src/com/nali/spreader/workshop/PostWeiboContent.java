@@ -47,22 +47,22 @@ public class PostWeiboContent extends SingleTaskComponentImpl implements Regular
 		List<KeyValue<Long, Long>> uidToWebsiteUidMaps = userService.findUidToWebsiteUidMapByDto(dto);
 		for (KeyValue<Long, Long> uidToWebsiteUidMap : uidToWebsiteUidMaps) {
 			Long uid = uidToWebsiteUidMap.getKey();
-			Long websiteUid = uidToWebsiteUidMap.getValue();
-			Map<String, Object> content = getContent(uid, websiteUid);
+//			Long websiteUid = uidToWebsiteUidMap.getValue();
+			Map<String, Object> content = getContent(uid);
 			if(content!=null) {
-				exporter.createTask(content, uid, SpecialDateUtil.afterToday(2));
+				exporter.createTask(content, uid, SpecialDateUtil.afterToday(3));
 			}
 		}
 	}
 
-	private Map<String, Object> getContent(Long uid, Long websiteUid) {
+	private Map<String, Object> getContent(Long uid) {
 		Content matchedContent = contentService.getMatchedContent(uid);
 		if(matchedContent==null) {
 			logger.warn("not matchedContent, uid:" + uid);
 			return null;
 		}
 		Map<String,Object> content = CollectionUtils.newHashMap(2);
-		content.put("contentId", matchedContent.getId());
+		content.put("id", uid);
 		content.put("content", matchedContent.getContent());
 		return content;
 	}

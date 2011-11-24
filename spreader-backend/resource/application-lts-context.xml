@@ -31,7 +31,7 @@
 	</bean>
 	
 	<bean id="ltsRegularSchedulerTask" class="com.nali.lts.configuration.TaskConfig">
-		<property name="stateful" value="true"></property>
+		<property name="stateful" value="false"></property>
 		<property name="task" ref="ltsRegularScheduler" />
 	</bean>
 	

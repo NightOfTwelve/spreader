@@ -43,4 +43,15 @@ public class UserDao implements IUserDao {
 		return (Long) sqlMap.insert("spreader_content.insertContent", content);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<User> findUserAttentions(UserDto dto) {
+		return (List<User>) sqlMap.insert("spreader_user.findUserAttentions", dto);
+	}
+
+	@Override
+	public void increaseRobotFans(Long uid) {
+		sqlMap.update("spreader_user.increaseRobotFans", uid);
+	}
+
 }

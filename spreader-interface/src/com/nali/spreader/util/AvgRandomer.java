@@ -8,7 +8,7 @@ import java.util.RandomAccess;
 
 public class AvgRandomer<T> implements Randomer<T> {
 	private List<T> datas;
-	private Random random = new Random();
+	private Randomer<Integer> idxRandomer;
 	
 	public AvgRandomer(Collection<T> datas) {
 		super();
@@ -17,10 +17,11 @@ public class AvgRandomer<T> implements Randomer<T> {
 		} else {
 			this.datas = new ArrayList<T>(datas);
 		}
+		idxRandomer = new NumberRandomer(0, datas.size());
 	}
 
 	public T get() {
-		return randomItem(datas, random);
+		return datas.get(idxRandomer.get());
 	}
 	
 	public static<T> T randomItem(List<T> datas, Random random) {
@@ -31,5 +32,15 @@ public class AvgRandomer<T> implements Randomer<T> {
 	@Override
 	public AvgRandomer<T> mirror() {
 		return new AvgRandomer<T>(datas);
+	}
+
+	@Override
+	public List<T> multiGet(int count) {
+		List<Integer> idxes = idxRandomer.multiGet(count);
+		List<T> rlt = new ArrayList<T>(idxes.size());
+		for (Integer idx : idxes) {
+			rlt.add(datas.get(idx));
+		}
+		return rlt;
 	}
 }

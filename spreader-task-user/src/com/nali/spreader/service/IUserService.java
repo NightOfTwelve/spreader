@@ -39,4 +39,6 @@ public interface IUserService {
 	 * value是网站用户id
 	 */
 	List<KeyValue<Long, Long>> findUidToWebsiteUidMapByDto(UserDto dto);
+
+	List<User> findUserAttentions(UserDto userDto);
 }
