@@ -381,6 +381,7 @@ var stgCmbWindow = new Ext.Window({
 				text : '确定', // 按钮文本
 				iconCls : 'tbar_synchronizeIcon', // 按钮图标
 				handler : function() { // 按钮响应函数
+					GDISPID = null;
 					GOBJID = stgSelectCombo.getValue();
 					GDISNAME = stgSelectCombo.lastSelectionText;
 					editstgWindow.show();
