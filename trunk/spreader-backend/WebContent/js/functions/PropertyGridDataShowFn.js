@@ -30,9 +30,9 @@ function getTypeDefaultEdit(stype) {
  */
 function renderPropertyGrid(node) {
 	// 获取数据
-	var data = node.attributes.attributes.data;
+	var data = node.attributes.data;
 	// 获取数据对应的表结构
-	var def = node.attributes.attributes.def;
+	var def = node.attributes.def;
 	// 获取布局组件
 	var pptgridcmp = Ext.getCmp('pptgridmanage');
 	// 创建一个PropertyGrid
