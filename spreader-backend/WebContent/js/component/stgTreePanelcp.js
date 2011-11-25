@@ -184,9 +184,13 @@ function appendNodeAction(node) {
 	if (node.isLeaf()) {
 		node.leaf = false;
 	}
+	if(!node.hasExpanded) {
+		node.expand(true,true);
+		node.hasExpanded=true;
+	}
 	var newNode = node.appendChild(node.attributes.getChildConfig());
 	node.attributes.children.push(newNode);
-	newNode.parentNode.reload();
+//	newNode.parentNode.reload();
 	// var newNode = node.attributes.getChildConfig;
 //	newNode.parentNode.expand(true, true, function() {
 ////				stgtree.getSelectionModel().select(newNode);
