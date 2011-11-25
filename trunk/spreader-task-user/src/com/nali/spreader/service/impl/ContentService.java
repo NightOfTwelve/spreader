@@ -97,7 +97,9 @@ public class ContentService implements IContentService {
 	}
 
 	private void checkNotNull(Object param) {
-		throw new IllegalArgumentException("property is null");
+		if(param==null) {
+			throw new IllegalArgumentException("property is null");
+		}
 	}
 
 }
