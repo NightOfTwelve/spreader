@@ -2,7 +2,10 @@ package com.nali.spreader.dao;
 
 import com.nali.spreader.data.Photo;
 import com.nali.spreader.data.PhotoExample;
+
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface ICrudPhotoDao {
     /**
@@ -116,4 +119,6 @@ public interface ICrudPhotoDao {
      * @ibatorgenerated Mon Nov 21 16:42:37 CST 2011
      */
     int updateByPrimaryKeyWithoutBLOBs(Photo record);
+    
+    Map<String,Date> selectMaxCreateTime();
 }

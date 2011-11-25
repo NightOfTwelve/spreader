@@ -3,7 +3,11 @@ package com.nali.spreader.dao.impl;
 import com.nali.spreader.dao.ICrudPhotoDao;
 import com.nali.spreader.data.Photo;
 import com.nali.spreader.data.PhotoExample;
+
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.orm.ibatis.support.SqlMapClientDaoSupport;
@@ -217,4 +221,9 @@ public class CrudPhotoDao implements ICrudPhotoDao {
             return record;
         }
     }
+
+	@Override
+	public Map<String,Date> selectMaxCreateTime() {
+		return getSqlMapClientTemplate().queryForMap("spreader_tb_photo.getMaxCreateTime", null, null);
+	}
 }
