@@ -40,5 +40,5 @@ public interface IUserService {
 	 */
 	List<KeyValue<Long, Long>> findUidToWebsiteUidMapByDto(UserDto dto);
 
-	List<User> findUserAttentions(UserDto userDto);
+	List<User> findUserFansInfoByDto(UserDto userDto);
 }

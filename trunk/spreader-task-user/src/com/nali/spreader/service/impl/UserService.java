@@ -223,8 +223,8 @@ public class UserService extends WebsiteBaseService implements IUserService {
 	}
 
 	@Override
-	public List<User> findUserAttentions(UserDto dto) {
+	public List<User> findUserFansInfoByDto(UserDto dto) {
 		dto.setWebsiteId(getWebsiteId());
-		return userDao.findUserAttentions(dto);
+		return userDao.findUserFansInfoByDto(dto);
 	}
 }
