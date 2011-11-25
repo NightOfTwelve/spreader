@@ -51,8 +51,8 @@ public class AddUserFans extends SingleTaskComponentImpl implements RegularTaskP
 
 	@Override
 	public void work(TaskExporter exporter) {
-		List<User> users = findUserAttentions(dto.getUser(), dto.getCategory(), dto.getWebsiteId(), false);//目前websiteId会强制为微博
-		List<User> robots = findUserAttentions(dto.getRobot(), dto.getCategory(), dto.getWebsiteId(), true);
+		List<User> users = findUserFansInfoByDto(dto.getUser(), dto.getCategory(), dto.getWebsiteId(), false);//目前websiteId会强制为微博
+		List<User> robots = findUserFansInfoByDto(dto.getRobot(), dto.getCategory(), dto.getWebsiteId(), true);
 		List<Long> robotIds = ids(robots);
 		if(users.size()==0 || robots.size()==0) {
 			logger.warn("not enough users in category:" + dto.getCategory());
@@ -67,10 +67,7 @@ public class AddUserFans extends SingleTaskComponentImpl implements RegularTaskP
 			
 			Iterator<Long> idIter = robotIds.iterator();
 			long i = 0;
-			while (i < needRobotCount) {
-				if (!idIter.hasNext()) {
-					break;
-				}
+			while (i < needRobotCount && idIter.hasNext()) {
 				Long id = idIter.next();
 				if (!existsIds.contains(id)) {
 					genTask(exporter, id, user);
@@ -99,7 +96,7 @@ public class AddUserFans extends SingleTaskComponentImpl implements RegularTaskP
 		return ids;
 	}
 
-	private List<User> findUserAttentions(BaseUserDto dto, String category, Integer websiteId, Boolean isRobot) {
+	private List<User> findUserFansInfoByDto(BaseUserDto dto, String category, Integer websiteId, Boolean isRobot) {
 		UserDto userDto = new UserDto();
 		userDto.setCategories(Arrays.asList(category));
 		userDto.setIsRobot(isRobot);
@@ -113,7 +110,7 @@ public class AddUserFans extends SingleTaskComponentImpl implements RegularTaskP
 		userDto.setGender(dto.getGender());
 		userDto.setProvince(dto.getProvince());
 		userDto.setvType(dto.getvType());
-		return userService.findUserAttentions(userDto);
+		return userService.findUserFansInfoByDto(userDto);
 	}
 
 	@Override

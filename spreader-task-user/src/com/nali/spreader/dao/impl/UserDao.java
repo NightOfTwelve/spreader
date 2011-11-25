@@ -45,8 +45,8 @@ public class UserDao implements IUserDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<User> findUserAttentions(UserDto dto) {
-		return (List<User>) sqlMap.insert("spreader_user.findUserAttentions", dto);
+	public List<User> findUserFansInfoByDto(UserDto dto) {
+		return (List<User>) sqlMap.insert("spreader_user.findUserFansInfoByDto", dto);
 	}
 
 	@Override

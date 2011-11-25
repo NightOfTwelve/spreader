@@ -22,7 +22,7 @@ public interface IUserDao {
 
 	Long insertContent(Content content);
 
-	List<User> findUserAttentions(UserDto dto);
+	List<User> findUserFansInfoByDto(UserDto dto);
 
 	void increaseRobotFans(Long uid);
 }

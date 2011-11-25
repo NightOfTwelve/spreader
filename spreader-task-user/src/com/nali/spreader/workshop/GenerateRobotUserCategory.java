@@ -48,7 +48,7 @@ public class GenerateRobotUserCategory implements PassiveAnalyzer<Long>, Configa
 	@Override
 	public void init(CategoryWeight categoryWeight) {
 		Range<Integer> categoryCount = categoryWeight.getCategoryCount();
-		countRandomer = new NumberRandomer(categoryCount.getLte(), categoryCount.getGte()+1);
+		countRandomer = new NumberRandomer(categoryCount.getGte(), categoryCount.getLte()+1);
 		
 		WeightRandomer<Category> weightRandomer = new WeightRandomer<Category>();
 		List<NameValue<String, Integer>> categories = categoryWeight.getCategories();
