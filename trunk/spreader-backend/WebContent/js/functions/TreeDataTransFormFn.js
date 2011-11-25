@@ -170,7 +170,12 @@ function createNodeData(node) {
 			var data = {};
 			var nodedata = node.data;
 			for (var key in nodedata) {
-				data[key] = nodedata[key];
+				var tmpvar = nodedata[key];
+				if(tmpvar==''){
+					tmpvar = null;
+				}
+//				data[key] = nodedata[key];
+				data[key] = tmpvar;
 			}
 			var childarray = node.children;
 			if (childarray != null) {
