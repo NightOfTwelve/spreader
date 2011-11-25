@@ -197,6 +197,20 @@ function createNodeData(node) {
 				var dt = node.attributes.data;
 				var datavalue = dt["data"];
 				return datavalue;
+			} else if (node.attributes.isObject) {
+				var data = {};
+				var nodedata = node.attributes.data;
+				for (var key in nodedata) {
+					data[key] = nodedata[key];
+				}
+				var childarray = node.attributes.children;
+				if (childarray != null) {
+					for (var i = 0; i < childarray.length; i++) {
+						var childobj = childarray[i];
+						data[splitDataId(childobj.id)] = createNodeData(childobj);
+					}
+				}
+				return data;
 			}
 		}
 	}
