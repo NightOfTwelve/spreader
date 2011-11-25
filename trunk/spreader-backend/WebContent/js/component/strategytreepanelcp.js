@@ -170,7 +170,6 @@ function insertNode() {
 // 添加子节点事件实现
 // TODO
 function appendNodeAction(node) {
-	// var selectedNode = stgtree.getSelectionModel().getSelectedNode();
 	if (node.isLeaf()) {
 		node.leaf = false;
 	}
@@ -178,12 +177,8 @@ function appendNodeAction(node) {
 		node.expand(true,true);
 		node.hasExpanded=true;
 	}
-	// var newNode = node.appendChild(new Ext.tree.TreeNode({
-	// text : node.id
-	// }));
 	var newNode = node.appendChild(node.attributes.getChildConfig());
 	node.attributes.children.push(newNode);
-	//node.expand(true,false);
 	// var newNode = node.attributes.getChildConfig;
 //	newNode.parentNode.expand(true, true, function() {
 ////				stgtree.getSelectionModel().select(newNode);
