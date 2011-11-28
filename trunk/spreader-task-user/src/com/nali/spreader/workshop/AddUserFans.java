@@ -60,7 +60,7 @@ public class AddUserFans extends SingleTaskComponentImpl implements RegularTaskP
 		}
 		double robotRate = dto.getRobotRate();
 		for (User user : users) {
-			long needRobotCount = (long)Math.ceil(user.getFans() * robotRate) - user.getRobotFans();
+			long needRobotCount = (long)Math.ceil(nvl(user.getFans()).doubleValue() * robotRate) - nvl(user.getRobotFans()).longValue();
 			Long toUid = user.getId();
 			List<Long> existsIdList = globalUserService.findRelationUserId(toUid, UserRelation.TYPE_ATTENTION, true);
 			Set<Long> existsIds = new HashSet<Long>(existsIdList);
@@ -78,6 +78,10 @@ public class AddUserFans extends SingleTaskComponentImpl implements RegularTaskP
 				logger.info(i + " robots are going to follow user:" + toUid);
 			}
 		}
+	}
+
+	private Number nvl(Number n) {
+		return n==null?0:n;
 	}
 
 	private void genTask(TaskExporter exporter, Long uid, User user) {
