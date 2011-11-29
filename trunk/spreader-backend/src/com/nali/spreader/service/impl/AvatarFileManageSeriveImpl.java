@@ -2,9 +2,7 @@ package com.nali.spreader.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,50 +21,23 @@ import com.googlecode.sardine.Sardine;
 import com.googlecode.sardine.SardineFactory;
 import com.googlecode.sardine.util.SardineException;
 import com.nali.spreader.dao.ICrudPhotoDao;
+import com.nali.spreader.dao.IPhotoDao;
 import com.nali.spreader.data.Photo;
 import com.nali.spreader.service.IAvatarFileManageService;
+import com.nali.spreader.utils.TimeHelper;
 
 @Service
 public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 	private static final Logger LOGGER = Logger
 			.getLogger(AvatarFileManageSeriveImpl.class);
-	// 时间格式化
-	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 	// 性别分类
 	private final String GENDER_MALE = "男";
 	private final String GENDER_FEMALE = "女";
 	private final String GENDER_GENERAL = "通用";
 	@Autowired
-	private ICrudPhotoDao photoDao;
-
-	public static void main(String arge[]) throws IOException {
-		AvatarFileManageSeriveImpl afs = new AvatarFileManageSeriveImpl();
-		// Sardine sardine = SardineFactory.begin();
-		String webDav = "http://192.168.3.61:8080/slide/files";
-//		afs.savePhotoInfo(afs.createAvatarFileUrlData(webDav));
-		// afs.initCreatePhotoFileDirectory(new Date(), 10);
-		// afs.createTypeFileDir("");
-		// String webDav =
-		// "http://192.168.3.61:8080/slide/files/20111124/male/other/";
-		// String webDav ="http://192.168.3.61:8080/slide/files/20111124/";
-		// Sardine sardine = SardineFactory.begin();
-		// if(sardine.exists(webDav)) {
-		// System.out.println("文件夹存在");
-		// }else {
-		// sardine.createDirectory(webDav);
-		// }
-		// List<DavResource> resources = sardine.getResources(webDav);
-		// for (DavResource res : resources) {
-		// System.out.println(res);
-		// }
-		// InputStream is = new FileInputStream(new File("d://20111122//"));
-		// sardine.put(webDav, is);
-		// byte[] data = FileUtils.readFileToByteArray(new
-		// File("D://webdav//20111122"));
-		// sardine.put("http://192.168.3.61:8080/slide/files/Koala.jpg", data);
-		// sardine.copy("http://192.168.3.61:8080/slide/files/test.txt",
-		// "http://192.168.3.61:8080/slide/files/test2.txt");
-	}
+	private IPhotoDao photoDao;
+	@Autowired
+	private ICrudPhotoDao crudPhotoDao;
 
 	@Override
 	public Map<Object, Object> getPropertiesMap(String url) {
@@ -194,39 +166,10 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 
 	}
 
-	/**
-	 * 获取某一日期后i天的所有日期集合
-	 * 
-	 * @param date
-	 * @param i
-	 * @return
-	 */
-	private List<String> findFileDateList(Date date, Integer i) {
-		if (date == null)
-			date = new Date();
-		if (i <= 0)
-			i = 10;
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		List<String> dateList = new ArrayList<String>();
-		// 包括当天
-		dateList.add(sdf.format(cal.getTime()));
-		for (int k = 0; k < i - 1; k++) {
-			cal.add(Calendar.DATE, 1);
-			String sdate = sdf.format(cal.getTime());
-			dateList.add(sdate);
-		}
-		return dateList;
-	}
-
 	@Override
-	public void initCreatePhotoFileDirectory(Date date, Integer k) {
+	public void initCreatePhotoFileDirectory(String webDav, Date date, Integer k) {
 		// 获取初始化日期集合
-		List<String> dateList = findFileDateList(date, k);
-		// 获取webdav的配置文件信息
-		Map<Object, Object> serviceMap = getPropertiesMap("/avatarconfig/webDavService.properties");
-		// 提取服务器地址
-		String webDav = serviceMap.get("url").toString();
+		List<String> dateList = TimeHelper.findAfterNDateList(date, k);
 		long start = System.currentTimeMillis();
 		LOGGER.info("开始创建头像库目录--------->");
 		if (dateList.size() > 0) {
@@ -255,52 +198,48 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 		// 待保存的参数集合
 		List<Map<String, Object>> paramsList = new ArrayList<Map<String, Object>>();
 
-		List<DavResource> resDate = sardine.getResources(url + "/");
-		// 日期
-		for (DavResource davDate : resDate) {
-			if (!davDate.isDirectory()) {
-				String genUrl = davDate.getAbsoluteUrl();
-				List<DavResource> resGender = sardine
-						.getResources(genUrl + "/");
-				// 性别
-				for (DavResource davGender : resGender) {
-					// 获取性别
-					String paramGender = davGender.getName();
-					if (!davGender.isDirectory()) {
-						String typeUrl = davGender.getAbsoluteUrl();
-						List<DavResource> resType = sardine
-								.getResources(typeUrl + "/");
-						for (DavResource davType : resType) {
-							// 获取类别
-							String paramType = davType.getName();
-							if (!davType.isDirectory()) {
-								String imgUrl = davType.getAbsoluteUrl();
-								List<DavResource> resImage = sardine
-										.getResources(imgUrl + "/");
-								for (DavResource davImg : resImage) {
-									if (!davImg.isDirectory()) {
-										String fileUri = davImg
-												.getAbsoluteUrl();
-										Map<String, Object> params = new HashMap<String, Object>();
-										// 设置性别
-										params.put("GENDER", paramGender);
-										// 设置类型
-										params.put("TYPE", paramType);
-										// 设置URL
-										params.put("URI", fileUri);
-										// 设置创建日期
-										params.put("CREATETIME",
-												davImg.getCreation());
-										paramsList.add(params);
-										System.out.println(fileUri);
-									}
-								}
+		// List<DavResource> resDate = sardine.getResources(url + "/");
+		// // 日期
+		// for (DavResource davDate : resDate) {
+		// if (!davDate.isDirectory()) {
+		// String genUrl = davDate.getAbsoluteUrl();
+		List<DavResource> resGender = sardine.getResources(url + "/");
+		// 性别
+		for (DavResource davGender : resGender) {
+			// 获取性别
+			String paramGender = davGender.getName();
+			if (!davGender.isDirectory()) {
+				String typeUrl = davGender.getAbsoluteUrl();
+				List<DavResource> resType = sardine.getResources(typeUrl + "/");
+				for (DavResource davType : resType) {
+					// 获取类别
+					String paramType = davType.getName();
+					if (!davType.isDirectory()) {
+						String imgUrl = davType.getAbsoluteUrl();
+						List<DavResource> resImage = sardine
+								.getResources(imgUrl + "/");
+						for (DavResource davImg : resImage) {
+							if (!davImg.isDirectory()) {
+								String fileUri = davImg.getAbsoluteUrl();
+								Map<String, Object> params = new HashMap<String, Object>();
+								// 设置性别
+								params.put("GENDER", paramGender);
+								// 设置类型
+								params.put("TYPE", paramType);
+								// 设置URL
+								params.put("URI", interceptUrl(fileUri));
+								// 设置创建日期
+								params.put("CREATETIME", davImg.getCreation());
+								paramsList.add(params);
+								LOGGER.info(fileUri);
 							}
 						}
 					}
 				}
 			}
 		}
+		// }
+		// }
 		return paramsList;
 	}
 
@@ -310,11 +249,11 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 	 * @param uriList
 	 */
 	private void savePhotoInfo(List<Map<String, Object>> uriList) {
-		Map<String, Date> maxTime = photoDao.selectMaxCreateTime();
-		Date tDate = null;
-		if (maxTime != null) {
-			tDate = maxTime.get("maxtime");
-		}
+		Date tDate = photoDao.selectMaxCreateTime();
+		// Date tDate = null;
+		// if (maxTime != null) {
+		// tDate = maxTime.get("maxtime");
+		// }
 		if (uriList.size() > 0) {
 			for (Map<String, Object> param : uriList) {
 				String sgender = param.get("GENDER").toString();
@@ -328,7 +267,7 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 						pt.setPicType(stype);
 						pt.setPicUrl(suri);
 						pt.setCreatetime(stime);
-						photoDao.insert(pt);
+						crudPhotoDao.insert(pt);
 					}
 				} else {
 					Photo pt = new Photo();
@@ -336,9 +275,11 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 					pt.setPicType(stype);
 					pt.setPicUrl(suri);
 					pt.setCreatetime(stime);
-					photoDao.insert(pt);
+					crudPhotoDao.insert(pt);
 				}
 			}
+		} else {
+			LOGGER.info("没有需要同步的数据");
 		}
 	}
 
@@ -358,4 +299,69 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 		}
 	}
 
+	/**
+	 * 转换URL保存固定的图片地址
+	 * 
+	 * @param url
+	 * @return
+	 */
+	private String interceptUrl(String url) {
+		StringBuffer buff = new StringBuffer();
+		if (StringUtils.isNotEmpty(url)) {
+			String[] array = url.split("[/]");
+			for (int i = 4; i > 0; i--) {
+				buff.append("/");
+				buff.append(array[array.length - i]);
+			}
+		}
+		return buff.toString();
+	}
+
+	@Override
+	public void synAvatarFileDataBase(String serviceUrl, Date lastTime,
+			Date specTime) {
+		// 根据上次执行的日期开始本次的扫描任务
+		List<String> jobDate = TimeHelper.findStart2EndDateList(lastTime,
+				specTime);
+		if (jobDate.size() > 0) {
+			for (String sdate : jobDate) {
+				StringBuffer webBuff = new StringBuffer(serviceUrl);
+				webBuff.append(sdate);
+				// webBuff.append("/");
+				try {
+					LOGGER.info("开始执行" + sdate + "任务");
+					List<Map<String, Object>> list = createAvatarFileUrlData(webBuff
+							.toString());
+					savePhotoInfo(list);
+					LOGGER.info("执行结束" + sdate);
+				} catch (SardineException e) {
+					LOGGER.error("获取同步数据出错", e);
+				}
+			}
+		} else {
+			LOGGER.info("执行出错，没有执行任务的时间集合");
+		}
+	}
+
+	@Override
+	public void createLastTimeToCurrTimeDir(String serviceUri, Date last,
+			Date curr) {
+		// TODO Auto-generated method stub
+		List<String> dateList = TimeHelper.findStart2EndDateList(last, curr);
+		if (dateList.size() > 0) {
+			for (String date : dateList) {
+				StringBuffer buff = new StringBuffer(serviceUri);
+				buff.append(date);
+				buff.append("/");
+				createTypeFileDir(buff.toString());
+			}
+		}
+	}
+
+	// public static void main(String arge[]) throws IOException {
+	// AvatarFileManageSeriveImpl afs = new AvatarFileManageSeriveImpl();
+	// // Sardine sardine = SardineFactory.begin();
+	// String webDav =
+	// "http://192.168.3.61:8080/slide/files/20111124/男/其他/34.jpg";
+	// }
 }

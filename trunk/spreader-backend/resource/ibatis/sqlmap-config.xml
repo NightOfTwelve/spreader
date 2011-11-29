@@ -21,5 +21,6 @@
   <sqlMap resource="ibatis/spreader_tb_content_category_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_regular_job_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_photo_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_photo.xml" />
 </sqlMapConfig>
 
