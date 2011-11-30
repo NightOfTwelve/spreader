@@ -23,7 +23,7 @@ import com.nali.spreader.factory.config.desc.ConfigableInfo;
 
 @Controller
 public class StrategyManageController {
-	public static final Logger LOGGER = Logger
+	private static final Logger LOGGER = Logger
 			.getLogger(StrategyManageController.class);
 	private static ObjectMapper jacksonMapper = new ObjectMapper();
 	@Autowired
