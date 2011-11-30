@@ -22,12 +22,12 @@
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/DateTimeField.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/Spinner.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/SpinnerField.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/component/stgTreePanelcp.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/app/strategy/stgTreePanelcp.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/functions/TreeDataTransFormFn.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/functions/PropertyGridDataShowFn.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/layout/strategyDispatchGridLayout.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/component/stgDispatchGridQueryFormcp.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/component/stgDispatchListGridcp.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/app/strategy/strategyDispatchGridLayout.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/app/strategy/stgDispatchGridQueryFormcp.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/app/strategy/stgDispatchListGridcp.js')"></script>
 </head>
 <body>
 </body>
