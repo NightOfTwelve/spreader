@@ -220,18 +220,25 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 								.getResources(imgUrl + "/");
 						for (DavResource davImg : resImage) {
 							if (!davImg.isDirectory()) {
-								String fileUri = davImg.getAbsoluteUrl();
-								Map<String, Object> params = new HashMap<String, Object>();
-								// 设置性别
-								params.put("GENDER", paramGender);
-								// 设置类型
-								params.put("TYPE", paramType);
-								// 设置URL
-								params.put("URI", interceptUrl(fileUri));
-								// 设置创建日期
-								params.put("CREATETIME", davImg.getCreation());
-								paramsList.add(params);
-								LOGGER.info(fileUri);
+								String fileName = davImg.getName();
+								// 只有图片文件才做处理
+								if (isImageFile(fileName)) {
+									String fileUri = davImg.getAbsoluteUrl();
+									Map<String, Object> params = new HashMap<String, Object>();
+									// 设置性别
+									params.put("GENDER", paramGender);
+									// 设置类型
+									params.put("TYPE", paramType);
+									// 设置URL
+									params.put("URI", interceptUrl(fileUri));
+									// 设置创建日期
+									params.put("CREATETIME",
+											davImg.getCreation());
+									paramsList.add(params);
+									LOGGER.info(fileUri);
+								} else {
+									LOGGER.info("不是图片文件，跳过处理");
+								}
 							}
 						}
 					}
@@ -297,6 +304,29 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 		} else {
 			return 3;
 		}
+	}
+
+	/**
+	 * 判断是否是图片文件
+	 * 
+	 * @param filename
+	 * @return
+	 */
+	private boolean isImageFile(String filename) {
+		boolean isImage = false;
+		// 部分图片文件的扩展名
+		String[] extName = { "jpg", "jpeg", "png", "bmp", "gif", "pic", "ico" };
+		if (StringUtils.isNotEmpty(filename)) {
+			String[] tarray = filename.split("[.]");
+			String ext = tarray[1];
+			for (String tmp : extName) {
+				if (ext.equalsIgnoreCase(tmp)) {
+					isImage = true;
+					break;
+				}
+			}
+		}
+		return isImage;
 	}
 
 	/**
