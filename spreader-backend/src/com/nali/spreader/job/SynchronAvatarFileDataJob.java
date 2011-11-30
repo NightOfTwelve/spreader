@@ -21,7 +21,6 @@ public class SynchronAvatarFileDataJob extends AbstractTask {
 
 	@Override
 	public void execute(TaskExecuteContext context) throws TaskExecuteException {
-		// TODO Auto-generated method stub
 		Map<Object, Object> prop = amService
 				.getPropertiesMap("/avatarconfig/webDavService.properties");
 		String serviceUri = prop.get("url").toString();
@@ -44,8 +43,7 @@ public class SynchronAvatarFileDataJob extends AbstractTask {
 			long stime = System.currentTimeMillis();
 			amService.synAvatarFileDataBase(serviceUri, lastTime, new Date());
 			long etime = System.currentTimeMillis();
-			LOGGER.info("同步任务执行结束,耗时:" + (etime - stime) * 1000 + "s");
-
+			LOGGER.info("同步任务执行结束,耗时:" + (etime - stime) / 1000 + "s");
 		}
 		lastTime = new Date();
 		lastTimeMap.put("lasttime", lastTime);
