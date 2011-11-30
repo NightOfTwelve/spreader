@@ -25,7 +25,7 @@ import com.nali.spreader.model.RegularJob.JobDto;
 
 @Controller
 public class StrategyDispatchController {
-	public static final Logger LOGGER = Logger
+	private static final Logger LOGGER = Logger
 			.getLogger(StrategyDispatchController.class);
 	private static ObjectMapper jacksonMapper = new ObjectMapper();
 	@Autowired
