@@ -72,11 +72,11 @@ var userSinaForm = new Ext.form.FormPanel({
 // 定义表格数据源
 var sinaUserStore = new Ext.data.Store({
 			proxy : new Ext.data.HttpProxy({
-						url : '../strategy/stgdispgridstore'
+						url : '../userinfo/userlist'
 					}),
 			reader : new Ext.data.JsonReader({
-						totalProperty : 'cnt',
-						root : 'data'
+						totalProperty : 'totalCount',
+						root : 'list'
 					}, [{
 								name : 'id'
 							}, {
@@ -220,7 +220,8 @@ var bbar = new Ext.PagingToolbar({
 var sinaUsergGrid = new Ext.grid.GridPanel({
 			// region : 'center',
 			id : 'sinaUsergGrid',
-			height : 300,
+//			autoHeight:true,
+			height : 500,
 			stripeRows : true, // 斑马线
 			frame : true,
 			// autoWidth : true,

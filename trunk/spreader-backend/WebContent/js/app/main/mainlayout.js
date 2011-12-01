@@ -13,7 +13,7 @@ Ext.onReady(function() {
 					// html:'<img border="0" width="450"
 					// height="70"src="$StaticConfig.u('../images/logo.jpg')"
 					// ></img>',
-					collapsible : true,
+//					collapsible : true,
 					border : false,
 					layout : 'fit',
 					height : 100
@@ -31,7 +31,6 @@ Ext.onReady(function() {
 					split : true,
 					collapsible : true,
 					width : 200,
-					height : 200,
 					// minWidth : 175,
 					// maxWidth : 400,
 					items : [accordPanel]
