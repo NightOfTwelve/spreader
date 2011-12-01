@@ -22,6 +22,8 @@
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/DateTimeField.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/Spinner.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/SpinnerField.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/app/user/UserInfoSinaGrid.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/app/user/UserQueryShowTabs.js')"></script>
 </head>
 <body>
 </body>
