@@ -1,6 +1,6 @@
 // WEST导航的Tree菜单
 var menuTree_Stg = new Ext.tree.TreePanel({
-			id : 'menuTree_1',
+			id : 'menuTree_Stg',
 			// autoScroll : true,
 			autoHeight : true,
 			expanded : true,
@@ -11,13 +11,13 @@ var menuTree_Stg = new Ext.tree.TreePanel({
 						id : '-1',
 						text : '相关配置',
 						children : [{
-									id : 'node1',
+									id : 'stgnode1',
 									text : "策略配置",
 									leaf : true,
 									// url : '../strategy/showinit'
 									url : '../strategy/showlist'
 								}, {
-									id : 'node2',
+									id : 'stgnode2',
 									text : "调度配置",
 									leaf : true,
 									url : '../strategy/dispatchlist'
@@ -40,7 +40,7 @@ var menuTree_Stg = new Ext.tree.TreePanel({
  * 查询的树菜单
  */
 var menuTree_InfoQuery = new Ext.tree.TreePanel({
-			id : 'menuTree_1',
+			id : 'menuTree_InfoQuery',
 			// autoScroll : true,
 			autoHeight : true,
 			expanded : true,
@@ -51,13 +51,12 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 						id : '-1',
 						text : '信息查询',
 						children : [{
-									id : 'node1',
+									id : 'infonode1',
 									text : "用户查询",
 									leaf : true,
-									// url : '../strategy/showinit'
-									url : '../strategy/showlist'
+									url : '../userinfo/init'
 								}, {
-									id : 'node2',
+									id : 'infonode2',
 									text : "机器人查询",
 									leaf : true,
 									url : '../strategy/dispatchlist'
