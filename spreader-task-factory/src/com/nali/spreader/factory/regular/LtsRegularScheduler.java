@@ -1,12 +1,8 @@
 package com.nali.spreader.factory.regular;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -28,10 +24,7 @@ import com.nali.lts.trigger.TriggerScheduleInfo;
 import com.nali.lts.trigger.TriggerType;
 import com.nali.spreader.dao.ICrudRegularJobDao;
 import com.nali.spreader.dao.IRegularJobDao;
-import com.nali.spreader.factory.config.Configable;
-import com.nali.spreader.factory.config.ConfigableUnit;
-import com.nali.spreader.factory.config.desc.ConfigDefinition;
-import com.nali.spreader.factory.config.desc.ConfigableInfo;
+import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.model.RegularJob;
 import com.nali.spreader.model.RegularJob.JobDto;
 import com.nali.spreader.model.RegularJobExample;
@@ -48,7 +41,6 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 	private ObjectMapper objectMapper = new ObjectMapper();
 	@Autowired
 	private RegularProducerManager regularProducerManager;
-	private List<ConfigableInfo> infoList;
 	
 	@Override
 	public void execute(TaskExecuteContext taskContext) throws TaskExecuteException {
@@ -56,7 +48,7 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 		RegularJob regularJob = getRegularJob(triggerName);
 		String name = regularJob.getName();
 		try {
-			Object config = unSerialize(regularJob.getConfig(), name);
+			Object config = regularProducerManager.unSerializeConfigData(regularJob.getConfig(), name);
 			regularProducerManager.invokeRegularObject(name, config);
 		} catch (Exception e) {
 			throw new TaskExecuteException("invoke task fail, triggerName:"+triggerName, e);
@@ -64,22 +56,9 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 	}
 
 	@Override
-	public List<ConfigableInfo> listRegularObjectInfos() {
-		if(infoList==null) {
-			synchronized(this) {
-				if(infoList==null) {
-					Collection<ConfigableInfo> units = regularProducerManager.getRegularObjectInfos().values();
-					infoList = new ArrayList<ConfigableInfo>(units);
-				}
-			}
-		}
-		return infoList;
-	}
-
-	@Override
-	public PageResult<RegularJob> findRegularJob(String name, Integer triggerType, int page, int pageSize) {
+	public PageResult<RegularJob> findRegularJob(String name, Integer triggerType, ConfigableType configableType, int page, int pageSize) {
 		RegularJobExample example = new RegularJobExample();
-		Criteria c = example.createCriteria();
+		Criteria c = example.createCriteria().andJobTypeEqualTo(configableType.jobType);
 		if(name!=null && !"".equals(name)) {
 			c.andNameEqualTo(name);
 		}
@@ -95,8 +74,8 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 
 	@Override
 	public Long scheduleCronTrigger(String name, Object config, String desc, String cron) {
-		Map<String, Object> triggerInfo = new HashMap<String, Object>();
-		triggerInfo.put("cron", cron);
+		JobDto triggerInfo = new JobDto();
+		triggerInfo.setCron(cron);
 		
 		Long id = registerRegularJob(name, desc, config, RegularJob.TRIGGER_TYPE_CRON, triggerInfo);
 		TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(cron);
@@ -107,10 +86,10 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 	@Override
 	public Long scheduleSimpleTrigger(String name, Object config, String desc, Date start, int repeatTimes,
 			int repeatInternal) {
-		Map<String, Object> triggerInfo = new HashMap<String, Object>();
-		triggerInfo.put("start", start);
-		triggerInfo.put("repeatTimes", repeatTimes);
-		triggerInfo.put("repeatInternal", repeatInternal);
+		JobDto triggerInfo = new JobDto();
+		triggerInfo.setStart(start);
+		triggerInfo.setRepeatInternal(repeatInternal);
+		triggerInfo.setRepeatTimes(repeatTimes);
 		
 		Long id = registerRegularJob(name, desc, config, RegularJob.TRIGGER_TYPE_SIMPLE, triggerInfo);
 		TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(start, null, repeatTimes, repeatInternal);
@@ -118,22 +97,26 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 		return id;
 	}
 	
-	private Long registerRegularJob(String name, String desc, Object config, Integer triggerType, Object triggerInfo) {
+	private Long registerRegularJob(String name, String desc, Object config, Integer triggerType, JobDto triggerInfo) {
 		RegularJob regularJob = new RegularJob();
 		regularJob.setName(name);
 		regularJob.setDescription(desc);
-		regularJob.setConfig(toJsonString(config));//TODO test config?
+		regularJob.setConfig(regularProducerManager.serializeConfigData(config));
 		regularJob.setTriggerType(triggerType);
-		regularJob.setTriggerInfo(toJsonString(triggerInfo));
+		regularJob.setTriggerInfo(jobDto2String(triggerInfo));
 		return regularJobDao.insert(regularJob);
 	}
 
-	private String toJsonString(Object obj) {
+	private String jobDto2String(JobDto obj) {
 		try {
 			return objectMapper.writeValueAsString(obj);
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	private JobDto string2JobDto(String triggerInfo) throws IOException {
+		return objectMapper.readValue(triggerInfo, JobDto.class);
 	}
 
 	@Override
@@ -152,8 +135,8 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 		RegularJob regularJob = getRegularJob(id);
 		JobDto rlt;
 		try {
-			rlt = objectMapper.readValue(regularJob.getTriggerInfo(), JobDto.class);
-			Object config = unSerialize(regularJob.getConfig(), regularJob.getName());
+			rlt = string2JobDto(regularJob.getTriggerInfo());
+			Object config = regularProducerManager.unSerializeConfigData(regularJob.getConfig(), regularJob.getName());
 			rlt.setConfig(config);
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -170,15 +153,6 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 			throw new IllegalArgumentException("regularJob doesnot exist:" + id);
 		}
 		return regularJob;
-	}
-
-	private Object unSerialize(String configStr, String name) throws Exception {
-		Class<?> configClazz = regularProducerManager.getConfigMetaInfo(name);
-		Object config = null;
-		if(configClazz!=null) {
-			config = objectMapper.readValue(configStr, configClazz);
-		}
-		return config;
 	}
 
 	private RegularJob getRegularJob(String triggerName) {
@@ -218,24 +192,6 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 	@Override
 	public void setBeanName(String name) {
 		beanName = name;
-	}
-
-	private <T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(String name) {
-		return regularProducerManager.getConfigableUnit(name);
-	}
-
-	@Override
-	public ConfigDefinition getConfigDefinition(String name) {
-		ConfigableUnit<Configable<?>> configableUnit = getConfigableUnit(name);
-		if(configableUnit==null) {
-			return null;
-		}
-		return configableUnit.getConfigDefinition();
-	}
-
-	@Override
-	public ConfigableInfo getConfigableInfo(String name) {
-		return regularProducerManager.getConfigableInfo(name);
 	}
 	
 }

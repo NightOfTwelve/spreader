@@ -1,25 +1,20 @@
 package com.nali.spreader.factory.config;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-import com.nali.spreader.factory.config.desc.ConfigableInfo;
+import com.nali.spreader.factory.config.desc.ConfigDefinition;
 
-@Scope("prototype")
-@Component
 public class ConfigableCenter implements IConfigableCenter {
 	private Map<String, ConfigableUnit<?>> configables = new LinkedHashMap<String, ConfigableUnit<?>>();
-	@Autowired
 	private ApplicationContext context;
-	private List<ConfigableInfo> infoList;
+
+	public ConfigableCenter(ApplicationContext context) {
+		super();
+		this.context = context;
+	}
 
 	@Override
 	public <T> boolean register(String name, Configable<T> configable) {
@@ -35,7 +30,6 @@ public class ConfigableCenter implements IConfigableCenter {
 		}
 	}
 
-	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(String name) {
 		ConfigableUnit<T> configableUnit = (ConfigableUnit<T>) configables.get(name);
@@ -46,18 +40,28 @@ public class ConfigableCenter implements IConfigableCenter {
 	}
 
 	@Override
-	public List<ConfigableInfo> listAllConfigableInfo() {
-		if(infoList==null) {
-			synchronized(this) {
-				if(infoList==null) {
-					Collection<ConfigableUnit<?>> units = configables.values();
-					infoList = new ArrayList<ConfigableInfo>(units.size());
-					for (ConfigableUnit<?> unit : units) {
-						infoList.add(unit.getConfigableInfo());
-					}
-				}
-			}
+	public <T extends Configable<?>> void listen(String name, ConfigableListener<T>... listeners) {
+		ConfigableUnit<T> configableUnit = getConfigableUnit(name);
+		for (ConfigableListener<T> listener : listeners) {
+			configableUnit.addListener(listener);
 		}
-		return infoList;
+	}
+
+	@Override
+	public <T> Configable<T> getCopy(String name, T config) {
+		ConfigableUnit<Configable<T>> configableUnit = getConfigableUnit(name);
+		return configableUnit.getFromPrototype(config);
+	}
+
+	@Override
+	public void applyConfigToPrototype(String name, Object config) {
+		ConfigableUnit<?> configableUnit = getConfigableUnit(name);
+		configableUnit.reload(config);
+	}
+
+	@Override
+	public ConfigDefinition getConfigDefinition(String name) {
+		ConfigableUnit<?> configableUnit = getConfigableUnit(name);
+		return configableUnit.getConfigDefinition();
 	}
 }

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.pagination.PageResult;
+import com.nali.spreader.factory.config.ConfigableType;
+import com.nali.spreader.factory.config.IConfigService;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.regular.RegularScheduler;
@@ -30,6 +32,8 @@ public class StrategyDispatchController {
 	private static ObjectMapper jacksonMapper = new ObjectMapper();
 	@Autowired
 	private RegularScheduler cfgService;
+	@Autowired
+	private IConfigService<Long> regularConfigService;
 
 	/**
 	 * 策略调度列表的显示页
@@ -58,10 +62,9 @@ public class StrategyDispatchController {
 			limit = 20;
 		}
 		start = start / limit + 1;
-		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname,
-				triggerType, start, limit);
+		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname, triggerType, ConfigableType.normal, start, limit);
 		List<RegularJob> list = pr.getList();
-		List<ConfigableInfo> dispnamelist = cfgService.listRegularObjectInfos();
+		List<ConfigableInfo> dispnamelist = regularConfigService.listConfigableInfo(ConfigableType.normal);
 		int rowcount = pr.getTotalCount();
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("cnt", rowcount);
@@ -86,8 +89,8 @@ public class StrategyDispatchController {
 	public String createStgTreeData(String name, Long id)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		return jacksonMapper.writeValueAsString(new DispatchData(null,
-				cfgService.getConfigableInfo(name).getDisplayName(), cfgService
-						.getConfigDefinition(name),
+				regularConfigService.getConfigableInfo(name).getDisplayName(), 
+				regularConfigService.getConfigDefinition(name),
 				id != null && id > 0 ? cfgService.getConfig(id).getConfig()
 						: null));
 	}
@@ -130,7 +133,7 @@ public class StrategyDispatchController {
 		}
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
 		message.put("success", false);
-		Class<?> dataClass = cfgService.getConfigableInfo(name).getDataClass();
+		Class<?> dataClass = regularConfigService.getConfigableInfo(name).getDataClass();
 		Object configObj = null;
 		if (StringUtils.isNotEmpty(config)) {
 			configObj = jacksonMapper.readValue(config, dataClass);
@@ -205,7 +208,7 @@ public class StrategyDispatchController {
 	@RequestMapping(value = "/strategy/combstore")
 	public String createStgCombStore() throws JsonGenerationException,
 			JsonMappingException, IOException {
-		List<ConfigableInfo> list = cfgService.listRegularObjectInfos();
+		List<ConfigableInfo> list = regularConfigService.listConfigableInfo(ConfigableType.normal);
 		return jacksonMapper.writeValueAsString(list);
 	}
 

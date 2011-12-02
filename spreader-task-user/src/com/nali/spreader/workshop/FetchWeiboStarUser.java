@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.factory.SimpleActionConfig;
+import com.nali.spreader.factory.config.SystemObject;
 import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
 import com.nali.spreader.factory.exporter.TaskExporter;
@@ -21,7 +22,7 @@ import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
 @ClassDescription("爬取明星排行榜")
-public class FetchWeiboStarUser extends SingleTaskComponentImpl implements RegularTaskProducer {
+public class FetchWeiboStarUser extends SingleTaskComponentImpl implements RegularTaskProducer, SystemObject {
 	private static Logger logger = Logger.getLogger(FetchWeiboStarUser.class);
 	private IRobotUserService robotUserService;
 

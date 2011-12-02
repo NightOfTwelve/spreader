@@ -1,4 +1,4 @@
-package com.nali.spreader.factory.config;
+package com.nali.spreader.dao.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.keyvalue.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.nali.spreader.dao.IPassiveConfigDao;
+
 @Repository
-public class ConfigStore implements IConfigStore {
-	private static Logger logger = Logger.getLogger(ConfigStore.class);
+public class PassiveConfigDao implements IPassiveConfigDao {
+	private static Logger logger = Logger.getLogger(PassiveConfigDao.class);
     private static final String CONFIG_INIT_DIR = "configInit/";
 	private static final String CONFIG_STORE_KEY = "ConfigStore";
 	@Autowired
@@ -34,7 +36,7 @@ public class ConfigStore implements IConfigStore {
 	}
 	
 	private <T> T initFromFile(String name, Class<T> clazz) {
-		InputStream in = ConfigStore.class.getClassLoader().getResourceAsStream(CONFIG_INIT_DIR + name);
+		InputStream in = PassiveConfigDao.class.getClassLoader().getResourceAsStream(CONFIG_INIT_DIR + name);
 		if(in==null) {
 			try {
 				return clazz.newInstance();

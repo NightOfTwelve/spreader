@@ -15,9 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.nali.spreader.factory.config.Configable;
-import com.nali.spreader.factory.config.ConfigableUnit;
-import com.nali.spreader.factory.config.ISingletonConfigCenter;
+import com.nali.spreader.factory.config.ConfigableType;
+import com.nali.spreader.factory.config.IConfigService;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 
@@ -27,7 +26,7 @@ public class StrategyManageController {
 			.getLogger(StrategyManageController.class);
 	private static ObjectMapper jacksonMapper = new ObjectMapper();
 	@Autowired
-	private ISingletonConfigCenter cfgService;
+	private IConfigService<String> passiveConfigService;
 
 	/**
 	 * 初始化进入策略详细配置
@@ -61,7 +60,7 @@ public class StrategyManageController {
 	@RequestMapping(value = "/strategy/stggridstore")
 	public String stgGridStore() throws JsonGenerationException,
 			JsonMappingException, IOException {
-		List<ConfigableInfo> list = cfgService.listAllConfigableInfo();
+		List<ConfigableInfo> list = passiveConfigService.listConfigableInfo(ConfigableType.normal);
 		Map<String, List<ConfigableInfo>> jsonMap = new HashMap<String, List<ConfigableInfo>>();
 		jsonMap.put("data", list);
 		return jacksonMapper.writeValueAsString(jsonMap);
@@ -80,10 +79,14 @@ public class StrategyManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/createtree")
-	public String createStgTreeData(String name)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		return jacksonMapper.writeValueAsString(new DefAndData(cfgService
-				.getConfigableUnit(name), cfgService.getConfig(name)));
+	public String createStgTreeData(String name) throws JsonGenerationException, JsonMappingException, IOException {
+		return jacksonMapper.writeValueAsString(
+				new DefAndData(
+						passiveConfigService.getConfigableInfo(name),
+						passiveConfigService.getConfigDefinition(name),
+						passiveConfigService.getConfigData(name)
+					)
+			);
 	}
 
 	/**
@@ -103,10 +106,10 @@ public class StrategyManageController {
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
 		message.put("success", false);
 		if (!StringUtils.isEmpty(name) && config != null) {
-			Class<?> configClass = cfgService.getConfigableUnit(name).getConfigClass();
+			Class<?> configClass = passiveConfigService.getConfigableInfo(name).getDataClass();
 			Object configObject = jacksonMapper.readValue(config, configClass);
 			try {
-				cfgService.saveConfig(name, configObject);
+				passiveConfigService.saveConfigData(name, configObject);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存策略配置失败", e);
@@ -123,19 +126,16 @@ public class StrategyManageController {
 		private ConfigDefinition def;
 		private Object data;
 
+		public DefAndData(ConfigableInfo configableInfo, ConfigDefinition def,
+				Object data) {
+			this(configableInfo.getName(), configableInfo.getDisplayName(), def, data);
+		}
 		public DefAndData(String id, String name, ConfigDefinition def,
 				Object data) {
 			this.id = id;
 			this.name = name;
 			this.def = def;
 			this.data = data;
-		}
-
-		public DefAndData(ConfigableUnit<Configable<?>> configableUnit,
-				Object config) {
-			this(configableUnit.getConfigableInfo().getName(), configableUnit
-					.getConfigableInfo().getDisplayName(), configableUnit
-					.getConfigDefinition(), config);
 		}
 
 		public String getId() {
