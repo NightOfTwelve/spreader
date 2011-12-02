@@ -37,16 +37,33 @@ public class UserInfoManageController {
 	 * @param start
 	 * @param limit
 	 * @return
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonGenerationException 
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/userlist")
 	public String userInfoDtl(Long id, String nickname, Integer start,
-			Integer limit) throws JsonGenerationException, JsonMappingException, IOException {
+			Integer limit) throws JsonGenerationException,
+			JsonMappingException, IOException {
 		start = start / limit + 1;
-		PageResult<User> result = userService.findUserInfo(id, nickname, start, limit);
+		PageResult<User> result = userService.findUserInfo(id, nickname, start,
+				limit);
 		return jacksonMapper.writeValueAsString(result);
+	}
+
+	/**
+	 * 查询粉丝信息 可以区分是否是机器人粉丝
+	 * 
+	 * @param id
+	 * @param isRobot
+	 * @param start
+	 * @param limit
+	 * @return
+	 */
+	public String userFansInfo(Long id, String isRobot, Integer start,
+			Integer limit) {
+
+		return null;
 	}
 }

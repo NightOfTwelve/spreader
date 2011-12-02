@@ -14,11 +14,11 @@
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-lang-zh_CN.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/pubjs/includeinit.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/app/strategy/strategylayout.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/app/strategy/strategytreepanelcp.js')"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategy/strategylayout.js'))"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategy/strategytreepanelcp.js'))"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/utils/extutils.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/utils/transformtreedatafn.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/utils/treedata2stringfn.js')"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/utils/transformtreedatafn.js'))"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/utils/treedata2stringfn.js'))"></script>
 </head>
 <body>
 </body>
