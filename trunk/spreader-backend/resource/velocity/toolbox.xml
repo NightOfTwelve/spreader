@@ -1,27 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <toolbox>
-	
+
 	<tool>
 		<key>StaticConfig</key>
 		<class>com.nali.spreader.util.StaticConfig</class>
 		<scope>application</scope>
 	</tool>
-	
+
 	<tool>
 		<key>NumberUtil</key>
 		<class>com.nali.common.util.NumberUtil</class>
 		<scope>application</scope>
 	</tool>
-	
+
 	<tool>
 		<key>DateUtil</key>
 		<class>com.nali.common.util.DateFormatUtil</class>
 		<scope>application</scope>
 	</tool>
-	
+
 	<tool>
 		<key>UrlUtil</key>
 		<class>com.nali.common.util.UrlUtil</class>
+		<scope>application</scope>
+	</tool>
+	
+	<tool>
+		<key>UriCacheRefreshUtil</key>
+		<class>com.nali.spreader.util.UriCacheRefreshUtil</class>
 		<scope>application</scope>
 	</tool>
 </toolbox>
