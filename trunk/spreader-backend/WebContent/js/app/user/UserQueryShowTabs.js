@@ -23,7 +23,7 @@ Ext.onReady(function() {
 							region : 'center',
 							split : true,
 							height : 500,
-							items : [sinaUsergGrid]
+							items : [sinaUserGrid]
 						}],
 				iconCls : 'book_previousIcon', // 图标
 				closable : true

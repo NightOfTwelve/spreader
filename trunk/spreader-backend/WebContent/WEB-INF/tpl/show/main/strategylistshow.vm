@@ -17,13 +17,13 @@
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all-debug.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-lang-zh_CN.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/pubjs/includeinit.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/app/strategy/strategytreepanelcp.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/functions/TreeDataTransFormFn.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/functions/PropertyGridDataShowFn.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/app/strategy/strategygridlayout.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/app/strategy/strategygridqueryformcp.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/app/strategy/strategylistgridcp.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/utils/extutils.js')"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategy/strategytreepanelcp.js'))"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/functions/TreeDataTransFormFn.js'))"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/functions/PropertyGridDataShowFn.js'))"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategy/strategygridlayout.js'))"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategy/strategygridqueryformcp.js'))"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategy/strategylistgridcp.js'))"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/utils/extutils.js'))"></script>
 </head>
 <body>
 </body>

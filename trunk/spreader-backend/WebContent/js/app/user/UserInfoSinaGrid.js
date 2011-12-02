@@ -217,10 +217,10 @@ var bbar = new Ext.PagingToolbar({
 		});
 
 // 定义grid表格
-var sinaUsergGrid = new Ext.grid.GridPanel({
+var sinaUserGrid = new Ext.grid.GridPanel({
 			// region : 'center',
-			id : 'sinaUsergGrid',
-//			autoHeight:true,
+			id : 'sinaUserGrid',
+			// autoHeight:true,
 			height : 500,
 			stripeRows : true, // 斑马线
 			frame : true,
@@ -259,68 +259,58 @@ var sinaUsergGrid = new Ext.grid.GridPanel({
 						}
 					}],
 			onCellClick : function(grid, rowIndex, columnIndex, e) {
-				// 找出表格中‘配置’按钮
-				if (e.target.defaultValue == '配置') {
-					var record = grid.getStore().getAt(rowIndex);
-					var data = record.data;
-					GDISNAME = data.displayName;
-					GOBJID = data.name;
-					GDISPID = data.id;
-					var trgid = data.id;
-					// editstgWindow.show();
+				var s = grid.getColumnModel().getDataIndex(columnIndex);
+				if(s=='fans'){
+					fansDtlWin.show();
 				}
+//				alert(grid+ rowIndex+ columnIndex+ e)
+//				alert('列号:' + columnIndex);
+//				fansDtlWin.show();
+				// 找出表格中‘配置’按钮
+				// if (e.target.defaultValue == '配置') {
+				// var record = grid.getStore().getAt(rowIndex);
+				// var data = record.data;
+				// GDISNAME = data.displayName;
+				// GOBJID = data.name;
+				// GDISPID = data.id;
+				// var trgid = data.id;
+				// // editstgWindow.show();
+				// }
 			}
 
 		});
 
 // 注册事件
-sinaUsergGrid.on('cellclick', sinaUsergGrid.onCellClick, sinaUsergGrid);
+sinaUserGrid.on('cellclick', sinaUserGrid.onCellClick, sinaUserGrid);
 
-// // 创建策略维护的窗口组件
-// var editstgWindow = new Ext.Window({
-// layout : 'border',
-// width : document.documentElement.clientWidth - 200,
-// height : document.documentElement.clientHeight - 200,
-// resizable : true,
-// draggable : true,
-// closeAction : 'hide',
-// title : '<span class="commoncss">策略详细配置</span>',
-// iconCls : 'app_rightIcon',
-// modal : true,
-// collapsible : true,
-// maximizable : true,
-// animCollapse : true,
-// animateTarget : document.head,
-// buttonAlign : 'right',
-// constrain : true,
-// border : false,
-// items : [{
-// region : 'center',
-// id : 'pptgridmanage',
-// header : false,
-// collapsible : true,
-// split : true,
-// height : 100
-// }],
-// buttons : [{
-// text : '关闭',
-// iconCls : 'deleteIcon',
-// handler : function() {
-// editstgWindow.hide();
-// }
-// }]
-// });
-// show事件，需先删除组件，再重新创建PPTGRID
-// editstgWindow.on('show', function() {
-// stgdisptree.getRootNode().reload();
-// stgdisptree.root.select();
-// var pptGrid = Ext.getCmp("pptGrid");
-// var pptMgr = Ext.getCmp("pptgridmanage");
-// if (pptGrid != null) {
-// pptMgr.remove(pptGrid);
-// }
-// pptMgr.doLayout();
-// });
+// TODO 粉丝信息列表
+var fansDtlWin = new Ext.Window({
+			title : '<span class="commoncss">粉丝列表</span>', // 窗口标题
+			iconCls : 'imageIcon',
+			layout : 'fit', // 设置窗口布局模式
+			width : 600, // 窗口宽度
+			height : 500, // 窗口高度
+			// tbar : tb, // 工具栏
+			closable : false, // 是否可关闭
+			closeAction : 'hide', // 关闭策略
+			collapsible : true, // 是否可收缩
+			maximizable : false, // 设置是否可以最大化
+			modal : true,
+			border : false, // 边框线设置
+			pageY : 120, // 页面定位Y坐标
+			pageX : document.documentElement.clientWidth / 2 - 400 / 2, // 页面定位X坐标
+			constrain : true,
+			items : [sinaUserFansGrid],
+			// 设置窗口是否可以溢出父容器
+			buttonAlign : 'center',
+			buttons : [{
+						text : '关闭',
+						iconCls : 'deleteIcon',
+						handler : function() {
+							fansDtlWin.hide();
+						}
+					}]
+		});
 
 /**
  * 渲染策略名称为中文名
