@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableListener;
-import com.nali.spreader.factory.config.ISingletonConfigCenter;
 import com.nali.spreader.factory.exporter.ClientTaskExporterFactory;
 import com.nali.spreader.factory.exporter.TaskExporter;
 
@@ -15,7 +14,7 @@ import com.nali.spreader.factory.exporter.TaskExporter;
 public class PassiveProducerManager {
 	private static Logger logger = Logger.getLogger(PassiveProducerManager.class);
 	@Autowired
-	private ISingletonConfigCenter singletonConfigCenter;
+	private PassiveConfigService passiveConfigService;
 	@Autowired
 	private ClientTaskExporterFactory passiveTaskExporterFactory;
 
@@ -25,8 +24,7 @@ public class PassiveProducerManager {
 			AnalyzerProduceLine produceLine = new AnalyzerProduceLine((PassiveAnalyzer)passive);
 			if (passive instanceof Configable) {
 				Configable<?> configable = (Configable<?>) passive;
-				singletonConfigCenter.register(beanName, configable);
-				singletonConfigCenter.listen(beanName, new AnalyzerProduceLineReplace(produceLine));
+				registerAndListen(beanName, configable, new AnalyzerProduceLineReplace(produceLine));
 			}
 			return produceLine;
 		} else if (passive instanceof PassiveTaskProducer) {
@@ -35,8 +33,7 @@ public class PassiveProducerManager {
 			TaskProducerProduceLine produceLine = new TaskProducerProduceLine(passiveTaskProducer, exporter);
 			if (passive instanceof Configable) {
 				Configable<?> configable = (Configable<?>) passive;
-				singletonConfigCenter.register(beanName, configable);
-				singletonConfigCenter.listen(beanName, new TaskProducerProduceLineReplace(produceLine));
+				registerAndListen(beanName, configable, new TaskProducerProduceLineReplace(produceLine));
 			}
 			return produceLine;
 		} else {
@@ -44,6 +41,12 @@ public class PassiveProducerManager {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	private void registerAndListen(String beanName, Configable<?> configable, ConfigableListener<?> listener) {
+		passiveConfigService.registerConfigableInfo(beanName, configable);
+		passiveConfigService.listen(beanName, listener);
+	}
+
 	public static class TaskProducerProduceLineReplace implements ConfigableListener<Configable<?>> {
 		private TaskProducerProduceLine<?> produceLine;
 		public TaskProducerProduceLineReplace(TaskProducerProduceLine<?> produceLine) {

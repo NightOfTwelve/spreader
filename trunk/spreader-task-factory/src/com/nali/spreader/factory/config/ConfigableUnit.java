@@ -7,7 +7,6 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.core.GenericTypeResolver;
 
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
-import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.config.desc.DescriptionResolve;
 
 @SuppressWarnings("rawtypes")
@@ -16,21 +15,13 @@ public class ConfigableUnit<T extends Configable> {
 	private List<ConfigableListener<T>> listeners = new LinkedList<ConfigableListener<T>>();
 	private AutowireCapableBeanFactory beanFactory;
 	private ConfigDefinition configDefinition;
-	private ConfigableInfo configableInfo;
-	private Class<?> configClass;
-
-	public Class<?> getConfigClass() {
-		return configClass;
-	}
 
 	public ConfigableUnit(String name, T configable, AutowireCapableBeanFactory beanFactory) {
 		this.configable = configable;
 		this.beanFactory = beanFactory;
 		Class<?> clazz = configable.getClass();
-		configClass = GenericTypeResolver.resolveTypeArgument(clazz, Configable.class);
-		//TODO 应该返回configType
+		Class<?> configClass = GenericTypeResolver.resolveTypeArgument(clazz, Configable.class);
 		configDefinition = DescriptionResolve.get(configClass);
-		configableInfo = DescriptionResolve.getConfigableInfo(clazz, name);
 	}
 
 	public T getConfigable() {
@@ -61,10 +52,6 @@ public class ConfigableUnit<T extends Configable> {
 
 	public ConfigDefinition getConfigDefinition() {
 		return configDefinition;
-	}
-
-	public ConfigableInfo getConfigableInfo() {
-		return configableInfo;
 	}
 
 }

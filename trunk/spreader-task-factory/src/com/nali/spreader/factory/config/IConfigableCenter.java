@@ -1,8 +1,6 @@
 package com.nali.spreader.factory.config;
 
-import java.util.List;
-
-import com.nali.spreader.factory.config.desc.ConfigableInfo;
+import com.nali.spreader.factory.config.desc.ConfigDefinition;
 
 public interface IConfigableCenter {
 	/**
@@ -10,13 +8,17 @@ public interface IConfigableCenter {
 	 */
 	<T> boolean register(String name, Configable<T> configable);
 	
+	<T extends Configable<?>> void listen(String name, ConfigableListener<T>... listeners);
+
 	/**
-	 * 如果不存在会报错
+	 * 获取一份拷贝
 	 */
-	<T extends Configable<?>> ConfigableUnit<T> getConfigableUnit(String name);
+	<T> Configable<T> getCopy(String name, T config);
+
+	/**
+	 * 保存配置到原型对象
+	 */
+	void applyConfigToPrototype(String name, Object config);
 	
-	/**
-	 * 列出所有ConfigableInfo
-	 */
-	List<ConfigableInfo> listAllConfigableInfo();
+	ConfigDefinition getConfigDefinition(String name);
 }

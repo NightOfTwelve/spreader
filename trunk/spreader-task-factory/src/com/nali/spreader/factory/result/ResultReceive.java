@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableListener;
-import com.nali.spreader.factory.config.ISingletonConfigCenter;
+import com.nali.spreader.factory.passive.PassiveConfigService;
 import com.nali.spreader.factory.regular.RegularObject;
 import com.nali.spreader.model.TaskResult;
 
@@ -29,7 +29,7 @@ public class ResultReceive {
 	private ApplicationContext context;
 	private Map<String, ResultProcessor> processers = new HashMap<String, ResultProcessor>();
 	@Autowired
-	private ISingletonConfigCenter singletonConfigCenter;
+	private PassiveConfigService passiveConfigService;
 	
 	@PostConstruct
 	public void init() {
@@ -65,8 +65,8 @@ public class ResultReceive {
 		}
 		if (processer instanceof Configable) {
 			Configable<?> configable = (Configable<?>) processer;
-			singletonConfigCenter.register(name, configable);
-			singletonConfigCenter.listen(name, new ResultProcessorReplace(processer.getCode()));
+			passiveConfigService.registerConfigableInfo(name, configable);
+			passiveConfigService.listen(name, new ResultProcessorReplace(processer.getCode()));
 		}
 	}
 
