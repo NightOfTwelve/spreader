@@ -24,8 +24,8 @@ import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
-import com.nali.spreader.factory.exporter.TaskExporter;
-import com.nali.spreader.factory.regular.RegularTaskProducer;
+import com.nali.spreader.factory.exporter.SingleTaskExporter;
+import com.nali.spreader.factory.regular.SingleRegularTaskProducer;
 import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
@@ -33,7 +33,7 @@ import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
 @ClassDescription("建立用户关注")
-public class AddUserFans extends SingleTaskComponentImpl implements RegularTaskProducer,Configable<CategoryUserMatchDto> {
+public class AddUserFans extends SingleTaskComponentImpl implements SingleRegularTaskProducer,Configable<CategoryUserMatchDto> {
 	private static Logger logger = Logger.getLogger(AddUserFans.class);
 	private IUserService userService;
 	private CategoryUserMatchDto dto;
@@ -50,7 +50,7 @@ public class AddUserFans extends SingleTaskComponentImpl implements RegularTaskP
 	}
 
 	@Override
-	public void work(TaskExporter exporter) {
+	public void work(SingleTaskExporter exporter) {
 		List<User> users = findUserFansInfoByDto(dto.getUser(), dto.getCategory(), dto.getWebsiteId(), false);//目前websiteId会强制为微博
 		List<User> robots = findUserFansInfoByDto(dto.getRobot(), dto.getCategory(), dto.getWebsiteId(), true);
 		List<Long> robotIds = ids(robots);
@@ -84,7 +84,7 @@ public class AddUserFans extends SingleTaskComponentImpl implements RegularTaskP
 		return n==null?0:n;
 	}
 
-	private void genTask(TaskExporter exporter, Long uid, User user) {
+	private void genTask(SingleTaskExporter exporter, Long uid, User user) {
 		Map<String,Object> content = CollectionUtils.newHashMap(3);
 		content.put("id", uid);
 		content.put("uid", user.getId());

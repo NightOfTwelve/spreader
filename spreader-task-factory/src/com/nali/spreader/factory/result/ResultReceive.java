@@ -58,15 +58,15 @@ public class ResultReceive {
 	
 	@SuppressWarnings("unchecked")
 	protected void registerResultProcessor(String name, ResultProcessor processer) {
-		ResultProcessor old = processers.put(processer.getCode(), processer);
+		ResultProcessor old = processers.put(processer.getTaskMeta().getCode(), processer);
 		if(old!=null) {
-			throw new IllegalArgumentException("two processer are using the same code:" + processer.getCode() +
+			throw new IllegalArgumentException("two processer are using the same code:" + processer.getTaskMeta().getCode() +
 					", one:" + old + ", another:" + processer);
 		}
 		if (processer instanceof Configable) {
 			Configable<?> configable = (Configable<?>) processer;
 			passiveConfigService.registerConfigableInfo(name, configable);
-			passiveConfigService.listen(name, new ResultProcessorReplace(processer.getCode()));
+			passiveConfigService.listen(name, new ResultProcessorReplace(processer.getTaskMeta().getCode()));
 		}
 	}
 

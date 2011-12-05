@@ -17,7 +17,7 @@ import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.SystemConfigable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
-import com.nali.spreader.factory.exporter.TaskExporter;
+import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
@@ -52,7 +52,7 @@ public class FetchWeiboUserMainPage extends SingleTaskComponentImpl implements P
 		}
 	}
 
-	private void createTask(Long robotUid, User user, TaskExporter exporter, Date expiredTime) {
+	private void createTask(Long robotUid, User user, SingleTaskExporter exporter, Date expiredTime) {
 		Map<String, Object> contents = CollectionUtils.newHashMap(2);
 		contents.put("id", user.getId());
 		contents.put("websiteUid", user.getWebsiteUid());
@@ -60,7 +60,7 @@ public class FetchWeiboUserMainPage extends SingleTaskComponentImpl implements P
 	}
 
 	@Override
-	public void work(Long uid, TaskExporter exporter) {
+	public void work(Long uid, SingleTaskExporter exporter) {
 		User user = userService.getUserById(uid);
 		if(user==null) {
 			logger.error("user does not exist,uid:" + uid);

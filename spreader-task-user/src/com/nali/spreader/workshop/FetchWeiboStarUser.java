@@ -13,8 +13,8 @@ import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.config.SystemObject;
 import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
-import com.nali.spreader.factory.exporter.TaskExporter;
-import com.nali.spreader.factory.regular.RegularTaskProducer;
+import com.nali.spreader.factory.exporter.SingleTaskExporter;
+import com.nali.spreader.factory.regular.SingleRegularTaskProducer;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotUserService;
 import com.nali.spreader.service.IRobotUserServiceFactory;
@@ -22,7 +22,7 @@ import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
 @ClassDescription("爬取明星排行榜")
-public class FetchWeiboStarUser extends SingleTaskComponentImpl implements RegularTaskProducer, SystemObject {
+public class FetchWeiboStarUser extends SingleTaskComponentImpl implements SingleRegularTaskProducer, SystemObject {
 	private static Logger logger = Logger.getLogger(FetchWeiboStarUser.class);
 	private IRobotUserService robotUserService;
 
@@ -37,7 +37,7 @@ public class FetchWeiboStarUser extends SingleTaskComponentImpl implements Regul
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void work(TaskExporter exporter) {
+	public void work(SingleTaskExporter exporter) {
 		List<RobotUser> users = robotUserService.getUsers(1);
 		if(users.size()==0) {
 			logger.error("not enough users for FetchWeiboStarUser");

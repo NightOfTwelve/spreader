@@ -18,7 +18,7 @@ import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
-import com.nali.spreader.factory.exporter.TaskExporter;
+import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotRegisterService;
@@ -46,7 +46,7 @@ public class RegisterWeiboAccount extends SingleTaskComponentImpl implements Pas
 	}
 
 	@Override
-	public void work(Long id, TaskExporter exporter) {
+	public void work(Long id, SingleTaskExporter exporter) {
 		RobotRegister robot = robotRegisterService.get(id);
 		Map<String, Object> contents = CollectionUtils.newHashMap(8);
 		contents.put("id", robot.getId());

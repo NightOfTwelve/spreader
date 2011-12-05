@@ -4,7 +4,7 @@ public enum SimpleActionConfig {
 	fetchWeiboStarUser(1L),
 	fetchWeiboUserMainPage(2L),
 	fetchUserAttentions(7L),//3有人用
-	registerRobotUserEmail(8L),
+	//registerRobotUserEmail(8L),
 	registerWeibo(9L),
 	activeWeibo(10L),
 	fetchWeiboContent(11L),

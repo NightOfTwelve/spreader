@@ -18,11 +18,11 @@ import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.RobotRegister;
-import com.nali.spreader.factory.PassiveWorkshop;
-import com.nali.spreader.factory.SimpleActionConfig;
+import com.nali.spreader.factory.MultiActionConfig;
+import com.nali.spreader.factory.MultiTypeTaskPassiveWorkshop;
 import com.nali.spreader.factory.TaskProduceLine;
-import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
-import com.nali.spreader.factory.exporter.TaskExporter;
+import com.nali.spreader.factory.exporter.MultiTaskComponentImpl;
+import com.nali.spreader.factory.exporter.MultiTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotRegisterService;
@@ -34,20 +34,21 @@ import com.nali.spreader.util.WeightRandomer;
 import com.nali.spreader.words.Txt;
 
 @Component
-public class RegisterRobotUserEmail extends SingleTaskComponentImpl implements PassiveWorkshop<RobotRegister, KeyValue<Long, String>> {
-	private static final String FILE_EMAIL_SERVICE = "txt/email.txt";
+public class RegisterRobotUserEmail extends MultiTaskComponentImpl implements MultiTypeTaskPassiveWorkshop<RobotRegister, KeyValue<Long, String>> {
+	private static final String FILE_ACTION_ID = "txt/email.txt";
 	private static final String FILE_QUESTION_SERVICE = "txt/question.txt";
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
 	
-	private Randomer<String> emailISPs;
+//	private Randomer<String> emailISPs;
+	private Randomer<Long> actionIds;
 
 	@AutowireProductLine
 	private TaskProduceLine<Long> registerWeiboAccount;
 	private Randomer<String> questions;
 	
 	public RegisterRobotUserEmail() throws IOException {
-		super(SimpleActionConfig.registerRobotUserEmail, Website.weibo, Channel.intervention);
+		super(MultiActionConfig.registerRobotUserEmail, Website.weibo, Channel.intervention);
 		initEmailISPsRandomer();
 		initQuestionsRandomer();
 	}
@@ -58,14 +59,14 @@ public class RegisterRobotUserEmail extends SingleTaskComponentImpl implements P
 	}
 
 	private void initEmailISPsRandomer() throws IOException {
-		WeightRandomer<String> tmpRandomer = new WeightRandomer<String>();
-		List<Entry<String, String>> properties = TxtFileUtil.readKeyValue(Txt.getUrl(FILE_EMAIL_SERVICE));
+		WeightRandomer<Long> tmpRandomer = new WeightRandomer<Long>();
+		List<Entry<String, String>> properties = TxtFileUtil.readKeyValue(Txt.getUrl(FILE_ACTION_ID));
 		for (Entry<String, String> entry : properties) {
 			String key = entry.getKey();
 			Integer count = Integer.valueOf(key);
-			tmpRandomer.add(entry.getValue(), count);
+			tmpRandomer.add(Long.valueOf(entry.getValue()), count);
 		}
-		emailISPs=tmpRandomer;
+		actionIds=tmpRandomer;
 	}
 	
 	@Override
@@ -75,12 +76,12 @@ public class RegisterRobotUserEmail extends SingleTaskComponentImpl implements P
 	}
 
 	@Override
-	public void work(RobotRegister robot, TaskExporter exporter) {
+	public void work(RobotRegister robot, MultiTaskExporter exporter) {
 		Map<String, Object> contents = CollectionUtils.newHashMap(10);
 		contents.put("id", robot.getId());
 		contents.put("accounts", makeAccounts(robot));
 		contents.put("randomAccount", robot.getFullNamePinyinLower());
-		contents.put("emailISP", emailISPs.get());
+//		contents.put("emailISP", emailISPs.get());
 		contents.put("question", questions.get());
 		contents.put("answer", robot.getFullName());
 		contents.put("gender", robot.getGender());
@@ -88,7 +89,7 @@ public class RegisterRobotUserEmail extends SingleTaskComponentImpl implements P
 		contents.put("month", robot.getBirthdayMonth());
 		contents.put("date", robot.getBirthdayDay());
 		contents.put("pwd", robot.getPwd());
-		exporter.createTask(contents, RobotUser.UID_NOT_LOGIN, SpecialDateUtil.afterToday(2));
+		exporter.createTask(actionIds.get(), contents, RobotUser.UID_NOT_LOGIN, SpecialDateUtil.afterToday(2));
 	}
 
 	private List<String> makeAccounts(RobotRegister robot) {

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.nali.spreader.factory.exporter.ClientTaskExporterFactory;
-import com.nali.spreader.factory.exporter.TaskExporter;
+import com.nali.spreader.factory.exporter.Exporter;
 
 @Service
 @Lazy(false)
@@ -33,13 +33,14 @@ public class RegularProducerManager {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public<T> void invokeRegularObject(String name, T params) throws Exception {
 		RegularObject regularObject = regularConfigService.getRegularObject(name, params);
 		if (regularObject instanceof RegularAnalyzer) {
 			((RegularAnalyzer) regularObject).work();
 		} else if (regularObject instanceof RegularTaskProducer) {
 			RegularTaskProducer regularTaskProducer = (RegularTaskProducer)regularObject;
-			TaskExporter exporter = regularTaskExporterFactory.getExporter(regularTaskProducer);
+			Exporter exporter = regularTaskExporterFactory.getExporter(regularTaskProducer.getTaskMeta());
 			regularTaskProducer.work(exporter);
 		} else {
 			throw new IllegalArgumentException("illegal bean type:" + regularObject.getClass());

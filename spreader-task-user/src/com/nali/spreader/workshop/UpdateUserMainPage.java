@@ -16,8 +16,8 @@ import com.nali.spreader.data.User;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
-import com.nali.spreader.factory.exporter.TaskExporter;
-import com.nali.spreader.factory.regular.RegularTaskProducer;
+import com.nali.spreader.factory.exporter.SingleTaskExporter;
+import com.nali.spreader.factory.regular.SingleRegularTaskProducer;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotUserService;
 import com.nali.spreader.service.IRobotUserServiceFactory;
@@ -29,7 +29,7 @@ import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
 @ClassDescription("更新用户资料")
-public class UpdateUserMainPage extends SingleTaskComponentImpl implements RegularTaskProducer {//TODO SystemObject
+public class UpdateUserMainPage extends SingleTaskComponentImpl implements SingleRegularTaskProducer {//TODO SystemObject
 	private static Logger logger = Logger.getLogger(UpdateUserMainPage.class);
 	private IRobotUserService robotUserService;
 	private IUserService userService;
@@ -49,7 +49,7 @@ public class UpdateUserMainPage extends SingleTaskComponentImpl implements Regul
 	}
 
 	@Override
-	public void work(TaskExporter exporter) {//TODO 改的只剩下同步过期用户,同步未更新的机器人用户
+	public void work(SingleTaskExporter exporter) {//TODO 改的只剩下同步过期用户,同步未更新的机器人用户
 		final int threshold = 20;//TODO 改为任意机器人类型任务
 		//基本数据计算
 		long uninitializedUserCount = userService.getUninitializedUserCount();
@@ -99,14 +99,14 @@ public class UpdateUserMainPage extends SingleTaskComponentImpl implements Regul
 		}
 	}
 
-	private void createTask(Long robotUid, User user, TaskExporter exporter, Date expiredTime) {
+	private void createTask(Long robotUid, User user, SingleTaskExporter exporter, Date expiredTime) {
 		Map<String, Object> contents = CollectionUtils.newHashMap(2);
 		contents.put("id", user.getId());
 		contents.put("websiteUid", user.getWebsiteUid());
 		exporter.createTask(contents, robotUid, expiredTime);
 	}
 	
-	private void createTasks(Long robotUid, List<User> users, TaskExporter exporter) {
+	private void createTasks(Long robotUid, List<User> users, SingleTaskExporter exporter) {
 		Date expiredTime = SpecialDateUtil.afterToday(2);
 		for (User user : users) {
 			createTask(robotUid, user, exporter, expiredTime);

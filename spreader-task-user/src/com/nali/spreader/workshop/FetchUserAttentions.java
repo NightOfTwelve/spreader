@@ -16,7 +16,7 @@ import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
-import com.nali.spreader.factory.exporter.TaskExporter;
+import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
@@ -58,7 +58,7 @@ public class FetchUserAttentions extends SingleTaskComponentImpl implements Pass
 	}
 
 	@Override
-	public void work(Long uid, TaskExporter exporter) {
+	public void work(Long uid, SingleTaskExporter exporter) {
 		Map<String, Object> contents = CollectionUtils.newHashMap(2);
 		User user = userService.getUserById(uid);
 		contents.put("id", uid);

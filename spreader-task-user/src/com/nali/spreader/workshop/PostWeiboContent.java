@@ -17,8 +17,8 @@ import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
-import com.nali.spreader.factory.exporter.TaskExporter;
-import com.nali.spreader.factory.regular.RegularTaskProducer;
+import com.nali.spreader.factory.exporter.SingleTaskExporter;
+import com.nali.spreader.factory.regular.SingleRegularTaskProducer;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
@@ -26,7 +26,7 @@ import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
 @ClassDescription("发微博")
-public class PostWeiboContent extends SingleTaskComponentImpl implements RegularTaskProducer,Configable<UserDto> {
+public class PostWeiboContent extends SingleTaskComponentImpl implements SingleRegularTaskProducer,Configable<UserDto> {
 	private static Logger logger = Logger.getLogger(PostWeiboContent.class);
 	private IUserService userService;
 	private UserDto dto;
@@ -43,7 +43,7 @@ public class PostWeiboContent extends SingleTaskComponentImpl implements Regular
 	}
 
 	@Override
-	public void work(TaskExporter exporter) {
+	public void work(SingleTaskExporter exporter) {
 		List<KeyValue<Long, Long>> uidToWebsiteUidMaps = userService.findUidToWebsiteUidMapByDto(dto);
 		for (KeyValue<Long, Long> uidToWebsiteUidMap : uidToWebsiteUidMaps) {
 			Long uid = uidToWebsiteUidMap.getKey();

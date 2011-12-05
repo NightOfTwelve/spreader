@@ -1,11 +1,6 @@
 package com.nali.spreader.factory.exporter;
 
-
-public interface SingleTaskComponent {
-
+public interface TaskMeta {
 	String getCode();
-
 	Integer getTaskType();
-	
-	Long getActionId();
 }
