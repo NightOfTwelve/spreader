@@ -23,28 +23,61 @@ public class ClientTaskExporterFactory {
 		this(DEFAULT_CONTENT_SERIALIZER, taskSender);
 	}
 	
-	public TaskExporter getExporter(SingleTaskComponent taskProducer) {
-		return getExporter(taskProducer.getCode(), taskProducer.getTaskType(), taskProducer.getActionId());
+	@SuppressWarnings("unchecked")
+	public <TM extends TaskMeta> Exporter<TM> getExporter(TM tm) {
+		if (tm instanceof SingleTaskMeta) {
+			SingleTaskMeta singleTaskMeta = (SingleTaskMeta) tm;
+			return (Exporter<TM>) getSingleTaskExporter(singleTaskMeta.getCode(), singleTaskMeta.getTaskType(), singleTaskMeta.getActionId());
+		} else if (tm instanceof MultiTaskMeta) {
+			return (Exporter<TM>) getMultiTaskExporter(tm.getCode(), tm.getTaskType());
+		} else {
+			throw new IllegalArgumentException("unsupported TaskProducer type:"+tm);
+		}
 	}
 
-	public TaskExporter getExporter(String taskCode, Integer taskType, Long actionId) {
-		return new ClientTaskExporter(taskCode, taskType, actionId);
+	private MultiTaskExporter getMultiTaskExporter(String code, Integer taskType) {
+		return new MultiTaskExporterImpl(code, taskType);
 	}
 
-	class ClientTaskExporter implements TaskExporter {
-		private String taskCode;
-		private Integer taskType;
-		private Long actionId;
+	private SingleTaskExporter getSingleTaskExporter(String taskCode, Integer taskType, Long actionId) {
+		return new SingleTaskExporterImpl(taskCode, taskType, actionId);
+	}
 
-		public ClientTaskExporter(String taskCode, Integer taskType, Long actionId) {
-			super();
-			this.taskCode = taskCode;
-			this.taskType = taskType;
+	class MultiTaskExporterImpl extends ExporterImpl<MultiTaskMeta> implements MultiTaskExporter {
+		public MultiTaskExporterImpl(String taskCode, Integer taskType) {
+			super(taskCode, taskType);
+		}
+		public void createTask(Long actionId, Map<String, Object> contents, Long uid, Date expireTime) {
+			super.createTask(actionId, contents, uid, expireTime);
+		}
+	}
+
+	class SingleTaskExporterImpl extends ExporterImpl<SingleTaskMeta> implements SingleTaskExporter {
+		private final Long actionId;
+
+		public SingleTaskExporterImpl(String taskCode, Integer taskType, Long actionId) {
+			super(taskCode, taskType);
 			this.actionId = actionId;
 		}
 
 		@Override
 		public void createTask(Map<String, Object> contents, Long uid, Date expireTime) {
+			createTask(actionId, contents, uid, expireTime);
+		}
+		
+	}
+
+	class ExporterImpl<TM extends TaskMeta> implements Exporter<TM> {
+		private String taskCode;
+		private Integer taskType;
+
+		public ExporterImpl(String taskCode, Integer taskType) {
+			super();
+			this.taskCode = taskCode;
+			this.taskType = taskType;
+		}
+
+		void createTask(Long actionId, Map<String, Object> contents, Long uid, Date expireTime) {
 			try {
 				String contentString = contentSerializer.serialize(contents);
 				ClientTask task = new ClientTask();

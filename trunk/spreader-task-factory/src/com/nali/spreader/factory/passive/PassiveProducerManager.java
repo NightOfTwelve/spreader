@@ -8,7 +8,8 @@ import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableListener;
 import com.nali.spreader.factory.exporter.ClientTaskExporterFactory;
-import com.nali.spreader.factory.exporter.TaskExporter;
+import com.nali.spreader.factory.exporter.Exporter;
+import com.nali.spreader.factory.exporter.TaskMeta;
 
 @Service
 public class PassiveProducerManager {
@@ -29,7 +30,7 @@ public class PassiveProducerManager {
 			return produceLine;
 		} else if (passive instanceof PassiveTaskProducer) {
 			PassiveTaskProducer passiveTaskProducer = (PassiveTaskProducer) passive;
-			TaskExporter exporter = passiveTaskExporterFactory.getExporter(passiveTaskProducer);
+			Exporter exporter = passiveTaskExporterFactory.getExporter(passiveTaskProducer.getTaskMeta());
 			TaskProducerProduceLine produceLine = new TaskProducerProduceLine(passiveTaskProducer, exporter);
 			if (passive instanceof Configable) {
 				Configable<?> configable = (Configable<?>) passive;
@@ -48,8 +49,8 @@ public class PassiveProducerManager {
 	}
 
 	public static class TaskProducerProduceLineReplace implements ConfigableListener<Configable<?>> {
-		private TaskProducerProduceLine<?> produceLine;
-		public TaskProducerProduceLineReplace(TaskProducerProduceLine<?> produceLine) {
+		private TaskProducerProduceLine<?, ?, ?> produceLine;
+		public TaskProducerProduceLineReplace(TaskProducerProduceLine<?, ?, ?> produceLine) {
 			super();
 			this.produceLine = produceLine;
 		}
@@ -88,10 +89,10 @@ public class PassiveProducerManager {
 		}
 	}
 	
-	public static class TaskProducerProduceLine<T> implements TaskProduceLine<T> {
-		private PassiveTaskProducer<T> passiveTaskProducer;
-		private TaskExporter exporter;
-		public TaskProducerProduceLine(PassiveTaskProducer<T> passiveTaskProducer, TaskExporter exporter) {
+	public static class TaskProducerProduceLine<T, TM extends TaskMeta, E extends Exporter<TM>> implements TaskProduceLine<T> {
+		private PassiveTaskProducer<T, TM, E> passiveTaskProducer;
+		private E exporter;
+		public TaskProducerProduceLine(PassiveTaskProducer<T, TM, E> passiveTaskProducer, E exporter) {
 			this.passiveTaskProducer = passiveTaskProducer;
 			this.exporter = exporter;
 		}

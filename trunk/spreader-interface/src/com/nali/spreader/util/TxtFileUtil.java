@@ -182,11 +182,12 @@ public class TxtFileUtil {
 			public void handle(String line) {
 				String[] pair = kvPattern.split(line, 2);
 				if(pair.length==1) {
-					if(!line.trim().startsWith("#")) {
+					if(!(line.trim().startsWith("#") || "".equals(line.trim()))) {
 						throw new IllegalArgumentException("not a key value pair:" + line);
 					}
+				} else {
+					pairHandler.handle(pair[0], pair[1]);
 				}
-				pairHandler.handle(pair[0], pair[1]);
 			}};
 		read(src, lineHandler);
 	}

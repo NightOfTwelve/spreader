@@ -15,7 +15,7 @@ import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
-import com.nali.spreader.factory.exporter.TaskExporter;
+import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotRegisterService;
@@ -50,7 +50,7 @@ public class ActiveWeibo extends SingleTaskComponentImpl implements PassiveWorks
 	}
 
 	@Override
-	public void work(Long robotRegisterId, TaskExporter exporter) {
+	public void work(Long robotRegisterId, SingleTaskExporter exporter) {
 		RobotRegister robotRegister = robotRegisterService.get(robotRegisterId);
 		Map<String, Object> contents = CollectionUtils.newHashMap(3);
 		contents.put("id", robotRegisterId);
