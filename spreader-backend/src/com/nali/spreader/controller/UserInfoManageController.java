@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.pagination.PageResult;
+import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.data.User;
 import com.nali.spreader.service.IUserManageService;
 
@@ -43,12 +44,20 @@ public class UserInfoManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/userlist")
-	public String userInfoDtl(Long id, String nickname, Integer start,
-			Integer limit) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String userInfoDtl(Long id, String nickName, Integer minFans,
+			Integer maxFans, Integer minRobotFans, Integer maxRobotFans,
+			String tag, Integer start, Integer limit)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		start = start / limit + 1;
-		PageResult<User> result = userService.findUserInfo(id, nickname, start,
-				limit);
+		UserTagParamsDto utp = new UserTagParamsDto();
+		utp.setMinFans(minFans);
+		utp.setMaxFans(maxFans);
+		utp.setId(id);
+		utp.setMinRobotFans(minRobotFans);
+		utp.setMaxRobotFans(maxRobotFans);
+		utp.setNickName(nickName);
+		utp.setTag(tag);
+		PageResult<User> result = userService.findUserInfo(utp, start, limit);
 		return jacksonMapper.writeValueAsString(result);
 	}
 

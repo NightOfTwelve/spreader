@@ -9,6 +9,7 @@ import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.nali.spreader.config.UserDto;
+import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.dao.IUserDao;
 import com.nali.spreader.data.Content;
 import com.nali.spreader.data.KeyValue;
@@ -16,12 +17,12 @@ import com.nali.spreader.data.User;
 
 @Repository
 public class UserDao implements IUserDao {
-    private static final String LAST_FETCH_TIME_KEY_PREFIX = "LastFetchTime_";
+	private static final String LAST_FETCH_TIME_KEY_PREFIX = "LastFetchTime_";
 	@Autowired
-    private SqlMapClientTemplate sqlMap;
+	private SqlMapClientTemplate sqlMap;
 	@Autowired
-    private RedisTemplate<String, Date> redisTemplate;
-    
+	private RedisTemplate<String, Date> redisTemplate;
+
 	@Override
 	public Long assignUser(User user) {
 		return (Long) sqlMap.insert("spreader_user.assignUser", user);
@@ -30,12 +31,14 @@ public class UserDao implements IUserDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<KeyValue<Long, Long>> findUidToWebsiteUidMapByDto(UserDto dto) {
-		return sqlMap.queryForList("spreader_user.findUidToWebsiteUidMapByDto", dto);
+		return sqlMap.queryForList("spreader_user.findUidToWebsiteUidMapByDto",
+				dto);
 	}
 
 	@Override
 	public Date getAndTouchLastFetchTime(Long uid) {
-		return redisTemplate.opsForValue().getAndSet(LAST_FETCH_TIME_KEY_PREFIX + uid, new Date());
+		return redisTemplate.opsForValue().getAndSet(
+				LAST_FETCH_TIME_KEY_PREFIX + uid, new Date());
 	}
 
 	@Override
@@ -46,7 +49,8 @@ public class UserDao implements IUserDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> findUserFansInfoByDto(UserDto dto) {
-		return (List<User>) sqlMap.queryForList("spreader_user.findUserFansInfoByDto", dto);
+		return (List<User>) sqlMap.queryForList(
+				"spreader_user.findUserFansInfoByDto", dto);
 	}
 
 	@Override
@@ -54,4 +58,15 @@ public class UserDao implements IUserDao {
 		sqlMap.update("spreader_user.increaseRobotFans", uid);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<User> findUserAndTagInfoList(UserTagParamsDto utp) {
+		return sqlMap.queryForList("spreader_user.getUserAndTagInfoByDto", utp);
+	}
+
+	@Override
+	public Integer countUserAndTagNumer(UserTagParamsDto utp) {
+		return (Integer) sqlMap.queryForObject(
+				"spreader_user.getUserAndTagCountByDto", utp);
+	}
 }

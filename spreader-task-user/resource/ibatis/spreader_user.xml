@@ -111,4 +111,58 @@
   	set robot_fans = robot_fans+1
   	where id = #id#
   </update>
+  <select id="getUserAndTagInfoByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultClass="com.nali.spreader.data.User">
+  	select u.*,ut.tag from tb_user u
+	join tb_user_tag ut on u.id = ut.uid
+	<dynamic prepend="where">
+		<isNotNull prepend="and" property="id">
+			u.id = #id#
+		</isNotNull>
+		<isNotNull prepend="and" property="nickName">
+			u.nick_name like %#nickName#%
+		</isNotNull>
+		<isNotNull prepend="and" property="minFans">
+			<![CDATA[u.fans >= #minFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="maxFans">
+			<![CDATA[u.fans <= #maxFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="minRobotFans">
+			<![CDATA[u.robot_fans >= #minRobotFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="maxRobotFans">
+			<![CDATA[u.robot_fans <= #maxRobotFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="tag">
+			ut.tag like %#tag#%
+		</isNotNull>
+	</dynamic>
+  </select>
+  <select id="getUserAndTagCountByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultClass="java.lang.Integer">
+  	select count(u.*) as cnum from tb_user u
+	join tb_user_tag ut on u.id = ut.uid
+	<dynamic prepend="where">
+		<isNotNull prepend="and" property="id">
+			u.id = #id#
+		</isNotNull>
+		<isNotNull prepend="and" property="nickName">
+			u.nick_name like %#nickName#%
+		</isNotNull>
+		<isNotNull prepend="and" property="minFans">
+			<![CDATA[u.fans >= #minFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="maxFans">
+			<![CDATA[u.robot_fans <= #maxFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="minRobotFans">
+			<![CDATA[u.robot_fans >= #minRobotFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="maxRobotFans">
+			<![CDATA[u.robot_fans <= #maxRobotFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="tag">
+			ut.tag like %#tag#%
+		</isNotNull>
+	</dynamic>
+  </select>
 </sqlMap>

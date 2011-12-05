@@ -18,8 +18,18 @@ public class User extends BaseModel implements Serializable {
     private List<Education> educations;
 
     private List<UserTag> tags;
+    
+    private String tag;
 
-    public List<Career> getCareers() {
+    public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
+	public List<Career> getCareers() {
         return careers;
     }
 
