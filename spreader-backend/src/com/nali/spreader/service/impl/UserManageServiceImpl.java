@@ -31,10 +31,12 @@ public class UserManageServiceImpl implements IUserManageService {
 	}
 
 	@Override
-	public PageResult<User> findUserFansInfo(Long id, Integer start,
-			Integer limit) {
-		// TODO Auto-generated method stub
-		return null;
+	public PageResult<User> findUserFansInfo(UserTagParamsDto utp,
+			Integer start, Integer limit) {
+		Limit lit = Limit.newInstanceForPage(start, limit);
+		List<User> uList = userDao.findUserFansInfoList(utp);
+		int cnt = userDao.countUserFansNumer(utp);
+		PageResult<User> pr = new PageResult<User>(uList, lit, cnt);
+		return pr;
 	}
-
 }

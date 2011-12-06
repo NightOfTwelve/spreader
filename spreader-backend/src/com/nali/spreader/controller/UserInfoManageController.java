@@ -48,7 +48,9 @@ public class UserInfoManageController {
 			Integer maxFans, Integer minRobotFans, Integer maxRobotFans,
 			String tag, Integer start, Integer limit)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		start = start / limit + 1;
+		if (start == null || start < 1)
+			start = 1;
+		// start = start / limit + 1;
 		UserTagParamsDto utp = new UserTagParamsDto();
 		utp.setMinFans(minFans);
 		utp.setMaxFans(maxFans);
@@ -62,17 +64,32 @@ public class UserInfoManageController {
 	}
 
 	/**
-	 * 查询粉丝信息 可以区分是否是机器人粉丝
+	 * 查询真人粉丝信息
 	 * 
 	 * @param id
-	 * @param isRobot
 	 * @param start
 	 * @param limit
 	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
 	 */
-	public String userFansInfo(Long id, String isRobot, Integer start,
-			Integer limit) {
-
-		return null;
+	@ResponseBody
+	@RequestMapping(value = "/realfansinfo")
+	public String userRealFansInfo(Long id, Integer start, Integer limit)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		if(start==null||start<1) start = 1;
+		if(limit==null||limit<1) limit = 25;
+		if (id != null) {
+			UserTagParamsDto utp = new UserTagParamsDto();
+			utp.setId(id);
+			utp.setIsRobot(false);
+			PageResult<User> result = userService.findUserFansInfo(utp, start,
+					limit);
+			return jacksonMapper.writeValueAsString(result);
+		} else {
+			LOGGER.info("id不能位空");
+			return null;
+		}
 	}
 }

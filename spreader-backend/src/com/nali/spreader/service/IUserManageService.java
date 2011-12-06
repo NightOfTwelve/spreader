@@ -17,14 +17,13 @@ public interface IUserManageService {
 			Integer limit);
 
 	/**
-	 * 查询用户的真人粉丝详细信息
+	 * 获取用户粉丝信息
 	 * 
-	 * @param id
+	 * @param utp
 	 * @param start
 	 * @param limit
 	 * @return
 	 */
-	public PageResult<User> findUserFansInfo(Long id, Integer start,
-			Integer limit);
-
+	public PageResult<User> findUserFansInfo(UserTagParamsDto utp,
+			Integer start, Integer limit);
 }

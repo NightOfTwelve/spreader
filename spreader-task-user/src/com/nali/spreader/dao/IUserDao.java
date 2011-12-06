@@ -41,4 +41,21 @@ public interface IUserDao {
 	 * @return
 	 */
 	Integer countUserAndTagNumer(UserTagParamsDto utp);
+
+	/**
+	 * 获取粉丝信息
+	 * 
+	 * @param utp
+	 * @return
+	 */
+	List<User> findUserFansInfoList(UserTagParamsDto utp);
+
+	/**
+	 * 获取粉丝总数
+	 * 
+	 * @param utp
+	 * @return
+	 */
+	Integer countUserFansNumer(UserTagParamsDto utp);
+
 }

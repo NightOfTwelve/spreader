@@ -10,61 +10,140 @@ var statTypeStore = new Ext.data.ArrayStore({
  * 用户信息列表的查询FORM
  */
 var userSinaForm = new Ext.form.FormPanel({
-			// region : 'north',
-			title : "筛选条件",
-			// collapsible : true,
-			frame : true,
-			id : 'userSinaForm',
-			// border : true,
-			labelWidth : 90, // 标签宽度
-			// frame : true, //是否渲染表单面板背景色
-			labelAlign : 'right', // 标签对齐方式
-			// bodyStyle : 'padding:3 5 0', // 表单元素和表单面板的边距
-			buttonAlign : 'center',
-			height : 120,
-			items : [{ // 行1
-				layout : "column", // 从左往右的布局
-				items : [{
-							columnWidth : .3, // 该列有整行中所占百分比
-							layout : "form", // 从上往下的布局
-							items : [{
-										fieldLabel : '运行状态',
-										// name:'TIMEFER',
-										xtype : 'combo',
-										width : 100,
-										store : statTypeStore,
-										id : 'runstat',
-										hiddenName : 'runstat',
-										valueField : 'ID',
-										editable : false,
-										displayField : 'NAME',
-										mode : 'local',
-										forceSelection : false,// 必须选择一项
-										emptyText : '运行状态...',// 默认值
-										triggerAction : 'all'
-									}]
-						}, {
-							columnWidth : .3,
-							layout : "form",
-							items : [{
-										xtype : "textfield",
-										fieldLabel : "用户昵称",
-										name : 'nickname',
-										width : 100
-									}]
-						}]
-			}],
-			buttonAlign : "center",
-			buttons : [{
-						text : "查询"
-					}, {
-						text : "重置",
-						handler : function() { // 按钮响应函数
-							userSinaForm.form.reset();
-						}
-					}]
-		});
-
+	// region : 'north',
+	title : "筛选条件",
+	// collapsible : true,
+	frame : true,
+	id : 'userSinaForm',
+	// border : true,
+	labelWidth : 100, // 标签宽度
+	// frame : true, //是否渲染表单面板背景色
+	labelAlign : 'left', // 标签对齐方式
+	// bodyStyle : 'padding:3 5 0', // 表单元素和表单面板的边距
+	buttonAlign : 'center',
+	height : 120,
+	items : [{ // 行1
+		layout : "column",
+		items : [{
+					columnWidth : .33,
+					layout : "form",
+					items : [{
+								fieldLabel : '运行状态',
+								// name:'TIMEFER',
+								xtype : 'combo',
+								width : 100,
+								store : statTypeStore,
+								id : 'runstat',
+								hiddenName : 'runstat',
+								valueField : 'ID',
+								editable : false,
+								displayField : 'NAME',
+								mode : 'local',
+								forceSelection : false,// 必须选择一项
+								emptyText : '运行状态...',// 默认值
+								triggerAction : 'all'
+							}]
+				}, {
+					columnWidth : .33,
+					layout : "form",
+					items : [{
+								xtype : "textfield",
+								fieldLabel : "用户昵称",
+								name : 'nickName',
+								width : 100
+							}]
+				}, {
+					columnWidth : .3,
+					layout : "form",
+					items : [{
+								xtype : "textfield",
+								fieldLabel : "分类",
+								name : 'tag',
+								width : 100
+							}]
+				}]
+	}, {
+		layout : "column", // 从左往右的布局
+		items : [{
+					columnWidth : .33,
+					layout : "form",
+					items : [{
+								layout : "column", // 从左往右的布局
+								items : [{
+											columnWidth : .5,
+											layout : "form",
+											items : [{
+														xtype : "textfield",
+														fieldLabel : "粉丝数大于",
+														name : 'minFans',
+														width : 100
+													}]
+										}, {
+											columnWidth : .5,
+											layout : "form",
+											items : [{
+														xtype : "textfield",
+														fieldLabel : "粉丝数小于",
+														name : 'maxFans',
+														width : 100
+													}]
+										}]
+							}]
+				}, {
+					columnWidth : .33,
+					layout : "form",
+					items : [{
+								layout : "column", // 从左往右的布局
+								items : [{
+											columnWidth : .5,
+											layout : "form",
+											items : [{
+														xtype : "textfield",
+														fieldLabel : "机器人粉丝数大于",
+														name : 'minRobotFans',
+														width : 100
+													}]
+										}, {
+											columnWidth : .5,
+											layout : "form",
+											items : [{
+														xtype : "textfield",
+														 fieldLabel : "机器人粉丝数小于",
+														name : 'maxRobotFans',
+														width : 100
+													}]
+										}]
+							}]
+				}]
+	}],
+	buttonAlign : "center",
+	buttons : [{
+				text : "查询",
+				handler : function() { // 按钮响应函数
+					var tform = userSinaForm.getForm();
+					var nickName = tform.findField("nickName").getValue();
+					var minFans = tform.findField("minFans").getValue();
+					var maxFans = tform.findField("maxFans").getValue();
+					var minRobotFans = tform.findField("minRobotFans")
+							.getValue();
+					var maxRobotFans = tform.findField("maxRobotFans")
+							.getValue();
+					var tag = tform.findField("tag").getValue();
+					sinaUserStore.setBaseParam('nickName', nickName);
+					sinaUserStore.setBaseParam('minFans', minFans);
+					sinaUserStore.setBaseParam('maxFans', maxFans);
+					sinaUserStore.setBaseParam('minRobotFans', minRobotFans);
+					sinaUserStore.setBaseParam('maxRobotFans', maxRobotFans);
+					sinaUserStore.setBaseParam('tag', tag);
+					sinaUserStore.load();
+				}
+			}, {
+				text : "重置",
+				handler : function() { // 按钮响应函数
+					userSinaForm.form.reset();
+				}
+			}]
+});
 // ///GRID
 /**
  * 用户信息列表
@@ -80,17 +159,17 @@ var sinaUserStore = new Ext.data.Store({
 					}, [{
 								name : 'id'
 							}, {
-								name : 'is_robot'
+								name : 'isRobot'
 							}, {
-								name : 'nick_name'
+								name : 'nickName'
 							}, {
 								name : 'gender'
 							}, {
-								name : 'real_name'
+								name : 'realName'
 							}, {
 								name : 'fans'
 							}, {
-								name : 'robot_fans'
+								name : 'robotFans'
 							}, {
 								name : 'articles'
 							}, {
@@ -98,7 +177,7 @@ var sinaUserStore = new Ext.data.Store({
 							}, {
 								name : 'region'
 							}, {
-								name : 'space_entry'
+								name : 'spaceEntry'
 							}, {
 								name : 'introduction'
 							}, {
@@ -111,7 +190,7 @@ var sinaUserStore = new Ext.data.Store({
 			autoLoad : {
 				params : {
 					start : 0,
-					limit : 25
+					limit : 20
 				}
 			}
 
@@ -125,11 +204,11 @@ var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), sm, {
 			width : 80
 		}, {
 			header : '是否机器人',
-			dataIndex : 'is_robot',
+			dataIndex : 'isRobot',
 			width : 100
 		}, {
 			header : '昵称',
-			dataIndex : 'nick_name',
+			dataIndex : 'nickName',
 			width : 100
 		}, {
 			header : '性别',
@@ -137,7 +216,7 @@ var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), sm, {
 			width : 100
 		}, {
 			header : '真实姓名',
-			dataIndex : 'real_name',
+			dataIndex : 'realName',
 			width : 100
 		}, {
 			header : '粉丝数',
@@ -145,7 +224,7 @@ var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), sm, {
 			width : 100
 		}, {
 			header : '机器人粉丝数',
-			dataIndex : 'robot_fans',
+			dataIndex : 'robotFans',
 			width : 100
 		}, {
 			header : '文章数',
@@ -161,7 +240,7 @@ var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), sm, {
 			width : 100
 		}, {
 			header : '个人主页',
-			dataIndex : 'space_entry',
+			dataIndex : 'spaceEntry',
 			width : 100
 		}, {
 			header : '自我介绍',
@@ -208,12 +287,14 @@ var numtext = new Ext.form.TextField({
 
 // // 分页菜单
 var bbar = new Ext.PagingToolbar({
-			pageSize : number,
+			pageSize : 20,
 			store : sinaUserStore,
 			displayInfo : true,
 			displayMsg : '显示{0}条到{1}条,共{2}条',
 			emptyMsg : "没有符合条件的记录",
-			items : ['-', '&nbsp;&nbsp;', numtext]
+			plugins : new Ext.ux.ProgressBarPager()
+//			,
+//			items : ['-', '&nbsp;&nbsp;', numtext]
 		});
 
 // 定义grid表格
@@ -259,13 +340,19 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 						}
 					}],
 			onCellClick : function(grid, rowIndex, columnIndex, e) {
-				var s = grid.getColumnModel().getDataIndex(columnIndex);
-				if(s=='fans'){
-					fansDtlWin.show();
+				var selesm = grid.getSelectionModel().getSelections();
+				var userid = selesm[0].data.id;
+				var fanscol = grid.getColumnModel().getDataIndex(columnIndex);
+				if (fanscol == 'fans') {
+					//TODO
+					realFansDtlWin.show();
+					userFansStore.setBaseParam('id', userid);
+					userFansStore.setBaseParam('isRobot', false);
+					userFansStore.load();
 				}
-//				alert(grid+ rowIndex+ columnIndex+ e)
-//				alert('列号:' + columnIndex);
-//				fansDtlWin.show();
+				// alert(grid+ rowIndex+ columnIndex+ e)
+				// alert('列号:' + columnIndex);
+				// fansDtlWin.show();
 				// 找出表格中‘配置’按钮
 				// if (e.target.defaultValue == '配置') {
 				// var record = grid.getStore().getAt(rowIndex);
@@ -284,7 +371,7 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 sinaUserGrid.on('cellclick', sinaUserGrid.onCellClick, sinaUserGrid);
 
 // TODO 粉丝信息列表
-var fansDtlWin = new Ext.Window({
+var realFansDtlWin = new Ext.Window({
 			title : '<span class="commoncss">粉丝列表</span>', // 窗口标题
 			iconCls : 'imageIcon',
 			layout : 'fit', // 设置窗口布局模式
@@ -307,7 +394,7 @@ var fansDtlWin = new Ext.Window({
 						text : '关闭',
 						iconCls : 'deleteIcon',
 						handler : function() {
-							fansDtlWin.hide();
+							realFansDtlWin.hide();
 						}
 					}]
 		});
