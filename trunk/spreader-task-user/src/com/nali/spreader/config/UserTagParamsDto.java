@@ -23,6 +23,8 @@ public class UserTagParamsDto implements Serializable {
 	private String tag;
 	// 昵称
 	private String nickName;
+	// 是否机器人
+	private Boolean isRobot;
 
 	public Long getId() {
 		return id;
@@ -78,5 +80,13 @@ public class UserTagParamsDto implements Serializable {
 
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
+	}
+
+	public Boolean getIsRobot() {
+		return isRobot;
+	}
+
+	public void setIsRobot(Boolean isRobot) {
+		this.isRobot = isRobot;
 	}
 }

@@ -4,7 +4,7 @@
 // 定义粉丝信息表格数据源
 var userFansStore = new Ext.data.Store({
 			proxy : new Ext.data.HttpProxy({
-						url : '../userinfo/userlist'
+						url : '../userinfo/realfansinfo'
 					}),
 			reader : new Ext.data.JsonReader({
 						totalProperty : 'totalCount',
@@ -12,17 +12,17 @@ var userFansStore = new Ext.data.Store({
 					}, [{
 								name : 'id'
 							}, {
-								name : 'is_robot'
+								name : 'isRobot'
 							}, {
-								name : 'nick_name'
+								name : 'nickName'
 							}, {
 								name : 'gender'
 							}, {
-								name : 'real_name'
+								name : 'realName'
 							}, {
 								name : 'fans'
 							}, {
-								name : 'robot_fans'
+								name : 'robotFans'
 							}, {
 								name : 'articles'
 							}, {
@@ -30,7 +30,7 @@ var userFansStore = new Ext.data.Store({
 							}, {
 								name : 'region'
 							}, {
-								name : 'space_entry'
+								name : 'spaceEntry'
 							}, {
 								name : 'introduction'
 							}, {
@@ -57,11 +57,11 @@ var fanscm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 			width : 80
 		}, {
 			header : '是否机器人',
-			dataIndex : 'is_robot',
+			dataIndex : 'isRobot',
 			width : 100
 		}, {
 			header : '昵称',
-			dataIndex : 'nick_name',
+			dataIndex : 'nickName',
 			width : 100
 		}, {
 			header : '性别',
@@ -69,7 +69,7 @@ var fanscm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 			width : 100
 		}, {
 			header : '真实姓名',
-			dataIndex : 'real_name',
+			dataIndex : 'realName',
 			width : 100
 		}, {
 			header : '粉丝数',
@@ -77,7 +77,7 @@ var fanscm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 			width : 100
 		}, {
 			header : '机器人粉丝数',
-			dataIndex : 'robot_fans',
+			dataIndex : 'robotFans',
 			width : 100
 		}, {
 			header : '文章数',
@@ -93,7 +93,7 @@ var fanscm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
 			width : 100
 		}, {
 			header : '个人主页',
-			dataIndex : 'space_entry',
+			dataIndex : 'spaceEntry',
 			width : 100
 		}, {
 			header : '自我介绍',
@@ -163,52 +163,5 @@ var sinaUserFansGrid = new Ext.grid.GridPanel({
 				msg : '正在加载表格数据,请稍等...'
 			},
 			bbar : fansbbar,
-			cm : fanscm,
-			onCellClick : function(grid, rowIndex, columnIndex, e) {
-				alert('列号:' + columnIndex);
-				// 找出表格中‘配置’按钮
-				// if (e.target.defaultValue == '配置') {
-				// var record = grid.getStore().getAt(rowIndex);
-				// var data = record.data;
-				// GDISNAME = data.displayName;
-				// GOBJID = data.name;
-				// GDISPID = data.id;
-				// var trgid = data.id;
-				// // editstgWindow.show();
-				// }
-			}
+			cm : fanscm
 		});
-
-// 注册事件
-sinaUserFansGrid.on('cellclick', sinaUserFansGrid.onCellClick, sinaUserFansGrid);
-
-/**
- * 渲染策略名称为中文名
- * 
- * @param {}
- *            value
- * @return {}
- */
-// function rendDispName(value) {
-// var list = sinaUserStore.reader.jsonData.dispname;
-// for (var idx in list) {
-// var tmp = list[idx].name;
-// var dname = list[idx].displayName;
-// if (value == tmp) {
-// return dname;
-// }
-// }
-// }
-/**
- * 
- * @param {}
- *            value
- * @return {}
- */
-// function rendTrigger(value) {
-// if (value == 1) {
-// return '简单调度';
-// } else {
-// return '复杂调度';
-// }
-// }

@@ -69,4 +69,16 @@ public class UserDao implements IUserDao {
 		return (Integer) sqlMap.queryForObject(
 				"spreader_user.getUserAndTagCountByDto", utp);
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<User> findUserFansInfoList(UserTagParamsDto utp) {
+		return sqlMap.queryForList("spreader_user.getUserFansInfoByDto", utp);
+	}
+
+	@Override
+	public Integer countUserFansNumer(UserTagParamsDto utp) {
+		return (Integer) sqlMap.queryForObject(
+				"spreader_user.getUserFansCountByDto", utp);
+	}
 }
