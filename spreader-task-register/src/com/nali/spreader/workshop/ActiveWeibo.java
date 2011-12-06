@@ -14,7 +14,7 @@ import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
-import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
+import com.nali.spreader.factory.exporter.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.RobotUser;
@@ -22,7 +22,7 @@ import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
-public class ActiveWeibo extends SingleTaskComponentImpl implements PassiveWorkshop<Long, KeyValue<Long, Long>> {
+public class ActiveWeibo extends SingleTaskMachineImpl implements PassiveWorkshop<Long, KeyValue<Long, Long>> {
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
 	@AutowireProductLine

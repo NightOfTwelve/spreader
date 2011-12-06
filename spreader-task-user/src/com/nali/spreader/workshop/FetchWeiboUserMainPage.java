@@ -16,7 +16,7 @@ import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.SystemConfigable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
-import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
+import com.nali.spreader.factory.exporter.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.service.IUserService;
@@ -25,7 +25,7 @@ import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
 @ClassDescription("爬取用户关注的用户")//TODO 真正功能是爬取用户主页，这个是一个配置项的名字
-public class FetchWeiboUserMainPage extends SingleTaskComponentImpl implements PassiveWorkshop<Long, User>, SystemConfigable<Boolean> {
+public class FetchWeiboUserMainPage extends SingleTaskMachineImpl implements PassiveWorkshop<Long, User>, SystemConfigable<Boolean> {
 	private static Logger logger = Logger.getLogger(FetchWeiboUserMainPage.class);
 	@Autowired
 	private WeiboRobotUserHolder weiboRobotUserHolder;

@@ -23,7 +23,7 @@ import com.nali.spreader.data.UserRelation;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
-import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
+import com.nali.spreader.factory.exporter.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.regular.SingleRegularTaskProducer;
 import com.nali.spreader.service.IGlobalUserService;
@@ -33,7 +33,7 @@ import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
 @ClassDescription("建立用户关注")
-public class AddUserFans extends SingleTaskComponentImpl implements SingleRegularTaskProducer,Configable<CategoryUserMatchDto> {
+public class AddUserFans extends SingleTaskMachineImpl implements SingleRegularTaskProducer,Configable<CategoryUserMatchDto> {
 	private static Logger logger = Logger.getLogger(AddUserFans.class);
 	private IUserService userService;
 	private CategoryUserMatchDto dto;

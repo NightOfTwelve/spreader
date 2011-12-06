@@ -21,8 +21,8 @@ import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.factory.MultiActionConfig;
 import com.nali.spreader.factory.MultiTypeTaskPassiveWorkshop;
 import com.nali.spreader.factory.TaskProduceLine;
-import com.nali.spreader.factory.exporter.MultiTaskComponentImpl;
 import com.nali.spreader.factory.exporter.MultiTaskExporter;
+import com.nali.spreader.factory.exporter.MultiTaskMachineImpl;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotRegisterService;
@@ -34,7 +34,7 @@ import com.nali.spreader.util.WeightRandomer;
 import com.nali.spreader.words.Txt;
 
 @Component
-public class RegisterRobotUserEmail extends MultiTaskComponentImpl implements MultiTypeTaskPassiveWorkshop<RobotRegister, KeyValue<Long, String>> {
+public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements MultiTypeTaskPassiveWorkshop<RobotRegister, KeyValue<Long, String>> {
 	private static final String FILE_ACTION_ID = "txt/email.txt";
 	private static final String FILE_QUESTION_SERVICE = "txt/question.txt";
 	@Autowired

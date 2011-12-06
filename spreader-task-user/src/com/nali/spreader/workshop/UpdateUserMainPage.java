@@ -15,7 +15,7 @@ import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.User;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.config.desc.ClassDescription;
-import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
+import com.nali.spreader.factory.exporter.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.regular.SingleRegularTaskProducer;
 import com.nali.spreader.model.RobotUser;
@@ -29,7 +29,7 @@ import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
 @ClassDescription("更新用户资料")
-public class UpdateUserMainPage extends SingleTaskComponentImpl implements SingleRegularTaskProducer {//TODO SystemObject
+public class UpdateUserMainPage extends SingleTaskMachineImpl implements SingleRegularTaskProducer {//TODO SystemObject
 	private static Logger logger = Logger.getLogger(UpdateUserMainPage.class);
 	private IRobotUserService robotUserService;
 	private IUserService userService;

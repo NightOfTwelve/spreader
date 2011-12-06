@@ -16,7 +16,7 @@ import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
-import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
+import com.nali.spreader.factory.exporter.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.regular.SingleRegularTaskProducer;
 import com.nali.spreader.service.IContentService;
@@ -26,7 +26,7 @@ import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
 @ClassDescription("发微博")
-public class PostWeiboContent extends SingleTaskComponentImpl implements SingleRegularTaskProducer,Configable<UserDto> {
+public class PostWeiboContent extends SingleTaskMachineImpl implements SingleRegularTaskProducer,Configable<UserDto> {
 	private static Logger logger = Logger.getLogger(PostWeiboContent.class);
 	private IUserService userService;
 	private UserDto dto;
