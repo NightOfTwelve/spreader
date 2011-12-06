@@ -15,7 +15,7 @@ import com.nali.spreader.data.UserRelation;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
-import com.nali.spreader.factory.exporter.SingleTaskComponentImpl;
+import com.nali.spreader.factory.exporter.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.service.IUserService;
@@ -23,7 +23,7 @@ import com.nali.spreader.service.IUserServiceFactory;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
-public class FetchUserAttentions extends SingleTaskComponentImpl implements PassiveWorkshop<Long, List<UserRelation>> {
+public class FetchUserAttentions extends SingleTaskMachineImpl implements PassiveWorkshop<Long, List<UserRelation>> {
 	@Autowired
 	private WeiboRobotUserHolder weiboRobotUserHolder;
 	

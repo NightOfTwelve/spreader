@@ -9,15 +9,12 @@ public enum MultiActionConfig {
 	;
 	private Set<Long> actionIds;
 	private String taskCode;
+	private Long startActionId;
+	private Long endActionId;
 	private MultiActionConfig(Long startActionId, Long endActionId) {
-		this(getIdRange(startActionId, endActionId));
-	}
-	private static Long[] getIdRange(Long startActionId, Long endActionId) {
-		Long[] ids = new Long[(int) (endActionId-startActionId)];
-		for (int i = 0; i < endActionId-startActionId; i++) {
-			ids[i] = startActionId + i;
-		}
-		return ids;
+		this.startActionId = startActionId;
+		this.endActionId = endActionId;
+		setTaskCode(name());
 	}
 	private MultiActionConfig(Long[] actionIds) {
 		this.actionIds = new HashSet<Long>(Arrays.asList(actionIds));
@@ -30,6 +27,10 @@ public enum MultiActionConfig {
 		this.taskCode = taskCode;
 	}
 	public boolean check(Long actionId) {
-		return actionIds.contains(actionId);
+		if(actionIds!=null) {
+			return actionIds.contains(actionId);
+		} else {
+			return actionId>=startActionId && actionId<endActionId;
+		}
 	}
 }
