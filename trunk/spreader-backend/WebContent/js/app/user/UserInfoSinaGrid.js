@@ -108,7 +108,7 @@ var userSinaForm = new Ext.form.FormPanel({
 											layout : "form",
 											items : [{
 														xtype : "textfield",
-														 fieldLabel : "机器人粉丝数小于",
+														fieldLabel : "机器人粉丝数小于",
 														name : 'maxRobotFans',
 														width : 100
 													}]
@@ -186,6 +186,8 @@ var sinaUserStore = new Ext.data.Store({
 								name : 'msn'
 							}, {
 								name : 'blog'
+							}, {
+								name : 'tag'
 							}]),
 			autoLoad : {
 				params : {
@@ -193,8 +195,8 @@ var sinaUserStore = new Ext.data.Store({
 					limit : 20
 				}
 			}
-
 		});
+
 // 定义Checkbox
 var sm = new Ext.grid.CheckboxSelectionModel();
 // 定义表格列CM
@@ -259,6 +261,11 @@ var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), sm, {
 			header : '博客',
 			dataIndex : 'blog',
 			width : 100
+		}, {
+			header : '分类',
+			dataIndex : 'tag',
+			renderer:renderBrief,
+			width : 100
 		}]);
 // 页数
 var number = 20;
@@ -287,14 +294,13 @@ var numtext = new Ext.form.TextField({
 
 // // 分页菜单
 var bbar = new Ext.PagingToolbar({
-			pageSize : 20,
+			pageSize : number,
 			store : sinaUserStore,
 			displayInfo : true,
 			displayMsg : '显示{0}条到{1}条,共{2}条',
 			emptyMsg : "没有符合条件的记录",
-			plugins : new Ext.ux.ProgressBarPager()
-//			,
-//			items : ['-', '&nbsp;&nbsp;', numtext]
+			plugins : new Ext.ux.ProgressBarPager(),
+			items : ['-', '&nbsp;&nbsp;', numtext]
 		});
 
 // 定义grid表格
@@ -344,7 +350,7 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 				var userid = selesm[0].data.id;
 				var fanscol = grid.getColumnModel().getDataIndex(columnIndex);
 				if (fanscol == 'fans') {
-					//TODO
+					// TODO
 					realFansDtlWin.show();
 					userFansStore.setBaseParam('id', userid);
 					userFansStore.setBaseParam('isRobot', false);

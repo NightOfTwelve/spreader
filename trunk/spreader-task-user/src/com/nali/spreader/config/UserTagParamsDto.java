@@ -2,6 +2,8 @@ package com.nali.spreader.config;
 
 import java.io.Serializable;
 
+import com.nali.common.model.Limit;
+
 /**
  * 封装用户信息列表参数的DTO
  * 
@@ -25,6 +27,16 @@ public class UserTagParamsDto implements Serializable {
 	private String nickName;
 	// 是否机器人
 	private Boolean isRobot;
+
+	public Limit getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Limit limit) {
+		this.limit = limit;
+	}
+
+	private Limit limit;
 
 	public Long getId() {
 		return id;

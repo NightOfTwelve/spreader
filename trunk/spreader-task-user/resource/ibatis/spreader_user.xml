@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
 <sqlMap namespace="spreader_user">
-
+<resultMap class="com.nali.spreader.data.User" id="selectuserinfo" extends="spreader_tb_user.ibatorgenerated_BaseResultMap">
+	<result property="tags" column="id" select="spreader_user.getUserTagList"/>
+</resultMap>
   <insert id="assignUser" parameterClass="com.nali.spreader.data.User">
 	insert into spreader.tb_user(
 		website_id,
@@ -111,38 +113,11 @@
   	set robot_fans = robot_fans+1
   	where id = #id#
   </update>
-  <select id="getUserAndTagInfoByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultClass="com.nali.spreader.data.User">
-  	select u.id,u.website_id as websiteId
-  	,u.website_uid as websiteUid
-  	,u.is_robot as isRobot
-  	,u.create_time as createTime
-	,u.update_time as updateTime
-	,u.nick_name as nickName
-	,u.gender
-	,u.space_entry as spaceEntry
-	,u.real_name as realName
-	,u.email
-	,u.nationality
-	,u.province
-	,u.city
-	,u.introduction
-	,u.birthday_year as birthdayYear
-	,u.birthday_month as birthdayMonth
-	,u.birthday_day as birthdayDay
-	,u.constellation
-	,u.qq
-	,u.msn
-	,u.blog
-	,u.v_type as vType
-	,u.v_info as vInfo
-	,u.attentions
-	,u.fans
-	,u.articles
-	,u.attentions_relation_update_time as attentionsRelationUpdateTime
-	,u.robot_fans as robotFans
-  	,ut.tag 
-  	from tb_user u
-	join tb_user_tag ut on u.id = ut.uid
+  <select id="getUserTagList" parameterClass="int" resultMap="spreader_tb_user_tag.ibatorgenerated_BaseResultMap">
+		select * From tb_user_tag where uid = #id#
+  </select>
+  <select id="getUserAndTagInfoByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultMap="selectuserinfo">
+		select u.* from tb_user u
 	<dynamic prepend="where">
 		<isNotNull prepend="and" property="id">
 			u.id = #id#
@@ -166,9 +141,12 @@
 			<![CDATA[u.robot_fans <= #maxRobotFans#]]>
 		</isNotNull>
 		<isNotNull prepend="and" property="tag">
-			ut.tag like CONCAT('%', #tag#, '%')
+			in(select uid from tb_user_tag where tag like CONCAT('%', #tag#, '%'))
 		</isNotNull>
 	</dynamic>
+	<isNotNull property="limit">
+        limit $limit.offset$,$limit.maxRows$
+    </isNotNull>
   </select>
   <select id="getUserFansInfoByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultClass="com.nali.spreader.data.User">
   	select u.id,u.website_id as websiteId
@@ -199,16 +177,16 @@
 	,u.articles
 	,u.attentions_relation_update_time as attentionsRelationUpdateTime
 	,u.robot_fans as robotFans
-  	from tb_user u 
+  	from spreader.tb_user u 
 	where exists(
-	select 1 from (select ur.uid from tb_user_relation ur
+	select 1 from (select ur.uid from spreader.tb_user_relation ur
 	where ur.to_uid = #id#
 	and ur.is_robot_user = #isRobot#)c
 	where u.id = c.uid)
   </select>
   <select id="getUserAndTagCountByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultClass="java.lang.Integer">
-  	select count(u.id) as cnum from tb_user u
-	join tb_user_tag ut on u.id = ut.uid
+  	select count(u.id) as cnum from spreader.tb_user u
+	left join spreader.tb_user_tag ut on u.id = ut.uid
 	<dynamic prepend="where">
 		<isNotNull prepend="and" property="id">
 			u.id = #id#
@@ -235,9 +213,9 @@
   </select>
   <select id="getUserFansCountByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultClass="java.lang.Integer">
   	select count(u.id) as cnum
-  	from tb_user u 
+  	from spreader.tb_user u 
 	where exists(
-	select 1 from (select ur.uid from tb_user_relation ur
+	select 1 from (select ur.uid from spreader.tb_user_relation ur
 	where ur.to_uid = #id#
 	and ur.is_robot_user = #isRobot#)c
 	where u.id = c.uid)
