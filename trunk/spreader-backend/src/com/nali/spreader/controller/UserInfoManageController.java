@@ -78,8 +78,10 @@ public class UserInfoManageController {
 	@RequestMapping(value = "/realfansinfo")
 	public String userRealFansInfo(Long id, Integer start, Integer limit)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		if(start==null||start<1) start = 1;
-		if(limit==null||limit<1) limit = 25;
+		if (start == null || start < 1)
+			start = 1;
+		if (limit == null || limit < 1)
+			limit = 25;
 		if (id != null) {
 			UserTagParamsDto utp = new UserTagParamsDto();
 			utp.setId(id);
@@ -88,7 +90,39 @@ public class UserInfoManageController {
 					limit);
 			return jacksonMapper.writeValueAsString(result);
 		} else {
-			LOGGER.info("id不能位空");
+			LOGGER.info("id不能为空");
+			return null;
+		}
+	}
+
+	/**
+	 * 查询机器人粉丝信息
+	 * 
+	 * @param id
+	 * @param start
+	 * @param limit
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/robotfansinfo")
+	public String userRobotFansInfo(Long id, Integer start, Integer limit)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		if (start == null || start < 1)
+			start = 1;
+		if (limit == null || limit < 1)
+			limit = 25;
+		if (id != null) {
+			UserTagParamsDto utp = new UserTagParamsDto();
+			utp.setId(id);
+			utp.setIsRobot(true);
+			PageResult<User> result = userService.findUserFansInfo(utp, start,
+					limit);
+			return jacksonMapper.writeValueAsString(result);
+		} else {
+			LOGGER.info("id不能为空");
 			return null;
 		}
 	}

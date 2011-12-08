@@ -6,6 +6,30 @@ var statTypeStore = new Ext.data.ArrayStore({
 			fields : ['ID', 'NAME'],
 			data : [['-1', '----------------------'], ['1', '正常'], ['2', '异常']]
 		});
+// 页数
+var number = 20;
+var numtext = new Ext.form.TextField({
+			id : 'maxpage',
+			name : 'maxpage',
+			width : 60,
+			emptyText : '每页条数',
+			// 激活键盘事件
+			enableKeyEvents : true,
+			listeners : {
+				specialKey : function(field, e) {
+					if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
+						bbar.pageSize = Number(numtext.getValue());
+						number = Number(numtext.getValue());
+						sinaUserStore.reload({
+									params : {
+										start : 0,
+										limit : bbar.pageSize
+									}
+								});
+					}
+				}
+			}
+		});
 /**
  * 用户信息列表的查询FORM
  */
@@ -73,7 +97,7 @@ var userSinaForm = new Ext.form.FormPanel({
 											columnWidth : .5,
 											layout : "form",
 											items : [{
-														xtype : "textfield",
+														xtype : "numberfield",
 														fieldLabel : "粉丝数大于",
 														name : 'minFans',
 														width : 100
@@ -82,7 +106,7 @@ var userSinaForm = new Ext.form.FormPanel({
 											columnWidth : .5,
 											layout : "form",
 											items : [{
-														xtype : "textfield",
+														xtype : "numberfield",
 														fieldLabel : "粉丝数小于",
 														name : 'maxFans',
 														width : 100
@@ -98,7 +122,7 @@ var userSinaForm = new Ext.form.FormPanel({
 											columnWidth : .5,
 											layout : "form",
 											items : [{
-														xtype : "textfield",
+														xtype : "numberfield",
 														fieldLabel : "机器人粉丝数大于",
 														name : 'minRobotFans',
 														width : 100
@@ -107,7 +131,7 @@ var userSinaForm = new Ext.form.FormPanel({
 											columnWidth : .5,
 											layout : "form",
 											items : [{
-														xtype : "textfield",
+														xtype : "numberfield",
 														fieldLabel : "机器人粉丝数小于",
 														name : 'maxRobotFans',
 														width : 100
@@ -118,31 +142,35 @@ var userSinaForm = new Ext.form.FormPanel({
 	}],
 	buttonAlign : "center",
 	buttons : [{
-				text : "查询",
-				handler : function() { // 按钮响应函数
-					var tform = userSinaForm.getForm();
-					var nickName = tform.findField("nickName").getValue();
-					var minFans = tform.findField("minFans").getValue();
-					var maxFans = tform.findField("maxFans").getValue();
-					var minRobotFans = tform.findField("minRobotFans")
-							.getValue();
-					var maxRobotFans = tform.findField("maxRobotFans")
-							.getValue();
-					var tag = tform.findField("tag").getValue();
-					sinaUserStore.setBaseParam('nickName', nickName);
-					sinaUserStore.setBaseParam('minFans', minFans);
-					sinaUserStore.setBaseParam('maxFans', maxFans);
-					sinaUserStore.setBaseParam('minRobotFans', minRobotFans);
-					sinaUserStore.setBaseParam('maxRobotFans', maxRobotFans);
-					sinaUserStore.setBaseParam('tag', tag);
-					sinaUserStore.load();
-				}
-			}, {
-				text : "重置",
-				handler : function() { // 按钮响应函数
-					userSinaForm.form.reset();
-				}
-			}]
+		text : "查询",
+		handler : function() { // 按钮响应函数
+			var tform = userSinaForm.getForm();
+			var nickName = tform.findField("nickName").getValue();
+			var minFans = tform.findField("minFans").getValue();
+			var maxFans = tform.findField("maxFans").getValue();
+			var minRobotFans = tform.findField("minRobotFans").getValue();
+			var maxRobotFans = tform.findField("maxRobotFans").getValue();
+			var tag = tform.findField("tag").getValue();
+			var num = numtext.getValue();
+			sinaUserStore.setBaseParam('nickName', Ext.isEmpty(nickName)
+							? null
+							: nickName);
+			sinaUserStore.setBaseParam('minFans', minFans);
+			sinaUserStore.setBaseParam('maxFans', maxFans);
+			sinaUserStore.setBaseParam('minRobotFans', minRobotFans);
+			sinaUserStore.setBaseParam('maxRobotFans', maxRobotFans);
+			sinaUserStore.setBaseParam('tag', Ext.isEmpty(tag) ? null : tag);
+			sinaUserStore.setBaseParam('limit', Ext.isEmpty(num)
+							? number
+							: Number(num));
+			sinaUserStore.load();
+		}
+	}, {
+		text : "重置",
+		handler : function() { // 按钮响应函数
+			userSinaForm.form.reset();
+		}
+	}]
 });
 // ///GRID
 /**
@@ -196,42 +224,79 @@ var sinaUserStore = new Ext.data.Store({
 				}
 			}
 		});
+// 分页带上查询条件
+sinaUserStore.on('beforeload', function() {
+			var pfrom = userSinaForm.getForm();
+			var pnickName = pfrom.findField("nickName").getValue();
+			var pminFans = pfrom.findField("minFans").getValue();
+			var pmaxFans = pfrom.findField("maxFans").getValue();
+			var pminRobotFans = pfrom.findField("minRobotFans").getValue();
+			var pmaxRobotFans = pfrom.findField("maxRobotFans").getValue();
+			var ptag = pfrom.findField("tag").getValue();
+			var limit = numtext.getValue();
+			this.baseParams = {
+				nickName : Ext.isEmpty(pnickName) ? null : pnickName,
+				minFans : pminFans,
+				maxFans : pmaxFans,
+				minRobotFans : pminRobotFans,
+				maxRobotFans : pmaxRobotFans,
+				tag : Ext.isEmpty(ptag) ? null : ptag,
+				limit : Ext.isEmpty(limit) ? number : Number(limit)
+			};
+		});
 
 // 定义Checkbox
 var sm = new Ext.grid.CheckboxSelectionModel();
+var rownums = new Ext.grid.RowNumberer({
+			header : 'NO',
+			locked : true
+		})
 // 定义表格列CM
-var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), sm, {
+var cm = new Ext.ux.grid.LockingColumnModel([rownums, {
 			header : '编号',
 			dataIndex : 'id',
+			locked : true,
 			width : 80
 		}, {
-			header : '是否机器人',
+			header : '机器人',
 			dataIndex : 'isRobot',
-			width : 100
+			locked : true,
+			renderer : rendIsRobot,
+			width : 80
 		}, {
 			header : '昵称',
 			dataIndex : 'nickName',
+			locked : true,
 			width : 100
 		}, {
 			header : '性别',
 			dataIndex : 'gender',
-			width : 100
+			renderer : renderGender,
+			width : 80
 		}, {
 			header : '真实姓名',
 			dataIndex : 'realName',
 			width : 100
 		}, {
+			header : '分类',
+			dataIndex : 'tag',
+			renderer : renderBrief,
+			width : 100
+		}, {
 			header : '粉丝数',
 			dataIndex : 'fans',
-			width : 100
+			width : 100,
+			sortable : true
 		}, {
 			header : '机器人粉丝数',
 			dataIndex : 'robotFans',
-			width : 100
+			width : 100,
+			sortable : true
 		}, {
 			header : '文章数',
 			dataIndex : 'articles',
-			width : 100
+			width : 100,
+			sortable : true
 		}, {
 			header : 'email',
 			dataIndex : 'email',
@@ -261,37 +326,7 @@ var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), sm, {
 			header : '博客',
 			dataIndex : 'blog',
 			width : 100
-		}, {
-			header : '分类',
-			dataIndex : 'tag',
-			renderer:renderBrief,
-			width : 100
 		}]);
-// 页数
-var number = 20;
-var numtext = new Ext.form.TextField({
-			id : 'maxpage',
-			name : 'maxpage',
-			width : 60,
-			emptyText : '每页条数',
-			// 激活键盘事件
-			enableKeyEvents : true,
-			listeners : {
-				specialKey : function(field, e) {
-					if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-						bbar.pageSize = parseInt(numtext.getValue());
-						number = parseInt(numtext.getValue());
-						sinaUserStore.reload({
-									params : {
-										start : 0,
-										limit : bbar.pageSize
-									}
-								});
-					}
-				}
-			}
-		});
-
 // // 分页菜单
 var bbar = new Ext.PagingToolbar({
 			pageSize : number,
@@ -318,27 +353,10 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 				msg : '正在加载表格数据,请稍等...'
 			},
 			bbar : bbar,
-			sm : sm,
+			// sm : sm,
 			cm : cm,
+			view : new Ext.ux.grid.LockingGridView(), // 锁定列视图
 			tbar : [{
-						text : '新增',
-						iconCls : 'page_addIcon',
-						handler : function() {
-							// stgCmbWindow.show();
-						}
-					}, '-', {
-						text : '删除',
-						iconCls : 'page_delIcon',
-						handler : function() {
-							// TODO
-							// deleteData();
-						}
-					}, {
-						text : '查询',
-						iconCls : 'previewIcon',
-						handler : function() {
-						}
-					}, '-', {
 						text : '刷新',
 						iconCls : 'arrow_refreshIcon',
 						handler : function() {
@@ -350,25 +368,19 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 				var userid = selesm[0].data.id;
 				var fanscol = grid.getColumnModel().getDataIndex(columnIndex);
 				if (fanscol == 'fans') {
-					// TODO
 					realFansDtlWin.show();
+					GFANSID = userid;
 					userFansStore.setBaseParam('id', userid);
 					userFansStore.setBaseParam('isRobot', false);
 					userFansStore.load();
 				}
-				// alert(grid+ rowIndex+ columnIndex+ e)
-				// alert('列号:' + columnIndex);
-				// fansDtlWin.show();
-				// 找出表格中‘配置’按钮
-				// if (e.target.defaultValue == '配置') {
-				// var record = grid.getStore().getAt(rowIndex);
-				// var data = record.data;
-				// GDISNAME = data.displayName;
-				// GOBJID = data.name;
-				// GDISPID = data.id;
-				// var trgid = data.id;
-				// // editstgWindow.show();
-				// }
+				else if(fanscol=='robotFans'){
+					robotFansDtlWin.show();
+					GROBOTID = userid;
+					userRobotFansStore.setBaseParam('id', userid);
+					userRobotFansStore.setBaseParam('isRobot', false);
+					userRobotFansStore.load();
+				}
 			}
 
 		});
@@ -404,24 +416,49 @@ var realFansDtlWin = new Ext.Window({
 						}
 					}]
 		});
+		//机器人粉丝
+		var robotFansDtlWin = new Ext.Window({
+			title : '<span class="commoncss">机器人粉丝列表</span>', // 窗口标题
+			iconCls : 'imageIcon',
+			layout : 'fit', // 设置窗口布局模式
+			width : 600, // 窗口宽度
+			height : 500, // 窗口高度
+			// tbar : tb, // 工具栏
+			closable : false, // 是否可关闭
+			closeAction : 'hide', // 关闭策略
+			collapsible : true, // 是否可收缩
+			maximizable : false, // 设置是否可以最大化
+			modal : true,
+			border : false, // 边框线设置
+			pageY : 120, // 页面定位Y坐标
+			pageX : document.documentElement.clientWidth / 2 - 400 / 2, // 页面定位X坐标
+			constrain : true,
+			items : [sinaUserRobotFansGrid],
+			// 设置窗口是否可以溢出父容器
+			buttonAlign : 'center',
+			buttons : [{
+						text : '关闭',
+						iconCls : 'deleteIcon',
+						handler : function() {
+							robotFansDtlWin.hide();
+						}
+					}]
+		});
 
 /**
- * 渲染策略名称为中文名
+ * 渲染是否位机器人
  * 
  * @param {}
  *            value
  * @return {}
  */
-// function rendDispName(value) {
-// var list = sinaUserStore.reader.jsonData.dispname;
-// for (var idx in list) {
-// var tmp = list[idx].name;
-// var dname = list[idx].displayName;
-// if (value == tmp) {
-// return dname;
-// }
-// }
-// }
+function rendIsRobot(value) {
+	if (value) {
+		return '是';
+	} else {
+		return '否';
+	}
+}
 /**
  * 
  * @param {}

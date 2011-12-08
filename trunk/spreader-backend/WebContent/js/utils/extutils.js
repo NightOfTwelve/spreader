@@ -105,3 +105,27 @@ function subStrLastId(id) {
 		return str;
 	}
 }
+/**
+ * 日期格式
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderDate(value) {
+	return value != null ? new Date(value).format('Y-m-d') : '';
+}
+/**
+ * 性别中文渲染
+ * 
+ * @param {}
+ *            value
+ */
+function renderGender(value) {
+	if (value == '1') {
+		return '男';
+	} else {
+		return '女';
+	}
+
+}
