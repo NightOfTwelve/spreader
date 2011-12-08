@@ -74,7 +74,7 @@ var userFansStore = new Ext.data.Store({
 userFansStore.on('beforeload', function() {
 			var limit = fansnumtext.getValue();
 			this.baseParams = {
-				id:GFANSID,
+				id : GFANSID,
 				limit : Ext.isEmpty(limit) ? number : Number(limit)
 			};
 		});
@@ -89,6 +89,7 @@ var fanscm = new Ext.ux.grid.LockingColumnModel([{
 		}, {
 			header : '机器人',
 			dataIndex : 'isRobot',
+			renderer : rendIsRobot,
 			locked : true,
 			width : 80
 		}, {

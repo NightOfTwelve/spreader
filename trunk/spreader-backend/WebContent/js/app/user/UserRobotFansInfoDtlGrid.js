@@ -1,29 +1,29 @@
 // 页数
 var robotfansnumber = 20;
 var robotfansnumtext = new Ext.form.TextField({
-			id : 'robotfansmaxpage',
-			name : 'robotfansmaxpage',
-			width : 60,
-			emptyText : '每页条数',
-			// 激活键盘事件
-			enableKeyEvents : true,
-			listeners : {
-				specialKey : function(field, e) {
-					if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							robotfansbbar.pageSize = Number(robotfansnumtext.getValue());
-							robotfansnumber = Number(robotfansnumtext.getValue());
-							userFansStore.reload({
-										params : {
-											start : 0,
-											limit : robotfansbbar.pageSize
-										}
-									});
-						}
-					}
+	id : 'robotfansmaxpage',
+	name : 'robotfansmaxpage',
+	width : 60,
+	emptyText : '每页条数',
+	// 激活键盘事件
+	enableKeyEvents : true,
+	listeners : {
+		specialKey : function(field, e) {
+			if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
+				if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
+					robotfansbbar.pageSize = Number(robotfansnumtext.getValue());
+					robotfansnumber = Number(robotfansnumtext.getValue());
+					userFansStore.reload({
+								params : {
+									start : 0,
+									limit : robotfansbbar.pageSize
+								}
+							});
 				}
 			}
-		});
+		}
+	}
+});
 /**
  * 用户粉丝信息列表
  */
@@ -74,7 +74,7 @@ var userRobotFansStore = new Ext.data.Store({
 userRobotFansStore.on('beforeload', function() {
 			var limit = robotfansnumtext.getValue();
 			this.baseParams = {
-				id:GROBOTID,
+				id : GROBOTID,
 				limit : Ext.isEmpty(limit) ? number : Number(limit)
 			};
 		});
@@ -89,6 +89,7 @@ var robotfanscm = new Ext.ux.grid.LockingColumnModel([{
 		}, {
 			header : '机器人',
 			dataIndex : 'isRobot',
+			renderer : rendIsRobot,
 			locked : true,
 			width : 80
 		}, {
