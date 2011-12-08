@@ -125,9 +125,9 @@
 		<isNotNull prepend="and" property="isRobot">
 			u.is_robot = #isRobot#
 		</isNotNull>
-		<isNotNull prepend="and" property="nickName">
+		<isNotEmpty prepend="and" property="nickName">
 			u.nick_name like CONCAT('%', #nickName#, '%')
-		</isNotNull>
+		</isNotEmpty>
 		<isNotNull prepend="and" property="minFans">
 			<![CDATA[u.fans >= #minFans#]]>
 		</isNotNull>
@@ -140,43 +140,16 @@
 		<isNotNull prepend="and" property="maxRobotFans">
 			<![CDATA[u.robot_fans <= #maxRobotFans#]]>
 		</isNotNull>
-		<isNotNull prepend="and" property="tag">
-			in(select uid from tb_user_tag where tag like CONCAT('%', #tag#, '%'))
-		</isNotNull>
+		<isNotEmpty prepend="and" property="tag">
+			u.id in(select uid from tb_user_tag where tag like CONCAT('%', #tag#, '%'))
+		</isNotEmpty>
 	</dynamic>
 	<isNotNull property="limit">
         limit $limit.offset$,$limit.maxRows$
     </isNotNull>
   </select>
-  <select id="getUserFansInfoByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultClass="com.nali.spreader.data.User">
-  	select u.id,u.website_id as websiteId
-  	,u.website_uid as websiteUid
-  	,u.is_robot as isRobot
-  	,u.create_time as createTime
-	,u.update_time as updateTime
-	,u.nick_name as nickName
-	,u.gender
-	,u.space_entry as spaceEntry
-	,u.real_name as realName
-	,u.email
-	,u.nationality
-	,u.province
-	,u.city
-	,u.introduction
-	,u.birthday_year as birthdayYear
-	,u.birthday_month as birthdayMonth
-	,u.birthday_day as birthdayDay
-	,u.constellation
-	,u.qq
-	,u.msn
-	,u.blog
-	,u.v_type as vType
-	,u.v_info as vInfo
-	,u.attentions
-	,u.fans
-	,u.articles
-	,u.attentions_relation_update_time as attentionsRelationUpdateTime
-	,u.robot_fans as robotFans
+  <select id="getUserFansInfoByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultMap="selectuserinfo">
+  	select u.*
   	from spreader.tb_user u 
 	where exists(
 	select 1 from (select ur.uid from spreader.tb_user_relation ur
@@ -186,14 +159,13 @@
   </select>
   <select id="getUserAndTagCountByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultClass="java.lang.Integer">
   	select count(u.id) as cnum from spreader.tb_user u
-	left join spreader.tb_user_tag ut on u.id = ut.uid
 	<dynamic prepend="where">
 		<isNotNull prepend="and" property="id">
 			u.id = #id#
 		</isNotNull>
-		<isNotNull prepend="and" property="nickName">
+		<isNotEmpty prepend="and" property="nickName">
 			u.nick_name like CONCAT('%', #nickName#, '%')
-		</isNotNull>
+		</isNotEmpty>
 		<isNotNull prepend="and" property="minFans">
 			<![CDATA[u.fans >= #minFans#]]>
 		</isNotNull>
@@ -206,9 +178,9 @@
 		<isNotNull prepend="and" property="maxRobotFans">
 			<![CDATA[u.robot_fans <= #maxRobotFans#]]>
 		</isNotNull>
-		<isNotNull prepend="and" property="tag">
-			ut.tag like CONCAT('%', #tag#, '%')
-		</isNotNull>
+		<isNotEmpty prepend="and" property="tag">
+			u.id in(select uid from tb_user_tag where tag like CONCAT('%', #tag#, '%'))
+		</isNotEmpty>
 	</dynamic>
   </select>
   <select id="getUserFansCountByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultClass="java.lang.Integer">

@@ -1,8 +1,8 @@
 // 页数
-var fansnumber = 20;
-var fansnumtext = new Ext.form.TextField({
-			id : 'fansmaxpage',
-			name : 'fansmaxpage',
+var robotfansnumber = 20;
+var robotfansnumtext = new Ext.form.TextField({
+			id : 'robotfansmaxpage',
+			name : 'robotfansmaxpage',
 			width : 60,
 			emptyText : '每页条数',
 			// 激活键盘事件
@@ -11,12 +11,12 @@ var fansnumtext = new Ext.form.TextField({
 				specialKey : function(field, e) {
 					if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
 						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							fansbbar.pageSize = Number(fansnumtext.getValue());
-							fansnumber = Number(fansnumtext.getValue());
+							robotfansbbar.pageSize = Number(robotfansnumtext.getValue());
+							robotfansnumber = Number(robotfansnumtext.getValue());
 							userFansStore.reload({
 										params : {
 											start : 0,
-											limit : fansbbar.pageSize
+											limit : robotfansbbar.pageSize
 										}
 									});
 						}
@@ -28,10 +28,10 @@ var fansnumtext = new Ext.form.TextField({
  * 用户粉丝信息列表
  */
 // 定义粉丝信息表格数据源
-var userFansStore = new Ext.data.Store({
+var userRobotFansStore = new Ext.data.Store({
 			autoLoad : false,
 			proxy : new Ext.data.HttpProxy({
-						url : '../userinfo/realfansinfo'
+						url : '../userinfo/robotfansinfo'
 					}),
 			reader : new Ext.data.JsonReader({
 						totalProperty : 'totalCount',
@@ -71,17 +71,17 @@ var userFansStore = new Ext.data.Store({
 							}])
 		});
 // 分页带上查询条件
-userFansStore.on('beforeload', function() {
-			var limit = fansnumtext.getValue();
+userRobotFansStore.on('beforeload', function() {
+			var limit = robotfansnumtext.getValue();
 			this.baseParams = {
-				id:GFANSID,
+				id:GROBOTID,
 				limit : Ext.isEmpty(limit) ? number : Number(limit)
 			};
 		});
 // 定义Checkbox
 // var fansm = new Ext.grid.CheckboxSelectionModel();
 // 定义表格列CM
-var fanscm = new Ext.ux.grid.LockingColumnModel([{
+var robotfanscm = new Ext.ux.grid.LockingColumnModel([{
 			header : '编号',
 			dataIndex : 'id',
 			locked : true,
@@ -154,19 +154,19 @@ var fanscm = new Ext.ux.grid.LockingColumnModel([{
 		}]);
 
 // // 分页菜单
-var fansbbar = new Ext.PagingToolbar({
-			pageSize : fansnumber,
-			store : userFansStore,
+var robotfansbbar = new Ext.PagingToolbar({
+			pageSize : robotfansnumber,
+			store : userRobotFansStore,
 			displayInfo : true,
 			displayMsg : '显示{0}条到{1}条,共{2}条',
 			emptyMsg : "没有符合条件的记录",
-			items : ['-', '&nbsp;&nbsp;', fansnumtext]
+			items : ['-', '&nbsp;&nbsp;', robotfansnumtext]
 		});
 
 // 定义grid表格
-var sinaUserFansGrid = new Ext.grid.GridPanel({
+var sinaUserRobotFansGrid = new Ext.grid.GridPanel({
 			// region : 'center',
-			id : 'sinaUserFansGrid',
+			id : 'sinaUserRobotFansGrid',
 			// autoHeight:true,
 			height : 500,
 			stripeRows : true, // 斑马线
@@ -174,10 +174,10 @@ var sinaUserFansGrid = new Ext.grid.GridPanel({
 			// autoWidth : true,
 			autoScroll : true,
 			view : new Ext.ux.grid.LockingGridView(), // 锁定列视图
-			store : userFansStore,
+			store : userRobotFansStore,
 			loadMask : {
 				msg : '正在加载表格数据,请稍等...'
 			},
-			bbar : fansbbar,
-			cm : fanscm
+			bbar : robotfansbbar,
+			cm : robotfanscm
 		});

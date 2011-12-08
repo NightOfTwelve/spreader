@@ -47,7 +47,19 @@ public class UserManageServiceImpl implements IUserManageService {
 	public PageResult<User> findUserFansInfo(UserTagParamsDto utp,
 			Integer start, Integer limit) {
 		Limit lit = Limit.newInstanceForPage(start, limit);
+		utp.setLimit(lit);
 		List<User> uList = userDao.findUserFansInfoList(utp);
+		for (User u : uList) {
+			StringBuffer buff = new StringBuffer();
+			List<UserTag> utList = u.getTags();
+			if (utList.size() > 0) {
+				for (UserTag ut : utList) {
+					buff.append(ut.getTag());
+					buff.append(",");
+				}
+			}
+			u.setTag(buff.toString());
+		}
 		int cnt = userDao.countUserFansNumer(utp);
 		PageResult<User> pr = new PageResult<User>(uList, lit, cnt);
 		return pr;

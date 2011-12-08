@@ -4,15 +4,16 @@
 <title>用户信息管理查询</title>
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/extjs3/resources/css/ext-all.css')" />
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/ext_icon.css')" />
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/LockingGridView.css')" />
 <script>
 	$CONFIG = {
 		BLANK_IMAGE_URL:"$StaticConfig.u('/js/extjs3/resources/images/default/s.gif')",
 		CHART_URL:"$StaticConfig.u('/js/extjs3/resources/charts.swf')"
 	};
 	// 全局对象ID
-	var GOBJID = null;
-	var GDISNAME = null;
-	var GDISPID;
+	var GFANSID;
+	var GROBOTID;
+	var GISROBOT=false;
 </script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/adapter/ext/ext-base.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all-debug.js')" ></script>
@@ -23,7 +24,9 @@
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/Spinner.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/SpinnerField.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/ProgressBarPager.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/LockingGridView.js')"></script>
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/user/UserFansInfoDtlGrid.js'))"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/user/UserRobotFansInfoDtlGrid.js'))"></script>
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/user/UserInfoSinaGrid.js'))"></script>
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/user/UserQueryShowTabs.js'))"></script>
 </head>
