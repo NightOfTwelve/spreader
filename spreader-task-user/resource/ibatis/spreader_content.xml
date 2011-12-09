@@ -92,4 +92,122 @@
 		select LAST_INSERT_ID() as value
 	</selectKey>
   </insert>
+  
+  <sql id="baseUserCondition">
+	<isNotNull prepend="and" property="userRelated.baseInfo.gender">
+	  gender = #gender#
+	</isNotNull>
+	<isNotNull prepend="and" property="userRelated.baseInfo.province">
+	  province = #province#
+	</isNotNull>
+	<isNotNull prepend="and" property="userRelated.baseInfo.city">
+	  city = #city#
+	</isNotNull>
+	<isNotNull prepend="and" property="userRelated.baseInfo.vType">
+	  v_type = #vType#
+	</isNotNull>
+	<isNotNull prepend="and" property="userRelated.baseInfo.birthdayYear.gte">
+	  birthday_year &gt;= #birthdayYear.gte#
+	</isNotNull>
+	<isNotNull prepend="and" property="userRelated.baseInfo.birthdayYear.lte">
+	  birthday_year &lt;= #birthdayYear.lte#
+	</isNotNull>
+	<isNotNull prepend="and" property="userRelated.baseInfo.attentions.gte">
+	  attentions &gt;= #attentions.gte#
+	</isNotNull>
+	<isNotNull prepend="and" property="userRelated.baseInfo.attentions.lte">
+	  attentions &lt;= #attentions.lte#
+	</isNotNull>
+	<isNotNull prepend="and" property="userRelated.baseInfo.fans.gte">
+	  fans &gt;= #fans.gte#
+	</isNotNull>
+	<isNotNull prepend="and" property="userRelated.baseInfo.fans.lte">
+	  fans &lt;= #fans.lte#
+	</isNotNull>
+	<isNotNull prepend="and" property="userRelated.baseInfo.articles.gte">
+	   articles &gt;= #articles.gte#
+	</isNotNull>
+	<isNotNull prepend="and" property="userRelated.baseInfo.articles.lte">
+	   articles &lt;= #articles.lte#
+	</isNotNull>
+  </sql>
+  <select id="findContentIdByDto" resultClass="long" parameterClass="com.nali.spreader.config.ContentDto">
+  	select id from spreader.tb_content
+	<dynamic prepend="where">
+		<isNotNull prepend="and" property="type">
+		  type = #type#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteId">
+		  website_id = #websiteId#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteContentId">
+		  website_content_id = #websiteContentId#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteRefId">
+		  website_ref_id = #websiteRefId#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteUid">
+		  website_uid = #websiteUid#
+		</isNotNull>
+		<isNotNull prepend="and" property="uid">
+		  uid = #uid#
+		</isNotNull>
+		<isNotNull prepend="and" property="pubDate.gte">
+		  pub_date &gt;= #pubDate.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="pubDate.lte">
+		  pub_date &lt;= #pubDate.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="refCount.gte">
+		  ref_count &gt;= #refCount.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="refCount.lte">
+		  ref_count &lt;= #refCount.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="replyCount.gte">
+		  reply_count &gt;= #replyCount.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="replyCount.lte">
+		  reply_count &lt;= #replyCount.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="contentLength.gte">
+		  (length(nick_name)+char_length(nick_name))/2 &gt;= #contentLength#
+		</isNotNull>
+		<isNotNull prepend="and" property="contentLength.lte">
+		  (length(nick_name)+char_length(nick_name))/2 &lt;= #contentLength#
+		</isNotNull>
+		<isNotNull prepend="and" property="userRelated">
+		  uid in (
+		  	select 0
+		  	<isNotNull prepend="union" property="userRelated.baseInfo">
+		  		select id
+				from spreader.tb_user
+				where 1=1
+				<include refid="baseUserCondition"/>
+			  	<isNotNull prepend="and" property="userRelated.isRobot">
+			  		is_robot = #isRobot#
+			  	</isNotNull>
+		  	</isNotNull>
+		  	<isNotNull prepend="union" property="userRelated.categories">
+				select uid from spreader.tb_user_tag where category_id in (
+					select id from spreader.tb_category where name in
+					<iterate property="userRelated.categories" open="(" close=")" conjunction=",">
+						#categories[]#
+					</iterate>
+				)
+		  	</isNotNull>
+		  	<isNotNull prepend="union" property="userRelated.attentionToUid">
+		  		select uid
+				from spreader.tb_user_relation
+				where to_uid=#userRelated.attentionToUid# and type=1
+		  	</isNotNull>
+		  	<isNotNull prepend="union" property="userRelated.fansUid">
+		  		select to_uid
+				from spreader.tb_user_relation
+				where uid=#userRelated.fansUid# and type=1
+		  	</isNotNull>
+		  )
+		</isNotNull>
+	</dynamic>
+  </select>
 </sqlMap>

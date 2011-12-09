@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.GenericTypeResolver;
 
+import com.nali.spreader.factory.base.SingleTaskMeta;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
-import com.nali.spreader.factory.exporter.SingleTaskMeta;
 import com.nali.spreader.factory.regular.RegularTaskProducer;
 import com.nali.spreader.factory.result.ResultProcessor;
 

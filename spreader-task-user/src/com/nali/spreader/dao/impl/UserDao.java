@@ -8,6 +8,7 @@ import org.springframework.data.keyvalue.redis.core.RedisTemplate;
 import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.nali.spreader.config.ContentDto;
 import com.nali.spreader.config.UserDto;
 import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.dao.IUserDao;
@@ -41,11 +42,6 @@ public class UserDao implements IUserDao {
 				LAST_FETCH_TIME_KEY_PREFIX + uid, new Date());
 	}
 
-	@Override
-	public Long insertContent(Content content) {
-		return (Long) sqlMap.insert("spreader_content.insertContent", content);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> findUserFansInfoByDto(UserDto dto) {
@@ -68,6 +64,17 @@ public class UserDao implements IUserDao {
 	public Integer countUserAndTagNumer(UserTagParamsDto utp) {
 		return (Integer) sqlMap.queryForObject(
 				"spreader_user.getUserAndTagCountByDto", utp);
+	}
+
+	@Override
+	public Long insertContent(Content content) {
+		return (Long) sqlMap.insert("spreader_content.insertContent", content);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findContentIdByDto(ContentDto dto) {
+		return sqlMap.queryForList("spreader_content.findContentIdByDto", dto);
 	}
 
 	@SuppressWarnings("unchecked")

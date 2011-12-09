@@ -5,11 +5,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nali.spreader.config.ContentDto;
 import com.nali.spreader.dao.ICrudContentDao;
 import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.ICrudUserTagDao;
@@ -27,6 +29,8 @@ public class ContentService implements IContentService {
 	private static Logger logger = Logger.getLogger(ContentService.class);
 	@Autowired
 	private ContentCategoryMatch contentCategoryMatch;
+	@Autowired
+	private PostContent postContent;
 	@Autowired
 	private ICrudUserTagDao crudUserTagDao;
 	@Autowired
@@ -100,6 +104,26 @@ public class ContentService implements IContentService {
 		if(param==null) {
 			throw new IllegalArgumentException("property is null");
 		}
+	}
+
+	@Override
+	public Content getContentById(Long contentId) {
+		return crudContentDao.selectByPrimaryKey(contentId);
+	}
+
+	@Override
+	public List<Long> findContentIdByDto(ContentDto dto) {
+		return userDao.findContentIdByDto(dto);
+	}
+
+	@Override
+	public Set<Long> getPostContentIds(Long uid) {
+		return postContent.getPostContentIds(uid);
+	}
+
+	@Override
+	public void addPostContentId(Long uid, Long contentId) {
+		postContent.addPostContentId(uid, contentId);		
 	}
 
 }

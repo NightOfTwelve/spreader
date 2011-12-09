@@ -1,5 +1,7 @@
 package com.nali.spreader.factory.regular;
 
-public interface RegularAnalyzer extends RegularObject {
+import com.nali.spreader.factory.base.Analyzer;
+
+public interface RegularAnalyzer extends RegularObject, Analyzer {
 	void work();
 }

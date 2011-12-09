@@ -97,4 +97,10 @@ public class GlobalUserService implements IGlobalUserService {
 			crudUserTagDao.insertSelective(userTag);
 		}
 	}
+
+	@Override
+	public Long getWebsiteUid(Long uid) {//TODO cache
+		User user = crudUserDao.selectByPrimaryKey(uid);
+		return user==null?null:user.getWebsiteUid();
+	}
 }

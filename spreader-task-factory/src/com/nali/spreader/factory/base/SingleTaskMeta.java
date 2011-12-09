@@ -1,4 +1,4 @@
-package com.nali.spreader.factory.exporter;
+package com.nali.spreader.factory.base;
 
 public final class SingleTaskMeta implements TaskMeta {
 	private Long actionId;

@@ -3,6 +3,8 @@ package com.nali.spreader.factory.exporter;
 import java.util.Date;
 import java.util.Map;
 
+import com.nali.spreader.factory.base.SingleTaskMeta;
+
 public interface SingleTaskExporter extends Exporter<SingleTaskMeta> {
 
 	/**

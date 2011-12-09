@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.nali.spreader.factory.base.MultiTaskMeta;
+import com.nali.spreader.factory.base.SingleTaskMeta;
+import com.nali.spreader.factory.base.TaskMeta;
 import com.nali.spreader.model.ClientTask;
 
 public class ClientTaskExporterFactory {

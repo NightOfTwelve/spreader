@@ -2,6 +2,9 @@ package com.nali.spreader.util.reflect;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+
+import org.apache.commons.lang.ObjectUtils;
 
 class ParameterizedTypeImpl implements ParameterizedType, FakeCloneable {
 	private Type[] actualTypeArguments;
@@ -70,5 +73,28 @@ class ParameterizedTypeImpl implements ParameterizedType, FakeCloneable {
 		} catch (CloneNotSupportedException e) {
 			throw new InternalError();
 		}
+	}
+	
+	@Override
+	public int hashCode() {
+		int rlt;
+		rlt = ObjectUtils.hashCode(getOwnerType());
+		rlt = rlt*31 + rawType.hashCode();
+		rlt = rlt*31 + Arrays.hashCode(actualTypeArguments);
+		return rlt;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj==this) {
+			return true;
+		}
+		if (obj instanceof ParameterizedType) {
+			ParameterizedType pt = (ParameterizedType) obj;
+			return ObjectUtils.equals(pt.getOwnerType(), getOwnerType()) &&
+						ObjectUtils.equals(pt.getRawType(), getRawType()) &&
+						Arrays.equals(pt.getActualTypeArguments(), getActualTypeArguments());
+		}
+		return false;
 	}
 }

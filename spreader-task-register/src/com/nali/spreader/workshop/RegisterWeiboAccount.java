@@ -17,7 +17,7 @@ import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
-import com.nali.spreader.factory.exporter.SingleTaskMachineImpl;
+import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.RobotUser;
@@ -28,7 +28,7 @@ import com.nali.spreader.words.naming.NamingMode;
 @Component
 public class RegisterWeiboAccount extends SingleTaskMachineImpl implements PassiveWorkshop<Long, KeyValue<Long, String>> {
 	@AutowireProductLine
-	private TaskProduceLine<Object> activeWeibo;
+	private TaskProduceLine<Long> activeWeibo;
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
 	private NamingMode[] namingModes=NamingMode.values();

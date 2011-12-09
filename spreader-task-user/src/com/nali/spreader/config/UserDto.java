@@ -14,6 +14,19 @@ public class UserDto extends BaseUserDto {
 	private Boolean isRobot;
 	@PropertyDescription("数量上限")
     private Integer limit;
+	
+	public static UserDto genUserDtoFrom(BaseUserDto baseUserDto) {
+		UserDto userDto = new UserDto();
+		userDto.setArticles(baseUserDto.getArticles());
+		userDto.setAttentions(baseUserDto.getAttentions());
+		userDto.setBirthdayYear(baseUserDto.getBirthdayYear());
+		userDto.setCity(baseUserDto.getCity());
+		userDto.setFans(baseUserDto.getFans());
+		userDto.setGender(baseUserDto.getGender());
+		userDto.setProvince(baseUserDto.getProvince());
+		userDto.setvType(baseUserDto.getvType());
+		return userDto;
+	}
     
 	public List<String> getCategories() {
 		return categories;

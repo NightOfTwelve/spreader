@@ -15,9 +15,10 @@ import com.nali.spreader.data.UserRelation;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
-import com.nali.spreader.factory.exporter.SingleTaskMachineImpl;
+import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
+import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
 import com.nali.spreader.util.SpecialDateUtil;
@@ -26,7 +27,8 @@ import com.nali.spreader.util.SpecialDateUtil;
 public class FetchUserAttentions extends SingleTaskMachineImpl implements PassiveWorkshop<Long, List<UserRelation>> {
 	@Autowired
 	private WeiboRobotUserHolder weiboRobotUserHolder;
-	
+	@Autowired
+	private IGlobalUserService globalUserService;
 	private IUserService userService;
 	@AutowireProductLine
 	private TaskProduceLine<Long> fetchWeiboUserMainPage;
@@ -60,9 +62,8 @@ public class FetchUserAttentions extends SingleTaskMachineImpl implements Passiv
 	@Override
 	public void work(Long uid, SingleTaskExporter exporter) {
 		Map<String, Object> contents = CollectionUtils.newHashMap(2);
-		User user = userService.getUserById(uid);
 		contents.put("id", uid);
-		contents.put("websiteUid", user.getWebsiteUid());
+		contents.put("websiteUid", globalUserService.getWebsiteUid(uid));
 		Date expiredTime = SpecialDateUtil.afterToday(2);
 		exporter.createTask(contents, weiboRobotUserHolder.getRobotUid(), expiredTime);
 	}
