@@ -8,6 +8,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +42,7 @@ public class DescriptionResolve {
 		cached.put(double.class, PrimitiveTypes.Float);
 		cached.put(Double.class, PrimitiveTypes.Float);
 		cached.put(String.class, PrimitiveTypes.String);	
+		cached.put(Date.class, PrimitiveTypes.Date);	
 	}
 	
 	private static GenericInfo<?> getCachedGenericInfo(Class<?> clazz) {

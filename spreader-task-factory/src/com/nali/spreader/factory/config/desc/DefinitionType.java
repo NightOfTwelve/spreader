@@ -6,6 +6,7 @@ public enum DefinitionType {
 	Float,
 	Boolean,
 	Character,
+	Date,
 	Object(true),
 	Collection(true),
 	Map(true),
