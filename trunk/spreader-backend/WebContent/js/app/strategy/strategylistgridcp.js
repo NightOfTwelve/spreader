@@ -20,15 +20,15 @@ var store = new Ext.data.Store({
 		});
 // 定义表格列CM
 var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), {
-			header : '策略名称',
+			header : '策略编号',
 			dataIndex : 'name',
 			width : 100
 		}, {
-			header : '显示列1',
+			header : '策略名称',
 			dataIndex : 'displayName',
 			width : 100
 		}, {
-			header : '显示列2',
+			header : '说明',
 			dataIndex : 'description',
 			width : 100
 		}, {
@@ -60,7 +60,7 @@ var stglistgrid = new Ext.grid.GridPanel({
 			loadMask : {
 				msg : '正在加载表格数据,请稍等...'
 			},
-			// stripeRows : true,
+			stripeRows : true,
 			frame : true,
 			// autoExpandColumn : 'remark',
 			cm : cm,
@@ -101,8 +101,10 @@ var stglistgrid = new Ext.grid.GridPanel({
 				if (e.target.defaultValue == '配置') {
 					var record = grid.getStore().getAt(rowIndex);
 					var data = record.data;
+					var disnames = record.data.displayName;
 					GDISNAME = data.displayName;
 					GOBJID = data.name;
+					editstgWindow.title=disnames;
 					editstgWindow.show();
 				}
 			}
@@ -138,7 +140,7 @@ var editstgWindow = new Ext.Window({
 						height : 100
 					}, {
 						region : 'west',
-						title : '选择配置',
+//						title : '选择配置',
 						split : true,
 						width : 200,
 						minWidth : 175,

@@ -12,21 +12,21 @@ var stgdisptree = new Ext.tree.TreePanel({
 			singleExpand : true,
 			useArrows : true,
 			rootVisible : true,
-			tbar : [
-					// {
-					// text : '保存修改',
-					// iconCls : 'addIcon',
-					// handler : function() {
-					// submitTreeData();
-					// }
-					// }, '-',
-					{
-				text : '修改',
-				iconCls : 'edit1Icon',
-				handler : function() {
-					editInit();
-				}
-			}],
+			// tbar : [
+			// // {
+			// // text : '保存修改',
+			// // iconCls : 'addIcon',
+			// // handler : function() {
+			// // submitTreeData();
+			// // }
+			// // }, '-',
+			// {
+			// text : '修改',
+			// iconCls : 'edit1Icon',
+			// handler : function() {
+			// editInit();
+			// }
+			// }],
 			root : stgroot,
 			loader : new Ext.tree.TreeLoader({
 						dataUrl : '../strategy/createdisptree?time='
@@ -61,8 +61,8 @@ var stgdisptree = new Ext.tree.TreePanel({
 								treeloader.baseParams = {
 									name : GOBJID,
 									disname : GDISNAME,
-									//TODO
-									id:GDISPID
+									// TODO
+									id : GDISPID
 								};
 							}
 						}
@@ -83,32 +83,32 @@ stgdisptree.on('rightMenu', stgdisptree.rightMenu, stgdisptree);
 var rightMenu = new Ext.menu.Menu({
 			id : 'rightMenu',
 			items : [
-//				{
-//						id : 'addNode',
-//						text : '添加',
-//						// 增加菜单点击事件
-//						menu : [{
-//									id : 'insertNode',
-//									text : '添加兄弟节点',
-//									handler : function(tree) {
-//										insertNode();
-//									}
-//
-//								}, {
-//									id : 'appendNode',
-//									text : '添加儿子节点',
-//									handler : function(tree) {
-//										appendNodeAction();
-//									}
-//								}]
-//					}, '-', 
-						{
-						id : 'delNode',
-						text : '删除',
-						handler : function(tree) {
-							deleteNode();
-						}
-					}
+					// {
+					// id : 'addNode',
+					// text : '添加',
+					// // 增加菜单点击事件
+					// menu : [{
+					// id : 'insertNode',
+					// text : '添加兄弟节点',
+					// handler : function(tree) {
+					// insertNode();
+					// }
+					//
+					// }, {
+					// id : 'appendNode',
+					// text : '添加儿子节点',
+					// handler : function(tree) {
+					// appendNodeAction();
+					// }
+					// }]
+					// }, '-',
+					{
+				id : 'delNode',
+				text : '删除',
+				handler : function(tree) {
+					deleteNode();
+				}
+			}
 					// , {
 					// id : 'modifNode',
 					// text : '修改',
@@ -116,16 +116,19 @@ var rightMenu = new Ext.menu.Menu({
 					// modifNode()
 					// }
 					// }
-					, {
-						id : 'viewNode',
-						text : '查看',
-						handler : function(tree) {
-							veiwNodeAction();
-						}
-					}]
+			, {
+				id : 'viewNode',
+				text : '查看',
+				handler : function(tree) {
+					veiwNodeAction();
+				}
+			}]
 		});
 // 添加点击事件
 stgdisptree.on('click', function(node) {
+			if (node.id == -1) {
+				return;
+			}
 			var isCollection = node.attributes.isCollection;
 			if (isCollection) {
 				collectionRender(node);
@@ -152,7 +155,7 @@ function deleteNode() {
 	var parent = selectedNode.parentNode;
 	parent.removeChild(selectedNode);
 	parent.attributes.children.pop(selectedNode);
-//	selectedNode.remove();
+	// selectedNode.remove();
 };
 // 修改节点事件实现
 function modifNode() {
@@ -184,21 +187,21 @@ function appendNodeAction(node) {
 	if (node.isLeaf()) {
 		node.leaf = false;
 	}
-	if(!node.hasExpanded) {
-		node.expand(true,true);
-		node.hasExpanded=true;
+	if (!node.hasExpanded) {
+		node.expand(true, true);
+		node.hasExpanded = true;
 	}
 	var newNode = node.appendChild(node.attributes.getChildConfig());
 	node.attributes.children.push(newNode);
-//	newNode.parentNode.reload();
+	// newNode.parentNode.reload();
 	// var newNode = node.attributes.getChildConfig;
-//	newNode.parentNode.expand(true, true, function() {
-////				stgtree.getSelectionModel().select(newNode);
-//				setTimeout(function() {
-//							treeEditor.editNode = newNode;
-//							treeEditor.startEdit(newNode.ui.textNode);
-//						}, 10);
-//			});// 将上级树形展开
+	// newNode.parentNode.expand(true, true, function() {
+	// // stgtree.getSelectionModel().select(newNode);
+	// setTimeout(function() {
+	// treeEditor.editNode = newNode;
+	// treeEditor.startEdit(newNode.ui.textNode);
+	// }, 10);
+	// });// 将上级树形展开
 }
 /**
  * 提交数据的函数

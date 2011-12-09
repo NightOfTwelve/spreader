@@ -34,144 +34,129 @@ var numtext = new Ext.form.TextField({
  * 用户信息列表的查询FORM
  */
 var userSinaForm = new Ext.form.FormPanel({
-	// region : 'north',
-	title : "筛选条件",
-	// collapsible : true,
-	frame : true,
-	id : 'userSinaForm',
-	// border : true,
-	labelWidth : 100, // 标签宽度
-	// frame : true, //是否渲染表单面板背景色
-	labelAlign : 'left', // 标签对齐方式
-	// bodyStyle : 'padding:3 5 0', // 表单元素和表单面板的边距
-	buttonAlign : 'center',
-	height : 120,
-	items : [{ // 行1
-		layout : "column",
-		items : [{
-					columnWidth : .33,
-					layout : "form",
-					items : [{
-								fieldLabel : '运行状态',
-								// name:'TIMEFER',
-								xtype : 'combo',
-								width : 100,
-								store : statTypeStore,
-								id : 'runstat',
-								hiddenName : 'runstat',
-								valueField : 'ID',
-								editable : false,
-								displayField : 'NAME',
-								mode : 'local',
-								forceSelection : false,// 必须选择一项
-								emptyText : '运行状态...',// 默认值
-								triggerAction : 'all'
-							}]
-				}, {
-					columnWidth : .33,
-					layout : "form",
-					items : [{
-								xtype : "textfield",
-								fieldLabel : "用户昵称",
-								name : 'nickName',
-								width : 100
-							}]
-				}, {
-					columnWidth : .3,
-					layout : "form",
-					items : [{
-								xtype : "textfield",
-								fieldLabel : "分类",
-								name : 'tag',
-								width : 100
-							}]
-				}]
-	}, {
-		layout : "column", // 从左往右的布局
-		items : [{
-					columnWidth : .33,
-					layout : "form",
-					items : [{
-								layout : "column", // 从左往右的布局
-								items : [{
-											columnWidth : .5,
-											layout : "form",
-											items : [{
-														xtype : "numberfield",
-														fieldLabel : "粉丝数大于",
-														name : 'minFans',
-														width : 100
-													}]
-										}, {
-											columnWidth : .5,
-											layout : "form",
-											items : [{
-														xtype : "numberfield",
-														fieldLabel : "粉丝数小于",
-														name : 'maxFans',
-														width : 100
-													}]
-										}]
-							}]
-				}, {
-					columnWidth : .33,
-					layout : "form",
-					items : [{
-								layout : "column", // 从左往右的布局
-								items : [{
-											columnWidth : .5,
-											layout : "form",
-											items : [{
-														xtype : "numberfield",
-														fieldLabel : "机器人粉丝数大于",
-														name : 'minRobotFans',
-														width : 100
-													}]
-										}, {
-											columnWidth : .5,
-											layout : "form",
-											items : [{
-														xtype : "numberfield",
-														fieldLabel : "机器人粉丝数小于",
-														name : 'maxRobotFans',
-														width : 100
-													}]
-										}]
-							}]
-				}]
-	}],
-	buttonAlign : "center",
-	buttons : [{
-		text : "查询",
-		handler : function() { // 按钮响应函数
-			var tform = userSinaForm.getForm();
-			var nickName = tform.findField("nickName").getValue();
-			var minFans = tform.findField("minFans").getValue();
-			var maxFans = tform.findField("maxFans").getValue();
-			var minRobotFans = tform.findField("minRobotFans").getValue();
-			var maxRobotFans = tform.findField("maxRobotFans").getValue();
-			var tag = tform.findField("tag").getValue();
-			var num = numtext.getValue();
-			sinaUserStore.setBaseParam('nickName', Ext.isEmpty(nickName)
-							? null
-							: nickName);
-			sinaUserStore.setBaseParam('minFans', minFans);
-			sinaUserStore.setBaseParam('maxFans', maxFans);
-			sinaUserStore.setBaseParam('minRobotFans', minRobotFans);
-			sinaUserStore.setBaseParam('maxRobotFans', maxRobotFans);
-			sinaUserStore.setBaseParam('tag', Ext.isEmpty(tag) ? null : tag);
-			sinaUserStore.setBaseParam('limit', Ext.isEmpty(num)
-							? number
-							: Number(num));
-			sinaUserStore.load();
-		}
-	}, {
-		text : "重置",
-		handler : function() { // 按钮响应函数
-			userSinaForm.form.reset();
-		}
-	}]
-});
+			// region : 'north',
+			title : "筛选条件",
+			// collapsible : true,
+			frame : true,
+			id : 'userSinaForm',
+			// border : true,
+			labelWidth : 90, // 标签宽度
+			frame : true,
+			labelAlign : 'right',
+			bodyStyle : 'padding:5 5 5 5',
+			buttonAlign : 'center',
+			height : 180,
+			items : [{ // 行1
+				layout : "column",
+				items : [{
+							columnWidth : .33,
+							layout : "form",
+							items : [{
+										fieldLabel : '运行状态',
+										// name:'TIMEFER',
+										xtype : 'combo',
+										store : statTypeStore,
+										id : 'runstat',
+										hiddenName : 'runstat',
+										valueField : 'ID',
+										editable : false,
+										displayField : 'NAME',
+										mode : 'local',
+										forceSelection : false,// 必须选择一项
+										emptyText : '运行状态...',// 默认值
+										triggerAction : 'all'
+									}]
+						}, {
+							columnWidth : .33,
+							layout : "form",
+							items : [{
+										xtype : "textfield",
+										fieldLabel : "用户昵称",
+										name : 'nickName'
+									}]
+						}, {
+							columnWidth : .3,
+							layout : "form",
+							items : [{
+										xtype : "textfield",
+										fieldLabel : "分类",
+										name : 'tag'
+									}]
+						}]
+			}, {	// 行2
+						layout : "column",
+						items : [{
+									columnWidth : .33,
+									layout : "form",
+									items : [{
+												xtype : "numberfield",
+												fieldLabel : "粉丝数大于",
+												name : 'minFans'
+											}]
+								}, {
+									columnWidth : .33,
+									layout : "form",
+									items : [{
+												xtype : "numberfield",
+												fieldLabel : "粉丝数小于",
+												name : 'maxFans'
+											}]
+								}]
+					}, { // 行3
+						layout : "column",
+						items : [{
+									columnWidth : .33,
+									layout : "form",
+									items : [{
+												xtype : "numberfield",
+												fieldLabel : "机器人粉丝数大于",
+												name : 'minRobotFans'
+											}]
+								}, {
+									columnWidth : .33,
+									layout : "form",
+									items : [{
+												xtype : "numberfield",
+												fieldLabel : "机器人粉丝数小于",
+												name : 'maxRobotFans'
+											}]
+								}]
+					}],
+			buttonAlign : "center",
+			buttons : [{
+				text : "查询",
+				handler : function() { // 按钮响应函数
+					var tform = userSinaForm.getForm();
+					var nickName = tform.findField("nickName").getValue();
+					var minFans = tform.findField("minFans").getValue();
+					var maxFans = tform.findField("maxFans").getValue();
+					var minRobotFans = tform.findField("minRobotFans")
+							.getValue();
+					var maxRobotFans = tform.findField("maxRobotFans")
+							.getValue();
+					var tag = tform.findField("tag").getValue();
+					var num = numtext.getValue();
+					sinaUserStore.setBaseParam('nickName', Ext
+									.isEmpty(nickName) ? null : nickName);
+					sinaUserStore.setBaseParam('minFans', minFans);
+					sinaUserStore.setBaseParam('maxFans', maxFans);
+					sinaUserStore.setBaseParam('minRobotFans', minRobotFans);
+					sinaUserStore.setBaseParam('maxRobotFans', maxRobotFans);
+					sinaUserStore.setBaseParam('tag', Ext.isEmpty(tag)
+									? null
+									: tag);
+					sinaUserStore.setBaseParam('limit', Ext.isEmpty(num)
+									? number
+									: Number(num));
+					sinaUserStore.load();
+				}
+			}, {
+				text : "重置",
+				handler : function() { // 按钮响应函数
+					userSinaForm.form.reset();
+				}
+			}]
+		});
 // ///GRID
 /**
  * 用户信息列表
@@ -342,8 +327,7 @@ var bbar = new Ext.PagingToolbar({
 var sinaUserGrid = new Ext.grid.GridPanel({
 			// region : 'center',
 			id : 'sinaUserGrid',
-			// autoHeight:true,
-			height : 500,
+			height : 440,
 			stripeRows : true, // 斑马线
 			frame : true,
 			// autoWidth : true,
@@ -366,15 +350,16 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 			onCellClick : function(grid, rowIndex, columnIndex, e) {
 				var selesm = grid.getSelectionModel().getSelections();
 				var userid = selesm[0].data.id;
+				var nickname = selesm[0].data.nickName;
 				var fanscol = grid.getColumnModel().getDataIndex(columnIndex);
 				if (fanscol == 'fans') {
+					realFansDtlWin.title = nickname + '的粉丝';
 					realFansDtlWin.show();
 					GFANSID = userid;
 					userFansStore.setBaseParam('id', userid);
 					userFansStore.setBaseParam('isRobot', false);
 					userFansStore.load();
-				}
-				else if(fanscol=='robotFans'){
+				} else if (fanscol == 'robotFans') {
 					robotFansDtlWin.show();
 					GROBOTID = userid;
 					userRobotFansStore.setBaseParam('id', userid);
@@ -388,7 +373,7 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 // 注册事件
 sinaUserGrid.on('cellclick', sinaUserGrid.onCellClick, sinaUserGrid);
 
-// TODO 粉丝信息列表
+// 粉丝信息列表
 var realFansDtlWin = new Ext.Window({
 			title : '<span class="commoncss">粉丝列表</span>', // 窗口标题
 			iconCls : 'imageIcon',
@@ -416,8 +401,8 @@ var realFansDtlWin = new Ext.Window({
 						}
 					}]
 		});
-		//机器人粉丝
-		var robotFansDtlWin = new Ext.Window({
+// 机器人粉丝
+var robotFansDtlWin = new Ext.Window({
 			title : '<span class="commoncss">机器人粉丝列表</span>', // 窗口标题
 			iconCls : 'imageIcon',
 			layout : 'fit', // 设置窗口布局模式
@@ -444,31 +429,3 @@ var realFansDtlWin = new Ext.Window({
 						}
 					}]
 		});
-
-/**
- * 渲染是否位机器人
- * 
- * @param {}
- *            value
- * @return {}
- */
-function rendIsRobot(value) {
-	if (value) {
-		return '是';
-	} else {
-		return '否';
-	}
-}
-/**
- * 
- * @param {}
- *            value
- * @return {}
- */
-// function rendTrigger(value) {
-// if (value == 1) {
-// return '简单调度';
-// } else {
-// return '复杂调度';
-// }
-// }

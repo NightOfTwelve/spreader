@@ -20,12 +20,6 @@ var stgtree = new Ext.tree.TreePanel({
 				handler : function() {
 					submitTreeData();
 				}
-			}, '-', {
-				text : '修改',
-				iconCls : 'edit1Icon',
-				handler : function() {
-					editInit();
-				}
 			}],
 	root : stgroot,
 	loader : new Ext.tree.TreeLoader({
@@ -119,6 +113,9 @@ var rightMenu = new Ext.menu.Menu({
 		});
 // 添加点击事件
 stgtree.on('click', function(node) {
+			if (node.id == -1) {
+				return;
+			}
 			var isCollection = node.attributes.isCollection;
 			if (isCollection) {
 				collectionRender(node);
@@ -173,20 +170,20 @@ function appendNodeAction(node) {
 	if (node.isLeaf()) {
 		node.leaf = false;
 	}
-	if(!node.hasExpanded) {
-		node.expand(true,true);
-		node.hasExpanded=true;
+	if (!node.hasExpanded) {
+		node.expand(true, true);
+		node.hasExpanded = true;
 	}
 	var newNode = node.appendChild(node.attributes.getChildConfig());
 	node.attributes.children.push(newNode);
 	// var newNode = node.attributes.getChildConfig;
-//	newNode.parentNode.expand(true, true, function() {
-////				stgtree.getSelectionModel().select(newNode);
-//				setTimeout(function() {
-//							treeEditor.editNode = newNode;
-//							treeEditor.startEdit(newNode.ui.textNode);
-//						}, 10);
-//			});// 将上级树形展开
+	// newNode.parentNode.expand(true, true, function() {
+	// // stgtree.getSelectionModel().select(newNode);
+	// setTimeout(function() {
+	// treeEditor.editNode = newNode;
+	// treeEditor.startEdit(newNode.ui.textNode);
+	// }, 10);
+	// });// 将上级树形展开
 }
 /**
  * 提交树的数据对象
