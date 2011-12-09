@@ -7,15 +7,14 @@ Ext.onReady(function() {
 						layout : 'border',
 						items : [{
 									region : 'center',
-									id:'pptgridmanage',
+									id : 'pptgridmanage',
 									header : false,
-									// TODO
 									collapsible : true,
 									split : true,
 									height : 100
 								}, {
 									region : 'west',
-									title : '选择配置',
+									// title : '选择配置',
 									split : true,
 									width : 200,
 									minWidth : 175,

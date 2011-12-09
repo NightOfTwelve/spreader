@@ -17,12 +17,12 @@ Ext.onReady(function() {
 							region : 'north',
 							split : true,
 							// collapsible : true,
-							height : 120,
+							autoHeight :true,
 							items : [userSinaForm]
 						}, {
 							region : 'center',
 							split : true,
-							height : 500,
+							autoHeight :true,
 							items : [sinaUserGrid]
 						}],
 				iconCls : 'book_previousIcon', // 图标

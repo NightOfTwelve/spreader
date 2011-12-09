@@ -146,11 +146,12 @@ var stgdisplistgrid = new Ext.grid.GridPanel({
 				if (e.target.defaultValue == '配置') {
 					var record = grid.getStore().getAt(rowIndex);
 					var data = record.data;
-					GDISNAME = data.displayName;
+					GDISNAME = data.name;
 					GOBJID = data.name;
 					GDISPID = data.id;
 					var trgid = data.id;
 					settingCreateTrigger(trgid);
+					editstgWindow.title = rendDispName(GDISNAME);
 					editstgWindow.show();
 				}
 			}
@@ -384,6 +385,7 @@ var stgCmbWindow = new Ext.Window({
 					GDISPID = null;
 					GOBJID = stgSelectCombo.getValue();
 					GDISNAME = stgSelectCombo.lastSelectionText;
+					editstgWindow.title = GDISNAME;
 					editstgWindow.show();
 					stgCmbWindow.hide();
 				}
@@ -424,11 +426,9 @@ var editstgWindow = new Ext.Window({
 						id : 'pptgridmanage',
 						header : false,
 						collapsible : true,
-						split : true,
-						height : 100
+						split : true
 					}, {
 						region : 'west',
-						title : '选择配置',
 						split : true,
 						width : 200,
 						minWidth : 175,
@@ -438,8 +438,8 @@ var editstgWindow = new Ext.Window({
 						region : 'south',
 						title : '调度配置',
 						split : true,
-						width : 300,
-						height : 180,
+						// height : 300,
+						autoHeight : true,
 						items : [radioForm, cardPanel]
 					}],
 			buttons : [{
@@ -532,7 +532,8 @@ function deleteData() {
 									},
 									scope : stgdisplistgrid,
 									success : function(response) {
-										var result = Ext.decode(response.responseText);
+										var result = Ext
+												.decode(response.responseText);
 										Ext.Msg.alert("提示", result.message);
 										store.reload();
 									},
