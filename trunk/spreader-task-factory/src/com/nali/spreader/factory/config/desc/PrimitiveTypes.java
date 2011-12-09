@@ -6,6 +6,7 @@ public class PrimitiveTypes implements ConfigDefinition {
 	public static final ConfigDefinition Float = new PrimitiveTypes(DefinitionType.Float);
 	public static final ConfigDefinition Boolean = new PrimitiveTypes(DefinitionType.Boolean);
 	public static final ConfigDefinition Character = new PrimitiveTypes(DefinitionType.Character);
+	public static final ConfigDefinition Date = new PrimitiveTypes(DefinitionType.Date);
 
 	private DefinitionType type;
 
