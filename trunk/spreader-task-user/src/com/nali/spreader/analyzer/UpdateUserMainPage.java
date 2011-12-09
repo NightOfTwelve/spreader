@@ -1,23 +1,19 @@
-package com.nali.spreader.workshop;
+package com.nali.spreader.analyzer;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
-import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
+import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
-import com.nali.spreader.factory.SimpleActionConfig;
+import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.desc.ClassDescription;
-import com.nali.spreader.factory.exporter.SingleTaskMachineImpl;
-import com.nali.spreader.factory.exporter.SingleTaskExporter;
-import com.nali.spreader.factory.regular.SingleRegularTaskProducer;
+import com.nali.spreader.factory.passive.AutowireProductLine;
+import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotUserService;
 import com.nali.spreader.service.IRobotUserServiceFactory;
@@ -25,18 +21,16 @@ import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
 import com.nali.spreader.util.DataIterator;
 import com.nali.spreader.util.NumberUtil;
-import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
 @ClassDescription("更新用户资料")
-public class UpdateUserMainPage extends SingleTaskMachineImpl implements SingleRegularTaskProducer {//TODO SystemObject
+public class UpdateUserMainPage implements RegularAnalyzer {//TODO SystemObject
+	private Integer websiteId = Website.weibo.getId();
 	private static Logger logger = Logger.getLogger(UpdateUserMainPage.class);
 	private IRobotUserService robotUserService;
 	private IUserService userService;
-	
-	public UpdateUserMainPage() {
-		super(SimpleActionConfig.fetchWeiboUserMainPage, Website.weibo, Channel.normal);
-	}
+	@AutowireProductLine
+	private TaskProduceLine<KeyValue<Long, Long>> fetchWeiboUserMainPage;
 
 	@Autowired
 	public void initRobotUserService(IRobotUserServiceFactory robotUserServiceFactory) {
@@ -49,7 +43,7 @@ public class UpdateUserMainPage extends SingleTaskMachineImpl implements SingleR
 	}
 
 	@Override
-	public void work(SingleTaskExporter exporter) {//TODO 改的只剩下同步过期用户,同步未更新的机器人用户
+	public void work() {//TODO 改的只剩下同步过期用户,同步未更新的机器人用户
 		final int threshold = 20;//TODO 改为任意机器人类型任务
 		//基本数据计算
 		long uninitializedUserCount = userService.getUninitializedUserCount();
@@ -81,35 +75,27 @@ public class UpdateUserMainPage extends SingleTaskMachineImpl implements SingleR
 		while (uninitializedUserIterator.hasNext()) {
 			List<User> users = uninitializedUserIterator.next();
 			robotUser = robotIterator.next();
-			createTasks(robotUser.getUid(), users, exporter);
+			createTasks(robotUser.getUid(), users);
 		}
 		//抓取过期用户
 		//之前未初始化用户最后一批的机器人可能未满batchSize，给予补足
 		long overfollow = uninitializedUserIterator.getOverfollow();
 		if(overfollow>0) {
 			List<User> users = userService.getExpiredUser(0, (int) overfollow);
-			createTasks(robotUser.getUid(), users, exporter);
+			createTasks(robotUser.getUid(), users);
 		}
 		//循环剩下的过期用户
 		ExpiredUserIterator expiredUserIterator = new ExpiredUserIterator(expiredUserCount, overfollow, batchSize);
 		while (expiredUserIterator.hasNext()) {
 			List<User> users = expiredUserIterator.next();
 			robotUser = robotIterator.next();
-			createTasks(robotUser.getUid(), users, exporter);
+			createTasks(robotUser.getUid(), users);
 		}
 	}
-
-	private void createTask(Long robotUid, User user, SingleTaskExporter exporter, Date expiredTime) {
-		Map<String, Object> contents = CollectionUtils.newHashMap(2);
-		contents.put("id", user.getId());
-		contents.put("websiteUid", user.getWebsiteUid());
-		exporter.createTask(contents, robotUid, expiredTime);
-	}
 	
-	private void createTasks(Long robotUid, List<User> users, SingleTaskExporter exporter) {
-		Date expiredTime = SpecialDateUtil.afterToday(2);
+	private void createTasks(Long robotUid, List<User> users) {
 		for (User user : users) {
-			createTask(robotUid, user, exporter, expiredTime);
+			fetchWeiboUserMainPage.send(new KeyValue<Long, Long>(user.getId(), robotUid));
 		}
 	}
 

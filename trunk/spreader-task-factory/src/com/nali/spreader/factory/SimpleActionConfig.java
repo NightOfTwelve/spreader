@@ -10,6 +10,7 @@ public enum SimpleActionConfig {
 	fetchWeiboContent(11L),
 	postWeiboContent(12L),
 	addUserFans(13L),
+	forwardWeiboContent(14L),
 	;
 	private Long actionId;
 	private String taskCode;

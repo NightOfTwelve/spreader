@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -43,10 +44,10 @@ public abstract class ProxyAnnotationResolver<T extends Annotation, Proxied> imp
 	protected Object resolveDependency(ProxyDependencyDescriptor descriptor, String beanName, Set<String> autowiredBeanNames, TypeConverter typeConverter) {
 		descriptor.setDependencyType(proxiedClazz);
 		Proxied proxied = (Proxied) beanFactory.resolveDependency(descriptor, beanName, autowiredBeanNames, typeConverter);
-		return wrap(proxied, autowiredBeanNames);
+		return wrap(proxied, autowiredBeanNames, descriptor.getGenericDependencyType());
 	}
 
-	protected abstract Object wrap(Proxied proxied, Set<String> beanNames);
+	protected abstract Object wrap(Proxied proxied, Set<String> beanNames, Type type);
 
 	protected class AutowiredFieldElement extends InjectionMetadata.InjectedElement {
 		private final boolean required;

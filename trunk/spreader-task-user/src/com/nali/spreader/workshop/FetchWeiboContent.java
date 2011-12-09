@@ -8,65 +8,58 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.nali.common.util.CollectionUtils;
-import com.nali.spreader.config.UserDto;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
+import com.nali.spreader.data.Content;
 import com.nali.spreader.data.KeyValue;
+import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
-import com.nali.spreader.factory.config.Configable;
-import com.nali.spreader.factory.config.desc.ClassDescription;
-import com.nali.spreader.factory.exporter.SingleTaskMachineImpl;
+import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
-import com.nali.spreader.factory.regular.SingleRegularTaskProducer;
 import com.nali.spreader.service.IContentService;
-import com.nali.spreader.service.IUserService;
-import com.nali.spreader.service.IUserServiceFactory;
+import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
-@ClassDescription("抓取微博内容")
-public class FetchWeiboContent extends SingleTaskMachineImpl implements SingleRegularTaskProducer,Configable<UserDto> {
-	private IUserService userService;
-	private UserDto dto;
+public class FetchWeiboContent extends SingleTaskMachineImpl implements PassiveWorkshop<KeyValue<Long, Long>,List<Content>> {
 	@Autowired
 	private IContentService contentService;
 	@Autowired
 	private WeiboRobotUserHolder robotUserHolder;
+	@Autowired
+	private IGlobalUserService globalUserService;
 
 	public FetchWeiboContent() {
 		super(SimpleActionConfig.fetchWeiboContent, Website.weibo, Channel.normal);
 	}
-	
-	@Autowired
-	public void initUserService(IUserServiceFactory userServiceFactory) {
-		userService = userServiceFactory.getUserService(websiteId);
-	}
 
 	@Override
-	public void work(SingleTaskExporter exporter) {
-		List<KeyValue<Long, Long>> uidToWebsiteUidMaps = userService.findUidToWebsiteUidMapByDto(dto);
-		for (KeyValue<Long, Long> uidToWebsiteUidMap : uidToWebsiteUidMaps) {
-			Long uid = uidToWebsiteUidMap.getKey();
-			Long websiteUid = uidToWebsiteUidMap.getValue();
-			Map<String, Object> content = getContent(uid, websiteUid);
-			if(content!=null) {
-				exporter.createTask(content, robotUserHolder.getRobotUid(), SpecialDateUtil.afterToday(2));//TODO 不分配具体的人
-			}
+	public void work(KeyValue<Long, Long> data, SingleTaskExporter exporter) {
+		Long uid = data.getKey();
+		Long robotId = data.getValue();
+		if(robotId==null) {
+			robotId = robotUserHolder.getRobotUid();//TODO 不分配具体的人
 		}
-	}
-
-	private Map<String, Object> getContent(Long uid, Long websiteUid) {
 		Date lastFetchTime= contentService.getAndTouchLastFetchTime(uid);
 		Map<String,Object> content = CollectionUtils.newHashMap(2);
-		content.put("websiteUid", websiteUid);
+		content.put("websiteUid", globalUserService.getWebsiteUid(uid));
 		content.put("lastFetchTime", lastFetchTime);
-		return content;
+		exporter.createTask(content, robotId, SpecialDateUtil.afterToday(2));
 	}
 
 	@Override
-	public void init(UserDto dto) {
-		this.dto = dto;
-		dto.setIsRobot(false);
+	public void handleResult(Date updateTime, List<Content> contents) {
+		for (Content content : contents) {
+			content.setSyncDate(updateTime);
+			content.setType(Content.TYPE_WEIBO);
+			content.setWebsiteId(Website.weibo.getId());
+//			Long uid = userService.assignUser(content.getWebsiteUid());
+//			if(uid!=null) {
+//				fetchWeiboUserMainPage.send(uid);
+//				content.setUid(uid);
+//			}
+			contentService.saveContent(content);
+		}
 	}
-
+	
 }

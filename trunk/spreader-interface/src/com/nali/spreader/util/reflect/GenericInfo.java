@@ -310,17 +310,21 @@ public class GenericInfo<T> {
 			GenericAnalyzeResult analyzeResult = new GenericAnalyzeResult(actualArgument);
 			addGeneric(declaredParameter, analyzeResult.getStatefulGenericType());
 			List<VarPath> varPaths = analyzeResult.getVarPaths();
-			Map<TypeVariable<?>,List<int[]>> varPathMap = new HashMap<TypeVariable<?>, List<int[]>>();
-			for (VarPath varPath : varPaths) {
-				List<int[]> pathList = varPathMap.get(varPath.var);
-				if(pathList==null) {
-					pathList = new LinkedList<int[]>();
-					varPathMap.put(varPath.var, pathList);
+			if(varPaths.size()==0) {
+				changeGeneric(declaredParameter, actualArgument);
+			} else {
+				Map<TypeVariable<?>,List<int[]>> varPathMap = new HashMap<TypeVariable<?>, List<int[]>>();
+				for (VarPath varPath : varPaths) {
+					List<int[]> pathList = varPathMap.get(varPath.var);
+					if(pathList==null) {
+						pathList = new LinkedList<int[]>();
+						varPathMap.put(varPath.var, pathList);
+					}
+					pathList.add(varPath.path);
 				}
-				pathList.add(varPath.path);
-			}
-			for (Entry<TypeVariable<?>, List<int[]>> entry : varPathMap.entrySet()) {
-				addListener(entry.getKey(), new GenericTypeReplace(declaredParameter, entry.getValue()));
+				for (Entry<TypeVariable<?>, List<int[]>> entry : varPathMap.entrySet()) {
+					addListener(entry.getKey(), new GenericTypeReplace(declaredParameter, entry.getValue()));
+				}
 			}
 		} else if (actualArgument instanceof TypeVariable) {
 			addGeneric(declaredParameter, actualArgument);

@@ -1,5 +1,7 @@
 package com.nali.spreader.factory.passive;
 
-public interface PassiveAnalyzer<D> extends PassiveObject {
+import com.nali.spreader.factory.base.Analyzer;
+
+public interface PassiveAnalyzer<D> extends PassiveObject, Analyzer {
 	void work(D data);
 }

@@ -3,6 +3,7 @@ package com.nali.spreader.util.autowire;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -19,7 +20,7 @@ public abstract class ProxyPostAnnotationResolver<T extends Annotation, Proxied>
 		proxiedClazz = GenericTypeResolver.resolveTypeArguments(getClass(), ProxyPostAnnotationResolver.class)[1];
 	}
 	
-	protected Object getBean(String beanName, Class<?> clazz) {
+	protected Object getBean(String beanName, Type type) {
 		Proxied proxied = null;
 		if(beanName!=null) {
 			try {
@@ -31,22 +32,22 @@ public abstract class ProxyPostAnnotationResolver<T extends Annotation, Proxied>
 			proxied = beanFactory.getBean(proxiedClazz);
 		}
 		
-		return wrap(proxied, beanName, clazz);
+		return wrap(proxied, beanName, type);
 	}
 
-	protected abstract Object wrap(Proxied proxied, String beanName, Class<?> clazz);
+	protected abstract Object wrap(Proxied proxied, String beanName, Type type);
 
 	@Override
 	public Object getInjectObject(T annotation, Field field) {
-		return getBean(field.getName(), field.getDeclaringClass());
+		return getBean(field.getName(), field.getGenericType());
 	}
 
 	@Override
 	public Object[] getInjectObject(T annotation, Method method) {
-		Class<?>[] parameterTypes = method.getParameterTypes();
+		Type[] parameterTypes = method.getGenericParameterTypes();
 		Object[] parameters = new Object[parameterTypes.length];
 		for (int i = 0; i < parameterTypes.length; i++) {
-			Class<?> parameterType = parameterTypes[i];
+			Type parameterType = parameterTypes[i];
 			parameters[i] = getBean(null, parameterType);//TODO null改掉，支持Qualified
 		}
 		return parameters;

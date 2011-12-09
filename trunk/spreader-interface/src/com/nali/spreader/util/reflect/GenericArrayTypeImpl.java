@@ -51,4 +51,20 @@ class GenericArrayTypeImpl implements GenericArrayType, FakeCloneable {
 			throw new InternalError();
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		return genericComponentType.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj==this) {
+			return true;
+		}
+		if (obj instanceof GenericArrayType) {
+			return ((GenericArrayType)obj).getGenericComponentType().equals(genericComponentType);
+		}
+		return false;
+	}
 }

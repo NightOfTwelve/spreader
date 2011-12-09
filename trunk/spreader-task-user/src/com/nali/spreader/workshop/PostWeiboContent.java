@@ -1,76 +1,44 @@
 package com.nali.spreader.workshop;
 
-import java.util.List;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.nali.common.util.CollectionUtils;
-import com.nali.spreader.config.UserDto;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
-import com.nali.spreader.data.Content;
 import com.nali.spreader.data.KeyValue;
+import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
-import com.nali.spreader.factory.config.Configable;
-import com.nali.spreader.factory.config.desc.ClassDescription;
-import com.nali.spreader.factory.exporter.SingleTaskMachineImpl;
+import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
-import com.nali.spreader.factory.regular.SingleRegularTaskProducer;
-import com.nali.spreader.service.IContentService;
-import com.nali.spreader.service.IUserService;
-import com.nali.spreader.service.IUserServiceFactory;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
-@ClassDescription("发微博")
-public class PostWeiboContent extends SingleTaskMachineImpl implements SingleRegularTaskProducer,Configable<UserDto> {
+public class PostWeiboContent extends SingleTaskMachineImpl implements PassiveWorkshop<KeyValue<Long, String>, KeyValue<Long, Long>> {
 	private static Logger logger = Logger.getLogger(PostWeiboContent.class);
-	private IUserService userService;
-	private UserDto dto;
-	@Autowired
-	private IContentService contentService;
 
 	public PostWeiboContent() {
 		super(SimpleActionConfig.postWeiboContent, Website.weibo, Channel.normal);
 	}
-	
-	@Autowired
-	public void initUserService(IUserServiceFactory userServiceFactory) {
-		userService = userServiceFactory.getUserService(websiteId);
-	}
 
 	@Override
-	public void work(SingleTaskExporter exporter) {
-		List<KeyValue<Long, Long>> uidToWebsiteUidMaps = userService.findUidToWebsiteUidMapByDto(dto);
-		for (KeyValue<Long, Long> uidToWebsiteUidMap : uidToWebsiteUidMaps) {
-			Long uid = uidToWebsiteUidMap.getKey();
-//			Long websiteUid = uidToWebsiteUidMap.getValue();
-			Map<String, Object> content = getContent(uid);
-			if(content!=null) {
-				exporter.createTask(content, uid, SpecialDateUtil.afterToday(3));
-			}
-		}
-	}
-
-	private Map<String, Object> getContent(Long uid) {
-		Content matchedContent = contentService.getMatchedContent(uid);
-		if(matchedContent==null) {
-			logger.warn("not matchedContent, uid:" + uid);
-			return null;
-		}
+	public void work(KeyValue<Long, String> data, SingleTaskExporter exporter) {
+		Long uid = data.getKey();
+		String text = data.getValue();
 		Map<String,Object> content = CollectionUtils.newHashMap(2);
 		content.put("id", uid);
-		content.put("content", matchedContent.getContent());
-		return content;
+		content.put("content", text);
+		exporter.createTask(content, uid, SpecialDateUtil.afterToday(3));
 	}
 
 	@Override
-	public void init(UserDto dto) {
-		this.dto = dto;
-		dto.setIsRobot(true);
+	public void handleResult(Date updateTime, KeyValue<Long, Long> uidToContentIdMap) {
+		//目前只是打打酱油
+		//TODO result改为 KeyValue<Long, KeyValue<Long, Long>>，记录发过的原帖id
+		logger.info("user[" + uidToContentIdMap.getKey() + "] post a content[" + uidToContentIdMap.getValue() + "]");
 	}
 
 }

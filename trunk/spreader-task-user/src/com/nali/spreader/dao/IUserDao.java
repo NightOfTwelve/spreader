@@ -3,6 +3,7 @@ package com.nali.spreader.dao;
 import java.util.Date;
 import java.util.List;
 
+import com.nali.spreader.config.ContentDto;
 import com.nali.spreader.config.UserDto;
 import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.data.Content;
@@ -19,8 +20,6 @@ public interface IUserDao {
 	List<KeyValue<Long, Long>> findUidToWebsiteUidMapByDto(UserDto dto);
 
 	Date getAndTouchLastFetchTime(Long uid);
-
-	Long insertContent(Content content);
 
 	List<User> findUserFansInfoByDto(UserDto dto);
 
@@ -41,6 +40,10 @@ public interface IUserDao {
 	 * @return
 	 */
 	Integer countUserAndTagNumer(UserTagParamsDto utp);
+
+	Long insertContent(Content content);
+	
+	List<Long> findContentIdByDto(ContentDto dto);
 
 	/**
 	 * 获取粉丝信息

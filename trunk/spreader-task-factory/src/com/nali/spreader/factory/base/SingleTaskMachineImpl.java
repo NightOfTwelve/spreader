@@ -1,4 +1,4 @@
-package com.nali.spreader.factory.exporter;
+package com.nali.spreader.factory.base;
 
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;

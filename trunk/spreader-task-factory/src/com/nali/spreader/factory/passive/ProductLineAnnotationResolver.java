@@ -1,5 +1,6 @@
 package com.nali.spreader.factory.passive;
 
+import java.lang.reflect.Type;
 import java.util.Set;
 
 import com.nali.spreader.util.autowire.ProxyAnnotationResolver;
@@ -12,9 +13,9 @@ public class ProductLineAnnotationResolver extends ProxyAnnotationResolver<Autow
 	private PassiveProducerManager passiveProducerManager;
 
 	@Override
-	protected Object wrap(PassiveObject proxied, Set<String> beanNames) {
+	protected Object wrap(PassiveObject proxied, Set<String> beanNames, Type type) {
 		String beanName = beanNames.iterator().next();
-		return passiveProducerManager.getProduceLine(beanName, proxied);
+		return passiveProducerManager.getProduceLine(beanName, proxied, type);
 	}
 
 	public void setPassiveProducerManager(PassiveProducerManager passiveProducerManager) {

@@ -1,4 +1,4 @@
-package com.nali.spreader.factory.exporter;
+package com.nali.spreader.factory.base;
 
 public interface TaskMeta {
 	String getCode();
