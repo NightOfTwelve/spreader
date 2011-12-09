@@ -47,7 +47,7 @@ public class AddUserFans extends SingleTaskMachineImpl implements PassiveWorksho
 	@Override
 	public void work(KeyValue<Long, Long> data, SingleTaskExporter exporter) {
 		Long robotId = data.getKey();
-		Long uid = data.getKey();
+		Long uid = data.getValue();
 		
 		Map<String,Object> content = CollectionUtils.newHashMap(3);
 		content.put("id", robotId);

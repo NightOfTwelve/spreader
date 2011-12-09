@@ -3,18 +3,31 @@ package com.nali.spreader.config;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.nali.spreader.factory.config.desc.PropertyDescription;
+
 public class ContentDto implements Serializable {
     private static final long serialVersionUID = 4201401029398919760L;
+    @PropertyDescription("类型")
 	private Integer type;
+	@PropertyDescription("网站id")
     private Integer websiteId;
+	@PropertyDescription("网站内容id")
     private Long websiteContentId;
+	@PropertyDescription("引用网站内容id")
     private Long websiteRefId;
+	@PropertyDescription("网站用户id")
     private Long websiteUid;
+	@PropertyDescription("用户id")
     private Long uid;
+	@PropertyDescription("发布时间")
     private Range<Date> pubDate;
+	@PropertyDescription("转发数")
     private Range<Integer> refCount;
+	@PropertyDescription("回复数")
     private Range<Integer> replyCount;
+	@PropertyDescription("内容长度数")
     private Range<Integer> contentLength;
+	@PropertyDescription("发帖人筛选条件")
     private UserRelatedDto userRelated;
 	public Integer getType() {
 		return type;
