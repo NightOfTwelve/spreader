@@ -75,13 +75,47 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 				}
 			}
 		});
+/**
+ * 内容库查询
+ */
+var menuTree_ContentLibQuery = new Ext.tree.TreePanel({
+			id : 'menuTree_ContentLibQuery',
+			// autoScroll : true,
+//			autoHeight : true,
+			expanded : true,
+			singleExpand : true,
+			useArrows : true,
+			rootVisible : true,
+			root : new Ext.tree.AsyncTreeNode({
+						id : '-1',
+						text : '基础信息',
+						children : [{
+									id : 'contentLib1',
+									text : "微博内容库检索",
+									leaf : true,
+									url : '../contentlib/init'
+								}]
+					}),
+			// 添加监听事件
+			listeners : {
+				'click' : function(view, rec) {
+					var nodeurl = view.attributes.url;
+					var nodetext = view.attributes.text;
+					var nodeid = view.attributes.id;
+					var leaf = view.attributes.leaf;
+					if (leaf) {
+						addTabNew(nodeurl, nodetext, nodeid, nodetext, '');
+					}
+				}
+			}
+		});
 // 左侧菜单，可以收缩的模式
 var accordPanel = new Ext.Panel({
 			id : 'accordPanel',
 			layout : 'accordion',
 			frame : true,
 			header : false,
-			height : document.documentElement.clientHeight-120,
+			height : document.documentElement.clientHeight - 120,
 			layoutConfig : {
 				animate : true
 			},
@@ -94,15 +128,21 @@ var accordPanel = new Ext.Panel({
 			items : [{
 						autoScroll : true,
 						border : false,
-						title : '系统设置',
+						title : '策略及调度维护',
 						iconCls : 'folder_cameraIcon',
 						items : [menuTree_Stg]
 					}, {
 						autoScroll : true,
 						border : false,
-						title : '系统查询',
+						title : '基础信息查询',
 						iconCls : 'folder_cameraIcon',
-						items:[menuTree_InfoQuery]
+						items : [menuTree_InfoQuery]
+					}, {
+						autoScroll : true,
+						border : false,
+						title : '微博内容库',
+						iconCls : 'folder_cameraIcon',
+						items : [menuTree_ContentLibQuery]
 					}]
 		});
 

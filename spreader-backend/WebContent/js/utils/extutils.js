@@ -143,20 +143,3 @@ function rendIsRobot(value) {
 		return '否';
 	}
 }
-/**
- * 显示系统时钟
- */
-function showTime() {
-	var date = new Date();
-	var h = date.getHours();
-	h = h < 10 ? '0' + h : h;
-	var m = date.getMinutes();
-	m = m < 10 ? '0' + m : m;
-	var s = date.getSeconds();
-	s = s < 10 ? '0' + s : s;
-	document.getElementById('rTime').innerHTML = h + ":" + m + ":" + s;
-}
-
-window.onload = function() {
-	setInterval("showTime()", 1000);
-}
