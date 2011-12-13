@@ -2,16 +2,16 @@
 <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
 <sqlMap namespace="spreader_content">
 	<resultMap class="com.nali.spreader.data.Content" id="selectContentInfo"
-		extends="spreader_tb_content.ibatorgenerated_BaseResultMap">
-		<result property="user" column="uid" select="contentUser" />
+		extends="spreader_tb_content.ibatorgenerated_ResultMapWithBLOBs">
+		<result property="nickName" column="uid" select="spreader_content.contentUser" />
 	</resultMap>
 	<sql id="contentPubCondition">
-		<isEmpty prepend="and" property="categoryName">
+		<isNotNull prepend="and" property="categoryName">
 			c.id in (select cc.content_id
 			from tb_category cg
 			inner join tb_content_category cc on cg.id = cc.category_id
 			where cg.name like CONCAT('%',#categoryName#,'%'))
-		</isEmpty>
+		</isNotNull>
 		<isNotNull prepend="and" property="sPubDate">
 			<![CDATA[c.pub_date >= #sPubDate#]]>
 		</isNotNull>
@@ -24,14 +24,14 @@
 		<isNotNull prepend="and" property="eSyncDate">
 			<![CDATA[c.sync_date <= #eSyncDate#]]>
 		</isNotNull>
-		<isEmpty prepend="and" property="userName">
+		<isNotNull prepend="and" property="userName">
 			c.uid in (select u.id from
 			tb_user u where u.nick_name like CONCAT('%',#userName#,'%'))
-		</isEmpty>
+		</isNotNull>
 	</sql>
 	<select id="contentUser" parameterClass="int"
-		resultMap="spreader_tb_user.ibatorgenerated_BaseResultMap">
-		select * from tb_user where id = #uid#
+		resultClass="java.lang.String">
+		select u.nick_name nickName from tb_user u where u.id = #uid#
 	</select>
 	<select id="getContentInfoByParamDto" parameterClass="com.nali.spreader.config.ContentQueryParamsDto"
 		resultMap="selectContentInfo">

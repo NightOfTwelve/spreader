@@ -1,12 +1,69 @@
 Ext.onReady(function() {
 	/**
-	 * 运行状态的COMB的数据源
+	 * 富文本输入框
 	 */
-	var statTypeStore = new Ext.data.ArrayStore({
-				fields : ['ID', 'NAME'],
-				data : [['-1', '----------------------'], ['1', '正常'],
-						['2', '异常']]
+	var contentPanel = new Ext.form.FormPanel({
+				layout : 'fit',
+				frame : true,
+				items : [{
+					id : 'htmleditor',
+					name : 'htmleditor',
+					xtype : 'htmleditor',
+					plugins : [new Ext.ux.form.HtmlEditor.Link(),
+							new Ext.ux.form.HtmlEditor.Image(),
+							new Ext.ux.form.HtmlEditor.Table(),
+							new Ext.ux.form.HtmlEditor.HR(),
+							new Ext.ux.form.HtmlEditor.Word(),
+							new Ext.ux.form.HtmlEditor.RemoveFormat()]
+				}]
 			});
+	/**
+	 * 富文本弹出窗口
+	 */
+	var contentWindow = new Ext.Window({
+				title : '<span class="commoncss">更多内容</span>', // 窗口标题
+				layout : 'fit', // 设置窗口布局模式
+				width : 700, // 窗口宽度
+				height : 450, // 窗口高度
+				closable : false, // 是否可关闭
+				collapsible : false, // 是否可收缩
+				maximizable : true, // 设置是否可以最大化
+				border : false, // 边框线设置
+				constrain : true, // 设置窗口是否可以溢出父容器
+				draggable : false,
+				animateTarget : Ext.getBody(),
+				pageY : 20, // 页面定位Y坐标
+				pageX : document.documentElement.clientWidth / 2 - 700 / 2, // 页面定位X坐标
+				items : [contentPanel], // 嵌入的表单面板
+				buttons : [{ // 窗口底部按钮配置
+					text : '关闭', // 按钮文本
+					iconCls : 'deleteIcon', // 按钮图标
+					handler : function() { // 按钮响应函数
+						contentWindow.hide();
+					}
+				}
+				// ,
+				// { // 窗口底部按钮配置
+				// text : '保存', // 按钮文本
+				// iconCls : 'acceptIcon', // 按钮图标
+				// handler : function() { // 按钮响应函数
+				// var value = Ext.getCmp('htmleditor').getValue();
+				// // Ext.MessageBox.alert('提示', value);
+				// alert(value);
+				// }
+				// }, { // 窗口底部按钮配置
+				// text : '重置', // 按钮文本
+				// iconCls : 'tbar_synchronizeIcon', // 按钮图标
+				// handler : function() { // 按钮响应函数
+				// contentPanel.form.reset();
+				// }
+				// }
+				]
+			});
+
+	Ext.getCmp('htmleditor').on('initialize', function() {
+				Ext.getCmp('htmleditor').focus();
+			})
 	// 页数
 	var number = 20;
 	var numtext = new Ext.form.TextField({
@@ -35,113 +92,123 @@ Ext.onReady(function() {
 	 * 内容库查询条件
 	 */
 	var contentQueryForm = new Ext.form.FormPanel({
-		region : 'north',
-		title : "筛选条件",
-		// collapsible : true,
-		frame : true,
-		id : 'contentQueryForm',
-		// border : true,
-		labelWidth : 90, // 标签宽度
-		frame : true,
-		labelAlign : 'right',
-		bodyStyle : 'padding:5 5 5 5',
-		buttonAlign : 'center',
-		height : 180,
-		items : [{ // 行1
-			layout : "column",
-			items : [{
-						columnWidth : .33,
-						layout : "form",
-						items : [{
-									xtype : "datefield",
-									fieldLabel : "发布起始时间",
-									name : 'sPubDate'
-								}]
-					}, {
-						columnWidth : .33,
-						layout : "form",
-						items : [{
-									xtype : "datefield",
-									fieldLabel : "发布结束时间",
-									name : 'ePubDate'
-								}]
-					}, {
-						columnWidth : .3,
-						layout : "form",
-						items : [{
-									xtype : "textfield",
-									fieldLabel : "微博分类",
-									name : 'categoryName'
-								}]
-					}]
-		}, {	// 行2
+				region : 'north',
+				title : "筛选条件",
+				// collapsible : true,
+				frame : true,
+				id : 'contentQueryForm',
+				// border : true,
+				labelWidth : 90, // 标签宽度
+				frame : true,
+				labelAlign : 'right',
+				bodyStyle : 'padding:5 5 5 5',
+				buttonAlign : 'center',
+				height : 180,
+				items : [{ // 行1
 					layout : "column",
 					items : [{
 								columnWidth : .33,
 								layout : "form",
 								items : [{
 											xtype : "datefield",
-											fieldLabel : "爬取起始时间",
-											name : 'sSyncDate'
+											fieldLabel : "发布起始时间",
+											name : 'sPubDate'
 										}]
 							}, {
 								columnWidth : .33,
 								layout : "form",
 								items : [{
 											xtype : "datefield",
-											fieldLabel : "爬取结束时间",
-											name : 'eSyncDate'
+											fieldLabel : "发布结束时间",
+											name : 'ePubDate'
 										}]
 							}, {
 								columnWidth : .3,
 								layout : "form",
 								items : [{
 											xtype : "textfield",
-											fieldLabel : "微博作者",
-											name : 'userName'
+											fieldLabel : "微博分类",
+											name : 'categoryName'
 										}]
 							}]
-				}],
-		buttonAlign : "center",
-		buttons : [{
-			text : "查询",
-			handler : function() { // 按钮响应函数
-				var tform = contentQueryForm.getForm();
-				var nickName = tform.findField("nickName").getValue();
-				var minFans = tform.findField("minFans").getValue();
-				var maxFans = tform.findField("maxFans").getValue();
-				var minRobotFans = tform.findField("minRobotFans").getValue();
-				var maxRobotFans = tform.findField("maxRobotFans").getValue();
-				var tag = tform.findField("tag").getValue();
-				var num = numtext.getValue();
-				contentStore.setBaseParam('nickName', Ext.isEmpty(nickName)
-								? null
-								: nickName);
-				contentStore.setBaseParam('minFans', minFans);
-				contentStore.setBaseParam('maxFans', maxFans);
-				contentStore.setBaseParam('minRobotFans', minRobotFans);
-				contentStore.setBaseParam('maxRobotFans', maxRobotFans);
-				contentStore.setBaseParam('tag', Ext.isEmpty(tag) ? null : tag);
-				contentStore.setBaseParam('limit', Ext.isEmpty(num)
-								? number
-								: Number(num));
-				contentStore.load();
-			}
-		}, {
-			text : "重置",
-			handler : function() { // 按钮响应函数
-				contentQueryForm.form.reset();
-			}
-		}]
-	});
-	// ///GRID
+				}, {	// 行2
+							layout : "column",
+							items : [{
+										columnWidth : .33,
+										layout : "form",
+										items : [{
+													xtype : "datefield",
+													fieldLabel : "爬取起始时间",
+													name : 'sSyncDate'
+												}]
+									}, {
+										columnWidth : .33,
+										layout : "form",
+										items : [{
+													xtype : "datefield",
+													fieldLabel : "爬取结束时间",
+													name : 'eSyncDate'
+												}]
+									}, {
+										columnWidth : .3,
+										layout : "form",
+										items : [{
+													xtype : "textfield",
+													fieldLabel : "微博作者",
+													name : 'userName'
+												}]
+									}]
+						}],
+				buttonAlign : "center",
+				buttons : [{
+					text : "查询",
+					handler : function() { // 按钮响应函数
+						var tform = contentQueryForm.getForm();
+						var sPubDate = tform.findField("sPubDate").getValue();
+						var ePubDate = tform.findField("ePubDate").getValue();
+						var categoryName = tform.findField("categoryName")
+								.getValue();
+						var sSyncDate = tform.findField("sSyncDate").getValue();
+						var eSyncDate = tform.findField("eSyncDate").getValue();
+						var userName = tform.findField("userName").getValue();
+						var num = numtext.getValue();
+						contentStore.setBaseParam('categoryName', Ext
+										.isEmpty(categoryName)
+										? null
+										: categoryName);
+						contentStore.setBaseParam('sPubDate', sPubDate == ''
+										? null
+										: sPubDate);
+						contentStore.setBaseParam('ePubDate', ePubDate == ''
+										? null
+										: ePubDate);
+						contentStore.setBaseParam('sSyncDate', sSyncDate == ''
+										? null
+										: sSyncDate);
+						contentStore.setBaseParam('eSyncDate', eSyncDate == ''
+										? null
+										: eSyncDate);
+						contentStore.setBaseParam('userName', Ext
+										.isEmpty(userName) ? null : userName);
+						contentStore.setBaseParam('limit', Ext.isEmpty(num)
+										? number
+										: Number(num));
+						contentStore.load();
+					}
+				}, {
+					text : "重置",
+					handler : function() { // 按钮响应函数
+						contentQueryForm.form.reset();
+					}
+				}]
+			});
 	/**
 	 * 用户信息列表
 	 */
 	// 定义表格数据源
 	var contentStore = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
-							url : '../userinfo/userlist'
+							url : '../contentlib/grid'
 						}),
 				reader : new Ext.data.JsonReader({
 							totalProperty : 'totalCount',
@@ -149,35 +216,33 @@ Ext.onReady(function() {
 						}, [{
 									name : 'id'
 								}, {
-									name : 'isRobot'
+									name : 'type'
+								}, {
+									name : 'websiteId'
+								}, {
+									name : 'websiteContentId'
+								}, {
+									name : 'websiteRefId'
+								}, {
+									name : 'websiteUid'
+								}, {
+									name : 'uid'
 								}, {
 									name : 'nickName'
 								}, {
-									name : 'gender'
+									name : 'title'
 								}, {
-									name : 'realName'
+									name : 'pubDate'
 								}, {
-									name : 'fans'
+									name : 'syncDate'
 								}, {
-									name : 'robotFans'
+									name : 'refCount'
 								}, {
-									name : 'articles'
+									name : 'replyCount'
 								}, {
-									name : 'email'
+									name : 'entry'
 								}, {
-									name : 'region'
-								}, {
-									name : 'spaceEntry'
-								}, {
-									name : 'introduction'
-								}, {
-									name : 'qq'
-								}, {
-									name : 'msn'
-								}, {
-									name : 'blog'
-								}, {
-									name : 'tag'
+									name : 'content'
 								}]),
 				autoLoad : {
 					params : {
@@ -187,25 +252,27 @@ Ext.onReady(function() {
 				}
 			});
 	// 分页带上查询条件
-	contentStore.on('beforeload', function() {
-				var pfrom = contentQueryForm.getForm();
-				var pnickName = pfrom.findField("nickName").getValue();
-				var pminFans = pfrom.findField("minFans").getValue();
-				var pmaxFans = pfrom.findField("maxFans").getValue();
-				var pminRobotFans = pfrom.findField("minRobotFans").getValue();
-				var pmaxRobotFans = pfrom.findField("maxRobotFans").getValue();
-				var ptag = pfrom.findField("tag").getValue();
-				var limit = numtext.getValue();
-				this.baseParams = {
-					nickName : Ext.isEmpty(pnickName) ? null : pnickName,
-					minFans : pminFans,
-					maxFans : pmaxFans,
-					minRobotFans : pminRobotFans,
-					maxRobotFans : pmaxRobotFans,
-					tag : Ext.isEmpty(ptag) ? null : ptag,
-					limit : Ext.isEmpty(limit) ? number : Number(limit)
-				};
-			});
+	// contentStore.on('beforeload', function() {
+	// var pfrom = contentQueryForm.getForm();
+	// var sPubDate = pfrom.findField("sPubDate").getValue();
+	// var ePubDate = pfrom.findField("ePubDate").getValue();
+	// var categoryName = pfrom.findField("categoryName").getValue();
+	// var sSyncDate = pfrom.findField("sSyncDate").getValue();
+	// var eSyncDate = pfrom.findField("eSyncDate").getValue();
+	// var userName = pfrom.findField("userName").getValue();
+	// var limit = numtext.getValue();
+	// this.baseParams = {
+	// sPubDate : Ext.isEmpty(sPubDate) ? null : sPubDate,
+	// ePubDate : Ext.isEmpty(ePubDate) ? null : ePubDate,
+	// sSyncDate : Ext.isEmpty(sSyncDate) ? null : sSyncDate,
+	// eSyncDate : Ext.isEmpty(eSyncDate) ? null : eSyncDate,
+	// categoryName : Ext.isEmpty(categoryName)
+	// ? null
+	// : categoryName,
+	// userName : Ext.isEmpty(userName) ? null : userName,
+	// limit : Ext.isEmpty(limit) ? number : Number(limit)
+	// };
+	// });
 
 	// 定义Checkbox
 	var sm = new Ext.grid.CheckboxSelectionModel();
@@ -220,10 +287,10 @@ Ext.onReady(function() {
 				locked : true,
 				width : 80
 			}, {
-				header : '机器人',
-				dataIndex : 'isRobot',
+				header : 'uid',
+				dataIndex : 'uid',
 				locked : true,
-				renderer : rendIsRobot,
+				hidden : true,
 				width : 80
 			}, {
 				header : '昵称',
@@ -231,62 +298,65 @@ Ext.onReady(function() {
 				locked : true,
 				width : 100
 			}, {
-				header : '性别',
-				dataIndex : 'gender',
-				renderer : renderGender,
+				header : '类型',
+				dataIndex : 'type',
+				// renderer : renderGender,
+				locked : true,
 				width : 80
 			}, {
-				header : '真实姓名',
-				dataIndex : 'realName',
+				header : '标题',
+				dataIndex : 'title',
 				width : 100
 			}, {
-				header : '分类',
-				dataIndex : 'tag',
-				renderer : renderBrief,
+				header : '内容',
+				dataIndex : 'content',
+				// renderer : renderBrief,
 				width : 100
 			}, {
-				header : '粉丝数',
-				dataIndex : 'fans',
+				header : '详细',
+				dataIndex : 'showdtl',
+				renderer : function(value, cellmeta, record) {
+					return '<a href="javascript:void(0);"><img src="../css/images/icon/preview.png"/></a>';
+				},
+				width : 35
+			}, {
+				header : 'websiteId',
+				dataIndex : 'websiteId',
 				width : 100,
 				sortable : true
 			}, {
-				header : '机器人粉丝数',
-				dataIndex : 'robotFans',
+				header : 'websiteContentId',
+				dataIndex : 'websiteContentId',
 				width : 100,
 				sortable : true
 			}, {
-				header : '文章数',
-				dataIndex : 'articles',
+				header : 'websiteRefId',
+				dataIndex : 'websiteRefId',
 				width : 100,
 				sortable : true
 			}, {
-				header : 'email',
-				dataIndex : 'email',
+				header : 'websiteUid',
+				dataIndex : 'websiteUid',
 				width : 100
 			}, {
-				header : '地区',
-				dataIndex : 'region',
+				header : '发布时间',
+				dataIndex : 'pubDate',
 				width : 100
 			}, {
-				header : '个人主页',
-				dataIndex : 'spaceEntry',
+				header : '爬取时间',
+				dataIndex : 'syncDate',
 				width : 100
 			}, {
-				header : '自我介绍',
-				dataIndex : 'introduction',
-				renderer : renderBrief,
+				header : 'refCount',
+				dataIndex : 'refCount',
 				width : 100
 			}, {
-				header : 'QQ',
-				dataIndex : 'qq',
+				header : 'replyCount',
+				dataIndex : 'replyCount',
 				width : 100
 			}, {
-				header : 'MSN',
-				dataIndex : 'msn',
-				width : 100
-			}, {
-				header : '博客',
-				dataIndex : 'blog',
+				header : 'entry',
+				dataIndex : 'entry',
 				width : 100
 			}]);
 	// // 分页菜单
@@ -302,7 +372,7 @@ Ext.onReady(function() {
 
 	// 定义grid表格
 	var contentGrid = new Ext.grid.GridPanel({
-				 region : 'center',
+				region : 'center',
 				id : 'contentGrid',
 				height : 440,
 				stripeRows : true, // 斑马线
@@ -325,38 +395,27 @@ Ext.onReady(function() {
 							}
 						}],
 				onCellClick : function(grid, rowIndex, columnIndex, e) {
-					// var selesm =
-					// grid.getSelectionModel().getSelections();
+					var selesm = grid.getSelectionModel().getSelections();
 					// var userid = selesm[0].data.id;
-					// var nickname = selesm[0].data.nickName;
-					// var fanscol =
-					// grid.getColumnModel().getDataIndex(columnIndex);
-					// if (fanscol == 'fans') {
-					// realFansDtlWin.title = nickname + '的粉丝';
-					// realFansDtlWin.show();
-					// GFANSID = userid;
-					// userFansStore.setBaseParam('id', userid);
-					// userFansStore.setBaseParam('isRobot', false);
-					// userFansStore.load();
-					// } else if (fanscol == 'robotFans') {
-					// robotFansDtlWin.show();
-					// GROBOTID = userid;
-					// userRobotFansStore.setBaseParam('id', userid);
-					// userRobotFansStore.setBaseParam('isRobot',
-					// false);
-					// userRobotFansStore.load();
-					// }
-				}
+					var cont = selesm[0].data.content;
+					var contentcol = grid.getColumnModel()
+							.getDataIndex(columnIndex);
+					if (contentcol == 'showdtl') {
+						// TODO
+						var edit = Ext.getCmp('htmleditor');
+						edit.setValue(cont);
+						contentWindow.show();
 
+					}
+				}
 			});
 
 	// 注册事件
-	// sinaUserGrid.on('cellclick', sinaUserGrid.onCellClick,
-	// sinaUserGrid);
+	contentGrid.on('cellclick', contentGrid.onCellClick, contentGrid);
 
 	// 布局模型
 	var viewport = new Ext.Viewport({
 				layout : 'border',
-				items : [contentQueryForm,contentGrid]
+				items : [contentQueryForm, contentGrid]
 			});
 });
