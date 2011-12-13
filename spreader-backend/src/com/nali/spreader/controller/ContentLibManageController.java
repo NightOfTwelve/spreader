@@ -51,10 +51,12 @@ public class ContentLibManageController {
 	@RequestMapping(value = "/grid")
 	public String contentGridStore(Date sPubDate, Date ePubDate,
 			Date sSyncDate, Date eSyncDate, String categoryName,
-			String userName, Integer start, Integer limit) throws JsonGenerationException, JsonMappingException, IOException {
-		if (start == null || start < 1)
-			start = 1;
-		if(limit == null) limit = 20;
+			String userName, Integer start, Integer limit)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		if (start == null)
+			start = 0;
+		if (limit == null)
+			limit = 20;
 		ContentQueryParamsDto cqd = new ContentQueryParamsDto();
 		cqd.setCategoryName(categoryName);
 		cqd.setUserName(userName);
@@ -66,4 +68,10 @@ public class ContentLibManageController {
 				limit);
 		return json.writeValueAsString(pr);
 	}
+
+	// @InitBinder
+	// public void initBinder(WebDataBinder binder) {
+	// binder.registerCustomEditor(Date.class, new CustomDateEditor(new
+	// SimpleDateFormat("yyyy-MM-dd HH:mm:ss"), true));
+	// }
 }

@@ -172,24 +172,17 @@ Ext.onReady(function() {
 						var eSyncDate = tform.findField("eSyncDate").getValue();
 						var userName = tform.findField("userName").getValue();
 						var num = numtext.getValue();
-						contentStore.setBaseParam('categoryName', Ext
-										.isEmpty(categoryName)
-										? null
-										: categoryName);
-						contentStore.setBaseParam('sPubDate', sPubDate == ''
-										? null
-										: sPubDate);
-						contentStore.setBaseParam('ePubDate', ePubDate == ''
-										? null
-										: ePubDate);
-						contentStore.setBaseParam('sSyncDate', sSyncDate == ''
-										? null
-										: sSyncDate);
-						contentStore.setBaseParam('eSyncDate', eSyncDate == ''
-										? null
-										: eSyncDate);
+						contentStore.setBaseParam('categoryName', categoryName);
+						contentStore.setBaseParam('sPubDate',
+								renderDateHis(sPubDate));
+						contentStore.setBaseParam('ePubDate',
+								renderDateHis(ePubDate));
+						contentStore.setBaseParam('sSyncDate',
+								renderDateHis(sSyncDate));
+						contentStore.setBaseParam('eSyncDate',
+								renderDateHis(eSyncDate));
 						contentStore.setBaseParam('userName', Ext
-										.isEmpty(userName) ? null : userName);
+										.isEmpty(userName) ? '' : userName);
 						contentStore.setBaseParam('limit', Ext.isEmpty(num)
 										? number
 										: Number(num));
@@ -243,6 +236,10 @@ Ext.onReady(function() {
 									name : 'entry'
 								}, {
 									name : 'content'
+								}, {
+									name : 'webSiteName'
+								}, {
+									name : 'categoryNames'
 								}]),
 				autoLoad : {
 					params : {
@@ -275,22 +272,18 @@ Ext.onReady(function() {
 	// });
 
 	// 定义Checkbox
-	var sm = new Ext.grid.CheckboxSelectionModel();
-	var rownums = new Ext.grid.RowNumberer({
+	// 定义自动当前页行号
+	var rownum = new Ext.grid.RowNumberer({
 				header : 'NO',
-				locked : true
-			})
-	// 定义表格列CM
-	var cm = new Ext.ux.grid.LockingColumnModel([rownums, {
+				locked : true,
+				width : 28
+			});
+
+	// 定义锁定列模型
+	var cm = new Ext.ux.grid.LockingColumnModel([rownum, {
 				header : '编号',
 				dataIndex : 'id',
 				locked : true,
-				width : 80
-			}, {
-				header : 'uid',
-				dataIndex : 'uid',
-				locked : true,
-				hidden : true,
 				width : 80
 			}, {
 				header : '昵称',
@@ -308,20 +301,27 @@ Ext.onReady(function() {
 				dataIndex : 'title',
 				width : 100
 			}, {
+				header : '文章分类',
+				dataIndex : 'categoryNames',
+				renderer : renderBrief,
+				width : 100
+			}, {
 				header : '内容',
 				dataIndex : 'content',
-				// renderer : renderBrief,
+				// renderer : function(value, cellmeta, record) {
+				// return '<a href="javascript:void(0);">'+value+'</a>';
+				// },
 				width : 100
 			}, {
 				header : '详细',
 				dataIndex : 'showdtl',
 				renderer : function(value, cellmeta, record) {
-					return '<a href="javascript:void(0);"><img src="../css/images/icon/preview.png"/></a>';
+					return '<a href="javascript:void(0);"><img src="../css/images/icon/pencil_1.png"/></a>';
 				},
 				width : 35
 			}, {
-				header : 'websiteId',
-				dataIndex : 'websiteId',
+				header : '网站',
+				dataIndex : 'webSiteName',
 				width : 100,
 				sortable : true
 			}, {
@@ -341,11 +341,13 @@ Ext.onReady(function() {
 			}, {
 				header : '发布时间',
 				dataIndex : 'pubDate',
-				width : 100
+				renderer : renderDateHis,
+				width : 120
 			}, {
 				header : '爬取时间',
 				dataIndex : 'syncDate',
-				width : 100
+				renderer : renderDateHis,
+				width : 120
 			}, {
 				header : 'refCount',
 				dataIndex : 'refCount',
@@ -374,7 +376,7 @@ Ext.onReady(function() {
 	var contentGrid = new Ext.grid.GridPanel({
 				region : 'center',
 				id : 'contentGrid',
-				height : 440,
+				height : 500,
 				stripeRows : true, // 斑马线
 				frame : true,
 				// autoWidth : true,
@@ -385,7 +387,7 @@ Ext.onReady(function() {
 				},
 				bbar : bbar,
 				// sm : sm,
-				cm : cm,
+				colModel : cm,
 				view : new Ext.ux.grid.LockingGridView(), // 锁定列视图
 				tbar : [{
 							text : '刷新',
@@ -405,7 +407,6 @@ Ext.onReady(function() {
 						var edit = Ext.getCmp('htmleditor');
 						edit.setValue(cont);
 						contentWindow.show();
-
 					}
 				}
 			});

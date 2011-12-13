@@ -49,6 +49,9 @@
 				<ref bean="strHttpMessageConverter" />
 			</util:list>
 		</property>
+        <property name="webBindingInitializer">
+        	<bean class="com.nali.spreader.util.web.WebBinder" />
+        </property>
 	</bean>
 	<bean id="strHttpMessageConverter"	class="com.nali.common.springplus.XmlStringHttpMessageConverter">
 	</bean>
