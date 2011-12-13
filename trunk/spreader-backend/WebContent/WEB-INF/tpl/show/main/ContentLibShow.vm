@@ -5,6 +5,7 @@
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/extjs3/resources/css/ext-all.css')" />
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/ext_icon.css')" />
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/LockingGridView.css')" />
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/ux/htmleditor/resources/css/htmleditorplugins.css')" />
 <script>
 	$CONFIG = {
 		BLANK_IMAGE_URL:"$StaticConfig.u('/js/extjs3/resources/images/default/s.gif')",
@@ -24,7 +25,22 @@
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/Spinner.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/SpinnerField.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/ProgressBarPager.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/ProgressBarPager.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/LockingGridView.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.MidasCommand.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.Divider.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.HR.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.RemoveFormat.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.IndentOutdent.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.SubSuperScript.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.FindAndReplace.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.Table.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.Word.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.Link.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.SpecialCharacters.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.Heading.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.Plugins.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.Image.js')"></script>
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/contentlib/ContentInfoGrid.js'))"></script>
 </head>
 <body>
