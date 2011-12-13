@@ -113,7 +113,18 @@ function subStrLastId(id) {
  * @return {}
  */
 function renderDate(value) {
-	return value != null ? new Date(value).format('Y-m-d') : '';
+	return value != null && value != '' ? new Date(value).format('Y-m-d') : '';
+}
+/**
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderDateHis(value) {
+	return value != null && value != ''
+			? new Date(value).format('Y-m-d H:i:s')
+			: '';
 }
 /**
  * 性别中文渲染

@@ -3,15 +3,21 @@
 <sqlMap namespace="spreader_content">
 	<resultMap class="com.nali.spreader.data.Content" id="selectContentInfo"
 		extends="spreader_tb_content.ibatorgenerated_ResultMapWithBLOBs">
-		<result property="nickName" column="uid" select="spreader_content.contentUser" />
+		<result property="nickName" column="uid"
+			select="spreader_content.contentUser" />
+		<result property="categorys" column="id"
+			select="spreader_content.getCategoryList" />
 	</resultMap>
 	<sql id="contentPubCondition">
-		<isNotNull prepend="and" property="categoryName">
-			c.id in (select cc.content_id
+		<isNotEmpty prepend="and" property="categoryName">
+			c.id in (select
+			cc.content_id
 			from tb_category cg
-			inner join tb_content_category cc on cg.id = cc.category_id
-			where cg.name like CONCAT('%',#categoryName#,'%'))
-		</isNotNull>
+			inner join tb_content_category cc on
+			cg.id = cc.category_id
+			where cg.name like
+			CONCAT('%',#categoryName#,'%'))
+		</isNotEmpty>
 		<isNotNull prepend="and" property="sPubDate">
 			<![CDATA[c.pub_date >= #sPubDate#]]>
 		</isNotNull>
@@ -24,13 +30,20 @@
 		<isNotNull prepend="and" property="eSyncDate">
 			<![CDATA[c.sync_date <= #eSyncDate#]]>
 		</isNotNull>
-		<isNotNull prepend="and" property="userName">
-			c.uid in (select u.id from
+		<isNotEmpty prepend="and" property="userName">
+			c.uid in (select u.id
+			from
 			tb_user u where u.nick_name like CONCAT('%',#userName#,'%'))
-		</isNotNull>
+		</isNotEmpty>
 	</sql>
-	<select id="contentUser" parameterClass="int"
-		resultClass="java.lang.String">
+	<select id="getCategoryList" parameterClass="int"
+		resultMap="spreader_tb_category.ibatorgenerated_BaseResultMap">
+		select c.* from tb_content_category cc
+		inner join tb_category
+		c on cc.category_id = c.id
+		where cc.content_id = #id#
+	</select>
+	<select id="contentUser" parameterClass="int" resultClass="java.lang.String">
 		select u.nick_name nickName from tb_user u where u.id = #uid#
 	</select>
 	<select id="getContentInfoByParamDto" parameterClass="com.nali.spreader.config.ContentQueryParamsDto"
@@ -43,8 +56,9 @@
 			limit $limit.offset$,$limit.maxRows$
 		</isNotNull>
 	</select>
-	<select id="getCountContentInfo" parameterClass="com.nali.spreader.config.ContentQueryParamsDto" resultClass="java.lang.Integer">
-		select count(c.id) as cnum from tb_content c 
+	<select id="getCountContentInfo" parameterClass="com.nali.spreader.config.ContentQueryParamsDto"
+		resultClass="java.lang.Integer">
+		select count(c.id) as cnum from tb_content c
 		<dynamic prepend="where">
 			<include refid="contentPubCondition" />
 		</dynamic>
@@ -156,16 +170,20 @@
 			v_type = #vType#
 		</isNotNull>
 		<isNotNull prepend="and" property="userRelated.baseInfo.birthdayYear.gte">
-			birthday_year &gt;= #birthdayYear.gte#
+			birthday_year &gt;=
+			#birthdayYear.gte#
 		</isNotNull>
 		<isNotNull prepend="and" property="userRelated.baseInfo.birthdayYear.lte">
-			birthday_year &lt;= #birthdayYear.lte#
+			birthday_year &lt;=
+			#birthdayYear.lte#
 		</isNotNull>
 		<isNotNull prepend="and" property="userRelated.baseInfo.attentions.gte">
-			attentions &gt;= #attentions.gte#
+			attentions &gt;=
+			#attentions.gte#
 		</isNotNull>
 		<isNotNull prepend="and" property="userRelated.baseInfo.attentions.lte">
-			attentions &lt;= #attentions.lte#
+			attentions &lt;=
+			#attentions.lte#
 		</isNotNull>
 		<isNotNull prepend="and" property="userRelated.baseInfo.fans.gte">
 			fans &gt;= #fans.gte#
@@ -174,10 +192,12 @@
 			fans &lt;= #fans.lte#
 		</isNotNull>
 		<isNotNull prepend="and" property="userRelated.baseInfo.articles.gte">
-			articles &gt;= #articles.gte#
+			articles &gt;=
+			#articles.gte#
 		</isNotNull>
 		<isNotNull prepend="and" property="userRelated.baseInfo.articles.lte">
-			articles &lt;= #articles.lte#
+			articles &lt;=
+			#articles.lte#
 		</isNotNull>
 	</sql>
 	<select id="findContentIdByDto" resultClass="long"
@@ -191,34 +211,43 @@
 				website_id = #websiteId#
 			</isNotNull>
 			<isNotNull prepend="and" property="websiteContentId">
-				website_content_id = #websiteContentId#
+				website_content_id =
+				#websiteContentId#
 			</isNotNull>
 			<isNotNull prepend="and" property="websiteRefId">
-				website_ref_id = #websiteRefId#
+				website_ref_id =
+				#websiteRefId#
 			</isNotNull>
 			<isNotNull prepend="and" property="websiteUid">
-				website_uid = #websiteUid#
+				website_uid =
+				#websiteUid#
 			</isNotNull>
 			<isNotNull prepend="and" property="uid">
 				uid = #uid#
 			</isNotNull>
 			<isNotNull prepend="and" property="pubDate.gte">
-				pub_date &gt;= #pubDate.gte#
+				pub_date &gt;=
+				#pubDate.gte#
 			</isNotNull>
 			<isNotNull prepend="and" property="pubDate.lte">
-				pub_date &lt;= #pubDate.lte#
+				pub_date &lt;=
+				#pubDate.lte#
 			</isNotNull>
 			<isNotNull prepend="and" property="refCount.gte">
-				ref_count &gt;= #refCount.gte#
+				ref_count &gt;=
+				#refCount.gte#
 			</isNotNull>
 			<isNotNull prepend="and" property="refCount.lte">
-				ref_count &lt;= #refCount.lte#
+				ref_count &lt;=
+				#refCount.lte#
 			</isNotNull>
 			<isNotNull prepend="and" property="replyCount.gte">
-				reply_count &gt;= #replyCount.gte#
+				reply_count &gt;=
+				#replyCount.gte#
 			</isNotNull>
 			<isNotNull prepend="and" property="replyCount.lte">
-				reply_count &lt;= #replyCount.lte#
+				reply_count &lt;=
+				#replyCount.lte#
 			</isNotNull>
 			<isNotNull prepend="and" property="contentLength.gte">
 				(length(nick_name)+char_length(nick_name))/2 &gt;= #contentLength#
@@ -250,12 +279,15 @@
 				</isNotNull>
 				<isNotNull prepend="union" property="userRelated.attentionToUid">
 					select uid
-					from spreader.tb_user_relation
-					where to_uid=#userRelated.attentionToUid# and type=1
+					from
+					spreader.tb_user_relation
+					where to_uid=#userRelated.attentionToUid#
+					and type=1
 				</isNotNull>
 				<isNotNull prepend="union" property="userRelated.fansUid">
 					select to_uid
-					from spreader.tb_user_relation
+					from
+					spreader.tb_user_relation
 					where uid=#userRelated.fansUid# and type=1
 				</isNotNull>
 				)

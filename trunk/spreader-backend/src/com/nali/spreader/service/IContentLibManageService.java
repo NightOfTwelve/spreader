@@ -16,4 +16,12 @@ public interface IContentLibManageService {
 	PageResult<Content> findContentPageResult(ContentQueryParamsDto cqd,
 			Integer start, Integer limit);
 
+	/**
+	 * 通过网站ID获取网站名称
+	 * 
+	 * @param id
+	 * @return
+	 */
+	String findWebsiteName(int id);
+
 }
