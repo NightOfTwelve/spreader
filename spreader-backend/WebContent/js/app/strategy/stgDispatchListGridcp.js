@@ -391,6 +391,7 @@ var stgCmbWindow = new Ext.Window({
 				iconCls : 'tbar_synchronizeIcon', // 按钮图标
 				handler : function() { // 按钮响应函数
 					GDISPID = null;
+					cleanCreateTrigger();
 					GOBJID = stgSelectCombo.getValue();
 					GDISNAME = stgSelectCombo.lastSelectionText;
 					editstgWindow.title = GDISNAME;
@@ -516,6 +517,27 @@ function settingCreateTrigger(trgid) {
 					// Ext.Msg.alert("提示", "数据获取异常");
 				}
 			});
+}
+/**
+ * 初始化新增对象的参数
+ * 
+ * @param {}
+ *            trgid
+ */
+function cleanCreateTrigger() {
+	// 获取FORM
+	var tradioForm = radioForm.getForm();
+	var ttriggerDispForm = triggerDispForm.getForm();
+	var tsimpleDispForm = simpleDispForm.getForm();
+	// 设置参数
+//	tradioForm.findField("triggerType").setValue(1);
+	tradioForm.findField("description").setValue(null);
+	tsimpleDispForm.findField("start").setValue(null);
+	tsimpleDispForm.findField("repeatTimes").setValue(null);
+	tsimpleDispForm.findField("repeatInternal").setValue(null);
+	ttriggerDispForm.findField("cron").setValue(null);
+	var remindcmp = Ext.getCmp("jobremind");
+	remindcmp.setText(null);
 }
 /**
  * 删除调度信息

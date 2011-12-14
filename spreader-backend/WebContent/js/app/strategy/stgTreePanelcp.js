@@ -228,13 +228,13 @@ function submitTreeData() {
 	tparam['description'] = description;
 	tparam['triggerType'] = triggerType;
 	if (triggerType == 1) {
-		var start = tsimpleDispForm.findField("start").getValue();
-		var fstart = start.dateFormat('Y/m/d H:i:s');
+		var start = renderDateHis(tsimpleDispForm.findField("start").getValue());
+//		var fstart = start.dateFormat('Y/m/d H:i:s');
 		// alert(fstart);
 		var repeatTimes = tsimpleDispForm.findField("repeatTimes").getValue();
 		var repeatInternal = tsimpleDispForm.findField("repeatInternal")
 				.getValue();
-		tparam['start'] = fstart;
+		tparam['start'] = start;
 		tparam['repeatTimes'] = repeatTimes;
 		tparam['repeatInternal'] = repeatInternal;
 	} else {
