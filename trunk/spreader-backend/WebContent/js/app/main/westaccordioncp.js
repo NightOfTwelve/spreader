@@ -81,7 +81,7 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 var menuTree_ContentLibQuery = new Ext.tree.TreePanel({
 			id : 'menuTree_ContentLibQuery',
 			// autoScroll : true,
-//			autoHeight : true,
+			// autoHeight : true,
 			expanded : true,
 			singleExpand : true,
 			useArrows : true,
@@ -125,18 +125,18 @@ var accordPanel = new Ext.Panel({
 			maxSize : 350,
 			split : true,
 			bodyPadding : 5,
-			items : [{
-						autoScroll : true,
-						border : false,
-						title : '策略及调度维护',
-						iconCls : 'folder_cameraIcon',
-						items : [menuTree_Stg]
-					}, {
+			items : [ {
 						autoScroll : true,
 						border : false,
 						title : '基础信息查询',
-						iconCls : 'folder_cameraIcon',
+						iconCls : 'app_boxesIcon',
 						items : [menuTree_InfoQuery]
+					},{
+						autoScroll : true,
+						border : false,
+						title : '策略及调度维护',
+						iconCls : 'wrenchIcon',
+						items : [menuTree_Stg]
 					}, {
 						autoScroll : true,
 						border : false,

@@ -142,6 +142,7 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 			logger.error(e, e);
 			throw new RuntimeException(e);
 		}
+		rlt.setName(regularJob.getName());
 		rlt.setDescription(regularJob.getDescription());
 		rlt.setTriggerType(regularJob.getTriggerType());
 		return rlt;
