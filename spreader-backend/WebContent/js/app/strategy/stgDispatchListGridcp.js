@@ -320,6 +320,13 @@ var cardPanel = new Ext.Panel({
 			},
 			items : [simpleDispForm, triggerDispForm]
 		});
+// 用于提示的Toolbar
+var radioTbar = new Ext.Toolbar();
+radioTbar.add({
+			id : 'jobremind',
+			name : 'jobremind',
+			xtype : 'tbtext'
+		})
 // RADIO组件
 var radioForm = new Ext.form.FormPanel({
 			// width : 200,
@@ -360,7 +367,8 @@ var radioForm = new Ext.form.FormPanel({
 						fieldLabel : "备注信息",
 						name : 'description',
 						width : 100
-					}]
+					}],
+			tbar : radioTbar
 		});
 // 弹出窗口
 var stgCmbWindow = new Ext.Window({
@@ -483,7 +491,7 @@ function settingCreateTrigger(trgid) {
 					var sdate = new Date(start);
 					var repeatTimes = result.repeatTimes;
 					var repeatInternal = result.repeatInternal;
-					var description = result.description;
+					var remind = result.remind;
 					// 获取FORM
 					var tradioForm = radioForm.getForm();
 					var ttriggerDispForm = triggerDispForm.getForm();
@@ -497,6 +505,12 @@ function settingCreateTrigger(trgid) {
 					tsimpleDispForm.findField("repeatInternal")
 							.setValue(repeatInternal);
 					ttriggerDispForm.findField("cron").setValue(cron);
+					// TODO
+					var remindcmp = Ext.getCmp("jobremind");
+					var tstr = '任务:' + rendDispName(GDISNAME) + ',编号:'
+							+ GDISPID + ',目前运行信息:' + remind;
+					remindcmp
+							.setText('<font color = "red">' + tstr + '</font>');
 				},
 				failure : function() {
 					// Ext.Msg.alert("提示", "数据获取异常");
@@ -510,7 +524,6 @@ function settingCreateTrigger(trgid) {
  *            id
  */
 function deleteData() {
-	// TODO
 	// 获取选中行
 	var rows = stgdisplistgrid.getSelectionModel().getSelections();
 	// 可能是批量删除，需循环所有的选中行

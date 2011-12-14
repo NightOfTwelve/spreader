@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.pagination.PageResult;
+import com.nali.lts.trigger.Trigger;
+import com.nali.lts.trigger.TriggerFactory;
+import com.nali.lts.trigger.TriggerMetaInfo;
+import com.nali.lts.trigger.TriggerScheduleInfo;
+import com.nali.lts.trigger.TriggerType;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.factory.config.IConfigService;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
@@ -24,6 +29,7 @@ import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.regular.RegularScheduler;
 import com.nali.spreader.model.RegularJob;
 import com.nali.spreader.model.RegularJob.JobDto;
+import com.nali.spreader.utils.TimeHelper;
 
 @Controller
 public class StrategyDispatchController {
@@ -62,9 +68,11 @@ public class StrategyDispatchController {
 			limit = 20;
 		}
 		start = start / limit + 1;
-		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname, triggerType, ConfigableType.normal, start, limit);
+		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname,
+				triggerType, ConfigableType.normal, start, limit);
 		List<RegularJob> list = pr.getList();
-		List<ConfigableInfo> dispnamelist = regularConfigService.listConfigableInfo(ConfigableType.normal);
+		List<ConfigableInfo> dispnamelist = regularConfigService
+				.listConfigableInfo(ConfigableType.normal);
 		int rowcount = pr.getTotalCount();
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("cnt", rowcount);
@@ -88,11 +96,12 @@ public class StrategyDispatchController {
 	@RequestMapping(value = "/strategy/createdisptree")
 	public String createStgTreeData(String name, Long id)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		return jacksonMapper.writeValueAsString(new DispatchData(null,
-				regularConfigService.getConfigableInfo(name).getDisplayName(), 
-				regularConfigService.getConfigDefinition(name),
-				id != null && id > 0 ? cfgService.getConfig(id).getConfig()
-						: null));
+		return jacksonMapper
+				.writeValueAsString(new DispatchData(null, regularConfigService
+						.getConfigableInfo(name).getDisplayName(),
+						regularConfigService.getConfigDefinition(name),
+						id != null && id > 0 ? cfgService.getConfig(id)
+								.getConfig() : null));
 	}
 
 	/**
@@ -108,7 +117,41 @@ public class StrategyDispatchController {
 	@RequestMapping(value = "/strategy/settgrparam")
 	public String settingTriggerParam(Long id) throws JsonGenerationException,
 			JsonMappingException, IOException {
-		return jacksonMapper.writeValueAsString(cfgService.getConfig(id));
+		JobDto job = cfgService.getConfig(id);
+		String remind = "";
+		if (job != null) {
+			StringBuffer buff = new StringBuffer();
+			String name = job.getName();
+			TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(
+					job.getCron());
+			String triggerName = new StringBuffer(name).append("_").append(id)
+					.toString();
+			TriggerMetaInfo tm = new TriggerMetaInfo(triggerName, name, name
+					+ "Task", null, TriggerType.INDEPENDENT_TRIGGER);
+			Trigger trigger = TriggerFactory.getInstance().generateTrigger(tm,
+					scheInfo);
+			int rcount = scheInfo.getRepeatCount();
+			buff.append("剩余执行次数:");
+			buff.append(rcount);
+			buff.append(";");
+			Date nextDate = trigger.getNextFireTime();
+			if (nextDate != null) {
+				String nextTime = TimeHelper.date2StringHms(nextDate);
+				buff.append("下次运行时间为:");
+				buff.append(nextTime);
+				buff.append(";");
+			}
+			Date endDate = scheInfo.getEndTime();
+			if (endDate != null) {
+				String endTime = TimeHelper.date2StringHms(endDate);
+				buff.append("任务结束时间为:");
+				buff.append(endTime);
+				buff.append(";");
+			}
+			remind = buff.toString();
+		}
+		job.setRemind(remind);
+		return jacksonMapper.writeValueAsString(job);
 	}
 
 	/**
@@ -133,7 +176,8 @@ public class StrategyDispatchController {
 		}
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
 		message.put("success", false);
-		Class<?> dataClass = regularConfigService.getConfigableInfo(name).getDataClass();
+		Class<?> dataClass = regularConfigService.getConfigableInfo(name)
+				.getDataClass();
 		Object configObj = null;
 		if (StringUtils.isNotEmpty(config)) {
 			configObj = jacksonMapper.readValue(config, dataClass);
@@ -208,7 +252,8 @@ public class StrategyDispatchController {
 	@RequestMapping(value = "/strategy/combstore")
 	public String createStgCombStore() throws JsonGenerationException,
 			JsonMappingException, IOException {
-		List<ConfigableInfo> list = regularConfigService.listConfigableInfo(ConfigableType.normal);
+		List<ConfigableInfo> list = regularConfigService
+				.listConfigableInfo(ConfigableType.normal);
 		return jacksonMapper.writeValueAsString(list);
 	}
 

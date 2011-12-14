@@ -33,8 +33,18 @@ public class RegularJob extends BaseModel implements Serializable {
         private int repeatTimes;
 
         private int repeatInternal;
+        
+        private String remind;
 
-        public void setConfig(Object config) {
+        public String getRemind() {
+			return remind;
+		}
+
+		public void setRemind(String remind) {
+			this.remind = remind;
+		}
+
+		public void setConfig(Object config) {
             this.config = config;
         }
 

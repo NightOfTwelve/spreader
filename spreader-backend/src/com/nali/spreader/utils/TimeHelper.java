@@ -15,6 +15,9 @@ public class TimeHelper {
 	private static final Logger LOGGER = Logger.getLogger(TimeHelper.class);
 	// 时间格式化
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	// 时间格式化 时分秒
+	private static SimpleDateFormat sdfhms = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss");
 
 	/**
 	 * 获取某一日期后i天的所有日期集合
@@ -131,6 +134,36 @@ public class TimeHelper {
 		return sdf.format(date);
 	}
 
+	/**
+	 * 日期转换成字符串
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static String date2StringHms(Date date) {
+		return sdfhms.format(date);
+	}
+
+	/**
+	 * 字符串转日期
+	 * 
+	 * @param s
+	 * @return
+	 */
+	public static Date string2DateHms(String s) {
+		Date date = null;
+		if (StringUtils.isNotEmpty(s)) {
+			try {
+				date = sdfhms.parse(s);
+			} catch (ParseException e) {
+				LOGGER.error("日期转换失败", e);
+			}
+		} else {
+			LOGGER.info("参数为空，日期转换失败");
+		}
+		return date;
+	}
+
 	public static void main(String arge[]) {
 		// List<String> sl = TimeHelper.findStart2EndDateList(
 		// TimeHelper.string2Date("20111228"),
@@ -138,7 +171,6 @@ public class TimeHelper {
 		// for (String s : sl) {
 		// LOGGER.info(s);
 		// }
-		System.out.println(TimeHelper.findAfterDate(
-				TimeHelper.string2Date("20111231")));
+		System.out.println(TimeHelper.date2StringHms(new Date()));
 	}
 }
