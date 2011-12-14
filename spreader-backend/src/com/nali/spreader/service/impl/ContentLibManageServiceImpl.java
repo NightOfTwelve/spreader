@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.ContentQueryParamsDto;
+import com.nali.spreader.constants.WebTypeEnum;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.dao.IContentLibDao;
 import com.nali.spreader.data.Category;
@@ -27,10 +28,16 @@ public class ContentLibManageServiceImpl implements IContentLibManageService {
 		List<Content> cList = conDao.findContentListByParamsDto(cqd);
 		if (cList.size() > 0) {
 			for (Content c : cList) {
+				// 网站ID
 				int webSiteId = c.getWebsiteId();
+				// 类型
+				int webType = c.getType();
 				// 处理网站名称
 				String tname = findWebsiteName(webSiteId);
 				c.setWebSiteName(tname);
+				// 处理类型
+				String wtype = findWebTypeName(webType);
+				c.setTypeName(wtype);
 				// 处理网站分类
 				List<Category> cateList = c.getCategorys();
 				if (cateList.size() > 0) {
@@ -63,5 +70,17 @@ public class ContentLibManageServiceImpl implements IContentLibManageService {
 			buff.append(",");
 		}
 		return buff.toString();
+	}
+
+	@Override
+	public String findWebTypeName(int id) {
+		String tName = null;
+		for (WebTypeEnum we : WebTypeEnum.values()) {
+			if (id == we.getEnumValue()) {
+				tName = we.getEnumName();
+				break;
+			}
+		}
+		return tName;
 	}
 }

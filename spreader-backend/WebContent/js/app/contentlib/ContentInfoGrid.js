@@ -240,6 +240,8 @@ Ext.onReady(function() {
 									name : 'webSiteName'
 								}, {
 									name : 'categoryNames'
+								}, {
+									name : 'typeName'
 								}]),
 				autoLoad : {
 					params : {
@@ -292,9 +294,15 @@ Ext.onReady(function() {
 				width : 100
 			}, {
 				header : '类型',
-				dataIndex : 'type',
+				dataIndex : 'typeName',
 				// renderer : renderGender,
 				locked : true,
+				width : 80
+			}, {
+				header : 'typeid',
+				dataIndex : 'type',
+				// renderer : renderGender,
+				hidden : true,
 				width : 80
 			}, {
 				header : '标题',

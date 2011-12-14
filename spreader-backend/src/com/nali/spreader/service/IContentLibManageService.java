@@ -23,5 +23,7 @@ public interface IContentLibManageService {
 	 * @return
 	 */
 	String findWebsiteName(int id);
+	
+	String findWebTypeName(int id);
 
 }
