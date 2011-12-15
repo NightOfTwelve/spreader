@@ -27,7 +27,7 @@
 	
 	<tool>
 		<key>UriCacheRefreshUtil</key>
-		<class>com.nali.spreader.util.UriCacheRefreshUtil</class>
+		<class>com.nali.spreader.util.web.UriCacheRefreshUtil</class>
 		<scope>application</scope>
 	</tool>
 </toolbox>
