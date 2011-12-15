@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+	#errorDetail li{
+		list-style-type:disc;
+	}
+	li.errorHead {
+		font-size:14px;
+		font-weight:bold;
+	}
+</style>
+</head>
+<body>
+#macro(printE $error)
+	#foreach($el in $error.stackTrace)
+		<li>$el</li>
+	#end
+	#if ($error.cause)
+		#set($error=$error.cause)
+		<li class="errorHead"><span style="font-weight:normal;">Caused by:</span><br>$error.toString().replaceAll("\n","<br>")</li>
+		#printE($error)
+	#end
+#end
+<div>
+	<div>
+		<div>
+            #if($errorInfo)
+            	<font color="red">$errorInfo</font>
+			#end
+		</div>
+    	<div id="errorDetail" style="display:none;">
+			<ul>
+				<li class="errorHead">$!error.toString().replaceAll("\n","<br>")</li>
+				#printE($!error)
+			</ul>
+    	</div>
+    	<div style="position:absolute;width:30px;height:30px;bottom:0px;right:0px;" onclick="document.getElementById('errorDetail').style.display='block'"></div>
+	</div>
+
+</div>
+</body>
+</html>
+
+

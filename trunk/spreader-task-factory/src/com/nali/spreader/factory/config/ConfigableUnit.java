@@ -12,7 +12,7 @@ import com.nali.spreader.factory.config.desc.DescriptionResolve;
 @SuppressWarnings("rawtypes")
 public class ConfigableUnit<T extends Configable> {
 	private T configable;
-	private List<ConfigableListener<T>> listeners = new LinkedList<ConfigableListener<T>>();
+	private List<ConfigableListener> listeners = new LinkedList<ConfigableListener>();
 	private AutowireCapableBeanFactory beanFactory;
 	private ConfigDefinition configDefinition;
 
@@ -28,14 +28,15 @@ public class ConfigableUnit<T extends Configable> {
 		return configable;
 	}
 	
-	public void addListener(ConfigableListener<T> listener) {
+	public void addListener(ConfigableListener listener) {
 		listeners.add(listener);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public T reload(Object config) {
 		T configable = getFromPrototype(config);
 		T oldConfigable = this.configable;
-		for (ConfigableListener<T> listener : listeners) {
+		for (ConfigableListener listener : listeners) {
 			listener.onchange(configable, oldConfigable);
 		}
 		this.configable=configable;

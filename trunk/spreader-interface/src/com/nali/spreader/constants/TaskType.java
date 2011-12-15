@@ -1,7 +1,7 @@
 package com.nali.spreader.constants;
 
 public enum TaskType {//TODO
-	weiboNormal(101, 30, 20),
+	weiboNormal(101, 80, 20),
 	weiboRegister(102, 80, 1),
 	;
 	private Integer id;

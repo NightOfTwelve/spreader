@@ -7,7 +7,6 @@
 	<artifactId>spreader</artifactId>
 	<version>1.0</version>
 	<packaging>pom</packaging>
-
 	<name>spreader</name>
 	<url>http://maven.apache.org</url>
 
@@ -35,6 +34,7 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -59,6 +59,12 @@
 					<encoding>utf-8</encoding>
 					<source>1.6</source>
 					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<overwrite>true</overwrite>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -248,9 +254,16 @@
 		</snapshotRepository>
 	</distributionManagement>
 	<modules>
-		<module>spreader-api</module>
-		<module>spreader-dao</module>
-		<module>spreader-impl</module>
-		<module>spreader-runtime</module>
+		<module>../spreader-interface</module>
+		<module>../spreader-backend</module>
+		<module>../spreader-task-factory</module>
+		<module>../spreader-task-register</module>
+		<module>../spreader-task-user</module>
+		
+		<module>../spreader-front</module>
+		<module>../spreader-action-config</module>
+		<module>../spreader-captcha</module>
+		<module>../spreader-login-config</module>
+		<module>../spreader-task-dispatch</module>
 	</modules>
 </project>
