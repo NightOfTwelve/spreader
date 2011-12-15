@@ -1,4 +1,4 @@
-package com.nali.spreader.util;
+package com.nali.spreader.util.web;
 
 import java.util.Date;
 
@@ -28,7 +28,7 @@ public class UriCacheRefreshUtil {
 			buff.append("?_random=");
 			buff.append(ts);
 			String tUri = buff.toString();
-			LOGGER.info("Refresh:" + tUri);
+			LOGGER.trace("Refresh:" + tUri);
 			return tUri;
 		} else {
 			return null;
