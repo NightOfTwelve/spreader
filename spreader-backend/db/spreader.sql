@@ -508,3 +508,8 @@ COLLATE = utf8_bin;
 
 alter table tb_websites comment '那里推广的目标网站列表';
 
+/* 增加是否为头像字段*/
+alter table tb_photo add avatarflg bit(0) ;
+/* 增加是否为相册字段 */
+alter table tb_photo add photolibflg bit(0) ;
+
