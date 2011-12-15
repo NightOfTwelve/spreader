@@ -70,46 +70,51 @@ stgtree.on('rightMenu', stgtree.rightMenu, stgtree);
 // 定义右键菜单
 var rightMenu = new Ext.menu.Menu({
 			id : 'rightMenu',
-			items : [{
-						id : 'addNode',
-						text : '添加',
-						// 增加菜单点击事件
-						menu : [{
-									id : 'insertNode',
-									text : '添加兄弟节点',
-									handler : function(tree) {
-										insertNode();
-									}
-
-								}, {
-									id : 'appendNode',
-									text : '添加儿子节点',
-									handler : function(tree) {
-										appendNodeAction();
-									}
-								}]
-					}, '-', {
-						id : 'delNode',
-						text : '删除',
-						handler : function(tree) {
-							deleteNode();
-						}
-					}
-					// , {
-					// id : 'modifNode',
-					// text : '修改',
-					// handler : function() {
-					// modifNode()
+			items : [
+					// {
+					// id : 'addNode',
+					// text : '添加',
+					// // 增加菜单点击事件
+					// menu : [
+					// {
+					// id : 'insertNode',
+					// text : '添加兄弟节点',
+					// handler : function(tree) {
+					// insertNode();
+					// }
+					//
+					// }, {
+					// id : 'appendNode',
+					// text : '添加儿子节点',
+					// handler : function(tree) {
+					// appendNodeAction();
 					// }
 					// }
-					, {
-						id : 'viewNode',
-						text : '查看',
-						handler : function(tree) {
-
-							veiwNodeAction();
-						}
-					}]
+					// ]
+					// }, '-',
+					{
+				id : 'delNode',
+				text : '删除',
+				handler : function(tree) {
+					deleteNode();
+				}
+			}
+			// , {
+			// id : 'modifNode',
+			// text : '修改',
+			// handler : function() {
+			// modifNode()
+			// }
+			// }
+			// , {
+			// id : 'viewNode',
+			// text : '查看',
+			// handler : function(tree) {
+			//
+			// veiwNodeAction();
+			// }
+			// }
+			]
 		});
 // 添加点击事件
 stgtree.on('click', function(node) {
@@ -139,7 +144,9 @@ stgtree.on('contextmenu', function(node, event) {
 function deleteNode() {
 	// 得到选中的节点
 	var selectedNode = stgtree.getSelectionModel().getSelectedNode();
-	selectedNode.remove();
+	var parent = selectedNode.parentNode;
+	parent.removeChild(selectedNode);
+	parent.attributes.children.pop(selectedNode);
 };
 // 修改节点事件实现
 function modifNode() {
