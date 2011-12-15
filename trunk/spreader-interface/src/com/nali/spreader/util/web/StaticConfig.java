@@ -2,7 +2,7 @@
  * CMS Framework Code
  * All rights reserved
  */
-package com.nali.spreader.util;
+package com.nali.spreader.util.web;
 
 import java.io.IOException;
 import java.io.InputStream;
