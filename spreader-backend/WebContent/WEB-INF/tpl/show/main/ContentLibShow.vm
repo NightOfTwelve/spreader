@@ -25,7 +25,6 @@
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/Spinner.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/SpinnerField.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/ProgressBarPager.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/ux/ProgressBarPager.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/LockingGridView.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.MidasCommand.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/htmleditor/js/Ext.ux.form.HtmlEditor.Divider.js')"></script>
