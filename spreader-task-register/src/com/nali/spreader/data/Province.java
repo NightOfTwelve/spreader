@@ -1,6 +1,6 @@
 package com.nali.spreader.data;
 
-import com.nali.spreader.util.Randomer;
+import com.nali.spreader.util.random.Randomer;
 
 public class Province {
 	private String name;

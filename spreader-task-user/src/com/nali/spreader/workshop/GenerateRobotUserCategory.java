@@ -16,9 +16,9 @@ import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.PassiveAnalyzer;
 import com.nali.spreader.service.ICategoryService;
 import com.nali.spreader.service.IGlobalUserService;
-import com.nali.spreader.util.NumberRandomer;
-import com.nali.spreader.util.Randomer;
-import com.nali.spreader.util.WeightRandomer;
+import com.nali.spreader.util.random.NumberRandomer;
+import com.nali.spreader.util.random.Randomer;
+import com.nali.spreader.util.random.WeightRandomer;
 
 @Component
 @ClassDescription("机器人分类策略")

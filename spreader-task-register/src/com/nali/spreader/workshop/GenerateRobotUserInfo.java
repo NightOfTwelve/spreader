@@ -22,11 +22,11 @@ import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.passive.PassiveAnalyzer;
 import com.nali.spreader.service.IRobotRegisterService;
-import com.nali.spreader.util.AvgRandomer;
-import com.nali.spreader.util.Randomer;
 import com.nali.spreader.util.RangeChoice;
 import com.nali.spreader.util.TxtFileUtil;
-import com.nali.spreader.util.WeightRandomer;
+import com.nali.spreader.util.random.AvgRandomer;
+import com.nali.spreader.util.random.Randomer;
+import com.nali.spreader.util.random.WeightRandomer;
 import com.nali.spreader.words.Txt;
 
 @Component

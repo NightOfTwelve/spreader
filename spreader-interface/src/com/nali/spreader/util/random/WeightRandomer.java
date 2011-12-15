@@ -1,4 +1,4 @@
-package com.nali.spreader.util;
+package com.nali.spreader.util.random;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+
+import com.nali.spreader.util.RangeChoice;
 
 public class WeightRandomer<T> implements Randomer<T>,Cloneable {
 	private static final int THRESHOLD = 10;

@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import com.nali.spreader.data.RobotRegister;
-import com.nali.spreader.util.AvgRandomer;
-import com.nali.spreader.util.Randomer;
+import com.nali.spreader.util.random.AvgRandomer;
+import com.nali.spreader.util.random.Randomer;
 import com.nali.spreader.words.Txt;
 import com.nali.spreader.words.naming.Modes;
 

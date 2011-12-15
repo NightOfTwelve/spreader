@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import com.nali.spreader.data.RobotRegister;
-import com.nali.spreader.util.NumberRandomer;
+import com.nali.spreader.util.random.NumberRandomer;
 import com.nali.spreader.words.naming.Modes;
 
 public class RandomNumberModes implements Modes {

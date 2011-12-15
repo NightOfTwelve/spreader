@@ -3,7 +3,7 @@
 
 	<tool>
 		<key>StaticConfig</key>
-		<class>com.nali.spreader.util.StaticConfig</class>
+		<class>com.nali.spreader.util.web.StaticConfig</class>
 		<scope>application</scope>
 	</tool>
 

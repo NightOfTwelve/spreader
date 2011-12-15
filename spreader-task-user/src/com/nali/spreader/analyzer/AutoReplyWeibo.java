@@ -17,9 +17,9 @@ import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.service.IContentService;
-import com.nali.spreader.util.AvgRandomer;
-import com.nali.spreader.util.Randomer;
 import com.nali.spreader.util.TxtFileUtil;
+import com.nali.spreader.util.random.AvgRandomer;
+import com.nali.spreader.util.random.Randomer;
 
 @Component
 @ClassDescription("自动回复微博")
