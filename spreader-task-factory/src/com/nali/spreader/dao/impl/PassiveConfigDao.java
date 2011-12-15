@@ -26,13 +26,14 @@ public class PassiveConfigDao implements IPassiveConfigDao {
 		return (T) redisTemplate.opsForHash().get(CONFIG_STORE_KEY, name);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized <T> T initConfig(String name, Class<T> clazz) {
-		T config = getConfig(name);
+		Object config = getConfig(name);
 		if(config==null) {
 			config = initFromFile(name, clazz);
 		}
-		return config;
+		return (T) config;
 	}
 	
 	private <T> T initFromFile(String name, Class<T> clazz) {

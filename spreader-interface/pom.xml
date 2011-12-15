@@ -5,6 +5,7 @@
 		<artifactId>spreader</artifactId>
 		<groupId>com.nali</groupId>
 		<version>1.0</version>
+		<relativePath>../spreader</relativePath>
 	</parent>
 	<groupId>com.nali.spreader</groupId>
 	<artifactId>spreader-interface</artifactId>

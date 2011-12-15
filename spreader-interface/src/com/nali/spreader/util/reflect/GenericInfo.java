@@ -77,7 +77,7 @@ public class GenericInfo<T> {
 				genericInfo.addGenericInterfaces(clazz);
 				return genericInfo;
 			} else {
-				return (GenericInfo<C>) OBJECT_INFO;//处理接口？
+				return (GenericInfo) OBJECT_INFO;//处理接口？
 			}
 		} else if (genericSuperclass instanceof Class) {
 			superClass = (Class) genericSuperclass;

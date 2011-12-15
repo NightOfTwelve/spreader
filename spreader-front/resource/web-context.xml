@@ -50,7 +50,10 @@
 				<ref bean="strHttpMessageConverter" />
 			</util:list>
 		</property>
+        <property name="webBindingInitializer">
+        	<bean class="com.nali.spreader.util.web.WebBinder" />
+        </property>
 	</bean>
-	<bean id="strHttpMessageConverter"	class="com.nali.common.springplus.XmlStringHttpMessageConverter">
-	</bean>
+	<bean id="strHttpMessageConverter" class="com.nali.common.springplus.XmlStringHttpMessageConverter" />
+	<bean id="controllerExceptionHandler" class="com.nali.common.exception.i18n.ControllerExceptionHandler" />
 </beans>

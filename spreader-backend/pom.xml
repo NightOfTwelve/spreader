@@ -4,6 +4,7 @@
 		<artifactId>spreader</artifactId>
 		<groupId>com.nali</groupId>
 		<version>1.0</version>
+		<relativePath>../spreader</relativePath>
 	</parent>
   <groupId>com.nali.spreader</groupId>
   <artifactId>spreader-backend</artifactId>
@@ -47,6 +48,9 @@
 		<resources>
 			<resource>
 				<directory>resource</directory>
+			</resource>
+			<resource>
+				<directory>env\${envcfg.dir}</directory>
 			</resource>
 		</resources>
 		<plugins>
@@ -115,8 +119,50 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<webResources>
+						<resource>
+							<directory>WebContent</directory>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
 		</plugins>
 
 		<finalName>spreader-backend</finalName>
 	</build>
+	
+	<profiles>
+		<profile>
+			<id>base</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<envcfg.dir>base</envcfg.dir>
+				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+				<spring.version>3.0.5.RELEASE</spring.version>
+			</properties>
+		</profile>
+		<profile>
+			<id>test</id>
+			<properties>
+				<envcfg.dir>test</envcfg.dir>
+				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+				<spring.version>3.0.5.RELEASE</spring.version>
+			</properties>
+		</profile>
+		<profile>
+			<id>product</id>
+			<properties>
+				<envcfg.dir>product</envcfg.dir>
+				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+				<spring.version>3.0.5.RELEASE</spring.version>
+			</properties>
+		</profile>
+	</profiles>
 </project>
