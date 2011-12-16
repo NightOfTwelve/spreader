@@ -1,5 +1,6 @@
 package com.nali.spreader.factory.passive;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -14,15 +15,23 @@ import com.nali.spreader.factory.config.IConfigableCenter;
 
 @Service
 public class PassiveConfigService extends AbstractConfigService<String> {
+	private static Logger logger = Logger.getLogger(PassiveConfigService.class);
 	private IConfigableCenter configableCenter;
 	@Autowired
 	private IPassiveConfigDao passiveConfigDao;
 	
-	public void registerConfigableInfo(String name, Configable<?> obj) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void registerConfigableInfo(String name, Configable obj) {
 		boolean newRegister = configableCenter.register(name, obj);
 		if (newRegister) {
 			Class<?> clazz = obj.getClass();
 			super.registerConfigableInfo(name, clazz);
+			Object config = passiveConfigDao.getConfig(name);
+			if(config!=null) {
+				obj.init(config);
+			} else {
+				logger.warn("configable object has not config:" + name);
+			}
 		}
 	}
 
