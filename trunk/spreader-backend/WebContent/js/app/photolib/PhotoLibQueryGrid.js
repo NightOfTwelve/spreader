@@ -145,7 +145,7 @@ Ext.onReady(function() {
 	// 定义表格数据源
 	var photoStore = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
-							url : '../contentlib/grid'
+							url : '../photolib/gridstore'
 						}),
 				reader : new Ext.data.JsonReader({
 							totalProperty : 'totalCount',
@@ -153,39 +153,17 @@ Ext.onReady(function() {
 						}, [{
 									name : 'id'
 								}, {
-									name : 'type'
+									name : 'gender'
 								}, {
-									name : 'websiteId'
+									name : 'picType'
 								}, {
-									name : 'websiteContentId'
+									name : 'picUrl'
 								}, {
-									name : 'websiteRefId'
+									name : 'createtime'
 								}, {
-									name : 'websiteUid'
+									name : 'avatarflg'
 								}, {
-									name : 'uid'
-								}, {
-									name : 'nickName'
-								}, {
-									name : 'title'
-								}, {
-									name : 'pubDate'
-								}, {
-									name : 'syncDate'
-								}, {
-									name : 'refCount'
-								}, {
-									name : 'replyCount'
-								}, {
-									name : 'entry'
-								}, {
-									name : 'content'
-								}, {
-									name : 'webSiteName'
-								}, {
-									name : 'categoryNames'
-								}, {
-									name : 'typeName'
+									name : 'photolibflg'
 								}]),
 				autoLoad : {
 					params : {
@@ -232,70 +210,34 @@ Ext.onReady(function() {
 				width : 80
 			}, {
 				header : '图片',
-				dataIndex : 'nickName',
+				dataIndex : 'picUrl',
+				renderer : renderImage,
 				width : 100
 			}, {
 				header : '类型',
-				dataIndex : 'typeName',
+				dataIndex : 'picType',
 				// renderer : renderGender,
 				locked : true,
 				width : 80
 			}, {
-				header : 'typeid',
-				dataIndex : 'type',
+				header : '性别',
+				dataIndex : 'gender',
 				// renderer : renderGender,
 				hidden : true,
 				width : 80
 			}, {
-				header : '标题',
-				dataIndex : 'title',
-				width : 100
-			}, {
-				header : '文章分类',
-				dataIndex : 'categoryNames',
-				renderer : renderBrief,
-				width : 100
-			}, {
-				header : '网站',
-				dataIndex : 'webSiteName',
-				width : 100,
-				sortable : true
-			}, {
-				header : 'websiteContentId',
-				dataIndex : 'websiteContentId',
-				width : 100,
-				sortable : true
-			}, {
-				header : 'websiteRefId',
-				dataIndex : 'websiteRefId',
-				width : 100,
-				sortable : true
-			}, {
-				header : 'websiteUid',
-				dataIndex : 'websiteUid',
-				width : 100
-			}, {
-				header : '发布时间',
-				dataIndex : 'pubDate',
+				header : '创建时间',
+				dataIndex : 'createtime',
 				renderer : renderDateHis,
 				width : 120
 			}, {
-				header : '爬取时间',
-				dataIndex : 'syncDate',
-				renderer : renderDateHis,
-				width : 120
+				header : '是否头像',
+				dataIndex : 'avatarflg',
+				width : 80
 			}, {
-				header : 'refCount',
-				dataIndex : 'refCount',
-				width : 100
-			}, {
-				header : 'replyCount',
-				dataIndex : 'replyCount',
-				width : 100
-			}, {
-				header : 'entry',
-				dataIndex : 'entry',
-				width : 100
+				header : '是否图片库',
+				dataIndex : 'photolibflg',
+				width : 80
 			}]);
 	// // 分页菜单
 	var bbar = new Ext.PagingToolbar({
@@ -334,24 +276,24 @@ Ext.onReady(function() {
 				onCellClick : function(grid, rowIndex, columnIndex, e) {
 					var selesm = grid.getSelectionModel().getSelections();
 					// var userid = selesm[0].data.id;
-					var cont = selesm[0].data.content;
+					var picUrl = selesm[0].data.picUrl;
+					var picType = selesm[0].data.picType;
 					var contentcol = grid.getColumnModel()
 							.getDataIndex(columnIndex);
-					if (contentcol == 'showdtl') {
-						// TODO
-						var edit = Ext.getCmp('htmleditor');
-						edit.setValue(cont);
-						contentWindow.show();
+					if (contentcol == 'picUrl') {
+						zoomWin.show();
+						zoomWin.setTitle('图片预览-' + picType);
+						Ext.get('image').dom.src = picUrl;
 					}
 				}
 			});
 
 	// 注册事件
-	photo.on('cellclick', photo.onCellClick, photo);
+	photoGrid.on('cellclick', photoGrid.onCellClick, photoGrid);
 
 	// 布局模型
 	var viewport = new Ext.Viewport({
 				layout : 'border',
-				items : [photoQueryForm, photo]
+				items : [photoQueryForm, photoGrid]
 			});
 });

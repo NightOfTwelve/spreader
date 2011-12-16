@@ -154,3 +154,53 @@ function rendIsRobot(value) {
 		return '否';
 	}
 }
+/**
+ * 将URL渲染成图片
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderImage(value) {
+	var url = '';
+	if (value != null) {
+		url = '<img src=\'' + value + '\' onload="AutoSize(this,32,32)"/>';
+	}
+	return url;
+}
+/**
+ * 自动缩放图片
+ * 
+ * @param {}
+ *            ImgD
+ * @param {}
+ *            MaxWidth
+ * @param {}
+ *            MaxHeight
+ */
+function AutoSize(ImgD, MaxWidth, MaxHeight) {
+	var image = new Image();
+	image.src = ImgD.src;
+	if (image.width > 0 && image.height > 0) {
+		flag = true;
+		if (image.width / image.height >= MaxWidth / MaxHeight) {
+			if (image.width > MaxWidth) {
+				ImgD.width = MaxWidth;
+				ImgD.height = (image.height * MaxWidth) / image.width;
+			} else {
+				ImgD.width = image.width;
+				ImgD.height = image.height;
+			}
+			// ImgD.alt="原始尺寸:宽" + image.width+",高"+image.height;
+		} else {
+			if (image.height > MaxHeight) {
+				ImgD.height = MaxHeight;
+				ImgD.width = (image.width * MaxHeight) / image.height;
+			} else {
+				ImgD.width = image.width;
+				ImgD.height = image.height;
+			}
+			// ImgD.alt="原始尺寸:宽" + image.width+",高"+image.height;
+		}
+	}
+}
