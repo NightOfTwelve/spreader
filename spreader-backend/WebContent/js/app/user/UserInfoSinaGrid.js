@@ -2,9 +2,9 @@
 /**
  * 运行状态的COMB的数据源
  */
-var statTypeStore = new Ext.data.ArrayStore({
+var isRobotStore = new Ext.data.ArrayStore({
 			fields : ['ID', 'NAME'],
-			data : [['-1', '----------------------'], ['1', '正常'], ['2', '异常']]
+			data : [[true, '是'], [false, '否']]
 		});
 // 页数
 var number = 20;
@@ -52,18 +52,17 @@ var userSinaForm = new Ext.form.FormPanel({
 							columnWidth : .33,
 							layout : "form",
 							items : [{
-										fieldLabel : '运行状态',
-										// name:'TIMEFER',
+										fieldLabel : '机器人',
 										xtype : 'combo',
-										store : statTypeStore,
-										id : 'runstat',
-										hiddenName : 'runstat',
+										store : isRobotStore,
+										id : 'isRobot',
+										hiddenName : 'isRobot',
 										valueField : 'ID',
 										editable : false,
 										displayField : 'NAME',
 										mode : 'local',
 										forceSelection : false,// 必须选择一项
-										emptyText : '运行状态...',// 默认值
+										emptyText : '...',// 默认值
 										triggerAction : 'all'
 									}]
 						}, {
@@ -135,6 +134,7 @@ var userSinaForm = new Ext.form.FormPanel({
 					var maxRobotFans = tform.findField("maxRobotFans")
 							.getValue();
 					var tag = tform.findField("tag").getValue();
+					var isRobot = tform.findField("isRobot").getValue();
 					var num = numtext.getValue();
 					sinaUserStore.setBaseParam('nickName', Ext
 									.isEmpty(nickName) ? null : nickName);
@@ -148,6 +148,7 @@ var userSinaForm = new Ext.form.FormPanel({
 					sinaUserStore.setBaseParam('limit', Ext.isEmpty(num)
 									? number
 									: Number(num));
+					sinaUserStore.setBaseParam('isRobot', isRobot);
 					sinaUserStore.load();
 				}
 			}, {
@@ -218,6 +219,7 @@ sinaUserStore.on('beforeload', function() {
 			var pminRobotFans = pfrom.findField("minRobotFans").getValue();
 			var pmaxRobotFans = pfrom.findField("maxRobotFans").getValue();
 			var ptag = pfrom.findField("tag").getValue();
+			var isRobot = pfrom.findField("isRobot").getValue();
 			var limit = numtext.getValue();
 			this.baseParams = {
 				nickName : Ext.isEmpty(pnickName) ? null : pnickName,
@@ -226,7 +228,8 @@ sinaUserStore.on('beforeload', function() {
 				minRobotFans : pminRobotFans,
 				maxRobotFans : pmaxRobotFans,
 				tag : Ext.isEmpty(ptag) ? null : ptag,
-				limit : Ext.isEmpty(limit) ? number : Number(limit)
+				limit : Ext.isEmpty(limit) ? number : Number(limit),
+				isRobot : isRobot
 			};
 		});
 

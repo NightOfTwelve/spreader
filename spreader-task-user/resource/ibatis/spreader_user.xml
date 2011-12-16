@@ -143,6 +143,9 @@
 		<isNotEmpty prepend="and" property="tag">
 			u.id in(select uid from tb_user_tag where tag like CONCAT('%', #tag#, '%'))
 		</isNotEmpty>
+		<isNotNull prepend="and" property="isRobot">
+			u.is_robot = #isRobot#
+		</isNotNull>
 	</dynamic>
 	<isNotNull property="limit">
         limit $limit.offset$,$limit.maxRows$
@@ -181,6 +184,9 @@
 		<isNotEmpty prepend="and" property="tag">
 			u.id in(select uid from tb_user_tag where tag like CONCAT('%', #tag#, '%'))
 		</isNotEmpty>
+		<isNotNull prepend="and" property="isRobot">
+			u.is_robot = #isRobot#
+		</isNotNull>
 	</dynamic>
   </select>
   <select id="getUserFansCountByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultClass="java.lang.Integer">
