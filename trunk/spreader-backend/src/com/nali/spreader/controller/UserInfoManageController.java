@@ -46,11 +46,10 @@ public class UserInfoManageController {
 	@RequestMapping(value = "/userlist")
 	public String userInfoDtl(Long id, String nickName, Integer minFans,
 			Integer maxFans, Integer minRobotFans, Integer maxRobotFans,
-			String tag, Integer start, Integer limit)
+			String tag, Boolean isRobot, Integer start, Integer limit)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		if (start == null || start < 1)
-			start = 1;
-		// start = start / limit + 1;
+		if (start == null)
+			start = 0;
 		UserTagParamsDto utp = new UserTagParamsDto();
 		utp.setMinFans(minFans);
 		utp.setMaxFans(maxFans);
@@ -59,6 +58,7 @@ public class UserInfoManageController {
 		utp.setMaxRobotFans(maxRobotFans);
 		utp.setNickName(nickName);
 		utp.setTag(tag);
+		utp.setIsRobot(isRobot);
 		PageResult<User> result = userService.findUserInfo(utp, start, limit);
 		return jacksonMapper.writeValueAsString(result);
 	}

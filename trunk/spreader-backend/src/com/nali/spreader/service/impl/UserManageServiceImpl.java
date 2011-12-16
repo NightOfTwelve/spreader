@@ -24,7 +24,7 @@ public class UserManageServiceImpl implements IUserManageService {
 	@Override
 	public PageResult<User> findUserInfo(UserTagParamsDto utp, Integer start,
 			Integer limit) {
-		Limit lit = Limit.newInstanceForPage(start, limit);
+		Limit lit = Limit.newInstanceForLimit(start, limit);
 		utp.setLimit(lit);
 		List<User> uList = userDao.findUserAndTagInfoList(utp);
 		for (User u : uList) {
