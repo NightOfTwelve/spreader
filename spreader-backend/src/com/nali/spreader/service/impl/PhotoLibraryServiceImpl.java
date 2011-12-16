@@ -40,6 +40,13 @@ public class PhotoLibraryServiceImpl implements IPhotoLibraryService {
 		Limit limit = Limit.newInstanceForLimit(page, pageSize);
 		pe.setLimit(limit);
 		List<Photo> list = crudPhotoDao.selectByExampleWithoutBLOBs(pe);
+		if (list.size() > 0) {
+			for (Photo p : list) {
+				StringBuffer turl = new StringBuffer("../css/images");
+				turl.append(p.getPicUrl());
+				p.setPicUrl(turl.toString());
+			}
+		}
 		int count = crudPhotoDao.countByExample(pe);
 		return new PageResult<Photo>(list, limit, count);
 	}

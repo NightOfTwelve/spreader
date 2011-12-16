@@ -131,6 +131,8 @@ public class StrategyDispatchController {
 			Trigger trigger = TriggerFactory.getInstance().generateTrigger(tm,
 					scheInfo);
 			int rcount = scheInfo.getRepeatCount();
+			//已完成的次数
+			int times = trigger.getTimesTriggered();
 			buff.append("剩余执行次数:");
 			buff.append(rcount);
 			buff.append(";");

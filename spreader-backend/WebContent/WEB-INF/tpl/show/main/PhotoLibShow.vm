@@ -4,6 +4,7 @@
 <title>图片库查询</title>
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/extjs3/resources/css/ext-all.css')" />
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/ext_icon.css')" />
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/app/zoom/css/zoom.css')" />
 <script>
 	$CONFIG = {
 		BLANK_IMAGE_URL:"$StaticConfig.u('/js/extjs3/resources/images/default/s.gif')",
@@ -23,6 +24,7 @@
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/Spinner.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/SpinnerField.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/ProgressBarPager.js')"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/zoom/js/zoom.js'))"></script>
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/photolib/PhotoLibQueryGrid.js'))"></script>
 </head>
 <body>

@@ -94,6 +94,11 @@ var menuTree_ContentLibQuery = new Ext.tree.TreePanel({
 									text : "微博内容库检索",
 									leaf : true,
 									url : '../contentlib/init'
+								},{
+									id : 'photoLib',
+									text : "图片库检索",
+									leaf : true,
+									url : '../photolib/init'
 								}]
 					}),
 			// 添加监听事件
