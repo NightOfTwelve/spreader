@@ -42,8 +42,8 @@ public class PhotoLibraryServiceImpl implements IPhotoLibraryService {
 		if (list.size() > 0) {
 			String serviceUri = getFileServiceUrl("/avatarconfig/webDavService.properties");
 			if (StringUtils.isNotEmpty(serviceUri)) {
-				StringBuffer turl = new StringBuffer(serviceUri);
 				for (Photo p : list) {
+					StringBuffer turl = new StringBuffer(serviceUri);
 					turl.append(p.getPicUrl());
 					p.setPicUrl(turl.toString());
 				}

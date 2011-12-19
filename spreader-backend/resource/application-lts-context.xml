@@ -35,14 +35,13 @@
 		<property name="stateful" value="false"></property>
 		<property name="task" ref="ltsRegularScheduler" />
 	</bean>
-	<!--<bean id="synchronAvatarFileDataJobCfg" class="com.nali.lts.configuration.TaskConfig">
+	<bean id="synchronAvatarFileDataJobCfg" class="com.nali.lts.configuration.TaskConfig">
 		<property name="group" value="Spreader.SynAvatar"></property>
 		 <property name="stateful" value="true"></property>
-		<property name="repeatInterval" value="12222222220000"></property>
+		<property name="repeatInterval" value="30000"></property>
 		<property name="repeatCount" value="1"></property>
-		 <property name="cronExp" value="0 0/50 * * * ?"></property>
+		<!--  <property name="cronExp" value="0 0/50 * * * ?"></property> -->
 		<property name="task" ref="synchronAvatarFileDataJob" />
 	</bean>
--->
 	<bean id="ltsService" class="com.nali.lts.server.spring.LTSService"></bean>
 </beans>

@@ -1,14 +1,14 @@
 var zoomWin = new Ext.Window({
 	id : 'zoomWin',
 	title : '图片浏览',
-	width : 750,
+	width : 500,
 	height : 500,
 	resizable : false,
 	closeAction : 'hide',
-	layout : 'border',
+	layout : 'fit',
 	items : [{
 		xtype : 'panel',
-		region : 'center',
+//		region : 'center',
 		layout : 'fit',
 		bodyStyle : 'background-color:#E5E3DF;',
 		frame : false,
@@ -18,7 +18,7 @@ var zoomWin = new Ext.Window({
 				+ '<div class="down" id="down"></div><div class="left" id="left"></div>'
 				+ '<div class="zoom" id="zoom"></div><div class="in" id="in"></div>'
 				+ '<div class="out" id="out"></div></div>'
-				+ '<img id="image" src="" border="0"  > </div>'
+				+ '<img id="image" src="" border="0" width=200 height=200> </div>'
 	}],
 	// buttons : [{
 	// text : '取消',
