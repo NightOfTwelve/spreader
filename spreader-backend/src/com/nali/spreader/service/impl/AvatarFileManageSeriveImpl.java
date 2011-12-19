@@ -1,14 +1,10 @@
 package com.nali.spreader.service.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +20,7 @@ import com.nali.spreader.dao.ICrudPhotoDao;
 import com.nali.spreader.dao.IPhotoDao;
 import com.nali.spreader.data.Photo;
 import com.nali.spreader.service.IAvatarFileManageService;
+import com.nali.spreader.utils.PhotoHelper;
 import com.nali.spreader.utils.TimeHelper;
 
 @Service
@@ -39,36 +36,6 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 	@Autowired
 	private ICrudPhotoDao crudPhotoDao;
 
-	@Override
-	public Map<Object, Object> getPropertiesMap(String url) {
-		Map<Object, Object> map = new HashMap<Object, Object>();
-		InputStream is = AvatarFileManageSeriveImpl.class
-				.getResourceAsStream(url);
-		try {
-			if (is != null) {
-				Properties prop = new Properties();
-				prop.load(is);
-				Set<Entry<Object, Object>> set = prop.entrySet();
-				for (Entry<Object, Object> entry : set) {
-					map.put(entry.getKey(), entry.getValue());
-				}
-			} else {
-				LOGGER.info("InputStream为空,请检查配置文件");
-			}
-		} catch (Exception e) {
-			LOGGER.info("未能读取头像类别配置文件", e);
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					LOGGER.info(e);
-				}
-			}
-		}
-		return map;
-	}
-
 	/**
 	 * 创建一套空目录结构
 	 * 
@@ -76,9 +43,12 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 	 */
 	private void createTypeFileDir(String serviceUrl) {
 		// 获取头像分类的配置文件信息
-		Map<Object, Object> maleTypeMap = getPropertiesMap("/avatarconfig/malePhotoType.properties");
-		Map<Object, Object> femaleTypeMap = getPropertiesMap("/avatarconfig/femalePhotoType.properties");
-		Map<Object, Object> generalTypeMap = getPropertiesMap("/avatarconfig/generalPhotoType.properties");
+		Map<Object, Object> maleTypeMap = PhotoHelper
+				.getPropertiesMap("/avatarconfig/malePhotoType.properties");
+		Map<Object, Object> femaleTypeMap = PhotoHelper
+				.getPropertiesMap("/avatarconfig/femalePhotoType.properties");
+		Map<Object, Object> generalTypeMap = PhotoHelper
+				.getPropertiesMap("/avatarconfig/generalPhotoType.properties");
 		try {
 			Sardine sardine = SardineFactory.begin();
 			if (!sardine.exists(serviceUrl)) {

@@ -10,6 +10,12 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+/**
+ * 时间帮助类
+ * 
+ * @author xiefei
+ * 
+ */
 public class TimeHelper {
 	// 日志
 	private static final Logger LOGGER = Logger.getLogger(TimeHelper.class);
