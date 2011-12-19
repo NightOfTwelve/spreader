@@ -31,13 +31,8 @@ public class SynchronAvatarFileDataJob extends AbstractTask {
 		if (lastTimeMap != null && lastTimeMap.containsKey("lasttime")) {
 			lastTime = lastTimeMap.get("lasttime");
 			LOGGER.info("获取上次执行的时间戳:" + lastTime);
-		}
-		if (lastTime == null) {
-			LOGGER.info("上次执行的时间戳为空，开始初始化创建目录");
-			amService.initCreatePhotoFileDirectory(serviceUri, new Date(), 10);
-		} else {
 			LOGGER.info("开始检查文件目录");
-			// 首先检查并创建上次结束时间到当前日期后一天的目录.防止文件目录遗漏为创建
+			// 首先检查并创建上次结束时间到当前日期后一天的目录.防止文件目录遗漏创建
 			amService.createLastTimeToCurrTimeDir(serviceUri, lastTime,
 					TimeHelper.findAfterDate(new Date()));
 			LOGGER.info("检查文件目录结束，开始执行同步任务");
@@ -45,6 +40,9 @@ public class SynchronAvatarFileDataJob extends AbstractTask {
 			amService.synAvatarFileDataBase(serviceUri, lastTime, new Date());
 			long etime = System.currentTimeMillis();
 			LOGGER.info("同步任务执行结束,耗时:" + (etime - stime) / 1000 + "s");
+		} else {
+			LOGGER.info("上次执行的时间戳为空，开始初始化创建目录");
+			amService.initCreatePhotoFileDirectory(serviceUri, new Date(), 10);
 		}
 		lastTime = new Date();
 		lastTimeMap.put("lasttime", lastTime);
