@@ -16,5 +16,4 @@ public interface IPhotoLibraryService {
 	 */
 	PageResult<Photo> findPhotoLibraryList(String picType, Boolean avatarflg,
 			Boolean photolibflg, Integer page, Integer pageSize);
-
 }

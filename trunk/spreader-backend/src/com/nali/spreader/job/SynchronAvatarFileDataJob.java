@@ -11,6 +11,7 @@ import com.nali.lts.context.TaskExecuteContext;
 import com.nali.lts.exceptions.TaskExecuteException;
 import com.nali.lts.task.AbstractTask;
 import com.nali.spreader.service.IAvatarFileManageService;
+import com.nali.spreader.utils.PhotoHelper;
 import com.nali.spreader.utils.TimeHelper;
 
 @Component
@@ -21,7 +22,7 @@ public class SynchronAvatarFileDataJob extends AbstractTask {
 
 	@Override
 	public void execute(TaskExecuteContext context) throws TaskExecuteException {
-		Map<Object, Object> prop = amService
+		Map<Object, Object> prop = PhotoHelper
 				.getPropertiesMap("/avatarconfig/webDavService.properties");
 		String serviceUri = prop.get("url").toString();
 		LOGGER.info("获取WEBDAV服务器地址:" + serviceUri);
