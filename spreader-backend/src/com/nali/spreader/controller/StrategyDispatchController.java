@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -17,6 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.pagination.PageResult;
+import com.nali.lang.StringUtils;
+import com.nali.lts.Scheduler;
+import com.nali.lts.SchedulerFactory;
+import com.nali.lts.SchedulerImpl;
+import com.nali.lts.exceptions.SchedulerException;
 import com.nali.lts.trigger.Trigger;
 import com.nali.lts.trigger.TriggerFactory;
 import com.nali.lts.trigger.TriggerMetaInfo;
@@ -112,45 +116,57 @@ public class StrategyDispatchController {
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
+	 * @throws SchedulerException 
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/settgrparam")
 	public String settingTriggerParam(Long id) throws JsonGenerationException,
-			JsonMappingException, IOException {
+			JsonMappingException, IOException, SchedulerException {
 		JobDto job = cfgService.getConfig(id);
 		String remind = "";
 		if (job != null) {
-			StringBuffer buff = new StringBuffer();
 			String name = job.getName();
-			TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(
-					job.getCron());
 			String triggerName = new StringBuffer(name).append("_").append(id)
 					.toString();
-			TriggerMetaInfo tm = new TriggerMetaInfo(triggerName, name, name
-					+ "Task", null, TriggerType.INDEPENDENT_TRIGGER);
-			Trigger trigger = TriggerFactory.getInstance().generateTrigger(tm,
-					scheInfo);
-			int rcount = scheInfo.getRepeatCount();
-			//已完成的次数
-			int times = trigger.getTimesTriggered();
-			buff.append("剩余执行次数:");
-			buff.append(rcount);
-			buff.append(";");
-			Date nextDate = trigger.getNextFireTime();
-			if (nextDate != null) {
-				String nextTime = TimeHelper.date2StringHms(nextDate);
-				buff.append("下次运行时间为:");
-				buff.append(nextTime);
+//			TriggerMetaInfo tm = new TriggerMetaInfo(triggerName, name, name
+//					+ "Task", null, TriggerType.INDEPENDENT_TRIGGER);
+			Trigger trigger = SchedulerFactory.getInstance().getScheduler().getTrigger(triggerName, name);
+			if(trigger != null) {
+				TriggerScheduleInfo scheduleInfo = trigger.getTriggerScheduleInfo();
+				 StringBuffer buff = new StringBuffer();
+				String cronExpression = scheduleInfo.getCronExpression();
+				if(StringUtils.isEmptyNoOffset(cronExpression)) {
+					//simple trigger
+					int rcount = scheduleInfo.getRepeatCount();
+					//已完成的次数
+					int times = trigger.getTimesTriggered();
+				    int left = times == -1 ? 0 : rcount + 1 - times;
+				   
+					buff.append("剩余执行次数:");
+					buff.append(left);
+				}else {
+					buff.append("Cron表达式:").append(cronExpression);
+				}
+				
 				buff.append(";");
+				Date nextDate = trigger.getNextFireTime();
+				if (nextDate != null) {
+					String nextTime = TimeHelper.date2StringHms(nextDate);
+					buff.append("下次运行时间为:");
+					buff.append(nextTime);
+					buff.append(";");
+				}
+				Date endDate = scheduleInfo.getEndTime();
+				if (endDate != null) {
+					String endTime = TimeHelper.date2StringHms(endDate);
+					buff.append("任务结束时间为:");
+					buff.append(endTime);
+					buff.append(";");
+				}
+				remind = buff.toString();
+			}else {
+				remind = "任务执行完毕, 您可以重新编辑保存，产生新的任务";
 			}
-			Date endDate = scheInfo.getEndTime();
-			if (endDate != null) {
-				String endTime = TimeHelper.date2StringHms(endDate);
-				buff.append("任务结束时间为:");
-				buff.append(endTime);
-				buff.append(";");
-			}
-			remind = buff.toString();
 		}
 		job.setRemind(remind);
 		return jacksonMapper.writeValueAsString(job);
@@ -181,7 +197,7 @@ public class StrategyDispatchController {
 		Class<?> dataClass = regularConfigService.getConfigableInfo(name)
 				.getDataClass();
 		Object configObj = null;
-		if (StringUtils.isNotEmpty(config)) {
+		if (StringUtils.isNotEmptyNoOffset(config)) {
 			configObj = jacksonMapper.readValue(config, dataClass);
 		}
 		if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
@@ -223,7 +239,7 @@ public class StrategyDispatchController {
 		int count = 0;
 		// 返回消息
 		Map<String, String> map = new HashMap<String, String>();
-		if (StringUtils.isNotEmpty(idstr)) {
+		if (StringUtils.isNotEmptyNoOffset(idstr)) {
 			String[] idarray = idstr.split("[,]");
 			if (idarray.length > 0) {
 				for (int i = 0; i < idarray.length; i++) {
