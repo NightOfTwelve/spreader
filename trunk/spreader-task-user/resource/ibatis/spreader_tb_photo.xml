@@ -8,4 +8,9 @@
 		from
 		spreader$shard.databaseSuffix$.tb_photo$shard.tableSuffix$
 	</select>
+	<select id="getAllTypeByGender" parameterClass="com.nali.spreader.data.Photo"
+		resultClass="java.lang.String">
+		select distinct pic_type as picType from spreader.tb_photo p where
+		p.gender in (#gender#,3) and p.avatarflg = true
+	</select>
 </sqlMap>

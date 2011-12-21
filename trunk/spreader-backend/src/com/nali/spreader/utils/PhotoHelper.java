@@ -9,8 +9,8 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
 
 /**
  * 图片处理帮助类
@@ -65,5 +65,24 @@ public class PhotoHelper {
 		Random rd = new Random();
 		int t = rd.nextInt(size);
 		return t;
+	}
+
+	/**
+	 * 去掉URL最后一个“/”
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static String splitUrlEnd(String url) {
+		String u = null;
+		if (StringUtils.isNotEmpty(url)) {
+			u = url.substring(0, url.length() - 1);
+		}
+		return u;
+	}
+
+	public static void main(String arge[]) {
+		System.out.println(PhotoHelper
+				.splitUrlEnd("http://192.168.3.61:8080/slide/files/"));
 	}
 }
