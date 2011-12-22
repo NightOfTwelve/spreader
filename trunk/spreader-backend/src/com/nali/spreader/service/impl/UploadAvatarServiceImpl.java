@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,12 +11,16 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.dao.ICrudPhotoDao;
+import com.nali.spreader.dao.IPhotoDao;
 import com.nali.spreader.data.Photo;
 import com.nali.spreader.data.PhotoExample;
 import com.nali.spreader.data.PhotoExample.Criteria;
+import com.nali.spreader.data.User;
 import com.nali.spreader.service.IUploadAvatarService;
 import com.nali.spreader.util.random.WeightRandomer;
+import com.nali.spreader.utils.PhotoHelper;
 
 @Service
 public class UploadAvatarServiceImpl implements IUploadAvatarService {
@@ -25,23 +28,20 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 			.getLogger(UploadAvatarServiceImpl.class);
 	@Autowired
 	private ICrudPhotoDao crudPhotoDao;
+	@Autowired
+	private IPhotoDao photoDao;
 
 	@Override
-	public List<Photo> findPhotoListByWeight(
-			List<Map<List<Photo>, Integer>> list) {
+	public List<Photo> findPhotoListByWeight(Map<List<Photo>, Integer> m) {
 		WeightRandomer<List<Photo>> weightList = new WeightRandomer<List<Photo>>();
-		if (list.size() > 0) {
-			for (Map<List<Photo>, Integer> weightMap : list) {
-				Set<Entry<List<Photo>, Integer>> set = weightMap.entrySet();
-				if (set != null) {
-					Iterator<Entry<List<Photo>, Integer>> it = set.iterator();
-					while (it.hasNext()) {
-						Map.Entry<List<Photo>, Integer> entry = it.next();
-						List<Photo> wList = entry.getKey();
-						Integer weight = entry.getValue();
-						weightList.add(wList, weight);
-					}
-				}
+		Set<Entry<List<Photo>, Integer>> set = m.entrySet();
+		if (set != null) {
+			Iterator<Entry<List<Photo>, Integer>> it = set.iterator();
+			while (it.hasNext()) {
+				Map.Entry<List<Photo>, Integer> entry = it.next();
+				List<Photo> wList = entry.getKey();
+				Integer weight = entry.getValue();
+				weightList.add(wList, weight);
 			}
 		}
 		List<Photo> result = weightList.get();
@@ -49,38 +49,30 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 	}
 
 	@Override
-	public String randomAvatarUrl(List<Photo> list, String http) {
+	public Photo randomAvatarUrl(List<Photo> list, String http) {
 		String uri = null;
 		int size = list.size();
+		Photo p = null;
 		StringBuffer buff = new StringBuffer(http);
 		if (size > 0) {
-			int index = getRandomNum(size);
-			Photo p = list.get(index);
+			int index = PhotoHelper.getRandomNum(size);
+			p = list.get(index);
 			String purl = p.getPicUrl();
 			if (StringUtils.isNotEmpty(purl)) {
 				buff.append(purl);
 			}
 			uri = buff.toString();
+			p.setPicUrl(uri.toString());
 		}
-		return uri;
-	}
-
-	/**
-	 * 获取随机整数
-	 * 
-	 * @param size
-	 * @return
-	 */
-	private int getRandomNum(int size) {
-		Random rd = new Random();
-		int t = rd.nextInt(size);
-		return t;
+		return p;
 	}
 
 	@Override
 	public List<String> findAllPhotoTypeByGender(Integer gender) {
-		// TODO Auto-generated method stub
-		return null;
+		Photo p = new Photo();
+		p.setGender(2);
+		List<String> list = photoDao.getPicTypeByGender(p);
+		return list;
 	}
 
 	@Override
@@ -98,4 +90,66 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 		return list;
 	}
 
+	@Override
+	public Map<String, Integer> findTypeWeightByProperties(String url) {
+		Map<String, Integer> map = null;
+		if (StringUtils.isNotEmpty(url)) {
+			Map<Object, Object> propMap = PhotoHelper.getPropertiesMap(url);
+			if (propMap != null) {
+				Integer gender = Integer.parseInt(propMap.get("gender")
+						.toString());
+				Integer general = Integer.parseInt(propMap.get("general")
+						.toString());
+				map = CollectionUtils.newHashMap(5);
+				map.put("gender", gender);
+				map.put("general", general);
+			}
+		}
+		return map;
+	}
+
+	@SuppressWarnings("unused")
+	public static void main(String argep[]) {
+		@SuppressWarnings("rawtypes")
+		Map m = PhotoHelper
+				.getPropertiesMap("/avatarconfig/webDavService.properties");
+		String s = m.get("url").toString();
+		System.out.println(m);
+	}
+
+	@Override
+	public List<Photo> findPhotoListByGender(Integer gender) {
+		PhotoExample pe = new PhotoExample();
+		Criteria cr = pe.createCriteria();
+		if (gender != null) {
+			cr.andGenderEqualTo(gender);
+		}
+		cr.andAvatarflgEqualTo(true);
+		List<Photo> list = crudPhotoDao.selectByExampleWithoutBLOBs(pe);
+		return list;
+	}
+
+	public Map<List<Photo>, Integer> createWeightMap(Integer gender) {
+		List<Photo> genderList = findPhotoListByGender(gender);
+		List<Photo> generalList = findPhotoListByGender(3);
+		// 默认权重配置
+		Integer genderWeight = 60;
+		Integer generalWeight = 40;
+		Map<String, Integer> weightMap = findTypeWeightByProperties("/avatarconfig/AvatarTypeWeight.properties");
+		if (weightMap != null) {
+			genderWeight = weightMap.get("gender");
+			generalWeight = weightMap.get("general");
+		}
+		Map<List<Photo>, Integer> m = CollectionUtils.newHashMap(5);
+		m.put(genderList, genderWeight);
+		m.put(generalList, generalWeight);
+		return m;
+	}
+
+	@Override
+	public int updateUserAvatarUrl(Long uid, Long pid) {
+		User u = new User();
+		u.setId(uid);
+		return 0;
+	}
 }
