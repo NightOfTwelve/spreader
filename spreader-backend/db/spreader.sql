@@ -512,4 +512,6 @@ alter table tb_websites comment '那里推广的目标网站列表';
 alter table tb_photo add avatarflg bit(0) ;
 /* 增加是否为相册字段 */
 alter table tb_photo add photolibflg bit(0) ;
+/* 增加图片ID字段*/
+alter table tb_user Add column pid bigint ;
 
