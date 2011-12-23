@@ -56,9 +56,9 @@ public class UploadUserAvatar extends SingleTaskMachineImpl implements
 	public void handleResult(Date updateTime, UploadAvatarDto dto) {
 		// 如果上传成功则需要更新USER表
 		if (dto.getSuccess()) {
-
+			Long pid = dto.getPid();
+			Long uid = dto.getUid();
+			uploadService.updateUserAvatarUrl(uid, pid);
 		}
-
 	}
-
 }
