@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.UserTagParamsDto;
+import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.data.User;
 import com.nali.spreader.service.IUserManageService;
 
@@ -61,6 +62,30 @@ public class UserInfoManageController {
 		utp.setIsRobot(isRobot);
 		PageResult<User> result = userService.findUserInfo(utp, start, limit);
 		return jacksonMapper.writeValueAsString(result);
+	}
+
+	/**
+	 * 查询机器人注册表的信息
+	 * 
+	 * @param nickName
+	 * @param province
+	 * @param start
+	 * @param limit
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/robotlist")
+	public String robotUserInfo(String nickName, String province,
+			Integer start, Integer limit) throws JsonGenerationException,
+			JsonMappingException, IOException {
+		if (start == null)
+			start = 0;
+		PageResult<RobotRegister> pr = userService.findRobotRegisterInfo(
+				nickName, province, start, limit);
+		return jacksonMapper.writeValueAsString(pr);
 	}
 
 	/**
