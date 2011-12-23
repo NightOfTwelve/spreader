@@ -27,6 +27,16 @@ public class UserTagParamsDto implements Serializable {
 	private String nickName;
 	// 是否机器人
 	private Boolean isRobot;
+	// 地区
+	private String province;
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
 
 	public Limit getLimit() {
 		return limit;
