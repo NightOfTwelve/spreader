@@ -20,6 +20,16 @@ public class UploadAvatarDto {
 	private Integer gender;
 	// 是否设置成功
 	private Boolean success;
+	// 头像ID
+	private Long pid;
+
+	public Long getPid() {
+		return pid;
+	}
+
+	public void setPid(Long pid) {
+		this.pid = pid;
+	}
 
 	public Long getUid() {
 		return uid;
