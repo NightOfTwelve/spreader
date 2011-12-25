@@ -59,7 +59,7 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									id : 'infonode2',
 									text : "机器人查询",
 									leaf : true,
-									url : '../strategy/dispatchlist'
+									url : '../rbtregist/init'
 								}]
 					}),
 			// 添加监听事件
@@ -94,7 +94,7 @@ var menuTree_ContentLibQuery = new Ext.tree.TreePanel({
 									text : "微博内容库检索",
 									leaf : true,
 									url : '../contentlib/init'
-								},{
+								}, {
 									id : 'photoLib',
 									text : "图片库检索",
 									leaf : true,
@@ -130,13 +130,13 @@ var accordPanel = new Ext.Panel({
 			maxSize : 350,
 			split : true,
 			bodyPadding : 5,
-			items : [ {
+			items : [{
 						autoScroll : true,
 						border : false,
 						title : '基础信息查询',
 						iconCls : 'app_boxesIcon',
 						items : [menuTree_InfoQuery]
-					},{
+					}, {
 						autoScroll : true,
 						border : false,
 						title : '策略及调度维护',
