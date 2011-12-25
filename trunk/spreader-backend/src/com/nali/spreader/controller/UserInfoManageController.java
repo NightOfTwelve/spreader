@@ -65,30 +65,6 @@ public class UserInfoManageController {
 	}
 
 	/**
-	 * 查询机器人注册表的信息
-	 * 
-	 * @param nickName
-	 * @param province
-	 * @param start
-	 * @param limit
-	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/robotlist")
-	public String robotUserInfo(String nickName, String province,
-			Integer start, Integer limit) throws JsonGenerationException,
-			JsonMappingException, IOException {
-		if (start == null)
-			start = 0;
-		PageResult<RobotRegister> pr = userService.findRobotRegisterInfo(
-				nickName, province, start, limit);
-		return jacksonMapper.writeValueAsString(pr);
-	}
-
-	/**
 	 * 查询真人粉丝信息
 	 * 
 	 * @param id
