@@ -29,7 +29,7 @@ public class ActiveWeibo extends SingleTaskMachineImpl implements PassiveWorksho
 	private TaskProduceLine<KeyValue<RobotUser, String>> generateRobotUserAccount;
 
 	public ActiveWeibo() {
-		super(SimpleActionConfig.activeWeibo, Website.weibo, Channel.normal);
+		super(SimpleActionConfig.activeWeibo, Website.weibo, Channel.intervention);
 	}
 
 	@Override
