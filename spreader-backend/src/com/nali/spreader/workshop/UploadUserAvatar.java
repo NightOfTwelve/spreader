@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
@@ -19,8 +21,11 @@ import com.nali.spreader.service.IUploadAvatarService;
 import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.utils.PhotoHelper;
 
+@Component
 public class UploadUserAvatar extends SingleTaskMachineImpl implements
 		PassiveWorkshop<UploadAvatarDto, UploadAvatarDto> {
+	private static final Logger logger = Logger
+			.getLogger(UploadUserAvatar.class);
 	@Autowired
 	private IUploadAvatarService uploadService;
 
@@ -44,12 +49,19 @@ public class UploadUserAvatar extends SingleTaskMachineImpl implements
 		List<Photo> dataList = uploadService.findPhotoListByWeight(dataMap);
 		Photo avatar = uploadService.randomAvatarUrl(dataList,
 				PhotoHelper.splitUrlEnd(headerUrl));
+		Long pid = null;
+		String puril = null;
+		if (avatar != null) {
+			pid = avatar.getId();
+			puril = avatar.getPicUrl();
+		}
 		Map<String, Object> contents = CollectionUtils.newHashMap(5);
 		contents.put("uid", dto.getUid());
 		contents.put("gender", dto.getGender());
-		contents.put("purl", avatar.getPicUrl());
-		contents.put("pid", avatar.getId());
+		contents.put("purl", puril);
+		contents.put("pid", pid);
 		exporter.createTask(contents, robotId, SpecialDateUtil.afterToday(1));
+		logger.info("URL:" + puril);
 	}
 
 	@Override
