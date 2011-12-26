@@ -22,6 +22,12 @@ import com.nali.spreader.service.IUploadAvatarService;
 import com.nali.spreader.util.random.WeightRandomer;
 import com.nali.spreader.utils.PhotoHelper;
 
+/**
+ * 上传头像服务类
+ * 
+ * @author xiefei
+ * 
+ */
 @Service
 public class UploadAvatarServiceImpl implements IUploadAvatarService {
 	private static final Logger logger = Logger
@@ -135,14 +141,22 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 		// 默认权重配置
 		Integer genderWeight = 60;
 		Integer generalWeight = 40;
+		// 获取权重配置
 		Map<String, Integer> weightMap = findTypeWeightByProperties("/avatarconfig/AvatarTypeWeight.properties");
 		if (weightMap != null) {
 			genderWeight = weightMap.get("gender");
 			generalWeight = weightMap.get("general");
 		}
 		Map<List<Photo>, Integer> m = CollectionUtils.newHashMap(5);
-		m.put(genderList, genderWeight);
-		m.put(generalList, generalWeight);
+		// 这里做判断SIZE=0的List不进入随机筛选，否则会有异常
+		if (genderList.size() > 0) {
+			m.put(genderList, genderWeight);
+			logger.info("genderList不为空进入筛选");
+		}
+		if (generalList.size() > 0) {
+			m.put(generalList, generalWeight);
+			logger.info("generalList不为空进入筛选");
+		}
 		return m;
 	}
 

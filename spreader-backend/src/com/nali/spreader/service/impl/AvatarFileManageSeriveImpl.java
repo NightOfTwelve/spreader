@@ -1,9 +1,5 @@
 package com.nali.spreader.service.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -362,13 +358,13 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 		}
 	}
 
-	public static void main(String arge[]) throws IOException {
-		AvatarFileManageSeriveImpl afs = new AvatarFileManageSeriveImpl();
-		Sardine sardine = SardineFactory.begin();
-		String webDav = "http://192.168.3.61:8080/slide/files/20111124/男/其他/34.jpg";
-		InputStream is = new FileInputStream(new File(
-				"D:\\nali\\doc\\营销系统\\头像库\\头像库\\女\\可爱\\16.jpg"));
-		sardine.put("http://192.168.3.61:8080/slide/files/16.txt", is);
-
-	}
+//	public static void main(String arge[]) throws IOException {
+//		AvatarFileManageSeriveImpl afs = new AvatarFileManageSeriveImpl();
+//		Sardine sardine = SardineFactory.begin();
+//		String webDav = "http://192.168.3.61:8080/slide/files/20111124/男/其他/34.jpg";
+//		InputStream is = new FileInputStream(new File(
+//				"D:\\nali\\doc\\营销系统\\头像库\\头像库\\女\\可爱\\16.jpg"));
+//		sardine.put("http://192.168.3.61:8080/slide/files/16.txt", is);
+//
+//	}
 }
