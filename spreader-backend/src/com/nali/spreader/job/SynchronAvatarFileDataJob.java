@@ -26,6 +26,7 @@ public class SynchronAvatarFileDataJob extends AbstractTask {
 				.getPropertiesMap(PhotoHelper.WEBDAV_FILE);
 		String serviceUri = prop.get("url").toString();
 		LOGGER.info("获取WEBDAV服务器地址:" + serviceUri);
+		@SuppressWarnings("unchecked")
 		Map<String, Date> lastTimeMap = context.getTaskExecutionParameters();
 		Date lastTime = null;
 		if (lastTimeMap != null && lastTimeMap.containsKey("lasttime")) {
