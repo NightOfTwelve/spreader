@@ -47,6 +47,7 @@ public class GlobalUserService implements IGlobalUserService {
 		user.setWebsiteUid(websiteUid);
 		user.setNickName(nickname);
 		user.setIsRobot(true);
+		user.setGender(robotUser.getGender());
 
 		UserExample example = new UserExample();
 		example.createCriteria().andWebsiteIdEqualTo(websiteId)
