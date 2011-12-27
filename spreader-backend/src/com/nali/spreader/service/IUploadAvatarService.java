@@ -26,7 +26,7 @@ public interface IUploadAvatarService {
 	 * @param list
 	 * @return
 	 */
-	Photo randomAvatarUrl(List<Photo> list, String http);
+	Photo randomAvatarUrl(List<Photo> list);
 
 	/**
 	 * 根据性别和类型获取头像的集合
