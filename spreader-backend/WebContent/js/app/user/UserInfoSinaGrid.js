@@ -34,7 +34,7 @@ var numtext = new Ext.form.TextField({
  * 用户信息列表的查询FORM
  */
 var userSinaForm = new Ext.form.FormPanel({
-			// region : 'north',
+			 region : 'north',
 			title : "筛选条件",
 			// collapsible : true,
 			frame : true,
@@ -328,7 +328,7 @@ var bbar = new Ext.PagingToolbar({
 
 // 定义grid表格
 var sinaUserGrid = new Ext.grid.GridPanel({
-			// region : 'center',
+			 region : 'center',
 			id : 'sinaUserGrid',
 			height : 440,
 			stripeRows : true, // 斑马线

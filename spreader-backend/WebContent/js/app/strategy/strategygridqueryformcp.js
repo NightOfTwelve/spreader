@@ -2,9 +2,11 @@
  * 策略列表的查询FORM
  */
 var stggridform = new Ext.form.FormPanel({
+			region : 'north',
 			title : "组合查询",
 			autoWidth : true,
 			height : 100,
+			split : true,
 			frame : true,
 			layout : "form", // 整个大的表单是form布局
 			labelWidth : 65,
@@ -43,5 +45,4 @@ var stggridform = new Ext.form.FormPanel({
 					}, {
 						text : "重置"
 					}]
-
 		});
