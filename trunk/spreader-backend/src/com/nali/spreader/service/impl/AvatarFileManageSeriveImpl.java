@@ -44,11 +44,11 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 	private void createTypeFileDir(String serviceUrl) {
 		// 获取头像分类的配置文件信息
 		Map<Object, Object> maleTypeMap = PhotoHelper
-				.getPropertiesMap("/avatarconfig/malePhotoType.properties");
+				.getPropertiesMap(PhotoHelper.MALE_FIEL);
 		Map<Object, Object> femaleTypeMap = PhotoHelper
-				.getPropertiesMap("/avatarconfig/femalePhotoType.properties");
+				.getPropertiesMap(PhotoHelper.FEMALE_FILE);
 		Map<Object, Object> generalTypeMap = PhotoHelper
-				.getPropertiesMap("/avatarconfig/generalPhotoType.properties");
+				.getPropertiesMap(PhotoHelper.GENERAL_FILE);
 		try {
 			Sardine sardine = SardineFactory.begin();
 			if (!sardine.exists(serviceUrl)) {
@@ -358,13 +358,14 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 		}
 	}
 
-//	public static void main(String arge[]) throws IOException {
-//		AvatarFileManageSeriveImpl afs = new AvatarFileManageSeriveImpl();
-//		Sardine sardine = SardineFactory.begin();
-//		String webDav = "http://192.168.3.61:8080/slide/files/20111124/男/其他/34.jpg";
-//		InputStream is = new FileInputStream(new File(
-//				"D:\\nali\\doc\\营销系统\\头像库\\头像库\\女\\可爱\\16.jpg"));
-//		sardine.put("http://192.168.3.61:8080/slide/files/16.txt", is);
-//
-//	}
+	// public static void main(String arge[]) throws IOException {
+	// AvatarFileManageSeriveImpl afs = new AvatarFileManageSeriveImpl();
+	// Sardine sardine = SardineFactory.begin();
+	// String webDav =
+	// "http://192.168.3.61:8080/slide/files/20111124/男/其他/34.jpg";
+	// InputStream is = new FileInputStream(new File(
+	// "D:\\nali\\doc\\营销系统\\头像库\\头像库\\女\\可爱\\16.jpg"));
+	// sardine.put("http://192.168.3.61:8080/slide/files/16.txt", is);
+	//
+	// }
 }

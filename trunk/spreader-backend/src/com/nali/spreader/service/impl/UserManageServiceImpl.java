@@ -10,14 +10,17 @@ import org.springframework.stereotype.Service;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.UserTagParamsDto;
+import com.nali.spreader.dao.ICrudPhotoDao;
 import com.nali.spreader.dao.ICrudRobotRegisterDao;
 import com.nali.spreader.dao.IUserDao;
+import com.nali.spreader.data.Photo;
 import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.data.RobotRegisterExample;
 import com.nali.spreader.data.RobotRegisterExample.Criteria;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserTag;
 import com.nali.spreader.service.IUserManageService;
+import com.nali.spreader.utils.PhotoHelper;
 
 @Service
 public class UserManageServiceImpl implements IUserManageService {
@@ -27,6 +30,8 @@ public class UserManageServiceImpl implements IUserManageService {
 	private IUserDao userDao;
 	@Autowired
 	private ICrudRobotRegisterDao regDao;
+	@Autowired
+	private ICrudPhotoDao photoDao;
 
 	@Override
 	public PageResult<User> findUserInfo(UserTagParamsDto utp, Integer start,
@@ -37,6 +42,16 @@ public class UserManageServiceImpl implements IUserManageService {
 		for (User u : uList) {
 			StringBuffer buff = new StringBuffer();
 			List<UserTag> utList = u.getTags();
+			Long pid = u.getPid();
+			if (pid != null) {
+				Photo p = photoDao.selectByPrimaryKey(pid);
+				if (p != null) {
+					String pUri = p.getPicUrl();
+					u.setAvatarUrl(PhotoHelper.formatPhotoUrl(pUri));
+				} else {
+					LOGGER.info("未找到对应头像信息");
+				}
+			}
 			if (utList.size() > 0) {
 				for (UserTag ut : utList) {
 					buff.append(ut.getTag());
@@ -59,6 +74,16 @@ public class UserManageServiceImpl implements IUserManageService {
 		for (User u : uList) {
 			StringBuffer buff = new StringBuffer();
 			List<UserTag> utList = u.getTags();
+			Long pid = u.getPid();
+			if (pid != null) {
+				Photo p = photoDao.selectByPrimaryKey(pid);
+				if (p != null) {
+					String pUri = p.getPicUrl();
+					u.setAvatarUrl(PhotoHelper.formatPhotoUrl(pUri));
+				} else {
+					LOGGER.info("未找到对应头像信息");
+				}
+			}
 			if (utList.size() > 0) {
 				for (UserTag ut : utList) {
 					buff.append(ut.getTag());

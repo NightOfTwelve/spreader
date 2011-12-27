@@ -34,7 +34,7 @@ var numtext = new Ext.form.TextField({
  * 用户信息列表的查询FORM
  */
 var userSinaForm = new Ext.form.FormPanel({
-			 region : 'north',
+			region : 'north',
 			title : "筛选条件",
 			// collapsible : true,
 			frame : true,
@@ -202,6 +202,8 @@ var sinaUserStore = new Ext.data.Store({
 								name : 'blog'
 							}, {
 								name : 'tag'
+							}, {
+								name : 'avatarUrl'
 							}]),
 			autoLoad : {
 				params : {
@@ -256,6 +258,17 @@ var cm = new Ext.ux.grid.LockingColumnModel([rownums, {
 			dataIndex : 'nickName',
 			locked : true,
 			width : 100
+		}, {
+			header : '头像',
+			dataIndex : 'avatarUrl',
+			renderer : renderImage,
+			locked : true,
+			width : 0
+		}, {
+			header : '头像',
+			dataIndex : 'avatarUrl',
+			renderer : renderImage,
+			width : 80
 		}, {
 			header : '性别',
 			dataIndex : 'gender',
@@ -328,7 +341,7 @@ var bbar = new Ext.PagingToolbar({
 
 // 定义grid表格
 var sinaUserGrid = new Ext.grid.GridPanel({
-			 region : 'center',
+			region : 'center',
 			id : 'sinaUserGrid',
 			height : 440,
 			stripeRows : true, // 斑马线

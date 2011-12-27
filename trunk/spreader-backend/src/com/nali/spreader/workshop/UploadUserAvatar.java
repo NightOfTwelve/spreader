@@ -42,8 +42,8 @@ public class UploadUserAvatar extends SingleTaskMachineImpl implements
 			gender = 3;
 		}
 		String headerUrl = PhotoHelper
-				.getPropertiesMap("/avatarconfig/webDavService.properties")
-				.get("url").toString();
+				.getPropertiesMap(PhotoHelper.WEBDAV_FILE).get("url")
+				.toString();
 		Map<List<Photo>, Integer> dataMap = uploadService
 				.createWeightMap(gender);
 		List<Photo> dataList = uploadService.findPhotoListByWeight(dataMap);

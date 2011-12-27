@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.UserTagParamsDto;
-import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.data.User;
 import com.nali.spreader.service.IUserManageService;
 

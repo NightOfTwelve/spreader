@@ -23,7 +23,7 @@ public class SynchronAvatarFileDataJob extends AbstractTask {
 	@Override
 	public void execute(TaskExecuteContext context) throws TaskExecuteException {
 		Map<Object, Object> prop = PhotoHelper
-				.getPropertiesMap("/avatarconfig/webDavService.properties");
+				.getPropertiesMap(PhotoHelper.WEBDAV_FILE);
 		String serviceUri = prop.get("url").toString();
 		LOGGER.info("获取WEBDAV服务器地址:" + serviceUri);
 		Map<String, Date> lastTimeMap = context.getTaskExecutionParameters();
