@@ -20,6 +20,12 @@ import org.apache.log4j.Logger;
  */
 public class PhotoHelper {
 	private static final Logger logger = Logger.getLogger(PhotoHelper.class);
+	// 图片服务器信息配置文件
+	public static final String WEBDAV_FILE = "/avatarconfig/webDavService.properties";
+	public static final String MALE_FIEL = "/avatarconfig/malePhotoType.properties";
+	public static final String FEMALE_FILE = "/avatarconfig/femalePhotoType.properties";
+	public static final String GENERAL_FILE = "/avatarconfig/femalePhotoType.properties";
+	public static final String TYPEWEIGHT_FILE = "/avatarconfig/AvatarTypeWeight.properties";
 
 	/**
 	 * 获取某个配置文件的键值对
@@ -81,8 +87,33 @@ public class PhotoHelper {
 		return u;
 	}
 
+	/**
+	 * 构造一个真实的图片URL
+	 * 
+	 * @param fileUri
+	 * @return
+	 */
+	public static String formatPhotoUrl(String fileUri) {
+		String realUrl = null;
+		if (StringUtils.isNotEmpty(fileUri)) {
+			Map<Object, Object> map = getPropertiesMap(WEBDAV_FILE);
+			if (map != null) {
+				StringBuffer buff = new StringBuffer();
+				String http = map.get("url").toString();
+				String tmp = splitUrlEnd(http);
+				buff.append(tmp);
+				buff.append(fileUri);
+				realUrl = buff.toString();
+			} else {
+				logger.info("服务器地址参数获取失败,请检查配置文件");
+			}
+		} else {
+			logger.info("文件地址为空,不能转换");
+		}
+		return realUrl;
+	}
+
 	public static void main(String arge[]) {
-		System.out.println(PhotoHelper
-				.splitUrlEnd("http://192.168.3.61:8080/slide/files/"));
+		System.out.println(PhotoHelper.formatPhotoUrl("/2011/02/11.jsp"));
 	}
 }

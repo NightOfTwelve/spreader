@@ -40,7 +40,7 @@ public class PhotoLibraryServiceImpl implements IPhotoLibraryService {
 		pe.setLimit(limit);
 		List<Photo> list = crudPhotoDao.selectByExampleWithoutBLOBs(pe);
 		if (list.size() > 0) {
-			String serviceUri = getFileServiceUrl("/avatarconfig/webDavService.properties");
+			String serviceUri = getFileServiceUrl(PhotoHelper.WEBDAV_FILE);
 			if (StringUtils.isNotEmpty(serviceUri)) {
 				for (Photo p : list) {
 					StringBuffer turl = new StringBuffer(serviceUri);

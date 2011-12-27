@@ -169,6 +169,20 @@ function renderImage(value) {
 	return url;
 }
 /**
+ * 头像渲染，像素16*16
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderImage2(value) {
+	var url = '';
+	if (value != null) {
+		url = '<img src=\'' + value + '\' onload="AutoSize(this,16,16)"/>';
+	}
+	return url;
+}
+/**
  * 自动缩放图片
  * 
  * @param {}

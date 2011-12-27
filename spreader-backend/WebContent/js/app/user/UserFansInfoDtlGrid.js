@@ -68,6 +68,8 @@ var userFansStore = new Ext.data.Store({
 								name : 'blog'
 							}, {
 								name : 'tag'
+							}, {
+								name : 'avatarUrl'
 							}])
 		});
 // 分页带上查询条件
@@ -97,6 +99,17 @@ var fanscm = new Ext.ux.grid.LockingColumnModel([{
 			dataIndex : 'nickName',
 			locked : true,
 			width : 100
+		}, {
+			header : '头像',
+			dataIndex : 'avatarUrl',
+			renderer : renderImage,
+			locked : true,
+			width : 0
+		}, {
+			header : '头像',
+			dataIndex : 'avatarUrl',
+			renderer : renderImage,
+			width : 80
 		}, {
 			header : '性别',
 			dataIndex : 'gender',

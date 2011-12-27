@@ -142,7 +142,7 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 		Integer genderWeight = 60;
 		Integer generalWeight = 40;
 		// 获取权重配置
-		Map<String, Integer> weightMap = findTypeWeightByProperties("/avatarconfig/AvatarTypeWeight.properties");
+		Map<String, Integer> weightMap = findTypeWeightByProperties(PhotoHelper.TYPEWEIGHT_FILE);
 		if (weightMap != null) {
 			genderWeight = weightMap.get("gender");
 			generalWeight = weightMap.get("general");
