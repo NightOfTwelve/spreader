@@ -11,44 +11,47 @@ import org.springframework.stereotype.Component;
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
+import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.Photo;
-import com.nali.spreader.dto.UploadAvatarDto;
+import com.nali.spreader.data.User;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.service.IUploadAvatarService;
+import com.nali.spreader.service.IUserService;
+import com.nali.spreader.service.IUserServiceFactory;
 import com.nali.spreader.util.SpecialDateUtil;
-import com.nali.spreader.utils.PhotoHelper;
 
 @Component
 public class UploadUserAvatar extends SingleTaskMachineImpl implements
-		PassiveWorkshop<UploadAvatarDto, UploadAvatarDto> {
+		PassiveWorkshop<Long, KeyValue<Long, KeyValue<Long, Boolean>>> {
 	private static final Logger logger = Logger
 			.getLogger(UploadUserAvatar.class);
 	@Autowired
 	private IUploadAvatarService uploadService;
+	private IUserService userService;
+
+	@Autowired
+	public void initUserService(IUserServiceFactory userServiceFactory) {
+		userService = userServiceFactory.getUserService(websiteId);
+	}
 
 	public UploadUserAvatar() {
 		super(SimpleActionConfig.uploadAvatar, Website.weibo, Channel.normal);
 	}
 
 	@Override
-	public void work(UploadAvatarDto dto, SingleTaskExporter exporter) {
-		Integer gender = dto.getGender();
-		Long robotId = dto.getRobotId();
-		if (gender == null) {
-			// 默认通用
-			gender = 3;
+	public void work(Long uid, SingleTaskExporter exporter) {
+		User user = userService.getUserById(uid);
+		Integer gender = 3;
+		if (user != null) {
+			gender = user.getGender();
 		}
-		String headerUrl = PhotoHelper
-				.getPropertiesMap(PhotoHelper.WEBDAV_FILE).get("url")
-				.toString();
 		Map<List<Photo>, Integer> dataMap = uploadService
 				.createWeightMap(gender);
 		List<Photo> dataList = uploadService.findPhotoListByWeight(dataMap);
-		Photo avatar = uploadService.randomAvatarUrl(dataList,
-				PhotoHelper.splitUrlEnd(headerUrl));
+		Photo avatar = uploadService.randomAvatarUrl(dataList);
 		Long pid = null;
 		String puril = null;
 		if (avatar != null) {
@@ -56,20 +59,21 @@ public class UploadUserAvatar extends SingleTaskMachineImpl implements
 			puril = avatar.getPicUrl();
 		}
 		Map<String, Object> contents = CollectionUtils.newHashMap(5);
-		contents.put("uid", dto.getUid());
-		contents.put("gender", dto.getGender());
+		contents.put("uid", uid);
+		contents.put("gender", gender);
 		contents.put("purl", puril);
 		contents.put("pid", pid);
-		exporter.createTask(contents, robotId, SpecialDateUtil.afterToday(1));
+		exporter.createTask(contents, uid, SpecialDateUtil.afterToday(1));
 		logger.info("URL:" + puril);
 	}
 
 	@Override
-	public void handleResult(Date updateTime, UploadAvatarDto dto) {
+	public void handleResult(Date updateTime,
+			KeyValue<Long, KeyValue<Long, Boolean>> keyValue) {
 		// 如果上传成功则需要更新USER表
-		if (dto.getSuccess()) {
-			Long pid = dto.getPid();
-			Long uid = dto.getUid();
+		if (keyValue.getValue().getValue()) {
+			Long pid = keyValue.getValue().getKey();
+			Long uid = keyValue.getKey();
 			uploadService.updateUserAvatarUrl(uid, pid);
 		}
 	}

@@ -55,19 +55,15 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 	}
 
 	@Override
-	public Photo randomAvatarUrl(List<Photo> list, String http) {
+	public Photo randomAvatarUrl(List<Photo> list) {
 		String uri = null;
 		int size = list.size();
 		Photo p = null;
-		StringBuffer buff = new StringBuffer(http);
 		if (size > 0) {
 			int index = PhotoHelper.getRandomNum(size);
 			p = list.get(index);
 			String purl = p.getPicUrl();
-			if (StringUtils.isNotEmpty(purl)) {
-				buff.append(purl);
-			}
-			uri = buff.toString();
+			uri = PhotoHelper.formatPhotoUrl(purl);
 			p.setPicUrl(uri.toString());
 		}
 		return p;
