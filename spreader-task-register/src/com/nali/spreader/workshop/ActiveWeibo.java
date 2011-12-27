@@ -45,6 +45,7 @@ public class ActiveWeibo extends SingleTaskMachineImpl implements PassiveWorksho
 		robotUser.setWebsiteUid(websiteUid);
 		robotUser.setLoginName(robotRegister.getEmail());//not use email
 		robotUser.setLoginPwd(robotRegister.getPwd());
+		robotUser.setGender(robotRegister.getGender());
 		generateRobotUserAccount.send(new KeyValue<RobotUser, String>(robotUser, nickname));
 		robotRegisterService.removeRegisteringAccount(websiteId, robotRegisterId);
 	}
