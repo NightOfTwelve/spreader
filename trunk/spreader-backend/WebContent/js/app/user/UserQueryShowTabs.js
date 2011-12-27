@@ -1,4 +1,3 @@
-
 Ext.onReady(function() {
 	var tabs = new Ext.TabPanel({
 				region : 'center',
@@ -13,18 +12,7 @@ Ext.onReady(function() {
 				id : 'sina',
 				layout : 'border',
 				// tbar:tb, //工具栏
-				items : [{
-							region : 'north',
-							split : true,
-							// collapsible : true,
-							autoHeight :true,
-							items : [userSinaForm]
-						}, {
-							region : 'center',
-							split : true,
-							autoHeight :true,
-							items : [sinaUserGrid]
-						}],
+				items : [userSinaForm, sinaUserGrid],
 				iconCls : 'book_previousIcon', // 图标
 				closable : true
 			});
@@ -34,15 +22,15 @@ Ext.onReady(function() {
 				html : '明细信息'
 			});
 	tabs.add({
-				id : 'qqweibo',
-				title : '<span class="commoncss"><font color="#006400">腾讯微博</font></span>',
-				html : '明细信息'
-			});
+		id : 'qqweibo',
+		title : '<span class="commoncss"><font color="#006400">腾讯微博</font></span>',
+		html : '明细信息'
+	});
 	tabs.add({
-				id : 'kaixin01',
-				title : '<span class="commoncss"><font color="#8b008b">开心网</font></span>',
-				html : '明细信息'
-			});
+		id : 'kaixin01',
+		title : '<span class="commoncss"><font color="#8b008b">开心网</font></span>',
+		html : '明细信息'
+	});
 	tabs.activate(0);
 
 	// 布局模型

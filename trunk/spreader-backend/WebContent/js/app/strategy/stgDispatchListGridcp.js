@@ -100,11 +100,10 @@ var bbar = new Ext.PagingToolbar({
 
 // 定义grid表格
 var stgdisplistgrid = new Ext.grid.GridPanel({
-			// title : '<span class="commoncss">策略配置列表</span>',
-			// iconCls : 'buildingIcon',
-			height : 540,
+			height : 500,
 			autoWidth : true,
 			autoScroll : true,
+			split:true,
 			region : 'center',
 			store : store,
 			loadMask : {
@@ -530,7 +529,7 @@ function cleanCreateTrigger() {
 	var ttriggerDispForm = triggerDispForm.getForm();
 	var tsimpleDispForm = simpleDispForm.getForm();
 	// 设置参数
-//	tradioForm.findField("triggerType").setValue(1);
+	// tradioForm.findField("triggerType").setValue(1);
 	tradioForm.findField("description").setValue(null);
 	tsimpleDispForm.findField("start").setValue(null);
 	tsimpleDispForm.findField("repeatTimes").setValue(null);

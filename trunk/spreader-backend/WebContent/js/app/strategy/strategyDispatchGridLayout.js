@@ -4,25 +4,6 @@
 Ext.onReady(function() {
 			var stgdispviewport = new Ext.Viewport({
 						layout : 'border',
-						items : [{
-									region : 'north',
-//									title : '查询条件',
-									split : true,
-//									width : 1000,
-									height : 100,
-//									minWidth : 175,
-//									maxWidth : 400,
-									items : [stgdispgridform]
-								}, {
-									region : 'center',
-									id : 'stglistgridly',
-									header : false,
-									collapsible : true,
-									split : true,
-//									width : 1000,
-//									height : document.documentElement.clientHeight - 200,
-									autoHeight:true,
-									items : [stgdisplistgrid]
-								}]
+						items : [stgdispgridform, stgdisplistgrid]
 					});
 		});

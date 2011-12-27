@@ -49,13 +49,11 @@ var bbar = new Ext.PagingToolbar({
 		});
 // 定义grid表格
 var stglistgrid = new Ext.grid.GridPanel({
-			// title : '<span class="commoncss">策略配置列表</span>',
-			// iconCls : 'buildingIcon',
-			height : 540,
-			// height : document.documentElement.clientHeight,
+			region : 'center',
+			height : 500,
 			autoWidth : true,
 			autoScroll : true,
-			region : 'center',
+			split : true,
 			store : store,
 			loadMask : {
 				msg : '正在加载表格数据,请稍等...'
@@ -104,7 +102,7 @@ var stglistgrid = new Ext.grid.GridPanel({
 					var disnames = record.data.displayName;
 					GDISNAME = data.displayName;
 					GOBJID = data.name;
-					editstgWindow.title=disnames;
+					editstgWindow.title = disnames;
 					editstgWindow.show();
 				}
 			}
@@ -140,7 +138,7 @@ var editstgWindow = new Ext.Window({
 						height : 100
 					}, {
 						region : 'west',
-//						title : '选择配置',
+						// title : '选择配置',
 						split : true,
 						width : 200,
 						minWidth : 175,

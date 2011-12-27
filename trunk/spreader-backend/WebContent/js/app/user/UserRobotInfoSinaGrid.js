@@ -287,5 +287,4 @@ Ext.onReady(function() {
 						layout : 'border',
 						items : [userRobotSinaForm, sinaUserRobotGrid]
 					});
-
 		});
