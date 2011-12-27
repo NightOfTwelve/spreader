@@ -31,6 +31,6 @@ public class GenerateRobotUserAccount implements
 		robotUser.setUid(uid);
 		globalRobotUserService.syncLoginConfig(robotUser);
 		generateRobotUserCategory.send(uid);
-		uploadUserAvatar.send(867L);
+		uploadUserAvatar.send(uid);
 	}
 }
