@@ -102,6 +102,17 @@
 		<property name="queueName" value="weiboRegisterPassiveTaskQueue"></property>
 		<property name="manager" ref="manager"></property>
 	</bean>
+	
+	<bean id="weiboInstantPassiveTaskQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">
+		<property name="valueSerializer" ref="clientTaskProtoStuffRedisSerializer"></property>
+		<property name="connectionFactory" ref="redisConnectionFactory"></property>
+		<property name="name" value="weiboInstantPassiveTaskQueue"></property>
+	</bean>
+	
+	<bean id="weiboInstantPassiveTaskReceiver" class="com.nali.lwtmq.receiver.RedisReceiver">
+		<property name="queueName" value="weiboInstantPassiveTaskQueue"></property>
+		<property name="manager" ref="manager"></property>
+	</bean>
 	<!-- 
 	<bean id="passiveTaskListenerContainer" class="com.nali.lwtmq.receiver.container.PollingMessageListenerContainer">
 		<property name="concurrentListeners" value="#{lwtmq['lwtmq.passiveTaskQueue.concurrentListeners']}"></property>

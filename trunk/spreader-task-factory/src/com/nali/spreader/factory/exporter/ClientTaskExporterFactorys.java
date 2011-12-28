@@ -22,6 +22,11 @@ public class ClientTaskExporterFactorys {
 		passiveTaskSender.register(TaskType.weiboRegister.getId(), weiboRegisterPassiveTaskSender);
 	}
 	
+	@Autowired
+	public void setWeiboInstantPassiveTaskSender(AsyncSender<ClientTask> weiboInstantPassiveTaskSender) {
+		passiveTaskSender.register(TaskType.weiboInstant.getId(), weiboInstantPassiveTaskSender);
+	}
+	
 	@Bean
 	public ClientTaskExporterFactory passiveTaskExporterFactory() {//TODO 减少queue配置
 		return new ClientTaskExporterFactory(passiveTaskSender);

@@ -3,6 +3,7 @@ package com.nali.spreader.constants;
 public enum TaskType {//TODO
 	weiboNormal(101, 80, 20),
 	weiboRegister(102, 80, 1),
+	weiboInstant(103, 80, 1),
 	;
 	private Integer id;
 	//front
