@@ -53,18 +53,17 @@ public class UploadUserAvatar extends SingleTaskMachineImpl implements
 		List<Photo> dataList = uploadService.findPhotoListByWeight(dataMap);
 		Photo avatar = uploadService.randomAvatarUrl(dataList);
 		Long pid = null;
-		String puril = null;
+		String purl = null;
 		if (avatar != null) {
 			pid = avatar.getId();
-			puril = avatar.getPicUrl();
+			purl = avatar.getPicUrl();
 		}
 		Map<String, Object> contents = CollectionUtils.newHashMap(5);
 		contents.put("uid", uid);
-		contents.put("gender", gender);
-		contents.put("purl", puril);
+		contents.put("purl", purl);
 		contents.put("pid", pid);
 		exporter.createTask(contents, uid, SpecialDateUtil.afterToday(1));
-		logger.info("URL:" + puril);
+		logger.info("URL:" + purl);
 	}
 
 	@Override
