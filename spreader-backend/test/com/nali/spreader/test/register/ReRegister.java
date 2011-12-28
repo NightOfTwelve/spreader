@@ -36,13 +36,13 @@ public class ReRegister {//重新注册帐号
 	
 	@Test
 	public void test() {
-//		redisTemplate.execute(new RedisCallback<Boolean>() {
-//			@Override
-//			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
-//				connection.flushDb();
-//				return true;
-//			}
-//		});
+		redisTemplate.execute(new RedisCallback<Boolean>() {
+			@Override
+			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
+				connection.flushDb();
+				return true;
+			}
+		});
 		RobotUserExample example2 = new RobotUserExample();
 		List<RobotUser> list2 = crudRobotUserDao.selectByExample(example2);
 		HashSet<Long> existIds = new HashSet<Long>();
