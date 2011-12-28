@@ -23,7 +23,7 @@ import com.nali.spreader.util.DataIterator;
 import com.nali.spreader.util.NumberUtil;
 
 @Component
-@ClassDescription("更新用户资料")
+@ClassDescription("爬取用户主页")
 public class UpdateUserMainPage implements RegularAnalyzer {//TODO SystemObject
 	private Integer websiteId = Website.weibo.getId();
 	private static Logger logger = Logger.getLogger(UpdateUserMainPage.class);
