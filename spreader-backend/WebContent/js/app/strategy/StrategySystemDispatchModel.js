@@ -191,6 +191,10 @@ Ext.onReady(function() {
 			// alert(fstart);
 			var repeatTimes = tsimpleDispForm.findField("repeatTimes")
 					.getValue();
+			if (repeatTimes < new Date().getTime()) {
+				Ext.MessageBox.alert("提示", "任务开始时间不能早于当前时间");
+				return;
+			}
 			var repeatInternal = tsimpleDispForm.findField("repeatInternal")
 					.getValue();
 			tparam['start'] = start;
