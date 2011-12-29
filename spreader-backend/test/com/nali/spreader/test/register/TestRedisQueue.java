@@ -12,9 +12,11 @@ import com.nali.lwtmq.core.queue.redis.RedisQueue;
 @ContextConfiguration("classpath:application-context-test.xml")
 public class TestRedisQueue {
 	@Autowired
-	private RedisQueue weiboNormalPassiveTaskQueue;
+	private RedisQueue weiboNormalPassiveTaskQueue;//微博普通任务队列:
 	@Autowired
-	private RedisQueue weiboRegisterPassiveTaskQueue;
+	private RedisQueue weiboRegisterPassiveTaskQueue;//微博注册任务队列:
+	@Autowired
+	private RedisQueue weiboInstantPassiveTaskQueue;//微博实时任务队列:
 	@Test
 	public void getNormalPassive() {
 		System.out.println(weiboNormalPassiveTaskQueue.size());

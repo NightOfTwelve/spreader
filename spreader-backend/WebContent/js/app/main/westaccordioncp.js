@@ -69,6 +69,11 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "机器人查询",
 									leaf : true,
 									url : '../rbtregist/init'
+								}, {
+									id : 'infonode3',
+									text : "队列查询",
+									leaf : true,
+									url : '../queuemoitor/init'
 								}]
 					}),
 			// 添加监听事件
