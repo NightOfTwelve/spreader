@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.dao.ICrudPhotoDao;
+import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.IPhotoDao;
+import com.nali.spreader.dao.IUserDao;
 import com.nali.spreader.data.Photo;
 import com.nali.spreader.data.PhotoExample;
 import com.nali.spreader.data.PhotoExample.Criteria;
@@ -36,6 +38,8 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 	private ICrudPhotoDao crudPhotoDao;
 	@Autowired
 	private IPhotoDao photoDao;
+	@Autowired
+	private ICrudUserDao crudUserDao;
 
 	@Override
 	public List<Photo> findPhotoListByWeight(Map<List<Photo>, Integer> m) {
@@ -158,8 +162,14 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 
 	@Override
 	public int updateUserAvatarUrl(Long uid, Long pid) {
-		User u = new User();
-		u.setId(uid);
-		return 0;
+		int cnt = 0;
+		User u = crudUserDao.selectByPrimaryKey(uid);
+		if (u != null) {
+			u.setPid(pid);
+			cnt = crudUserDao.updateByPrimaryKey(u);
+		} else {
+			logger.warn("找不到用户,uid:" + uid);
+		}
+		return cnt;
 	}
 }
