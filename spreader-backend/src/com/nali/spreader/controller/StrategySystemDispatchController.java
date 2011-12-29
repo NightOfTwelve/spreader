@@ -31,7 +31,7 @@ import com.nali.spreader.model.RegularJob.JobDto;
 import com.nali.spreader.utils.TimeHelper;
 
 @Controller
-@RequestMapping(value = "/strategy")
+@RequestMapping(value = "/dispsys")
 public class StrategySystemDispatchController {
 	private static final Logger LOGGER = Logger
 			.getLogger(StrategySystemDispatchController.class);
@@ -46,9 +46,9 @@ public class StrategySystemDispatchController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/system/dispatchlist")
+	@RequestMapping(value = "/dispatchlist")
 	public String init() {
-		return "/show/main/strategyDispatchListShow";
+		return "/show/main/StrategySystemDispatchShow";
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class StrategySystemDispatchController {
 	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/system/stgdispgridstore")
+	@RequestMapping(value = "/stgdispgridstore")
 	public String stgGridStore(String dispname, Integer triggerType, int start,
 			int limit) throws JsonGenerationException, JsonMappingException,
 			IOException {
@@ -93,7 +93,7 @@ public class StrategySystemDispatchController {
 	 * @throws IOException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/system/createdisptree")
+	@RequestMapping(value = "/createdisptree")
 	public String createStgTreeData(String name, Long id)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		return jacksonMapper
@@ -115,7 +115,7 @@ public class StrategySystemDispatchController {
 	 * @throws SchedulerException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/system/settgrparam")
+	@RequestMapping(value = "/settgrparam")
 	public String settingTriggerParam(Long id) throws JsonGenerationException,
 			JsonMappingException, IOException, SchedulerException {
 		JobDto job = cfgService.getConfig(id);
@@ -181,7 +181,7 @@ public class StrategySystemDispatchController {
 	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/system/dispsave")
+	@RequestMapping(value = "/dispsave")
 	public String saveStrategyConfig(String name, String config,
 			Integer triggerType, String description, Date start,
 			Integer repeatTimes, Integer repeatInternal, String cron, Long id)
@@ -230,7 +230,7 @@ public class StrategySystemDispatchController {
 	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/system/deletetrg")
+	@RequestMapping(value = "/deletetrg")
 	public String deleteTrigger(String idstr) throws JsonGenerationException,
 			JsonMappingException, IOException {
 		// 操作记录数
@@ -265,7 +265,7 @@ public class StrategySystemDispatchController {
 	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/system/combstore")
+	@RequestMapping(value = "/combstore")
 	public String createStgCombStore() throws JsonGenerationException,
 			JsonMappingException, IOException {
 		List<ConfigableInfo> list = regularConfigService

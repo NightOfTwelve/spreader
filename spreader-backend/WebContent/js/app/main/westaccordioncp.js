@@ -24,12 +24,12 @@ var menuTree_Stg = new Ext.tree.TreePanel({
 									id : 'stgnode3',
 									text : "系统策略配置",
 									leaf : true,
-									url : '../strategy/system/init'
+									url : '../strategysys/init'
 								}, {
 									id : 'stgnode4',
 									text : "系统调度配置",
 									leaf : true,
-									url : '../strategy/system/dispatchlist'
+									url : '../dispsys/dispatchlist'
 								}]
 					}),
 			// 添加监听事件
