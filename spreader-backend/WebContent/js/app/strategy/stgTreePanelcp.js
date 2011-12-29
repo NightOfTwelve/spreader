@@ -229,13 +229,17 @@ function submitTreeData() {
 	tparam['triggerType'] = triggerType;
 	if (triggerType == 1) {
 		var start = renderDateHis(tsimpleDispForm.findField("start").getValue());
-//		var fstart = start.dateFormat('Y/m/d H:i:s');
+		// var fstart = start.dateFormat('Y/m/d H:i:s');
 		// alert(fstart);
 		var repeatTimes = tsimpleDispForm.findField("repeatTimes").getValue();
 		var repeatInternal = tsimpleDispForm.findField("repeatInternal")
 				.getValue();
 		tparam['start'] = start;
 		tparam['repeatTimes'] = repeatTimes;
+		if (repeatTimes < new Date().getTime()) {
+			Ext.MessageBox.alert("提示", "任务开始时间不能早于当前时间");
+			return;
+		}
 		tparam['repeatInternal'] = repeatInternal;
 	} else {
 		var cron = ttriggerDispForm.findField("cron").getValue();
