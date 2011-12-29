@@ -74,6 +74,8 @@ public class UploadUserAvatar extends SingleTaskMachineImpl implements
 			Long pid = keyValue.getValue().getKey();
 			Long uid = keyValue.getKey();
 			uploadService.updateUserAvatarUrl(uid, pid);
+		} else {
+			logger.warn("上传头像不成功");
 		}
 	}
 }
