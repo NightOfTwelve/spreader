@@ -18,7 +18,7 @@ Ext.onReady(function() {
 		rootVisible : true,
 		root : stgroot,
 		loader : new Ext.tree.TreeLoader({
-					dataUrl : '../strategy/system/createdisptree?time='
+					dataUrl : '../dispsys/createdisptree?time='
 							+ new Date().getTime(),
 					processResponse : function(response, node, callback, scope) {
 						var json = response.responseText;
@@ -201,7 +201,7 @@ Ext.onReady(function() {
 			tparam['cron'] = cron;
 		}
 		Ext.Ajax.request({
-					url : '../strategy/system/dispsave',
+					url : '../dispsys/dispsave',
 					params : tparam,
 					scope : stgdisptree,
 					success : function(response) {
@@ -289,7 +289,7 @@ Ext.onReady(function() {
 	// 定义表格数据源
 	var store = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
-							url : '../strategy/system/stgdispgridstore'
+							url : '../dispsys/stgdispgridstore'
 						}),
 				reader : new Ext.data.JsonReader({
 							totalProperty : 'cnt',
@@ -452,7 +452,7 @@ Ext.onReady(function() {
 	var stgCmbStore = new Ext.data.Store({
 				// 代理模式
 				proxy : new Ext.data.HttpProxy({
-							url : '../strategy/system/combstore'
+							url : '../dispsys/combstore'
 						}),
 				// 读取模式
 				reader : new Ext.data.JsonReader({}, [{
@@ -764,7 +764,7 @@ Ext.onReady(function() {
 	 */
 	function settingCreateTrigger(trgid) {
 		Ext.Ajax.request({
-					url : '../strategy/system/settgrparam',
+					url : '../dispsys/settgrparam',
 					params : {
 						'id' : trgid
 					},
@@ -848,7 +848,7 @@ Ext.onReady(function() {
 					function(btn, text) {
 						if (btn == 'yes') {
 							Ext.Ajax.request({
-										url : '../strategy/system/deletetrg',
+										url : '../dispsys/deletetrg',
 										params : {
 											'idstr' : idstr
 										},

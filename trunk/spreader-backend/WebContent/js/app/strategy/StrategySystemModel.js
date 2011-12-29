@@ -24,7 +24,7 @@ Ext.onReady(function() {
 				}],
 		root : stgroot,
 		loader : new Ext.tree.TreeLoader({
-					dataUrl : '../system/createtree?time='
+					dataUrl : '../strategysys/createtree?time='
 							+ new Date().getTime(),
 					processResponse : function(response, node, callback, scope) {
 						var json = response.responseText;
@@ -167,7 +167,7 @@ Ext.onReady(function() {
 			var arrayobj = treearray[i].attributes;
 			var submitStr = treejson2str(arrayobj);
 			Ext.Ajax.request({
-						url : '../system/cfgsave',
+						url : '../strategysys/cfgsave',
 						params : {
 							'name' : GOBJID,
 							'config' : submitStr
@@ -236,7 +236,7 @@ Ext.onReady(function() {
 			});
 	var store = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
-							url : '../system/stggridstore'
+							url : '../strategysys/stggridstore'
 						}),
 				reader : new Ext.data.JsonReader({
 							totalProperty : 'TOTALCOUNT',

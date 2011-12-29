@@ -21,7 +21,7 @@ import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 
 @Controller
-@RequestMapping(value = "/strategy")
+@RequestMapping(value = "/strategysys")
 public class StrategySystemManageController {
 	private static final Logger LOGGER = Logger
 			.getLogger(StrategySystemManageController.class);
@@ -34,7 +34,7 @@ public class StrategySystemManageController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/system/init")
+	@RequestMapping(value = "/init")
 	public String init() {
 		return "/show/main/StrategySystemShow";
 	}
@@ -48,7 +48,7 @@ public class StrategySystemManageController {
 	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/system/stggridstore")
+	@RequestMapping(value = "/stggridstore")
 	public String stgGridStore() throws JsonGenerationException,
 			JsonMappingException, IOException {
 		List<ConfigableInfo> list = passiveConfigService
@@ -70,7 +70,7 @@ public class StrategySystemManageController {
 	 * @throws IOException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/system/createtree")
+	@RequestMapping(value = "/createtree")
 	public String createStgTreeData(String name)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		return jacksonMapper.writeValueAsString(new DefAndData(
@@ -90,7 +90,7 @@ public class StrategySystemManageController {
 	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/system/cfgsave")
+	@RequestMapping(value = "/cfgsave")
 	public String saveStrategyConfig(String name, String config)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
