@@ -18,7 +18,7 @@ import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.SpecialDateUtil;
 
 
-@Component
+@Component//TODO 尽量不要在backend里面放service逻辑，一般只放controller，这个代码要改一下
 public class UpdateRobotUserInfo extends SingleTaskMachineImpl implements
 		PassiveWorkshop<Long, Integer> {
 	@Autowired
