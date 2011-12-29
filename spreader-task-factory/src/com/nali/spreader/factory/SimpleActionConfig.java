@@ -13,6 +13,7 @@ public enum SimpleActionConfig {
 	forwardWeiboContent(14L),
 	replyWeibo(15L),
 	uploadAvatar(16L),
+	updateRobotUserInfo(17L),
 	;
 	private Long actionId;
 	private String taskCode;
