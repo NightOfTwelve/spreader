@@ -21,21 +21,22 @@ import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 
 @Controller
-public class StrategyManageController {
+@RequestMapping(value = "/strategy")
+public class StrategySystemManageController {
 	private static final Logger LOGGER = Logger
-			.getLogger(StrategyManageController.class);
+			.getLogger(StrategySystemManageController.class);
 	private static ObjectMapper jacksonMapper = new ObjectMapper();
 	@Autowired
 	private IConfigService<String> passiveConfigService;
 
 	/**
-	 * 策略列表的显示页
+	 * 初始化进入策略详细配置
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/strategy/showlist")
-	public String showStgList() {
-		return "/show/main/strategylistshow";
+	@RequestMapping(value = "/system/init")
+	public String init() {
+		return "/show/main/StrategySystemShow";
 	}
 
 	/**
@@ -47,11 +48,11 @@ public class StrategyManageController {
 	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/strategy/stggridstore")
+	@RequestMapping(value = "/system/stggridstore")
 	public String stgGridStore() throws JsonGenerationException,
 			JsonMappingException, IOException {
 		List<ConfigableInfo> list = passiveConfigService
-				.listConfigableInfo(ConfigableType.normal);
+				.listConfigableInfo(ConfigableType.system);
 		Map<String, List<ConfigableInfo>> jsonMap = new HashMap<String, List<ConfigableInfo>>();
 		jsonMap.put("data", list);
 		return jacksonMapper.writeValueAsString(jsonMap);
@@ -69,7 +70,7 @@ public class StrategyManageController {
 	 * @throws IOException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/strategy/createtree")
+	@RequestMapping(value = "/system/createtree")
 	public String createStgTreeData(String name)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		return jacksonMapper.writeValueAsString(new DefAndData(
@@ -89,7 +90,7 @@ public class StrategyManageController {
 	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/strategy/cfgsave")
+	@RequestMapping(value = "/system/cfgsave")
 	public String saveStrategyConfig(String name, String config)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		Map<String, Boolean> message = new HashMap<String, Boolean>();

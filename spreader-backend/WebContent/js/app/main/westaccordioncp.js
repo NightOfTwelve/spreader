@@ -14,13 +14,22 @@ var menuTree_Stg = new Ext.tree.TreePanel({
 									id : 'stgnode1',
 									text : "策略配置",
 									leaf : true,
-									// url : '../strategy/showinit'
 									url : '../strategy/showlist'
 								}, {
 									id : 'stgnode2',
 									text : "调度配置",
 									leaf : true,
 									url : '../strategy/dispatchlist'
+								}, {
+									id : 'stgnode3',
+									text : "系统策略配置",
+									leaf : true,
+									url : '../strategy/system/init'
+								}, {
+									id : 'stgnode4',
+									text : "系统调度配置",
+									leaf : true,
+									url : '../strategy/system/dispatchlist'
 								}]
 					}),
 			// 添加监听事件
