@@ -103,7 +103,7 @@ var stgdisplistgrid = new Ext.grid.GridPanel({
 			height : 500,
 			autoWidth : true,
 			autoScroll : true,
-			split:true,
+			split : true,
 			region : 'center',
 			store : store,
 			loadMask : {
@@ -236,7 +236,8 @@ var simpleDispForm = new Ext.form.FormPanel({
 										xtype : "datetimefield",
 										fieldLabel : "开始时间",
 										name : 'start',
-										width : 150
+										width : 150,
+										minValue : new Date()
 									}]
 						}, {
 							columnWidth : .3,
