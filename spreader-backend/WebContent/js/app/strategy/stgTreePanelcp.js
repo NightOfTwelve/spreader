@@ -236,10 +236,6 @@ function submitTreeData() {
 				.getValue();
 		tparam['start'] = start;
 		tparam['repeatTimes'] = repeatTimes;
-		//if (repeatTimes < new Date().getTime()) {//TODO 不是用repeatTimes而是用start，并且start现在是字符串, StrategySystemDispatchModel.js也要改
-		//	Ext.MessageBox.alert("提示", "任务开始时间不能早于当前时间");
-		//	return;
-		//}
 		tparam['repeatInternal'] = repeatInternal;
 	} else {
 		var cron = ttriggerDispForm.findField("cron").getValue();

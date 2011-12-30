@@ -526,6 +526,7 @@ Ext.onReady(function() {
 											xtype : "datetimefield",
 											fieldLabel : "开始时间",
 											name : 'start',
+											minValue : new Date(),
 											width : 150
 										}]
 							}, {
