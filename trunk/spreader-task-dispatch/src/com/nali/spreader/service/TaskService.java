@@ -170,6 +170,7 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 				}
 			} else {
 				logger.error("task failed, id:" + taskResult.getTaskId()
+								+ ", code:" + taskResult.getTaskCode()
 								+ ", status:" + taskResult.getStatus()
 								+ ", clientId:" + clientId
 								+ "\r\n" + taskResult.getResult()
