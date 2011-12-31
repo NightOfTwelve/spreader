@@ -1,0 +1,3 @@
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/LockingGridView.css')" />
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/LockingGridView.js')"></script>
+<br />

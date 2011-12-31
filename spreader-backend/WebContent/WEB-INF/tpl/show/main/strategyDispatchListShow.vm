@@ -2,29 +2,16 @@
 <html>
 <head>
 <title>策略调度列表</title>
-<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/extjs3/resources/css/ext-all.css')" />
-<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/ext_icon.css')" />
 <script>
-	$CONFIG = {
-		BLANK_IMAGE_URL:"$StaticConfig.u('/js/extjs3/resources/images/default/s.gif')",
-		CHART_URL:"$StaticConfig.u('/js/extjs3/resources/charts.swf')"
-	};
 	// 全局对象ID
 	var GOBJID = null;
 	var GDISNAME = null;
 	var GDISPID;
 </script>
-<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/adapter/ext/ext-base.js')" ></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all-debug.js')" ></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-lang-zh_CN.js')" ></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/pubjs/includeinit.js')"></script>
-<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/utils/extutils.js'))"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/DateTimeField.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/Spinner.js')"></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/SpinnerField.js')"></script>
+#parse("/show/comm/PublicInclude.vm")
+#parse("/show/comm/DateTimeFieldInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategy/stgTreePanelcp.js'))"></script>
-<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/functions/TreeDataTransFormFn.js'))"></script>
-<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/functions/PropertyGridDataShowFn.js'))"></script>
+#parse("/show/comm/FunctionsInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategy/strategyDispatchGridLayout.js'))"></script>
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategy/stgDispatchGridQueryFormcp.js'))"></script>
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategy/stgDispatchListGridcp.js'))"></script>
