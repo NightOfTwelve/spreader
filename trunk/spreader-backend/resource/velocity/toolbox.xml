@@ -24,6 +24,12 @@
 		<class>com.nali.common.util.UrlUtil</class>
 		<scope>application</scope>
 	</tool>
+
+	<tool>
+		<key>TestUtil</key>
+		<class>com.nali.common.util.TestUtil</class>
+		<scope>application</scope>
+	</tool>
 	
 	<tool>
 		<key>UriCacheRefreshUtil</key>
