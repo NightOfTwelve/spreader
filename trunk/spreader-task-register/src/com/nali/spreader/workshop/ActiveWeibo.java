@@ -11,6 +11,7 @@ import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.RobotRegister;
+import com.nali.spreader.data.User;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.TaskProduceLine;
@@ -26,7 +27,7 @@ public class ActiveWeibo extends SingleTaskMachineImpl implements PassiveWorksho
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
 	@AutowireProductLine
-	private TaskProduceLine<KeyValue<RobotUser, String>> generateRobotUserAccount;
+	private TaskProduceLine<KeyValue<RobotUser, User>> generateRobotUserAccount;
 
 	public ActiveWeibo() {
 		super(SimpleActionConfig.activeWeibo, Website.weibo, Channel.instant);
@@ -46,7 +47,19 @@ public class ActiveWeibo extends SingleTaskMachineImpl implements PassiveWorksho
 		robotUser.setLoginName(robotRegister.getEmail());//not use email
 		robotUser.setLoginPwd(robotRegister.getPwd());
 		robotUser.setGender(robotRegister.getGender());
-		generateRobotUserAccount.send(new KeyValue<RobotUser, String>(robotUser, nickname));
+		User user = new User();
+		user.setBirthdayDay(robotRegister.getBirthdayDay());
+		user.setBirthdayMonth(robotRegister.getBirthdayMonth());
+		user.setBirthdayYear(robotRegister.getBirthdayYear());
+		user.setCity(robotRegister.getCity());
+		user.setConstellation(robotRegister.getConstellation());
+		user.setEmail(robotRegister.getEmail());
+		user.setGender(robotRegister.getGender());
+		user.setIntroduction(robotRegister.getIntroduction());
+		user.setNickName(nickname);
+		user.setRealName(robotRegister.getFullName());
+		
+		generateRobotUserAccount.send(new KeyValue<RobotUser, User>(robotUser, user));
 		robotRegisterService.removeRegisteringAccount(websiteId, robotRegisterId);
 	}
 
