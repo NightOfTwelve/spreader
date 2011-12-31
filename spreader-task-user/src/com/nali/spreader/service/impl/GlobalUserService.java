@@ -1,6 +1,7 @@
 package com.nali.spreader.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class GlobalUserService implements IGlobalUserService {
 	public Long registerRobotUser(RobotUser robotUser, String nickname) {
 		Long websiteUid = robotUser.getWebsiteUid();
 		Integer websiteId = robotUser.getWebsiteId();
-		
+
 		User user = new User();
 		user.setWebsiteId(websiteId);
 		user.setWebsiteUid(websiteUid);
@@ -55,7 +56,7 @@ public class GlobalUserService implements IGlobalUserService {
 		List<User> existUsers = crudUserDao.selectByExample(example);
 		Long uid;
 		if (existUsers.size() != 0) {
-			//可能被其他爬取任务爬到了
+			// 可能被其他爬取任务爬到了
 			uid = existUsers.get(0).getId();
 			user.setId(uid);
 			crudUserDao.updateByPrimaryKeySelective(user);
@@ -63,20 +64,23 @@ public class GlobalUserService implements IGlobalUserService {
 			uid = userDao.assignUser(user);
 			user.setId(uid);
 		}
-		
+
 		robotUser.setUid(uid);
 		crudRobotUserDao.insert(robotUser);
 		return uid;
 	}
 
 	@Override
-	public List<Long> findRelationUserId(Long toUid, Integer attentionType, Boolean isRobot) {
+	public List<Long> findRelationUserId(Long toUid, Integer attentionType,
+			Boolean isRobot) {
 		UserRelationExample example = new UserRelationExample();
-		Criteria criteria = example.createCriteria().andToUidEqualTo(toUid).andTypeEqualTo(attentionType);
-		if(isRobot!=null) {
+		Criteria criteria = example.createCriteria().andToUidEqualTo(toUid)
+				.andTypeEqualTo(attentionType);
+		if (isRobot != null) {
 			criteria.andIsRobotUserEqualTo(isRobot);
 		}
-		List<UserRelation> relations = crudUserRelationDao.selectByExample(example);
+		List<UserRelation> relations = crudUserRelationDao
+				.selectByExample(example);
 		List<Long> rlt = new ArrayList<Long>(relations.size());
 		for (UserRelation relation : relations) {
 			rlt.add(relation.getUid());
@@ -91,7 +95,7 @@ public class GlobalUserService implements IGlobalUserService {
 		crudUserTagDao.deleteByExample(example);
 		for (UserTag userTag : tags) {
 			userTag.setUid(uid);
-			if(userTag.getCategoryId()==null) {
+			if (userTag.getCategoryId() == null) {
 				Long cid = categoryService.getIdByName(userTag.getTag());
 				userTag.setCategoryId(cid);
 			}
@@ -100,8 +104,37 @@ public class GlobalUserService implements IGlobalUserService {
 	}
 
 	@Override
-	public Long getWebsiteUid(Long uid) {//TODO cache
+	public Long getWebsiteUid(Long uid) {// TODO cache
 		User user = crudUserDao.selectByPrimaryKey(uid);
-		return user==null?null:user.getWebsiteUid();
+		return user == null ? null : user.getWebsiteUid();
+	}
+
+	@Override
+	public Long registerRobotUser(RobotUser robotUser, User user) {
+		Long websiteUid = robotUser.getWebsiteUid();
+		Integer websiteId = robotUser.getWebsiteId();
+		user.setWebsiteId(websiteId);
+		user.setWebsiteUid(websiteUid);
+		user.setCreateTime(new Date());
+		user.setIsRobot(true);
+
+		UserExample example = new UserExample();
+		example.createCriteria().andWebsiteIdEqualTo(websiteId)
+				.andWebsiteUidEqualTo(websiteUid);
+		List<User> existUsers = crudUserDao.selectByExample(example);
+		Long uid;
+		if (existUsers.size() != 0) {
+			// 可能被其他爬取任务爬到了
+			uid = existUsers.get(0).getId();
+			user.setId(uid);
+			crudUserDao.updateByPrimaryKeySelective(user);
+		} else {
+			uid = userDao.assignUser(user);
+			user.setId(uid);
+		}
+
+		robotUser.setUid(uid);
+		crudRobotUserDao.insert(robotUser);
+		return uid;
 	}
 }
