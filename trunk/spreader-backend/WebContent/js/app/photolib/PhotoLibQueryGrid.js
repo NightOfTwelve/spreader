@@ -108,28 +108,15 @@ Ext.onReady(function() {
 					text : "查询",
 					handler : function() { // 按钮响应函数
 						var tform = photoQueryForm.getForm();
-						var sPubDate = tform.findField("sPubDate").getValue();
-						var ePubDate = tform.findField("ePubDate").getValue();
-						var categoryName = tform.findField("categoryName")
+						var picType = tform.findField("picType").getValue();
+						var avatarflg = tform.findField("avatarflg").getValue();
+						var photolibflg = tform.findField("photolibflg")
 								.getValue();
-						var sSyncDate = tform.findField("sSyncDate").getValue();
-						var eSyncDate = tform.findField("eSyncDate").getValue();
-						var userName = tform.findField("userName").getValue();
 						var num = numtext.getValue();
-						photoStore.setBaseParam('categoryName', categoryName);
-						photoStore.setBaseParam('sPubDate',
-								renderDateHis(sPubDate));
-						photoStore.setBaseParam('ePubDate',
-								renderDateHis(ePubDate));
-						photoStore.setBaseParam('sSyncDate',
-								renderDateHis(sSyncDate));
-						photoStore.setBaseParam('eSyncDate',
-								renderDateHis(eSyncDate));
-						photoStore.setBaseParam('userName', Ext
-										.isEmpty(userName) ? '' : userName);
-						photoStore.setBaseParam('limit', Ext.isEmpty(num)
-										? number
-										: Number(num));
+						photoStore.setBaseParam('picType', Ext.isEmpty(picType)? null: picType);
+						photoStore.setBaseParam('avatarflg', avatarflg);
+						photoStore.setBaseParam('photolibflg', photolibflg);
+						photoStore.setBaseParam('limit', Ext.isEmpty(num)? number: Number(num));
 						photoStore.load();
 					}
 				}, {
