@@ -15,7 +15,6 @@ import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.dao.ICrudPhotoDao;
 import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.IPhotoDao;
-import com.nali.spreader.dao.IUserDao;
 import com.nali.spreader.data.Photo;
 import com.nali.spreader.data.PhotoExample;
 import com.nali.spreader.data.PhotoExample.Criteria;
