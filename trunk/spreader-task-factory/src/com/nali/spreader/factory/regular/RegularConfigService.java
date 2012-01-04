@@ -16,7 +16,7 @@ import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableCenter;
 import com.nali.spreader.factory.config.IConfigableCenter;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
-import com.nali.spreader.factory.result.ResultProcessor;
+import com.nali.spreader.factory.result.SimpleResultProcessor;
 import com.nali.spreader.model.RegularJob;
 
 @Service
@@ -30,7 +30,7 @@ public class RegularConfigService extends AbstractConfigService<Long> {
 	void registerConfigableInfo(String name, RegularObject obj) {
 		Class<?> clazz = obj.getClass();
 		if (Configable.class.isAssignableFrom(clazz)) {
-			if (ResultProcessor.class.isAssignableFrom(clazz)) {
+			if (SimpleResultProcessor.class.isAssignableFrom(clazz)) {
 				throw new InternalError("regularObject cannot implements ResultProcessor");
 			}
 			configableCenter.register(name, (Configable<?>) obj);

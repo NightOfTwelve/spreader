@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
@@ -48,16 +46,15 @@ public class RegisterWeiboAccount extends SingleTaskMachineImpl implements Passi
 	@Override
 	public void work(Long id, SingleTaskExporter exporter) {
 		RobotRegister robot = robotRegisterService.get(id);
-		Map<String, Object> contents = CollectionUtils.newHashMap(8);
-		contents.put("id", robot.getId());
-		contents.put("nicknames", getModifiedNames(robot));
-		contents.put("baseName", robot.getNickName());
-		contents.put("email", robot.getEmail());
-		contents.put("pwd", robot.getPwd());
-		contents.put("gender", robot.getGender());
-		contents.put("province", robot.getProvince());
-		contents.put("city", robot.getCity());
-		exporter.createTask(contents, RobotUser.UID_NOT_LOGIN, SpecialDateUtil.afterToday(2));
+		exporter.setProperty("id", robot.getId());
+		exporter.setProperty("nicknames", getModifiedNames(robot));
+		exporter.setProperty("baseName", robot.getNickName());
+		exporter.setProperty("email", robot.getEmail());
+		exporter.setProperty("pwd", robot.getPwd());
+		exporter.setProperty("gender", robot.getGender());
+		exporter.setProperty("province", robot.getProvince());
+		exporter.setProperty("city", robot.getCity());
+		exporter.send(RobotUser.UID_NOT_LOGIN, SpecialDateUtil.afterToday(2));
 	}
 	
 	public List<String> getModifiedNames(RobotRegister robot) {

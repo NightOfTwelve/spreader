@@ -1,12 +1,10 @@
 package com.nali.spreader.workshop;
 
 import java.util.Date;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.Content;
@@ -50,14 +48,13 @@ public class ReplyWeibo extends SingleTaskMachineImpl implements PassiveWorkshop
 	private void work(Long robotUid, Long contentId, String text, SingleTaskExporter exporter) {
 		Content content = contentService.getContentById(contentId);
 
-		Map<String, Object> contents = CollectionUtils.newHashMap(6);
-		contents.put("id", robotUid);
-		contents.put("contentId", contentId);
-		contents.put("websiteContentId", content.getWebsiteContentId());
-		contents.put("websiteUid", content.getWebsiteUid());
-		contents.put("entry", content.getEntry());
-		contents.put("text", text);
-		exporter.createTask(contents, robotUid, SpecialDateUtil.afterToday(3));
+		exporter.setProperty("id", robotUid);
+		exporter.setProperty("contentId", contentId);
+		exporter.setProperty("websiteContentId", content.getWebsiteContentId());
+		exporter.setProperty("websiteUid", content.getWebsiteUid());
+		exporter.setProperty("entry", content.getEntry());
+		exporter.setProperty("text", text);
+		exporter.send(robotUid, SpecialDateUtil.afterToday(3));
 	}
 
 	@Override

@@ -53,7 +53,7 @@ public class AddUserFans extends SingleTaskMachineImpl implements PassiveWorksho
 		content.put("id", robotId);
 		content.put("uid", uid);
 		content.put("websiteUid", globalUserService.getWebsiteUid(uid));
-		exporter.createTask(content, robotId, SpecialDateUtil.afterToday(3));
+		exporter.send(robotId, SpecialDateUtil.afterToday(3));
 	}
 
 	@Override

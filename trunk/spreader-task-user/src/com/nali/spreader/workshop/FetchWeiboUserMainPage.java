@@ -1,13 +1,11 @@
 package com.nali.spreader.workshop;
 
 import java.util.Date;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
@@ -74,10 +72,9 @@ public class FetchWeiboUserMainPage extends SingleTaskMachineImpl implements Pas
 			return ;
 		}
 		Date expiredTime = SpecialDateUtil.afterToday(2);
-		Map<String, Object> contents = CollectionUtils.newHashMap(2);
-		contents.put("id", uid);
-		contents.put("websiteUid", websiteUid);
-		exporter.createTask(contents, weiboRobotUserHolder.getRobotUid(), expiredTime);
+		exporter.setProperty("id", uid);
+		exporter.setProperty("websiteUid", websiteUid);
+		exporter.send(weiboRobotUserHolder.getRobotUid(), expiredTime);
 	}
 
 	@Override

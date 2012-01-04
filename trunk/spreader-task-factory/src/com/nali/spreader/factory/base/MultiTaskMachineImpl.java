@@ -19,4 +19,7 @@ public class MultiTaskMachineImpl implements TaskMachine<MultiTaskMeta> {
 		return taskMeta;
 	}
 
+	protected void setContextMeta(ContextMeta contextMeta) {
+		taskMeta.setContextMeta(contextMeta);
+	}
 }

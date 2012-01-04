@@ -2,12 +2,10 @@ package com.nali.spreader.workshop;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.User;
@@ -61,10 +59,9 @@ public class FetchUserAttentions extends SingleTaskMachineImpl implements Passiv
 
 	@Override
 	public void work(Long uid, SingleTaskExporter exporter) {
-		Map<String, Object> contents = CollectionUtils.newHashMap(2);
-		contents.put("id", uid);
-		contents.put("websiteUid", globalUserService.getWebsiteUid(uid));
+		exporter.setProperty("id", uid);
+		exporter.setProperty("websiteUid", globalUserService.getWebsiteUid(uid));
 		Date expiredTime = SpecialDateUtil.afterToday(2);
-		exporter.createTask(contents, weiboRobotUserHolder.getRobotUid(), expiredTime);
+		exporter.send(weiboRobotUserHolder.getRobotUid(), expiredTime);
 	}
 }

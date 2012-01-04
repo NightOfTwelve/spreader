@@ -4,6 +4,7 @@ public final class SingleTaskMeta implements TaskMeta {
 	private Long actionId;
 	private String code;
 	private Integer taskType;
+	private ContextMeta contextMeta;
 
 	public SingleTaskMeta(Long actionId, String code, Integer taskType) {
 		super();
@@ -24,5 +25,14 @@ public final class SingleTaskMeta implements TaskMeta {
 	@Override
 	public Integer getTaskType() {
 		return taskType;
+	}
+
+	@Override
+	public ContextMeta getContextMeta() {
+		return contextMeta;
+	}
+
+	public void setContextMeta(ContextMeta contextMeta) {
+		this.contextMeta = contextMeta;
 	}
 }
