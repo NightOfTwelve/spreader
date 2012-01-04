@@ -18,7 +18,7 @@ public class GenericInfo<T> {
 	private Map<TypeVariable<?>, Type> genericArgumentMap;//参数对照表(value只包含Class, GenericArrayType和ParameterizedType以及他们的嵌套)
 	private Map<TypeVariable<?>, List<Listener>> listenerMapping;//参数映射
 	private Class<T> representingClass;
-	private boolean addInterfaceGeneric = true;//TODO 可以穿参数
+	private boolean addInterfaceGeneric = true;//TODO 可以传参数
 	private boolean userOperateFlag = false;
 	
 	@SuppressWarnings("unchecked")

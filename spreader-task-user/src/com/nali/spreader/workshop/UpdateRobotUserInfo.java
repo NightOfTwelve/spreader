@@ -1,12 +1,10 @@
 package com.nali.spreader.workshop;
 
 import java.util.Date;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.User;
@@ -43,11 +41,10 @@ public class UpdateRobotUserInfo extends SingleTaskMachineImpl implements
 		} else {
 			logger.warn("用户为空，无法更新用户资料");
 		}
-		Map<String, Object> contents = CollectionUtils.newHashMap(5);
-		contents.put("year", year);
-		contents.put("month", month);
-		contents.put("day", day);
-		exporter.createTask(contents, uid, SpecialDateUtil.afterToday(1));
+		exporter.setProperty("year", year);
+		exporter.setProperty("month", month);
+		exporter.setProperty("day", day);
+		exporter.send(uid, SpecialDateUtil.afterToday(1));
 	}
 
 	@Override

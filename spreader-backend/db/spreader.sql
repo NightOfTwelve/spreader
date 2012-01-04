@@ -1,7 +1,7 @@
 /*==============================================================*/
 /* Database name:  spreader                                     */
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     2011-11-21 16:08:55                          */
+/* Created on:     2011-12-7 16:20:24                           */
 /*==============================================================*/
 
 
@@ -175,6 +175,7 @@ create table tb_content
    sync_date            datetime comment '爬取日期',
    ref_count            int comment '转发数',
    reply_count          int comment '回复数',
+   entry                varchar(1000) comment '页面入口',
    primary key (id)
 )
 ENGINE = InnoDB
@@ -288,6 +289,7 @@ create table tb_regular_job
    trigger_type         int not null comment '1:simple,2:cron',
    trigger_info         varchar(4000) not null comment '触发器配置',
    description          varchar(2000) comment '描述',
+   job_type             int default 1 comment '任务类型，0：系统，1：普通',
    primary key (id)
 )
 ENGINE = InnoDB
@@ -302,6 +304,15 @@ alter table tb_regular_job comment '定时任务表';
 create index idx_name on tb_regular_job
 (
    name
+);
+
+/*==============================================================*/
+/* Index: idx_job_type                                          */
+/*==============================================================*/
+create index idx_job_type on tb_regular_job
+(
+   job_type,
+   id
 );
 
 /*==============================================================*/
@@ -431,13 +442,13 @@ create table tb_user
    qq                   varchar(30),
    msn                  varchar(50),
    blog                 varchar(200),
-   v_type               int comment '1实名认证，2企业认证',
+   v_type               int default 0 comment '1实名认证，2企业认证',
    v_info               varchar(200) comment '实名信息',
    attentions           bigint comment '关注人数',
    fans                 bigint comment '粉丝数',
    articles             bigint comment '文章数',
    attentions_relation_update_time datetime,
-   robot_fans           bigint comment '机器人粉丝数',
+   robot_fans           bigint default 0 comment '机器人粉丝数',
    primary key (id),
    key uk_tb_user_website_user (website_id, website_uid)
 )
@@ -458,6 +469,7 @@ create table tb_user_relation
    website_id           int,
    website_uid          bigint,
    to_website_uid       bigint,
+   is_robot_user        boolean default false comment '是否机器人',
    primary key (uid, to_uid, type)
 )
 ENGINE = InnoDB
@@ -507,11 +519,4 @@ DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;
 
 alter table tb_websites comment '那里推广的目标网站列表';
-
-/* 增加是否为头像字段*/
-alter table tb_photo add avatarflg bit(0) ;
-/* 增加是否为相册字段 */
-alter table tb_photo add photolibflg bit(0) ;
-/* 增加图片ID字段*/
-alter table tb_user Add column pid bigint ;
 

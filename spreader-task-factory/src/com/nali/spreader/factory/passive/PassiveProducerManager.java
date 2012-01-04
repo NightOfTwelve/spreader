@@ -1,6 +1,7 @@
 package com.nali.spreader.factory.passive;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 
@@ -14,6 +15,7 @@ import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableListener;
 import com.nali.spreader.factory.exporter.ClientTaskExporterFactory;
 import com.nali.spreader.factory.exporter.Exporter;
+import com.nali.spreader.factory.exporter.ExporterProvider;
 import com.nali.spreader.util.AnnotatedMethodIterator;
 import com.nali.spreader.util.reflect.GenericInfo;
 
@@ -36,8 +38,7 @@ public class PassiveProducerManager {
 			return produceLine;
 		} else if (passive instanceof PassiveTaskProducer) {
 			PassiveTaskProducer passiveTaskProducer = (PassiveTaskProducer) passive;
-			Exporter exporter = passiveTaskExporterFactory.getExporter(passiveTaskProducer.getTaskMeta());
-			TaskProducerProduceLine produceLine = new TaskProducerProduceLine(passiveTaskProducer, exporter, paramType);
+			TaskProducerProduceLine produceLine = new TaskProducerProduceLine(passiveTaskProducer, passiveTaskExporterFactory, paramType);
 			if (passive instanceof Configable) {
 				Configable<?> configable = (Configable<?>) passive;
 				registerAndListen(beanName, configable, new TaskProducerProduceLineReplace(produceLine));
@@ -102,7 +103,8 @@ public class PassiveProducerManager {
 	}
 	
 	static interface MethodFilter {
-		Boolean check(Method method);//null if illegal argument
+		/** null if illegal argument */
+		Boolean check(Method method);
 	}
 	
 	public static class AnalyzerProduceLine<T> implements TaskProduceLine<T> {
@@ -142,16 +144,19 @@ public class PassiveProducerManager {
 	
 	public static class TaskProducerProduceLine<T, TM extends TaskMeta, E extends Exporter<TM>> implements TaskProduceLine<T> {
 		private PassiveTaskProducer<T, TM, E> passiveTaskProducer;
-		private E exporter;
 		private Method method;
 		private boolean reverseArgument;
-		public TaskProducerProduceLine(PassiveTaskProducer<T, TM, E> passiveTaskProducer, final E exporter, final Type paramType) {
+		private ExporterProvider<TM, E> exporterProvider;
+		@SuppressWarnings("rawtypes")
+		public TaskProducerProduceLine(final PassiveTaskProducer<T, TM, E> passiveTaskProducer, final ClientTaskExporterFactory exporterFactory, final Type paramType) {
 			this.passiveTaskProducer = passiveTaskProducer;
-			this.exporter = exporter;
+			final TM tm = passiveTaskProducer.getTaskMeta();
 
-			Type baseParamType = resolveTypeArgument(passiveTaskProducer.getClass(), PassiveTaskProducer.class, 0);
+			GenericInfo<? extends PassiveTaskProducer> genericInfo = GenericInfo.get(passiveTaskProducer.getClass());
+			Type baseParamType = genericInfo.getGeneric(PassiveTaskProducer.class.getTypeParameters()[0]);
 			if(baseParamType.equals(paramType)) {
 				method=PassiveTaskProducer.class.getDeclaredMethods()[0];
+				setExporterProvider(tm, genericInfo.getGeneric(PassiveTaskProducer.class.getTypeParameters()[2]), exporterFactory);
 				reverseArgument = false;
 			} else {
 				method=iterateAnnotatedMethod(passiveTaskProducer.getClass(), paramType, new MethodFilter() {
@@ -159,16 +164,18 @@ public class PassiveProducerManager {
 					public Boolean check(Method method) {
 						Type[] methodParameterTypes = method.getGenericParameterTypes();
 						if(methodParameterTypes.length==2) {
-							if(isAssignableFrom(methodParameterTypes[1], exporter.getClass())) {
+							if(isExporter(methodParameterTypes[1])) {
 								if(methodParameterTypes[0].equals(paramType)) {//equals-->isAssignableFrom ??
 									reverseArgument = false;
+									setExporterProvider(tm, methodParameterTypes[1], exporterFactory);
 									return true;
 								} else {
 									return false;
 								}
-							} else if(isAssignableFrom(methodParameterTypes[0], exporter.getClass())) {
+							} else if(isExporter(methodParameterTypes[0])) {
 								if(methodParameterTypes[1].equals(paramType)) {
 									reverseArgument = true;
+									setExporterProvider(tm, methodParameterTypes[0], exporterFactory);
 									return true;
 								} else {
 									return false;
@@ -177,26 +184,41 @@ public class PassiveProducerManager {
 						}
 						return null;
 					}
-					private boolean isAssignableFrom(Type type, Class<?> clazz) {
-						return type instanceof Class && ((Class<?>)type).isAssignableFrom(clazz);
+					private boolean isExporter(Type type) {
+						return type instanceof Class && Exporter.class.isAssignableFrom((Class<?>)type);
 					}
 				});
 			}
 		}
+		@SuppressWarnings("unchecked")
+		private void setExporterProvider(TM tm, Type exporterType, ClientTaskExporterFactory exporterFactory) {
+			Class<E> exporterClass;
+			if (exporterType instanceof Class) {
+				exporterClass = (Class<E>) exporterType;
+			} else if(exporterType instanceof ParameterizedType) {
+				exporterClass = (Class<E>) ((ParameterizedType)exporterType).getRawType();
+			} else {
+				throw new IllegalArgumentException("exporterType has a wrong type:" + exporterType);
+			}
+			
+			exporterProvider = exporterFactory.getExporterProvider(tm, exporterClass);
+		}
+		
 		@Override
 		public void send(T data) {
+			E exporter = exporterProvider.getExporter();
+			Object[] params;
+			if(reverseArgument) {
+				params = new Object[] {exporter, data};
+			} else {
+				params = new Object[] {data, exporter};
+			}
 			try {
-				method.invoke(passiveTaskProducer, getParams(data));
+				method.invoke(passiveTaskProducer, params);
 			} catch (Exception e) {
 				logger.error(e, e);
 			}
-		}
-		private Object[] getParams(T data) {
-			if(reverseArgument) {
-				return new Object[] {exporter, data};
-			} else {
-				return new Object[] {data, exporter};
-			}
+			exporter.reset();
 		}
 	}
 	

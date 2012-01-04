@@ -57,6 +57,8 @@ public class RemoteTaskService implements IRemoteTaskService {//TODO 减少queue
 		List<ClientTask> taskList = passiveTaskService.getBatchTask();
 		if(taskList.size()==0) {
 			taskList = getRegularTasks(taskTypeId, clientId);
+		} else {
+			taskService.assignToBatch(taskList, taskTypeId, clientId);
 		}
 		return tranContents(taskList);
 	}

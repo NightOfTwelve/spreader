@@ -44,7 +44,7 @@ public class FetchWeiboContent extends SingleTaskMachineImpl implements PassiveW
 		Map<String,Object> content = CollectionUtils.newHashMap(2);
 		content.put("websiteUid", globalUserService.getWebsiteUid(uid));
 		content.put("lastFetchTime", lastFetchTime);
-		exporter.createTask(content, robotId, SpecialDateUtil.afterToday(2));
+		exporter.send(robotId, SpecialDateUtil.afterToday(2));
 	}
 
 	@Override

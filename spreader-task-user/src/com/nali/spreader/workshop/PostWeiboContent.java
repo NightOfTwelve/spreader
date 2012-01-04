@@ -31,7 +31,7 @@ public class PostWeiboContent extends SingleTaskMachineImpl implements PassiveWo
 		Map<String,Object> content = CollectionUtils.newHashMap(2);
 		content.put("id", uid);
 		content.put("content", text);
-		exporter.createTask(content, uid, SpecialDateUtil.afterToday(3));
+		exporter.send(uid, SpecialDateUtil.afterToday(3));
 	}
 
 	@Override

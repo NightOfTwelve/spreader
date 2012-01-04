@@ -1,6 +1,5 @@
 package com.nali.spreader.workshop;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -46,7 +45,6 @@ public class FetchWeiboStarUser extends SingleTaskMachineImpl implements Passive
 		robotUserService = robotUserServiceFactory.getRobotUserService(websiteId);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void work(Object data, SingleTaskExporter exporter) {
 		List<RobotUser> users = robotUserService.getUsers(1);
@@ -55,7 +53,7 @@ public class FetchWeiboStarUser extends SingleTaskMachineImpl implements Passive
 			return;
 		}
 		RobotUser user = users.get(0);
-		exporter.createTask(Collections.EMPTY_MAP , user.getUid(), SpecialDateUtil.afterToday(3));
+		exporter.send(user.getUid(), SpecialDateUtil.afterToday(3));
 	}
 	
 	@Override

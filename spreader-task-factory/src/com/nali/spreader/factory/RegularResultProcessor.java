@@ -7,9 +7,9 @@ import org.springframework.core.GenericTypeResolver;
 import com.nali.spreader.factory.base.SingleTaskMeta;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.regular.RegularTaskProducer;
-import com.nali.spreader.factory.result.ResultProcessor;
+import com.nali.spreader.factory.result.SimpleResultProcessor;
 
-public abstract class RegularResultProcessor<R, P extends RegularTaskProducer<SingleTaskMeta, SingleTaskExporter>> implements ResultProcessor<R, SingleTaskMeta> {
+public abstract class RegularResultProcessor<R, P extends RegularTaskProducer<SingleTaskMeta, SingleTaskExporter>> implements SimpleResultProcessor<R, SingleTaskMeta> {
 	private SingleTaskMeta taskMeta;
 	
 	@SuppressWarnings("unchecked")

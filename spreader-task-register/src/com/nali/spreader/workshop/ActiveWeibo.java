@@ -1,12 +1,10 @@
 package com.nali.spreader.workshop;
 
 import java.util.Date;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
@@ -66,11 +64,10 @@ public class ActiveWeibo extends SingleTaskMachineImpl implements PassiveWorksho
 	@Override
 	public void work(Long robotRegisterId, SingleTaskExporter exporter) {
 		RobotRegister robotRegister = robotRegisterService.get(robotRegisterId);
-		Map<String, Object> contents = CollectionUtils.newHashMap(3);
-		contents.put("id", robotRegisterId);
-		contents.put("email", robotRegister.getEmail());
-		contents.put("pwd", robotRegister.getPwd());
-		exporter.createTask(contents, RobotUser.UID_NOT_LOGIN, SpecialDateUtil.afterToday(2));
+		exporter.setProperty("id", robotRegisterId);
+		exporter.setProperty("email", robotRegister.getEmail());
+		exporter.setProperty("pwd", robotRegister.getPwd());
+		exporter.send(RobotUser.UID_NOT_LOGIN, SpecialDateUtil.afterToday(2));
 	}
 
 }

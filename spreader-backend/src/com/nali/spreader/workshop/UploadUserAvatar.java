@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
@@ -58,11 +57,10 @@ public class UploadUserAvatar extends SingleTaskMachineImpl implements
 			pid = avatar.getId();
 			purl = avatar.getPicUrl();
 		}
-		Map<String, Object> contents = CollectionUtils.newHashMap(5);
-		contents.put("uid", uid);
-		contents.put("purl", purl);
-		contents.put("pid", pid);
-		exporter.createTask(contents, uid, SpecialDateUtil.afterToday(1));
+		exporter.setProperty("uid", uid);
+		exporter.setProperty("purl", purl);
+		exporter.setProperty("pid", pid);
+		exporter.send(uid, SpecialDateUtil.afterToday(1));
 		logger.info("URL:" + purl);
 	}
 

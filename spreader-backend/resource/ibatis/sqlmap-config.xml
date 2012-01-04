@@ -4,6 +4,7 @@
 <sqlMapConfig>
   <settings useStatementNamespaces="true" enhancementEnabled="true" errorTracingEnabled="true" lazyLoadingEnabled="true" />
   
+  <!-- coolsql自动生成 -->
   <sqlMap resource="ibatis/spreader_tb_career_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_education_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_user_SqlMap.xml" />
@@ -16,11 +17,14 @@
   <sqlMap resource="ibatis/spreader_tb_content_category_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_regular_job_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_photo_SqlMap.xml" />
-  <sqlMap resource="ibatis/spreader_tb_photo.xml" />
+  <sqlMap resource="ibatis/spreader_tb_task_SqlMap.xml" />
   
+  <!-- 自定义 -->
+  <sqlMap resource="ibatis/spreader_tb_photo.xml" />
   <sqlMap resource="ibatis/spreader_user.xml" />
   <sqlMap resource="ibatis/spreader_content.xml" />
   <sqlMap resource="ibatis/spreader_regular_job.xml" />
   <sqlMap resource="ibatis/spreader_register.xml" />
+  <sqlMap resource="ibatis/spreader_task.xml" />
 </sqlMapConfig>
 

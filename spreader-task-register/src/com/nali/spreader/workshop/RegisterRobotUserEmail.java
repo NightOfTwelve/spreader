@@ -7,13 +7,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
@@ -77,19 +75,22 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Mult
 
 	@Override
 	public void work(RobotRegister robot, MultiTaskExporter exporter) {
-		Map<String, Object> contents = CollectionUtils.newHashMap(10);
-		contents.put("id", robot.getId());
-		contents.put("accounts", makeAccounts(robot));
-		contents.put("randomAccount", robot.getFullNamePinyinLower());
-//		contents.put("emailISP", emailISPs.get());
-		contents.put("question", questions.get());
-		contents.put("answer", robot.getFullName());
-		contents.put("gender", robot.getGender());
-		contents.put("year", robot.getBirthdayYear());
-		contents.put("month", robot.getBirthdayMonth());
-		contents.put("date", robot.getBirthdayDay());
-		contents.put("pwd", robot.getPwd());
-		exporter.createTask(actionIds.get(), contents, RobotUser.UID_NOT_LOGIN, SpecialDateUtil.afterToday(2));
+		exporter.setProperty("id", robot.getId());
+		exporter.setProperty("accounts", makeAccounts(robot));
+		exporter.setProperty("randomAccount", robot.getFullNamePinyinLower());
+//		exporter.setProperty("emailISP", emailISPs.get());
+		exporter.setProperty("question", questions.get());
+		exporter.setProperty("answer", robot.getFullName());
+		exporter.setProperty("gender", robot.getGender());
+		exporter.setProperty("year", robot.getBirthdayYear());
+		exporter.setProperty("month", robot.getBirthdayMonth());
+		exporter.setProperty("date", robot.getBirthdayDay());
+		exporter.setProperty("pwd", robot.getPwd());
+		
+		exporter.setActionId(actionIds.get());
+		exporter.setUid(RobotUser.UID_NOT_LOGIN);
+		exporter.setExpiredTime(SpecialDateUtil.afterToday(2));
+		exporter.send();
 	}
 
 	private List<String> makeAccounts(RobotRegister robot) {
