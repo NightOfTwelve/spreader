@@ -99,7 +99,9 @@ public class PhotoHelper {
 			Map<Object, Object> map = getPropertiesMap(WEBDAV_FILE);
 			if (map != null) {
 				StringBuffer buff = new StringBuffer();
-				String http = map.get("url").toString();
+				// String http = map.get("url").toString();
+				//构造服务端使用的URL
+				String http = map.get("imageUrl").toString();
 				String tmp = splitUrlEnd(http);
 				buff.append(tmp);
 				buff.append(fileUri);
