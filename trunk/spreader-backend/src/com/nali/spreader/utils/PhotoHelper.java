@@ -2,7 +2,6 @@ package com.nali.spreader.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -11,6 +10,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
+import com.nali.common.util.CollectionUtils;
 
 /**
  * 图片处理帮助类
@@ -34,7 +35,7 @@ public class PhotoHelper {
 	 * @return
 	 */
 	public static Map<Object, Object> getPropertiesMap(String url) {
-		Map<Object, Object> map = new HashMap<Object, Object>();
+		Map<Object, Object> map = CollectionUtils.newHashMap(5);
 		InputStream is = PhotoHelper.class.getResourceAsStream(url);
 		try {
 			if (is != null) {
@@ -100,7 +101,7 @@ public class PhotoHelper {
 			if (map != null) {
 				StringBuffer buff = new StringBuffer();
 				// String http = map.get("url").toString();
-				//构造服务端使用的URL
+				// 构造服务端使用的URL
 				String http = map.get("imageUrl").toString();
 				String tmp = splitUrlEnd(http);
 				buff.append(tmp);

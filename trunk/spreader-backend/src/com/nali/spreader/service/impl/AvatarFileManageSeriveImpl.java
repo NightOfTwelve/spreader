@@ -2,7 +2,6 @@ package com.nali.spreader.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +15,7 @@ import com.googlecode.sardine.DavResource;
 import com.googlecode.sardine.Sardine;
 import com.googlecode.sardine.SardineFactory;
 import com.googlecode.sardine.util.SardineException;
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.dao.ICrudPhotoDao;
 import com.nali.spreader.dao.IPhotoDao;
 import com.nali.spreader.data.Photo;
@@ -178,23 +178,29 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 		for (DavResource davGender : resGender) {
 			// 获取性别
 			String paramGender = davGender.getName();
-			if (!davGender.isDirectory()) {
+			if (davGender.isDirectory() && StringUtils.isNotEmpty(paramGender)) {
 				String typeUrl = davGender.getAbsoluteUrl();
-				List<DavResource> resType = sardine.getResources(typeUrl + "/");
+				// List<DavResource> resType = sardine.getResources(typeUrl +
+				// "/");
+				List<DavResource> resType = sardine.getResources(typeUrl);
 				for (DavResource davType : resType) {
 					// 获取类别
 					String paramType = davType.getName();
-					if (!davType.isDirectory()) {
+					if (davType.isDirectory()
+							&& StringUtils.isNotEmpty(paramType)) {
 						String imgUrl = davType.getAbsoluteUrl();
+						// List<DavResource> resImage = sardine
+						// .getResources(imgUrl + "/");
 						List<DavResource> resImage = sardine
-								.getResources(imgUrl + "/");
+								.getResources(imgUrl);
 						for (DavResource davImg : resImage) {
 							if (!davImg.isDirectory()) {
 								String fileName = davImg.getName();
 								// 只有图片文件才做处理
 								if (isImageFile(fileName)) {
 									String fileUri = davImg.getAbsoluteUrl();
-									Map<String, Object> params = new HashMap<String, Object>();
+									Map<String, Object> params = CollectionUtils
+											.newHashMap(4);
 									// 设置性别
 									params.put("GENDER", paramGender);
 									// 设置类型
