@@ -1,5 +1,6 @@
 package com.nali.spreader.workshop;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -21,6 +22,9 @@ import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.SpecialDateUtil;
+import com.nali.spreader.util.ThreadLocalFormat;
+import com.nali.spreader.util.random.NumberRandomer;
+import com.nali.spreader.util.random.Randomer;
 import com.nali.spreader.words.naming.NamingMode;
 
 @Component
@@ -54,9 +58,27 @@ public class RegisterWeiboAccount extends SingleTaskMachineImpl implements Passi
 		exporter.setProperty("gender", robot.getGender());
 		exporter.setProperty("province", robot.getProvince());
 		exporter.setProperty("city", robot.getCity());
+		
+		exporter.setProperty("realName", robot.getFullName());
+		exporter.setProperty("idType", 1);//TODO 完善证件信息  0-3 按身份证，学生证，军官证，护照来
+		exporter.setProperty("idCode", getStudentIdCode(robot));//TODO
 		exporter.send(RobotUser.UID_NOT_LOGIN, SpecialDateUtil.afterToday(2));
 	}
+
+	private Randomer<Integer> yuan = new NumberRandomer(1, 80);
+	private Randomer<Integer> xi = new NumberRandomer(1, 30);
+	private Randomer<Integer> sequence = new NumberRandomer(1, 430);
+	private static ThreadLocalFormat<MessageFormat> f = new ThreadLocalFormat<MessageFormat>(MessageFormat.class, "{0,number,0000}{1,number,00}{2,number,00}{3,number,00}{4,number,000}");
 	
+	private String getStudentIdCode(RobotRegister robot) {
+		int year = robot.getBirthdayYear()+18;//2005 6121 00 273
+		Integer y = yuan.get();
+		Integer x = xi.get();
+		Integer sp = 0;
+		Integer seq = sequence.get();
+		return f.getFormat().format(new Object[] {year, y, x, sp, seq});
+	}
+
 	public List<String> getModifiedNames(RobotRegister robot) {
 		List<String> rlt = new ArrayList<String>();
 		for (NamingMode namingMode : namingModes) {

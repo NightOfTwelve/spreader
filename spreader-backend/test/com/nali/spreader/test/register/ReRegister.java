@@ -2,13 +2,13 @@ package com.nali.spreader.test.register;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.keyvalue.redis.connection.RedisConnection;
-import org.springframework.data.keyvalue.redis.core.RedisCallback;
 import org.springframework.data.keyvalue.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -36,13 +36,13 @@ public class ReRegister {//重新注册帐号
 	
 	@Test
 	public void test() {
-		redisTemplate.execute(new RedisCallback<Boolean>() {
-			@Override
-			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
-				connection.flushDb();
-				return true;
-			}
-		});
+//		redisTemplate.execute(new RedisCallback<Boolean>() {
+//			@Override
+//			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
+//				connection.flushDb();
+//				return true;
+//			}
+//		});
 		RobotUserExample example2 = new RobotUserExample();
 		List<RobotUser> list2 = crudRobotUserDao.selectByExample(example2);
 		HashSet<Long> existIds = new HashSet<Long>();
@@ -52,6 +52,13 @@ public class ReRegister {//重新注册帐号
 				existIds.add(robotRegisterId);
 			}
 		}
+		
+    	Map<Object, Object> entries = redisTemplate.opsForHash().entries("RegisteringAccount_1");
+    	Set<Entry<Object, Object>> entrySet = entries.entrySet();
+    	for (Entry<Object, Object> entry : entrySet) {
+    		Long id = (Long) entry.getKey();
+    		existIds.add(id);
+    	}
 		
 		RobotRegisterExample example = new RobotRegisterExample();
 		example.createCriteria().andEmailIsNotNull();

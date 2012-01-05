@@ -20,11 +20,21 @@ public class TestRedisQueue {
 	@Test
 	public void getNormalPassive() {
 		Object obj;
-		while((obj = weiboNormalPassiveTaskQueue.pop(1))!=null) {
+		while((obj = p(weiboNormalPassiveTaskQueue))!=null) {
 		};
-		while((obj = weiboRegisterPassiveTaskQueue.pop(1))!=null) {
+		while((obj = p(weiboRegisterPassiveTaskQueue))!=null) {
 		};
-		while((obj = weiboInstantPassiveTaskQueue.pop(1))!=null) {
+		while((obj = p(weiboInstantPassiveTaskQueue))!=null) {
 		};
 	}
+	private Object p(RedisQueue q) {
+		try {
+			return q.pop(1);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return "";
+		}
+	}
+	
+	
 }
