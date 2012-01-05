@@ -19,10 +19,12 @@ public class TestRedisQueue {
 	private RedisQueue weiboInstantPassiveTaskQueue;//微博实时任务队列:
 	@Test
 	public void getNormalPassive() {
-		System.out.println(weiboNormalPassiveTaskQueue.size());
 		Object obj;
+		while((obj = weiboNormalPassiveTaskQueue.pop(1))!=null) {
+		};
 		while((obj = weiboRegisterPassiveTaskQueue.pop(1))!=null) {
-			System.out.println(obj);
+		};
+		while((obj = weiboInstantPassiveTaskQueue.pop(1))!=null) {
 		};
 	}
 }
