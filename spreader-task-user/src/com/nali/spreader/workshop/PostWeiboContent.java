@@ -1,12 +1,10 @@
 package com.nali.spreader.workshop;
 
 import java.util.Date;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
@@ -28,9 +26,8 @@ public class PostWeiboContent extends SingleTaskMachineImpl implements PassiveWo
 	public void work(KeyValue<Long, String> data, SingleTaskExporter exporter) {
 		Long uid = data.getKey();
 		String text = data.getValue();
-		Map<String,Object> content = CollectionUtils.newHashMap(2);
-		content.put("id", uid);
-		content.put("content", text);
+		exporter.setProperty("id", uid);
+		exporter.setProperty("content", text);
 		exporter.send(uid, SpecialDateUtil.afterToday(3));
 	}
 

@@ -2,12 +2,10 @@ package com.nali.spreader.workshop;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.Content;
@@ -41,9 +39,8 @@ public class FetchWeiboContent extends SingleTaskMachineImpl implements PassiveW
 			robotId = robotUserHolder.getRobotUid();//TODO 不分配具体的人
 		}
 		Date lastFetchTime= contentService.getAndTouchLastFetchTime(uid);
-		Map<String,Object> content = CollectionUtils.newHashMap(2);
-		content.put("websiteUid", globalUserService.getWebsiteUid(uid));
-		content.put("lastFetchTime", lastFetchTime);
+		exporter.setProperty("websiteUid", globalUserService.getWebsiteUid(uid));
+		exporter.setProperty("lastFetchTime", lastFetchTime);
 		exporter.send(robotId, SpecialDateUtil.afterToday(2));
 	}
 
