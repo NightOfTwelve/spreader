@@ -13,6 +13,9 @@ public class NumberRandomer implements Randomer<Integer>,Cloneable {
 	private int base;
 	private int range;
 
+	/**
+	 * 起始两个值都包括在内
+	 */
 	public NumberRandomer(int start, int end) {
 		this.base = start;
 		this.range = end- start;
