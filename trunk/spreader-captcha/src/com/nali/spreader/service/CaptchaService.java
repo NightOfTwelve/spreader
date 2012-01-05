@@ -43,7 +43,7 @@ public class CaptchaService implements ICaptchaService {
 			record.setType(Captcha.TYPE_HANDLING);
 			example = new CaptchaExample();
 			example.createCriteria().andIdIn(ids);
-			crudCaptchaDao.updateByExampleWithoutBLOBs(record, example);
+			crudCaptchaDao.updateByExampleSelective(record, example);
 		}
 		return captchas;
 	}
