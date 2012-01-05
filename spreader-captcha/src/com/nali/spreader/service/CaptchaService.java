@@ -1,5 +1,7 @@
 package com.nali.spreader.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -20,27 +22,30 @@ public class CaptchaService implements ICaptchaService {
 	private ICaptchaDao captchaDao;
 
 	@Override
-	public Captcha assignCaptcha(Long clientId) {//TODO 同步锁问题
-		Captcha captcha;
+	public List<Captcha> assignCaptcha(Long clientId, int count) {//TODO 同步锁问题
+		List<Captcha> captchas;
 		synchronized (this) {
 			CaptchaExample example = new CaptchaExample();
 			example.createCriteria().andExpireTimeGreaterThan(new Date())
 			.andTypeEqualTo(Captcha.TYPE_MANUAL);
-			example.setLimit(Limit.newInstanceForLimit(0, 1));
+			example.setLimit(Limit.newInstanceForLimit(0, count));
 			example.setOrderByClause("expire_time asc");
-			List<Captcha> list = crudCaptchaDao.selectByExampleWithBLOBs(example);
-			if(list.size()==0) {
-				return null;
+			captchas = crudCaptchaDao.selectByExampleWithBLOBs(example);
+			if(captchas.size()==0) {
+				return Collections.emptyList();
 			}
-			captcha = list.get(0);
-			
+			List<Long> ids = new ArrayList<Long>(captchas.size());
+			for (Captcha captcha : captchas) {
+				ids.add(captcha.getId());
+			}
 			Captcha record = new Captcha();
-			record.setId(captcha.getId());
 			record.setHandleClient(clientId);
 			record.setType(Captcha.TYPE_HANDLING);
-			crudCaptchaDao.updateByPrimaryKeySelective(record);
+			example = new CaptchaExample();
+			example.createCriteria().andIdIn(ids);
+			crudCaptchaDao.updateByExampleWithoutBLOBs(record, example);
 		}
-		return captcha;
+		return captchas;
 	}
 
 	@Override
