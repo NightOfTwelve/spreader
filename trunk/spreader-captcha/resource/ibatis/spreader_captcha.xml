@@ -1,65 +1,78 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
-<sqlMap namespace="spreader" >
+<sqlMap namespace="spreader">
 	<insert id="insertCaptcha" parameterClass="com.nali.spreader.model.Captcha">
-	    insert into spreader$shard.databaseSuffix$.tb_captcha$shard.tableSuffix$
-	    <dynamic prepend="(">
-	      <isNotNull prepend="," property="id">
-	        id
-	      </isNotNull>
-	      <isNotNull prepend="," property="expireTime">
-	        expire_time
-	      </isNotNull>
-	      <isNotNull prepend="," property="type">
-	        type
-	      </isNotNull>
-	      <isNotNull prepend="," property="result">
-	        result
-	      </isNotNull>
-	      <isNotNull prepend="," property="postClient">
-	        post_client
-	      </isNotNull>
-	      <isNotNull prepend="," property="handleClient">
-	        handle_client
-	      </isNotNull>
-	      <isNotNull prepend="," property="handleTime">
-	        handle_time
-	      </isNotNull>
-	      <isNotNull prepend="," property="data">
-	        data
-	      </isNotNull>
-	      )
-	    </dynamic>
-	    values
-	    <dynamic prepend="(">
-	      <isNotNull prepend="," property="id">
-	        #id:BIGINT#
-	      </isNotNull>
-	      <isNotNull prepend="," property="expireTime">
-	        #expireTime:TIMESTAMP#
-	      </isNotNull>
-	      <isNotNull prepend="," property="type">
-	        #type:INTEGER#
-	      </isNotNull>
-	      <isNotNull prepend="," property="result">
-	        #result:VARCHAR#
-	      </isNotNull>
-	      <isNotNull prepend="," property="postClient">
-	        #postClient:BIGINT#
-	      </isNotNull>
-	      <isNotNull prepend="," property="handleClient">
-	        #handleClient:BIGINT#
-	      </isNotNull>
-	      <isNotNull prepend="," property="handleTime">
-	        #handleTime:TIMESTAMP#
-	      </isNotNull>
-	      <isNotNull prepend="," property="data">
-	        #data:LONGVARBINARY#
-	      </isNotNull>
-	      )
-	    </dynamic>
+		insert into
+		spreader$shard.databaseSuffix$.tb_captcha$shard.tableSuffix$
+		<dynamic prepend="(">
+			<isNotNull prepend="," property="id">
+				id
+			</isNotNull>
+			<isNotNull prepend="," property="expireTime">
+				expire_time
+			</isNotNull>
+			<isNotNull prepend="," property="type">
+				type
+			</isNotNull>
+			<isNotNull prepend="," property="result">
+				result
+			</isNotNull>
+			<isNotNull prepend="," property="postClient">
+				post_client
+			</isNotNull>
+			<isNotNull prepend="," property="handleClient">
+				handle_client
+			</isNotNull>
+			<isNotNull prepend="," property="handleTime">
+				handle_time
+			</isNotNull>
+			<isNotNull prepend="," property="taskId">
+				task_id
+			</isNotNull>
+			<isNotNull prepend="," property="seq">
+				seq
+			</isNotNull>
+			<isNotNull prepend="," property="data">
+				data
+			</isNotNull>
+			)
+		</dynamic>
+		values
+		<dynamic prepend="(">
+			<isNotNull prepend="," property="id">
+				#id:BIGINT#
+			</isNotNull>
+			<isNotNull prepend="," property="expireTime">
+				#expireTime:TIMESTAMP#
+			</isNotNull>
+			<isNotNull prepend="," property="type">
+				#type:INTEGER#
+			</isNotNull>
+			<isNotNull prepend="," property="result">
+				#result:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="postClient">
+				#postClient:BIGINT#
+			</isNotNull>
+			<isNotNull prepend="," property="handleClient">
+				#handleClient:BIGINT#
+			</isNotNull>
+			<isNotNull prepend="," property="handleTime">
+				#handleTime:TIMESTAMP#
+			</isNotNull>
+			<isNotNull prepend="," property="taskId">
+				#taskId:BIGINT#
+			</isNotNull>
+			<isNotNull prepend="," property="seq">
+				#seq:INTEGER#
+			</isNotNull>
+			<isNotNull prepend="," property="data">
+				#data:LONGVARBINARY#
+			</isNotNull>
+			)
+		</dynamic>
 		<selectKey resultClass="long" type="post" keyProperty="id">
 			select LAST_INSERT_ID() as value
 		</selectKey>
-	</insert> 
+	</insert>
 </sqlMap>

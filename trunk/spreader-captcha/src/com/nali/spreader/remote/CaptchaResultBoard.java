@@ -32,7 +32,7 @@ public class CaptchaResultBoard implements ICaptchaResultBoard {
 	}
 
 	@Override
-	public Long postCaptcha(byte[] data, String typeStr) {
+	public Long postCaptcha(byte[] data, String typeStr, Long taskId, Integer seq) {
 		CaptchaType type = CaptchaType.valueOf(typeStr);
 		//TODO type是自动处理类型的处理
 		Captcha captcha = new Captcha();
@@ -40,6 +40,8 @@ public class CaptchaResultBoard implements ICaptchaResultBoard {
 		captcha.setType(type.type);
 		captcha.setExpireTime(new Date(System.currentTimeMillis() + EXPIRED_TIME));
 		captcha.setPostClient(ClientContext.getCurrentContext().getClientId());
+		captcha.setTaskId(taskId);
+		captcha.setSeq(seq);
 		return captchaService.save(captcha);
 	}
 

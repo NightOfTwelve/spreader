@@ -1,3 +1,4 @@
+truncate table spreader.tb_client_task;
 alter table spreader.tb_client_task modify column id bigint not null;
 alter table spreader.tb_client_task drop column hash;
 alter table spreader.tb_client_task add column (

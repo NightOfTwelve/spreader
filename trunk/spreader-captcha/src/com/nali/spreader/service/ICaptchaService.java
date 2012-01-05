@@ -1,10 +1,12 @@
 package com.nali.spreader.service;
 
+import java.util.List;
+
 import com.nali.spreader.model.Captcha;
 
 public interface ICaptchaService {
 
-	Captcha assignCaptcha(Long clientId);
+	List<Captcha> assignCaptcha(Long clientId, int count);
 
 	void updateResult(Long id, String code, Long clientId);
 
