@@ -200,7 +200,7 @@ public class StrategySystemDispatchController {
 		}
 		if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
 			try {
-				cfgService.scheduleSimpleTrigger(name, configObj, description,
+				cfgService.scheduleSimpleTrigger(name, configObj, description,null,
 						start, repeatTimes, repeatInternal);
 				message.put("success", true);
 			} catch (Exception e) {
@@ -208,7 +208,7 @@ public class StrategySystemDispatchController {
 			}
 		} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
 			try {
-				cfgService.scheduleCronTrigger(name, configObj, description,
+				cfgService.scheduleCronTrigger(name, configObj, description,null,
 						cron);
 				message.put("success", true);
 			} catch (Exception e) {

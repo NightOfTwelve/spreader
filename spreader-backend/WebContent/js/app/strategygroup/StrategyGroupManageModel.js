@@ -15,40 +15,39 @@ Ext.onReady(function() {
 		rootVisible : true,
 		root : stgroot,
 		loader : new Ext.tree.TreeLoader({
-					dataUrl : '../dispsys/createdisptree?time='
-							+ new Date().getTime(),
-					processResponse : function(response, node, callback, scope) {
-						var json = response.responseText;
-						var respObj = Ext.util.JSON.decode(json);
-						try {
-							submitid = respObj.id;
-							var o = [tranNodeConfig('data', respObj.treename,
-									respObj.def, respObj.data)];
-							// var o = response.responseData ||
-							// Ext.decode(json);
-							node.beginUpdate();
-							for (var i = 0, len = o.length; i < len; i++) {
-								var n = this.createNode(o[i]);
-								if (n) {
-									node.appendChild(n);
-								}
-							}
-							node.endUpdate();
-							this.runCallback(callback, scope || node, [node]);
-						} catch (e) {
-							this.handleFailure(response);
-						}
-					},
-					listeners : {
-						"beforeload" : function(treeloader, node) {
-							treeloader.baseParams = {
-								name : GOBJID,
-								disname : GDISNAME,
-								id : GDISPID
-							};
+			dataUrl : '../strategy/createdisptree?time=' + new Date().getTime(),
+			processResponse : function(response, node, callback, scope) {
+				var json = response.responseText;
+				var respObj = Ext.util.JSON.decode(json);
+				try {
+					submitid = respObj.id;
+					var o = [tranNodeConfig('data', respObj.treename,
+							respObj.def, respObj.data)];
+					// var o = response.responseData ||
+					// Ext.decode(json);
+					node.beginUpdate();
+					for (var i = 0, len = o.length; i < len; i++) {
+						var n = this.createNode(o[i]);
+						if (n) {
+							node.appendChild(n);
 						}
 					}
-				})
+					node.endUpdate();
+					this.runCallback(callback, scope || node, [node]);
+				} catch (e) {
+					this.handleFailure(response);
+				}
+			},
+			listeners : {
+				"beforeload" : function(treeloader, node) {
+					treeloader.baseParams = {
+						name : GOBJID,
+						disname : GDISNAME,
+						id : GDISPID
+					};
+				}
+			}
+		})
 	});
 	stgdisptree.expand(true, true);
 	// 树形编辑器
@@ -56,9 +55,6 @@ Ext.onReady(function() {
 				id : 'stgtreeEdit',
 				allowBlank : false
 			});
-	/**
-	 * 右键菜单相关代码
-	 */
 	// 给tree添加右键菜单事件
 	stgdisptree.on('rightMenu', stgdisptree.rightMenu, stgdisptree);
 	// 定义右键菜单
@@ -98,129 +94,7 @@ Ext.onReady(function() {
 				node.select();
 				rightMenu.showAt(event.getXY());// 取得鼠标点击坐标，展示菜单
 			});
-	// ////////////////////////////右键菜单代码结束
-	/**
-	 * 右键菜单相关的功能函数实现
-	 */
-	// 删除节点事件实现
-	function deleteNode() {
-		// 得到选中的节点
-		var selectedNode = stgdisptree.getSelectionModel().getSelectedNode();
-		var parent = selectedNode.parentNode;
-		parent.removeChild(selectedNode);
-		parent.attributes.children.pop(selectedNode);
-		// selectedNode.remove();
-	};
-	// 修改节点事件实现
-	function modifNode() {
-		var selectedNode = stgdisptree.getSelectionModel().getSelectedNode();// 得到选中的节点
-		treeEditor.editNode = selectedNode;
-		treeEditor.startEdit(selectedNode.ui.textNode);
-	};
-	// 添加兄弟节点事件实现
-	function insertNode() {
-		var selectedNode = stgdisptree.getSelectionModel().getSelectedNode();
-		var selectedParentNode = selectedNode.parentNode;
-		var newNode = new Ext.tree.TreeNode({
-					text : '新建节点' + selectedNode.id
-				});
-		if (selectedParentNode == null) {
-			selectedNode.appendChild(newNode);
-		} else {
-			selectedParentNode.insertBefore(newNode, selectedNode);
-		}
-		setTimeout(function() {
-					treeEditor.editNode = newNode;
-					treeEditor.startEdit(newNode.ui.textNode);
-				}, 10);
-	};
-	// 添加子节点事件实现
-	// TODO
-	function appendNodeAction(node) {
-		// var selectedNode = stgtree.getSelectionModel().getSelectedNode();
-		if (node.isLeaf()) {
-			node.leaf = false;
-		}
-		if (!node.hasExpanded) {
-			node.expand(true, true);
-			node.hasExpanded = true;
-		}
-		var newNode = node.appendChild(node.attributes.getChildConfig());
-		node.attributes.children.push(newNode);
-		// newNode.parentNode.reload();
-		// var newNode = node.attributes.getChildConfig;
-		// newNode.parentNode.expand(true, true, function() {
-		// // stgtree.getSelectionModel().select(newNode);
-		// setTimeout(function() {
-		// treeEditor.editNode = newNode;
-		// treeEditor.startEdit(newNode.ui.textNode);
-		// }, 10);
-		// });// 将上级树形展开
-	}
-	/**
-	 * 提交数据的函数
-	 */
-	function submitTreeData() {
-		// 获取ROOT数组
-		var treearray = stgdisptree.root.childNodes;
-		var tparam = {};
-		tparam['name'] = GOBJID;
-		tparam['_time'] = new Date().getTime();
-		tparam['id'] = GDISPID;
-		if (treearray.length > 0) {
-			var arrayobj = treearray[0].attributes;
-			var submitStr = treejson2str(arrayobj);
-			tparam['config'] = submitStr;
-		}
-		// 获取调度FORM
-		var tradioForm = radioForm.getForm();
-		var ttriggerDispForm = triggerDispForm.getForm();
-		var tsimpleDispForm = simpleDispForm.getForm();
-		// 获取调度参数
-		var triggerType = tradioForm.findField("triggerType").inputValue;
-		var description = tradioForm.findField("description").getValue();
-		tparam['description'] = description;
-		tparam['triggerType'] = triggerType;
-		if (triggerType == 1) {
-			var start = renderDateHis(tsimpleDispForm.findField("start")
-					.getValue());
-			// var fstart = start.dateFormat('Y/m/d H:i:s');
-			// alert(fstart);
-			var repeatTimes = tsimpleDispForm.findField("repeatTimes")
-					.getValue();
-			if (repeatTimes < new Date().getTime()) {
-				Ext.MessageBox.alert("提示", "任务开始时间不能早于当前时间");
-				return;
-			}
-			var repeatInternal = tsimpleDispForm.findField("repeatInternal")
-					.getValue();
-			tparam['start'] = start;
-			tparam['repeatTimes'] = repeatTimes;
-			tparam['repeatInternal'] = repeatInternal;
-		} else {
-			var cron = ttriggerDispForm.findField("cron").getValue();
-			tparam['cron'] = cron;
-		}
-		Ext.Ajax.request({
-					url : '../dispsys/dispsave',
-					params : tparam,
-					scope : stgdisptree,
-					success : function(response) {
-						var result = Ext.decode(response.responseText);
-						if (result.success) {
-							// stgdisptree.getRootNode().reload();
-							Ext.Msg.alert("提示", "保存成功");
-							editstgWindow.hide();
-							store.reload();
-						} else {
-							Ext.Msg.alert("提示", "保存失败");
-						}
-					},
-					failure : function() {
-						Ext.Msg.alert("提示", "保存失败");
-					}
-				});
-	}
+
 	// 创建简单调度的FORM
 	var simpleDispForm = new Ext.form.FormPanel({
 				// autoWidth : true,
@@ -275,6 +149,7 @@ Ext.onReady(function() {
 							}
 						}]
 			});
+
 	// 表达式配置FORM
 	var triggerDispForm = new Ext.form.FormPanel({
 				autoWidth : true,
@@ -431,16 +306,18 @@ Ext.onReady(function() {
 				}
 				pptMgr.doLayout();
 			});
+	// 分组类型的数据源
 	var groupTypeStore = new Ext.data.ArrayStore({
 				fields : ['ID', 'NAME'],
 				data : [['-1', '----------------------'], ['1', '简单'],
 						['2', '复杂']]
 			});
-	var AddGroupTypeStore = new Ext.data.ArrayStore({
+	// 增加分组选择策略的数据源
+	var addGroupTypeStore = new Ext.data.ArrayStore({
 				fields : ['ID', 'NAME'],
-				data : [['-1', '----------------------'], ['1', '简单'],
-						['2', '复杂']]
+				data : [['1', '简单'], ['2', '复杂']]
 			});
+	// 策略分组的FORM
 	var groupForm = new Ext.form.FormPanel({
 				region : 'north',
 				title : "组合查询",
@@ -493,7 +370,7 @@ Ext.onReady(function() {
 							}
 						}]
 			});
-
+	// 策略分组的数据源
 	var groupStore = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
 							url : '../stggroup/groupgrid'
@@ -522,10 +399,11 @@ Ext.onReady(function() {
 				}
 
 			});
-	// 定义Checkbox
-	var sm = new Ext.grid.CheckboxSelectionModel();
-	// 定义表格列CM
-	var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), sm, {
+	// 策略分组的Checkbox
+	var groupsm = new Ext.grid.CheckboxSelectionModel();
+	// 策略分组的CM
+	var groupcm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(),
+			groupsm, {
 				header : '分组编号',
 				dataIndex : 'id',
 				width : 80
@@ -552,9 +430,10 @@ Ext.onReady(function() {
 				},
 				width : 100
 			}]);
-	// 页数
-	var number = 20;
-	var numtext = new Ext.form.TextField({
+	// 策略分组表格页数
+	var groupNumber = 20;
+	// 策略分组表格自定义页数
+	var groupNumtext = new Ext.form.TextField({
 				id : 'maxpage',
 				name : 'maxpage',
 				width : 60,
@@ -564,12 +443,13 @@ Ext.onReady(function() {
 				listeners : {
 					specialKey : function(field, e) {
 						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							bbar.pageSize = parseInt(numtext.getValue());
-							number = parseInt(numtext.getValue());
-							store.reload({
+							groupBbar.pageSize = parseInt(groupNumtext
+									.getValue());
+							groupNumber = parseInt(groupNumtext.getValue());
+							groupStore.reload({
 										params : {
 											start : 0,
-											limit : bbar.pageSize
+											limit : groupBbar.pageSize
 										}
 									});
 						}
@@ -577,17 +457,17 @@ Ext.onReady(function() {
 				}
 			});
 
-	// 分页菜单
-	var bbar = new Ext.PagingToolbar({
-				pageSize : number,
+	// 策略分组分页菜单
+	var groupBbar = new Ext.PagingToolbar({
+				pageSize : groupNumber,
 				store : groupStore,
 				displayInfo : true,
 				displayMsg : '显示{0}条到{1}条,共{2}条',
 				emptyMsg : "没有符合条件的记录",
-				items : ['-', '&nbsp;&nbsp;', numtext]
+				items : ['-', '&nbsp;&nbsp;', groupNumtext]
 			});
 
-	// 定义grid表格
+	// 策略分组grid
 	var groupGrid = new Ext.grid.GridPanel({
 				height : 500,
 				autoWidth : true,
@@ -601,8 +481,8 @@ Ext.onReady(function() {
 				// stripeRows : true,
 				frame : true,
 				// autoExpandColumn : 'remark',
-				sm : sm,
-				cm : cm,
+				sm : groupsm,
+				cm : groupcm,
 				tbar : [{
 							text : '新增',
 							iconCls : 'page_addIcon',
@@ -623,7 +503,7 @@ Ext.onReady(function() {
 								groupStore.reload();
 							}
 						}],
-				bbar : bbar,
+				bbar : groupBbar,
 				onCellClick : function(grid, rowIndex, columnIndex, e) {
 					// 找出表格中‘配置’按钮
 					if (e.target.defaultValue == '配置') {
@@ -648,13 +528,13 @@ Ext.onReady(function() {
 			});
 	// 注册事件
 	groupGrid.on('cellclick', groupGrid.onCellClick, groupGrid);
-
+	// 增加策略分组的ComboBox
 	var groupAddCombo = new Ext.form.ComboBox({
 				id : 'groupAddCombo',
 				fieldLabel : '分组类型',
-				emptyText : '请选择策略...',
+				emptyText : '请选择...',
 				triggerAction : 'all',
-				store : AddGroupTypeStore,
+				store : addGroupTypeStore,
 				hiddenName : 'groupType',
 				valueField : 'ID',
 				displayField : 'NAME',
@@ -662,21 +542,67 @@ Ext.onReady(function() {
 				mode : 'local', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取
 				forceSelection : true,
 				typeAhead : true,
+				allowBlank : false,
 				resizable : true,
 				editable : false,
 				anchor : '100%'
 			});
-	// 选择事件，用于联动 TODO
-	// stgSelectCombo.on('select', function() {
-	// cityCombo.reset();
-	// countyCombo.reset();
-	// var value = provinceCombo.getValue();
-	// cityStore.load({
-	// params : {
-	// areacode : value
-	// }
-	// });
-	// });
+	// 选择事件，用于联动
+	groupAddCombo.on('select', function() {
+				var groupTypeId = groupAddCombo.getValue();
+				var tform = addGroupForm.getForm();
+				var gnameField = tform.findField("groupName");
+				// 非简单策略分组不能选择策略
+				if (groupTypeId != 1) {
+					stgSelectCombo.disable(true);
+					gnameField.disable(true);
+				} else {
+					stgSelectCombo.enable(true);
+					gnameField.enable(true);
+				}
+				stgSelectCombo.reset();
+			});
+
+	// 创建ComboBox数据源，支持Ajax取值
+	var stgCmbStore = new Ext.data.Store({
+				// 代理模式
+				proxy : new Ext.data.HttpProxy({
+							url : '../strategy/combstore'
+						}),
+				// 读取模式
+				reader : new Ext.data.JsonReader({}, [{
+									name : 'name'
+								}, {
+									name : 'displayName'
+								}])
+			});
+	// 选择策略的COMB
+	var stgSelectCombo = new Ext.form.ComboBox({
+				hiddenName : 'name',
+				id : 'stgSelectCombo',
+				fieldLabel : '策略',
+				emptyText : '请选择策略...',
+				triggerAction : 'all',
+				store : stgCmbStore,
+				displayField : 'displayName',
+				valueField : 'name',
+				loadingText : '正在加载数据...',
+				mode : 'remote', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取
+				forceSelection : true,
+				typeAhead : true,
+				resizable : true,
+				editable : false,
+				anchor : '100%'
+			});
+	// 选择事件，用于联动
+	stgSelectCombo.on('select', function() {
+				var gtId = groupAddCombo.getValue();
+				if (Ext.isEmpty(gtId)) {
+					Ext.MessageBox.alert("提示", "请先选择分组类型");
+					stgSelectCombo.reset();
+					return;
+				}
+			});
 	// 嵌入的FORM
 	var addGroupForm = new Ext.form.FormPanel({
 				id : 'addGroupForm',
@@ -686,7 +612,12 @@ Ext.onReady(function() {
 				defaultType : 'textfield', // 表单元素默认类型
 				labelAlign : 'right', // 标签对齐方式
 				bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
-				items : [groupAddCombo, {
+				items : [groupAddCombo, stgSelectCombo, {
+							fieldLabel : '分组名称',
+							name : 'groupName',
+							xtype : 'textfield',
+							anchor : '100%'
+						}, {
 							fieldLabel : '分组说明',
 							name : 'description',
 							xtype : 'textarea',
@@ -721,22 +652,144 @@ Ext.onReady(function() {
 						GDISNAME = stgSelectCombo.lastSelectionText;
 						editstgWindow.title = GDISNAME;
 						editstgWindow.show();
-						stgCmbWindow.hide();
+						groupAddCombo.hide();
 					}
 				}, {	// 窗口底部按钮配置
 							text : '重置', // 按钮文本
 							iconCls : 'tbar_synchronizeIcon', // 按钮图标
 							handler : function() { // 按钮响应函数
-								stgCmbForm.form.reset();
+								addGroupForm.form.reset();
 							}
 						}, {
 							text : '关闭',
 							iconCls : 'deleteIcon',
 							handler : function() {
-								stgCmbWindow.hide();
+								groupAddWindow.hide();
 							}
 						}]
 			});
+	/**
+	 * 右键菜单相关的功能函数实现
+	 */
+	// 删除节点事件实现
+	function deleteNode() {
+		// 得到选中的节点
+		var selectedNode = stgdisptree.getSelectionModel().getSelectedNode();
+		var parent = selectedNode.parentNode;
+		parent.removeChild(selectedNode);
+		parent.attributes.children.pop(selectedNode);
+		// selectedNode.remove();
+	};
+	// 修改节点事件实现
+	function modifNode() {
+		var selectedNode = stgdisptree.getSelectionModel().getSelectedNode();// 得到选中的节点
+		treeEditor.editNode = selectedNode;
+		treeEditor.startEdit(selectedNode.ui.textNode);
+	};
+	// 添加兄弟节点事件实现
+	function insertNode() {
+		var selectedNode = stgdisptree.getSelectionModel().getSelectedNode();
+		var selectedParentNode = selectedNode.parentNode;
+		var newNode = new Ext.tree.TreeNode({
+					text : '新建节点' + selectedNode.id
+				});
+		if (selectedParentNode == null) {
+			selectedNode.appendChild(newNode);
+		} else {
+			selectedParentNode.insertBefore(newNode, selectedNode);
+		}
+		setTimeout(function() {
+					treeEditor.editNode = newNode;
+					treeEditor.startEdit(newNode.ui.textNode);
+				}, 10);
+	};
+	// 添加子节点事件实现
+	// TODO
+	function appendNodeAction(node) {
+		// var selectedNode = stgtree.getSelectionModel().getSelectedNode();
+		if (node.isLeaf()) {
+			node.leaf = false;
+		}
+		if (!node.hasExpanded) {
+			node.expand(true, true);
+			node.hasExpanded = true;
+		}
+		var newNode = node.appendChild(node.attributes.getChildConfig());
+		node.attributes.children.push(newNode);
+		// newNode.parentNode.reload();
+		// var newNode = node.attributes.getChildConfig;
+		// newNode.parentNode.expand(true, true, function() {
+		// // stgtree.getSelectionModel().select(newNode);
+		// setTimeout(function() {
+		// treeEditor.editNode = newNode;
+		// treeEditor.startEdit(newNode.ui.textNode);
+		// }, 10);
+		// });// 将上级树形展开
+	}
+	/**
+	 * 提交数据的函数
+	 */
+	function submitTreeData() {
+		// 获取ROOT数组
+		var treearray = stgdisptree.root.childNodes;
+		var tparam = {};
+		tparam['name'] = GOBJID;
+		tparam['_time'] = new Date().getTime();
+		tparam['id'] = GDISPID;
+		if (treearray.length > 0) {
+			var arrayobj = treearray[0].attributes;
+			var submitStr = treejson2str(arrayobj);
+			tparam['config'] = submitStr;
+		}
+		// 获取调度FORM
+		var tradioForm = radioForm.getForm();
+		var ttriggerDispForm = triggerDispForm.getForm();
+		var tsimpleDispForm = simpleDispForm.getForm();
+		// 获取调度参数
+		var triggerType = tradioForm.findField("triggerType").inputValue;
+		var description = tradioForm.findField("description").getValue();
+		tparam['description'] = description;
+		tparam['triggerType'] = triggerType;
+		if (triggerType == 1) {
+			var start = renderDateHis(tsimpleDispForm.findField("start")
+					.getValue());
+			// var fstart = start.dateFormat('Y/m/d H:i:s');
+			// alert(fstart);
+			var repeatTimes = tsimpleDispForm.findField("repeatTimes")
+					.getValue();
+			if (repeatTimes < new Date().getTime()) {
+				Ext.MessageBox.alert("提示", "任务开始时间不能早于当前时间");
+				return;
+			}
+			var repeatInternal = tsimpleDispForm.findField("repeatInternal")
+					.getValue();
+			tparam['start'] = start;
+			tparam['repeatTimes'] = repeatTimes;
+			tparam['repeatInternal'] = repeatInternal;
+		} else {
+			var cron = ttriggerDispForm.findField("cron").getValue();
+			tparam['cron'] = cron;
+		}
+		Ext.Ajax.request({
+					url : '../strategy/dispsave',
+					params : tparam,
+					scope : stgdisptree,
+					success : function(response) {
+						var result = Ext.decode(response.responseText);
+						if (result.success) {
+							// stgdisptree.getRootNode().reload();
+							Ext.Msg.alert("提示", "保存成功");
+							editstgWindow.hide();
+							store.reload();
+						} else {
+							Ext.Msg.alert("提示", "保存失败");
+						}
+					},
+					failure : function() {
+						Ext.Msg.alert("提示", "保存失败");
+					}
+				});
+	}
 	/**
 	 * 设置调度配置的相关参数
 	 * 

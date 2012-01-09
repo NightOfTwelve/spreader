@@ -15,8 +15,6 @@ public class TestSavePhotoImg {
 	
 	@Test
 	public void test() {
-
-		uploadUserAvatar.send(867L);
-		
+		uploadUserAvatar.send(260L);
 	}
 }

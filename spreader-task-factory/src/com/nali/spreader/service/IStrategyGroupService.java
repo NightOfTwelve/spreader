@@ -1,6 +1,9 @@
 package com.nali.spreader.service;
 
+import java.util.List;
+
 import com.nali.common.pagination.PageResult;
+import com.nali.spreader.model.RegularJob;
 import com.nali.spreader.model.StrategyGroup;
 
 /**
@@ -20,5 +23,31 @@ public interface IStrategyGroupService {
 	 */
 	PageResult<StrategyGroup> findStrategyGroupPageResult(StrategyGroup params,
 			Integer pageNum, Integer pageSize);
+
+	/**
+	 * 保存StrategyGroup 并返回主键
+	 * 
+	 * @param sg
+	 * @return
+	 */
+	Long saveGroupInfo(StrategyGroup sg);
+
+	/**
+	 * 通过组ID和策略ID判断是否同步
+	 * 
+	 * @param gid
+	 * @param regId
+	 * @return
+	 */
+	Boolean checkRegularJobGroupId(Long gid,Long regId);
+
+	/**
+	 * 同步RegularJob
+	 * 
+	 * @param gid
+	 * @param regularJobId
+	 * @return
+	 */
+	void syncRegularJob(Long gid, Long regularJobId);
 
 }

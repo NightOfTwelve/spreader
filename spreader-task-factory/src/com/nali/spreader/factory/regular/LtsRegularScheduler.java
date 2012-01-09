@@ -73,37 +73,38 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 	}
 
 	@Override
-	public Long scheduleCronTrigger(String name, Object config, String desc, String cron) {
+	public Long scheduleCronTrigger(String name, Object config, String desc, Long gid, String cron) {
 		JobDto triggerInfo = new JobDto();
 		triggerInfo.setCron(cron);
 		
-		Long id = registerRegularJob(name, desc, config, RegularJob.TRIGGER_TYPE_CRON, triggerInfo);
+		Long id = registerRegularJob(name, desc, gid,config, RegularJob.TRIGGER_TYPE_CRON, triggerInfo);
 		TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(cron);
 		ltsSchedule(name, id, scheInfo);
 		return id;
 	}
 
 	@Override
-	public Long scheduleSimpleTrigger(String name, Object config, String desc, Date start, int repeatTimes,
+	public Long scheduleSimpleTrigger(String name, Object config, String desc, Long gid,Date start, int repeatTimes,
 			int repeatInternal) {
 		JobDto triggerInfo = new JobDto();
 		triggerInfo.setStart(start);
 		triggerInfo.setRepeatInternal(repeatInternal);
 		triggerInfo.setRepeatTimes(repeatTimes);
 		
-		Long id = registerRegularJob(name, desc, config, RegularJob.TRIGGER_TYPE_SIMPLE, triggerInfo);
+		Long id = registerRegularJob(name, desc, gid,config, RegularJob.TRIGGER_TYPE_SIMPLE, triggerInfo);
 		TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(start, null, repeatTimes, repeatInternal);
 		ltsSchedule(name, id, scheInfo);
 		return id;
 	}
-	
-	private Long registerRegularJob(String name, String desc, Object config, Integer triggerType, JobDto triggerInfo) {
+	//modified xiefei 2012.01.09 增加组ID
+	private Long registerRegularJob(String name, String desc, Long gid,Object config, Integer triggerType, JobDto triggerInfo) {
 		RegularJob regularJob = new RegularJob();
 		regularJob.setName(name);
 		regularJob.setDescription(desc);
 		regularJob.setConfig(regularProducerManager.serializeConfigData(config));
 		regularJob.setTriggerType(triggerType);
 		regularJob.setTriggerInfo(jobDto2String(triggerInfo));
+		regularJob.setGid(gid);
 		return regularJobDao.insert(regularJob);
 	}
 

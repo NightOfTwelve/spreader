@@ -28,6 +28,8 @@ import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.regular.RegularScheduler;
 import com.nali.spreader.model.RegularJob;
 import com.nali.spreader.model.RegularJob.JobDto;
+import com.nali.spreader.model.StrategyGroup;
+import com.nali.spreader.service.IStrategyGroupService;
 import com.nali.spreader.utils.TimeHelper;
 
 @Controller
@@ -39,6 +41,12 @@ public class StrategyDispatchController {
 	private RegularScheduler cfgService;
 	@Autowired
 	private IConfigService<Long> regularConfigService;
+	@Autowired
+	private IStrategyGroupService groupService;
+	// 简单分组
+	private static final Integer SIMPLE_GROUP_TYPE = 1;
+	// 复杂分组
+	private static final Integer COMPLEX_GROUP_TYPE = 2;
 
 	/**
 	 * 策略调度列表的显示页
@@ -111,7 +119,7 @@ public class StrategyDispatchController {
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
-	 * @throws SchedulerException 
+	 * @throws SchedulerException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/settgrparam")
@@ -123,26 +131,28 @@ public class StrategyDispatchController {
 			String name = job.getName();
 			String triggerName = new StringBuffer(name).append("_").append(id)
 					.toString();
-//			TriggerMetaInfo tm = new TriggerMetaInfo(triggerName, name, name
-//					+ "Task", null, TriggerType.INDEPENDENT_TRIGGER);
-			Trigger trigger = SchedulerFactory.getInstance().getScheduler().getTrigger(triggerName, name);
-			if(trigger != null) {
-				TriggerScheduleInfo scheduleInfo = trigger.getTriggerScheduleInfo();
-				 StringBuffer buff = new StringBuffer();
+			// TriggerMetaInfo tm = new TriggerMetaInfo(triggerName, name, name
+			// + "Task", null, TriggerType.INDEPENDENT_TRIGGER);
+			Trigger trigger = SchedulerFactory.getInstance().getScheduler()
+					.getTrigger(triggerName, name);
+			if (trigger != null) {
+				TriggerScheduleInfo scheduleInfo = trigger
+						.getTriggerScheduleInfo();
+				StringBuffer buff = new StringBuffer();
 				String cronExpression = scheduleInfo.getCronExpression();
-				if(StringUtils.isEmptyNoOffset(cronExpression)) {
-					//simple trigger
+				if (StringUtils.isEmptyNoOffset(cronExpression)) {
+					// simple trigger
 					int rcount = scheduleInfo.getRepeatCount();
-					//已完成的次数
+					// 已完成的次数
 					int times = trigger.getTimesTriggered();
-				    int left = times == -1 ? 0 : rcount + 1 - times;
-				   
+					int left = times == -1 ? 0 : rcount + 1 - times;
+
 					buff.append("剩余执行次数:");
 					buff.append(left);
-				}else {
+				} else {
 					buff.append("Cron表达式:").append(cronExpression);
 				}
-				
+
 				buff.append(";");
 				Date nextDate = trigger.getNextFireTime();
 				if (nextDate != null) {
@@ -159,7 +169,7 @@ public class StrategyDispatchController {
 					buff.append(";");
 				}
 				remind = buff.toString();
-			}else {
+			} else {
 				remind = "任务执行完毕, 您可以重新编辑保存，产生新的任务";
 			}
 		}
@@ -177,12 +187,26 @@ public class StrategyDispatchController {
 	 * @throws JsonMappingException
 	 * @throws JsonGenerationException
 	 */
+	@SuppressWarnings("null")
 	@ResponseBody
 	@RequestMapping(value = "/strategy/dispsave")
 	public String saveStrategyConfig(String name, String config,
-			Integer triggerType, String description, Date start,
-			Integer repeatTimes, Integer repeatInternal, String cron, Long id)
+			Integer triggerType, String description, Long groupId,
+			Integer groupType, Date start, Integer repeatTimes,
+			Integer repeatInternal, String cron, Long id)
 			throws JsonGenerationException, JsonMappingException, IOException {
+		// 如果groupId不为空，首先同步策略表
+		if (groupId != null || groupId > 0) {
+			groupService.syncRegularJob(groupId, id);
+		} else {
+			// 否则先保存分组获取分组ID
+			StrategyGroup sg = new StrategyGroup();
+			sg.setGroupType(groupType);
+			sg.setGroupName(name);
+			sg.setDescription(description);
+			sg.setCreateTime(new Date());
+			groupId = groupService.saveGroupInfo(sg);
+		}
 		// 如果是编辑则先删除
 		if (id != null && id > 0) {
 			cfgService.unSchedule(id);
@@ -198,7 +222,7 @@ public class StrategyDispatchController {
 		if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
 			try {
 				cfgService.scheduleSimpleTrigger(name, configObj, description,
-						start, repeatTimes, repeatInternal);
+						groupId, start, repeatTimes, repeatInternal);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存SimpleTrigger失败", e);
@@ -206,7 +230,7 @@ public class StrategyDispatchController {
 		} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
 			try {
 				cfgService.scheduleCronTrigger(name, configObj, description,
-						cron);
+						groupId, cron);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存CronTrigger失败", e);
