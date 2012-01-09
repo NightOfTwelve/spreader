@@ -19,6 +19,12 @@
       <isNotNull prepend="," property="description">
         description
       </isNotNull>
+      <isNotNull prepend="," property="jobType">
+        job_type
+      </isNotNull>
+      <isNotNull prepend="," property="gid">
+        gid
+      </isNotNull>
       <isNotNull prepend="," property="config">
         config
       </isNotNull>
@@ -40,6 +46,12 @@
       </isNotNull>
       <isNotNull prepend="," property="description">
         #description:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="jobType">
+        #jobType:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="gid">
+        #gid:BIGINT#
       </isNotNull>
       <isNotNull prepend="," property="config">
         #config:LONGVARCHAR#
