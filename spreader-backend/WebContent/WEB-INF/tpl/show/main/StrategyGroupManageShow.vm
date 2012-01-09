@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>策略分组管理</title>
+<script>
+	// 全局对象ID
+	var GOBJID = null;
+	var GDISNAME = null;
+	var GDISPID;
+</script>
+#parse("/show/comm/PublicInclude.vm")
+#parse("/show/comm/DateTimeFieldInclude.vm")
+#parse("/show/comm/FunctionsInclude.vm")
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategygroup/StrategyGroupManageModel.js'))"></script>
+</head>
+<body>
+</body>
+</html>

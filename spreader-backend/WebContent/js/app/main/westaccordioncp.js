@@ -30,6 +30,11 @@ var menuTree_Stg = new Ext.tree.TreePanel({
 									text : "系统调度配置",
 									leaf : true,
 									url : '../dispsys/dispatchlist'
+								}, {
+									id : 'stgnode5',
+									text : "分组配置",
+									leaf : true,
+									url : '../stggroup/init'
 								}]
 					}),
 			// 添加监听事件
