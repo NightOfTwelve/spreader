@@ -12,7 +12,6 @@ import com.nali.spreader.dao.ICrudRegularJobDao;
 import com.nali.spreader.dao.ICrudStrategyGroupDao;
 import com.nali.spreader.dao.IStrategyGroupDao;
 import com.nali.spreader.model.RegularJob;
-import com.nali.spreader.model.RegularJobExample;
 import com.nali.spreader.model.StrategyGroup;
 import com.nali.spreader.model.StrategyGroupExample;
 import com.nali.spreader.model.StrategyGroupExample.Criteria;
