@@ -101,8 +101,11 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/createdisptree")
-	public String createStgTreeData(String name, Long id)
+	public String createStgTreeData(String name, Long id, Boolean isGroup)
 			throws JsonGenerationException, JsonMappingException, IOException {
+		if (Boolean.TRUE.equals(isGroup)) {
+			id = getRegularIdBYGid(id);
+		}
 		return jacksonMapper
 				.writeValueAsString(new DispatchData(null, regularConfigService
 						.getConfigableInfo(name).getDisplayName(),
@@ -123,8 +126,12 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/settgrparam")
-	public String settingTriggerParam(Long id) throws JsonGenerationException,
-			JsonMappingException, IOException, SchedulerException {
+	public String settingTriggerParam(Long id, Boolean isGroup)
+			throws JsonGenerationException, JsonMappingException, IOException,
+			SchedulerException {
+		if (isGroup != null && isGroup) {
+			id = getRegularIdBYGid(id);
+		}
 		JobDto job = cfgService.getConfig(id);
 		String remind = "";
 		if (job != null) {
@@ -189,10 +196,10 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/dispsave")
-	public String saveStrategyConfig(String name, String config,
-			Integer triggerType, String description, Long groupId,
-			Integer groupType, Date start, Integer repeatTimes,
-			Integer repeatInternal, String cron, Long id)
+	public String saveStrategyConfig(String name, String groupName,
+			String config, Integer triggerType, String description,
+			String groupNote, Long groupId, Integer groupType, Date start,
+			Integer repeatTimes, Integer repeatInternal, String cron, Long id)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		// 如果groupId不为空，首先同步策略表
 		if (groupId != null && groupId > 0) {
@@ -201,8 +208,9 @@ public class StrategyDispatchController {
 			// 否则先保存分组获取分组ID
 			StrategyGroup sg = new StrategyGroup();
 			sg.setGroupType(groupType);
-			sg.setGroupName(name);
-			sg.setDescription(description);
+			sg.setGroupName(groupType.equals(SIMPLE_GROUP_TYPE) ? name
+					: groupName);
+			sg.setDescription(groupNote);
 			sg.setCreateTime(new Date());
 			groupId = groupService.saveGroupInfo(sg);
 		}
@@ -291,6 +299,23 @@ public class StrategyDispatchController {
 		List<ConfigableInfo> list = regularConfigService
 				.listConfigableInfo(ConfigableType.normal);
 		return jacksonMapper.writeValueAsString(list);
+	}
+
+	/**
+	 * 通过
+	 * 
+	 * @param gid
+	 * @return
+	 */
+	private Long getRegularIdBYGid(Long gid) {
+		Long id = null;
+		if (gid != null) {
+			RegularJob rj = cfgService.findRegularJobBySimpleGroupId(gid);
+			if (rj != null) {
+				id = rj.getId();
+			}
+		}
+		return id;
 	}
 
 	/**

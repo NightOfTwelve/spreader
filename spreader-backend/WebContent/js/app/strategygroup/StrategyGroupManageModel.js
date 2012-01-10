@@ -43,7 +43,8 @@ Ext.onReady(function() {
 					treeloader.baseParams = {
 						name : GOBJID,
 						disname : GDISNAME,
-						id : GDISPID
+						id : GDISPID,
+						isGroup : GISGROUP
 					};
 				}
 			}
@@ -511,16 +512,24 @@ Ext.onReady(function() {
 						var data = record.data;
 						// 获取分组类型分别做判断
 						var gType = data.groupType;
+						GDISNAME = null;
+						GOBJID = null;
+						GDISPID = null;
+						GISGROUP = null;
+						// 简单分组 TODO
 						if (gType == 1) {
-							GDISNAME = data.name;
-							GOBJID = data.name;
+							GDISNAME = data.groupName;
+							GOBJID = data.groupName;
 							GDISPID = data.id;
-							var trgid = data.id;
-							settingCreateTrigger(trgid);
+							GISGROUP = true;
+							var gid = data.id;
+							settingCreateTrigger(gid, GISGROUP);
 							editstgWindow.title = rendDispName(GDISNAME);
 							editstgWindow.show();
 						} else {
-							//
+
+							GGROUPID;
+							compGroupWindow.show();
 						}
 					}
 				}
@@ -553,11 +562,11 @@ Ext.onReady(function() {
 				var tform = addGroupForm.getForm();
 				var gnameField = tform.findField("groupName");
 				// 非简单策略分组不能选择策略
-				if (groupTypeId != 1) {
-					stgSelectCombo.disable(true);
+				if (groupTypeId == 1) {
+					stgSelectCombo.enable(true);
 					gnameField.disable(true);
 				} else {
-					stgSelectCombo.enable(true);
+					stgSelectCombo.disable(true);
 					gnameField.enable(true);
 				}
 				stgSelectCombo.reset();
@@ -626,6 +635,264 @@ Ext.onReady(function() {
 							anchor : '100%'
 						}]
 			});
+	/**
+	 * 调度类型的COMB的数据源
+	 */
+	var tgTypeStore = new Ext.data.ArrayStore({
+				fields : ['ID', 'NAME'],
+				data : [['-1', '----------------------'], ['1', '简单调度'],
+						['2', '复杂调度']]
+			});
+
+	/**
+	 * 策略列表的查询FORM
+	 */
+	var stgdispgridform = new Ext.form.FormPanel({
+				region : 'north',
+				// title : "组合查询",
+				bodyStyle : 'width: 100%',
+				// autoWidth : true,
+				autoScroll : true,
+				height : 100,
+				split : true,
+				frame : true,
+				layout : "form", // 整个大的表单是form布局
+				labelWidth : 65,
+				labelAlign : "right",
+				items : [{ // 行1
+					layout : "column", // 从左往右的布局
+					items : [{
+								columnWidth : .5, // 该列有整行中所占百分比
+								layout : "form", // 从上往下的布局
+								items : [{
+											fieldLabel : '调度类型',
+											// name:'TIMEFER',
+											xtype : 'combo',
+											width : 100,
+											store : tgTypeStore,
+											id : 'triggerType1',
+											hiddenName : 'triggerType',
+											valueField : 'ID',
+											editable : false,
+											displayField : 'NAME',
+											mode : 'local',
+											forceSelection : false,// 必须选择一项
+											emptyText : '调度类型...',// 默认值
+											triggerAction : 'all'
+										}]
+							}, {
+								columnWidth : .5,
+								layout : "form",
+								items : [{
+											xtype : "textfield",
+											fieldLabel : "调度名称",
+											name : 'dispname1',
+											width : 100
+										}]
+							}]
+				}],
+				buttonAlign : "center",
+				buttons : [{
+							text : "查询"
+						}, {
+							text : "重置",
+							handler : function() { // 按钮响应函数
+								stgdispgridform.form.reset();
+							}
+						}]
+			});
+
+	/**
+	 * 策略配置列表页面 实现所有策略的简单列表，点击某一行记录跳转到详细配置页面
+	 */
+	// 定义表格数据源
+	var store = new Ext.data.Store({
+				proxy : new Ext.data.HttpProxy({
+							url : '../dispsys/stgdispgridstore'
+						}),
+				reader : new Ext.data.JsonReader({
+							totalProperty : 'cnt',
+							root : 'data'
+						}, [{
+									name : 'id'
+								}, {
+									name : 'name'
+								}, {
+									name : 'triggerType'
+								}, {
+									name : 'triggerInfo'
+								}, {
+									name : 'description'
+								}]),
+				autoLoad : {
+					params : {
+						start : 0,
+						limit : 25
+					}
+				}
+
+			});
+	// 定义Checkbox
+	var sm = new Ext.grid.CheckboxSelectionModel();
+	// 定义表格列CM
+	var cm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(), sm, {
+				header : '调度编号',
+				dataIndex : 'id',
+				width : 80
+			}, {
+				header : '调度名称',
+				dataIndex : 'name',
+				renderer : rendDispName,
+				width : 100
+			}, {
+				header : '调度类型',
+				dataIndex : 'triggerType',
+				width : 100,
+				renderer : rendTrigger
+			}, {
+				header : '调度备注',
+				dataIndex : 'triggerInfo',
+				renderer : renderBrief,
+				width : 100
+			}, {
+				header : '描述',
+				dataIndex : 'description',
+				renderer : renderBrief,
+				width : 100
+			}, {
+				header : '相关操作',
+				renderer : function showbutton() {
+					var returnStr = "<input type='button' value='配置'/>";
+					return returnStr;
+				},
+				width : 100
+			}]);
+	// 页数
+	var number = 20;
+	var numtext = new Ext.form.TextField({
+				id : 'maxpage',
+				name : 'maxpage',
+				width : 60,
+				emptyText : '每页条数',
+				// 激活键盘事件
+				enableKeyEvents : true,
+				listeners : {
+					specialKey : function(field, e) {
+						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
+							bbar.pageSize = parseInt(numtext.getValue());
+							number = parseInt(numtext.getValue());
+							store.reload({
+										params : {
+											start : 0,
+											limit : bbar.pageSize
+										}
+									});
+						}
+					}
+				}
+			});
+
+	// 分页菜单
+	var bbar = new Ext.PagingToolbar({
+				pageSize : number,
+				store : store,
+				displayInfo : true,
+				displayMsg : '显示{0}条到{1}条,共{2}条',
+				emptyMsg : "没有符合条件的记录",
+				items : ['-', '&nbsp;&nbsp;', numtext]
+			});
+
+	// 定义grid表格
+	var stgdisplistgrid = new Ext.grid.GridPanel({
+				height : 500,
+				autoWidth : true,
+				autoScroll : true,
+				split : true,
+				region : 'center',
+				store : store,
+				loadMask : {
+					msg : '正在加载表格数据,请稍等...'
+				},
+				// stripeRows : true,
+				frame : true,
+				// autoExpandColumn : 'remark',
+				sm : sm,
+				cm : cm,
+				tbar : [{
+							text : '新增',
+							iconCls : 'page_addIcon',
+							handler : function() {
+								stgCmbWindow.show();
+							}
+						}, '-', {
+							text : '删除',
+							iconCls : 'page_delIcon',
+							handler : function() {
+								// TODO
+								deleteData();
+							}
+						}, {
+							text : '查询',
+							iconCls : 'previewIcon',
+							handler : function() {
+							}
+						}, '-', {
+							text : '刷新',
+							iconCls : 'arrow_refreshIcon',
+							handler : function() {
+								store.reload();
+							}
+						}],
+				bbar : bbar,
+				onCellClick : function(grid, rowIndex, columnIndex, e) {
+					// 找出表格中‘配置’按钮
+					if (e.target.defaultValue == '配置') {
+						var record = grid.getStore().getAt(rowIndex);
+						var data = record.data;
+						GDISNAME = data.name;
+						GOBJID = data.name;
+						GDISPID = data.id;
+						var trgid = data.id;
+						settingCreateTrigger(trgid);
+						editstgWindow.title = rendDispName(GDISNAME);
+						editstgWindow.show();
+					}
+				}
+
+			});
+	// 注册事件
+	stgdisplistgrid.on('cellclick', stgdisplistgrid.onCellClick,
+			stgdisplistgrid);
+
+	// var dispanels = new Ext.Panel({
+	// layout : 'border',
+	// items : [stgdispgridform, stgdisplistgrid]
+	// });
+	// 复杂分组的弹出窗口
+	var compGroupWindow = new Ext.Window({
+				title : '<span class="commoncss">复杂分组</span>', // 窗口标题
+				id : 'compGroupWindow',
+				closeAction : 'hide',
+				maximized : true,
+				layout : 'border', // 设置窗口布局模式
+				width : 500, // 窗口宽度
+				height : 600, // 窗口高度
+				// closable : true, // 是否可关闭
+				collapsible : true, // 是否可收缩
+				maximizable : true, // 设置是否可以最大化
+				border : false, // 边框线设置
+				constrain : true, // 设置窗口是否可以溢出父容器
+				pageY : 20, // 页面定位Y坐标
+				pageX : document.documentElement.clientWidth / 2 - 300 / 2, // 页面定位X坐标
+				items : [stgdispgridform, stgdisplistgrid], // 嵌入的表单面板
+				buttons : [{
+							text : '关闭',
+							iconCls : 'deleteIcon',
+							handler : function() {
+								compGroupWindow.hide();
+							}
+						}]
+			});
 	// 弹出窗口
 	var groupAddWindow = new Ext.Window({
 				title : '<span class="commoncss">创建分组</span>', // 窗口标题
@@ -646,13 +913,33 @@ Ext.onReady(function() {
 					text : '确定', // 按钮文本
 					iconCls : 'tbar_synchronizeIcon', // 按钮图标
 					handler : function() { // 按钮响应函数
+						var gType = groupAddCombo.getValue();
+						var tform = addGroupForm.getForm();
+						var gname = tform.findField("groupName").getValue();
+						var gnote = tform.findField("description").getValue();
+						GGROUPTYPE = null;
 						GDISPID = null;
+						GGROUPNAME = null;
+						GGROUPNOTE = null;
 						cleanCreateTrigger();
-						GOBJID = stgSelectCombo.getValue();
-						GDISNAME = stgSelectCombo.lastSelectionText;
-						editstgWindow.title = GDISNAME;
-						editstgWindow.show();
-						groupAddCombo.hide();
+						// 简单分组
+						if (gType == 1) {
+							GOBJID = stgSelectCombo.getValue();
+							GDISNAME = stgSelectCombo.lastSelectionText;
+							GGROUPNAME = stgSelectCombo.lastSelectionText;
+							GGROUPNOTE = gnote;
+							editstgWindow.title = rendDispName(GOBJID);
+							editstgWindow.show();
+						} else {
+							// 复杂分组
+							GGROUPNAME = gname;
+							GGROUPNOTE = gnote;
+							GGROUPTYPE = gType;
+							editstgWindow.title = gname;
+							compGroupWindow.show();
+						}
+						GGROUPTYPE = gType;
+						groupAddWindow.hide();
 					}
 				}, {	// 窗口底部按钮配置
 							text : '重置', // 按钮文本
@@ -668,6 +955,11 @@ Ext.onReady(function() {
 							}
 						}]
 			});
+	// 弹出前事件
+	groupAddWindow.on('show', function() {
+				addGroupForm.form.reset();
+			});
+
 	/**
 	 * 右键菜单相关的功能函数实现
 	 */
@@ -704,7 +996,6 @@ Ext.onReady(function() {
 				}, 10);
 	};
 	// 添加子节点事件实现
-	// TODO
 	function appendNodeAction(node) {
 		// var selectedNode = stgtree.getSelectionModel().getSelectedNode();
 		if (node.isLeaf()) {
@@ -733,7 +1024,14 @@ Ext.onReady(function() {
 		// 获取ROOT数组
 		var treearray = stgdisptree.root.childNodes;
 		var tparam = {};
+		// 简单分组名，默认就用调用名
 		tparam['name'] = GOBJID;
+		// 复杂分组用自定义的组名
+		tparam['groupName'] = GGROUPNAME;
+		// 复杂分组的说明
+		tparam['groupNote'] = GGROUPNOTE;
+		// 分组类型
+		tparam['groupType'] = GGROUPTYPE;
 		tparam['_time'] = new Date().getTime();
 		tparam['id'] = GDISPID;
 		if (treearray.length > 0) {
@@ -753,14 +1051,8 @@ Ext.onReady(function() {
 		if (triggerType == 1) {
 			var start = renderDateHis(tsimpleDispForm.findField("start")
 					.getValue());
-			// var fstart = start.dateFormat('Y/m/d H:i:s');
-			// alert(fstart);
 			var repeatTimes = tsimpleDispForm.findField("repeatTimes")
 					.getValue();
-			if (repeatTimes < new Date().getTime()) {
-				Ext.MessageBox.alert("提示", "任务开始时间不能早于当前时间");
-				return;
-			}
 			var repeatInternal = tsimpleDispForm.findField("repeatInternal")
 					.getValue();
 			tparam['start'] = start;
@@ -777,7 +1069,6 @@ Ext.onReady(function() {
 					success : function(response) {
 						var result = Ext.decode(response.responseText);
 						if (result.success) {
-							// stgdisptree.getRootNode().reload();
 							Ext.Msg.alert("提示", "保存成功");
 							editstgWindow.hide();
 							store.reload();
@@ -796,11 +1087,12 @@ Ext.onReady(function() {
 	 * @param {}
 	 *            trgid
 	 */
-	function settingCreateTrigger(trgid) {
+	function settingCreateTrigger(trgid, isGroup) {
 		Ext.Ajax.request({
-					url : '../dispsys/settgrparam',
+					url : '../strategy/settgrparam',
 					params : {
-						'id' : trgid
+						'id' : trgid,
+						'isGroup' : isGroup
 					},
 					success : function(response) {
 						var result = Ext.decode(response.responseText);
@@ -828,6 +1120,54 @@ Ext.onReady(function() {
 								.setValue(repeatInternal);
 						ttriggerDispForm.findField("cron").setValue(cron);
 						// TODO
+						var remindcmp = Ext.getCmp("jobremind");
+						var tstr = '任务:' + rendDispName(GDISNAME) + ',编号:'
+								+ GDISPID + ',目前运行信息:' + remind;
+						remindcmp.setText('<font color = "red">' + tstr
+								+ '</font>');
+					},
+					failure : function() {
+						// Ext.Msg.alert("提示", "数据获取异常");
+					}
+				});
+	}
+	/**
+	 * 设置简单分组调度配置的相关参数
+	 * 
+	 * @param {}
+	 *            trgid
+	 */
+	function settingGroupCreateTrigger(gid) {
+		Ext.Ajax.request({
+					url : '../strategy/setgroupparam',
+					params : {
+						'gid' : gid
+					},
+					success : function(response) {
+						var result = Ext.decode(response.responseText);
+						var description = result.description;
+						var triggerType = result.triggerType;
+						var cron = result.cron;
+						var start = result.start;
+						var sdate = new Date(start);
+						var repeatTimes = result.repeatTimes;
+						var repeatInternal = result.repeatInternal;
+						var remind = result.remind;
+						// 获取FORM
+						var tradioForm = radioForm.getForm();
+						var ttriggerDispForm = triggerDispForm.getForm();
+						var tsimpleDispForm = simpleDispForm.getForm();
+						// 设置参数
+						tradioForm.findField("triggerType")
+								.setValue(triggerType);
+						tradioForm.findField("description")
+								.setValue(description);
+						tsimpleDispForm.findField("start").setValue(sdate);
+						tsimpleDispForm.findField("repeatTimes")
+								.setValue(repeatTimes);
+						tsimpleDispForm.findField("repeatInternal")
+								.setValue(repeatInternal);
+						ttriggerDispForm.findField("cron").setValue(cron);
 						var remindcmp = Ext.getCmp("jobremind");
 						var tstr = '任务:' + rendDispName(GDISNAME) + ',编号:'
 								+ GDISPID + ',目前运行信息:' + remind;

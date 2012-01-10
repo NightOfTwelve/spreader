@@ -34,4 +34,10 @@ public interface RegularScheduler {
 	 * 获取已有配置
 	 */
 	JobDto getConfig(Long id);
+	/**
+	 * 通过简单分组的id获取RegularJob
+	 * @param gid
+	 * @return
+	 */
+	RegularJob findRegularJobBySimpleGroupId(Long gid);
 }

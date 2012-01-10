@@ -1,9 +1,6 @@
 package com.nali.spreader.service;
 
-import java.util.List;
-
 import com.nali.common.pagination.PageResult;
-import com.nali.spreader.model.RegularJob;
 import com.nali.spreader.model.StrategyGroup;
 
 /**

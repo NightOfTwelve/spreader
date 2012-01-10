@@ -187,14 +187,8 @@ Ext.onReady(function() {
 		if (triggerType == 1) {
 			var start = renderDateHis(tsimpleDispForm.findField("start")
 					.getValue());
-			// var fstart = start.dateFormat('Y/m/d H:i:s');
-			// alert(fstart);
 			var repeatTimes = tsimpleDispForm.findField("repeatTimes")
 					.getValue();
-			if (repeatTimes < new Date().getTime()) {
-				Ext.MessageBox.alert("提示", "任务开始时间不能早于当前时间");
-				return;
-			}
 			var repeatInternal = tsimpleDispForm.findField("repeatInternal")
 					.getValue();
 			tparam['start'] = start;
@@ -806,7 +800,7 @@ Ext.onReady(function() {
 								+ '</font>');
 					},
 					failure : function() {
-						// Ext.Msg.alert("提示", "数据获取异常");
+//						 Ext.Msg.alert("提示", "数据获取异常");
 					}
 				});
 	}
