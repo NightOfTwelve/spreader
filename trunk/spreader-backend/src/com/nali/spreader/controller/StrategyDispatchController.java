@@ -187,7 +187,6 @@ public class StrategyDispatchController {
 	 * @throws JsonMappingException
 	 * @throws JsonGenerationException
 	 */
-	@SuppressWarnings("null")
 	@ResponseBody
 	@RequestMapping(value = "/strategy/dispsave")
 	public String saveStrategyConfig(String name, String config,
@@ -196,7 +195,7 @@ public class StrategyDispatchController {
 			Integer repeatInternal, String cron, Long id)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		// 如果groupId不为空，首先同步策略表
-		if (groupId != null || groupId > 0) {
+		if (groupId != null && groupId > 0) {
 			groupService.syncRegularJob(groupId, id);
 		} else {
 			// 否则先保存分组获取分组ID
