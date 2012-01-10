@@ -98,6 +98,12 @@ public class RobotForward implements RegularAnalyzer,Configable<RobotForwardDto>
 
 	@Override
 	public void init(RobotForwardDto dto) {
+		if(dto.getCategory()==null) {
+			throw new IllegalArgumentException("category must be set");
+		}
+		if(dto.getCount()==null) {
+			throw new IllegalArgumentException("count must be set");
+		}
 		this.dto = dto;
 	}
 

@@ -16,7 +16,7 @@ import com.nali.spreader.service.ITaskService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
-public class DoTestWorkshop {
+public class TestTask {
 	@Autowired
 	private ITaskService taskService;
 	@Autowired

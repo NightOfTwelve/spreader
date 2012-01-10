@@ -3,7 +3,7 @@
 <sqlMap namespace="spreader_register">
 
   <insert id="insertRobotRegister" parameterClass="com.nali.spreader.data.RobotRegister">
-    insert into spreader.tb_robot_register
+    insert into spreader$shard.databaseSuffix$.tb_robot_register$shard.tableSuffix$
     <dynamic prepend="(">
       <isNotNull prepend="," property="id">
         id
@@ -64,6 +64,15 @@
       </isNotNull>
       <isNotNull prepend="," property="updateTime">
         update_time
+      </isNotNull>
+      <isNotNull prepend="," property="county">
+        county
+      </isNotNull>
+      <isNotNull prepend="," property="personId">
+        person_id
+      </isNotNull>
+      <isNotNull prepend="," property="studentId">
+        student_id
       </isNotNull>
       )
     </dynamic>
@@ -128,6 +137,15 @@
       </isNotNull>
       <isNotNull prepend="," property="updateTime">
         #updateTime:TIMESTAMP#
+      </isNotNull>
+      <isNotNull prepend="," property="county">
+        #county:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="personId">
+        #personId:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="studentId">
+        #studentId:VARCHAR#
       </isNotNull>
       )
     </dynamic>

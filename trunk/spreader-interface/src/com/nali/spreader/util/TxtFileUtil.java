@@ -159,7 +159,7 @@ public class TxtFileUtil {
 		}
 	}
 	
-	private static void read(URL src, LineHandler handler) throws IOException {
+	public static void read(URL src, LineHandler handler) throws IOException {
 		InputStream fi = src.openStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(fi, "utf-8"));
 		
@@ -192,15 +192,15 @@ public class TxtFileUtil {
 		read(src, lineHandler);
 	}
 	
-	private static interface PairHandler {
+	public static interface PairHandler {
 		void handle(String key, String value);
 	}
 
-	private static interface LineHandler {
+	public static interface LineHandler {
 		void handle(String line);
 	}
 	
-	private static interface LineMaker<T> {
+	public static interface LineMaker<T> {
 		String format(T t);
 	}
 }
