@@ -3,6 +3,7 @@ package com.nali.spreader.workshop;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.data.Constellation;
-import com.nali.spreader.data.Province;
 import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.data.User;
 import com.nali.spreader.factory.TaskProduceLine;
@@ -27,12 +27,16 @@ import com.nali.spreader.util.TxtFileUtil;
 import com.nali.spreader.util.random.AvgRandomer;
 import com.nali.spreader.util.random.Randomer;
 import com.nali.spreader.util.random.WeightRandomer;
+import com.nali.spreader.words.Area;
+import com.nali.spreader.words.IDGenerator;
+import com.nali.spreader.words.StudentIDGenerator;
 import com.nali.spreader.words.Txt;
 
 @Component
 public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
+	private static final String DIRECT_WORD = "直辖";
 	private static final String FILE_TOP_FIRST_NAME = "txt/top-first.txt";
-	private static final String FILE_PROVINCE = "txt/province.txt";
+//	private static final String FILE_PROVINCE = "txt/province.txt";
 	private static final String FILE_YEAR = "txt/year.txt";
 	private static final String FILE_PINYIN = "txt/py-all.txt";
 	private static final String FILE_FIRST_NAME_PINYIN = "txt/py-first.txt";
@@ -49,7 +53,6 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 	private Randomer<Randomer<Integer>> yearRandomer;
 	private Randomer<Integer> monthRandomer;
 	private Randomer<Integer> dayRandomer;
-	private Randomer<Province> provinceRandomer;
 	private Randomer<Integer> pwdRandomer;
 	
 	private RangeChoice<Integer, Constellation> constellations;
@@ -61,6 +64,9 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 
 	@AutowireProductLine
 	private TaskProduceLine<RobotRegister> registerRobotUserEmail;
+	private Randomer<Area> directAreas;
+	private Randomer<Area> provinceAreas;
+	private double directRate = 0.25;
 
 	public GenerateRobotUserInfo() throws IOException {
 		genderRandomer = rangeRandomer(1, 2);
@@ -72,15 +78,30 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 		initYearRandomer();
 		monthRandomer = rangeRandomer(1, 12);
 		dayRandomer = rangeRandomer(1, 28);
-		initProvinceRandomer();
 		pwdRandomer = rangeRandomer(0, 9);
 
 		initFirstNamePinyinMap();
 		initCommonPinyinMap();
 		
 		initConstellation();
+		initCities();
 	}
 	
+	private void initCities() throws IOException {
+		List<Area> list = Area.load(Txt.getUrl("txt/city.txt"));
+		for (Iterator<Area> iterator = list.iterator(); iterator.hasNext();) {
+			Area area = iterator.next();
+			if(DIRECT_WORD.equals(area.getName())) {
+				directAreas = new AvgRandomer<Area>(area.getSubAreas());
+				iterator.remove();
+				provinceAreas = new AvgRandomer<Area>(list);
+				return;
+			}
+		}
+		provinceAreas = new AvgRandomer<Area>(list);
+		logger.error("not found direct cities.");
+	}
+
 	private void initCommonPinyinMap() throws IOException {
 		Map<String, List<String>> pinyinMap = TxtFileUtil.readKeyListMap(Txt.getUrl(FILE_PINYIN));
 		commonPinyinMap = CollectionUtils.newHashMap(pinyinMap.size());
@@ -138,16 +159,16 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 		yearRandomer = tmpRandomer;
 	}
 	
-	private void initProvinceRandomer() throws IOException {
-		List<Province> datas = new ArrayList<Province>();
-		List<Entry<String, List<String>>> properties = TxtFileUtil.readKeyList(Txt.getUrl(FILE_PROVINCE));
-		for (Entry<String, List<String>> entry : properties) {
-			String name = entry.getKey();
-			List<String> cities = entry.getValue();
-			datas.add(new Province(name, new AvgRandomer<String>(cities)));
-		}
-		provinceRandomer=new AvgRandomer<Province>(datas);
-	}
+//	private void initProvinceRandomer() throws IOException {
+//		List<Province> datas = new ArrayList<Province>();
+//		List<Entry<String, List<String>>> properties = TxtFileUtil.readKeyList(Txt.getUrl(FILE_PROVINCE));
+//		for (Entry<String, List<String>> entry : properties) {
+//			String name = entry.getKey();
+//			List<String> cities = entry.getValue();
+//			datas.add(new Province(name, new AvgRandomer<String>(cities)));
+//		}
+//		provinceRandomer=new AvgRandomer<Province>(datas);
+//	}
 
 	@Override
 	public void work(Object data) {
@@ -181,9 +202,31 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 		Constellation constellation = getConstellation(robot.getBirthdayMonth(), robot.getBirthdayDay());
 		robot.setConstellation(constellation.ordinal());
 
-		Province province = provinceRandomer.get();
-		robot.setProvince(province.getName());
-		robot.setCity(province.getRandomCity());
+		String province;
+		Area city;
+		if(Math.random()<directRate) {
+			Area directCity = directAreas.get();
+			province = directCity.getName();
+			city = directCity;
+		} else {
+			Area area = provinceAreas.get();
+			province = area.getName();
+			city = AvgRandomer.randomItem(area.getSubAreas(), random);
+		}
+		robot.setProvince(province);
+		robot.setCity(city.getName());
+		Area county = AvgRandomer.randomItem(city.getSubAreas(), random);
+		robot.setCounty(county.getName());
+		String personId;
+		if (User.GENDER_MALE.equals(gender)) {
+			personId = IDGenerator.generate(county.getCode(), robot.getBirthdayYear(),
+					robot.getBirthdayMonth(), robot.getBirthdayDay(), true);
+		} else {
+			personId = IDGenerator.generate(county.getCode(), robot.getBirthdayYear(),
+					robot.getBirthdayMonth(), robot.getBirthdayDay(), false);
+		}
+		robot.setPersonId(personId);
+		robot.setStudentId(StudentIDGenerator.generate(robot));
 		//TODO
 		//pwd 6-16
 		//nickname 4-20

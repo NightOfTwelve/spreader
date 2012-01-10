@@ -10,7 +10,7 @@ import com.nali.spreader.factory.regular.RegularAnalyzer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
-public class TestRedisQueue {
+public class TestTask {
 	@Autowired
 	private RegularAnalyzer fetchStarUser;
 	@Test
