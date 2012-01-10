@@ -11,7 +11,7 @@
  */
 function getTypeDefaultEdit(stype) {
 	var defValue = new Ext.grid.GridEditor(new Ext.form.TextField());
-	if (stype != null) {
+	if (!Ext.isEmpty(stype)) {
 		if (stype == 'Integer') {
 			defValue = new Ext.grid.GridEditor(new Ext.form.NumberField());
 		} else if (stype == 'Float') {
@@ -121,13 +121,12 @@ function createPptGridStoreDef(def) {
  *            data
  */
 function createPptGridStoreData(data, def) {
-	// var data = {};
-	if (data != null && def != null) {
+	if (!Ext.isEmpty(data) && !Ext.isEmpty(def)) {
 		for (var i = 0; i < def.length; i++) {
 			var defObj = def[i];
 			var defname = defObj.propertyName;
 			var pType = defObj.propertyDefinition.type;
-			if (data[defname] == null) {
+			if (Ext.isEmpty(data[defname])) {
 				if (pType == 'Boolean') {
 					data[defname] = false;
 				} else {
@@ -152,13 +151,13 @@ function createPptGridStoreData(data, def) {
  */
 function createPptGridCustEdit(data, def) {
 	var custEdit = {};
-	if (data != null && def != null) {
+	if (!Ext.isEmpty(data) && !Ext.isEmpty(def)) {
 		for (var i = 0; i < def.length; i++) {
 			var defObj = def[i];
 			var defname = defObj.propertyName;
 			var pType = defObj.propertyDefinition.type;
 			// if (!data.hasOwnProperty(defname)) {
-			if (data[defname] == null) {
+			if (Ext.isEmpty(data[defname])) {
 				custEdit[defname] = getTypeDefaultEdit(pType);
 			}
 		}
@@ -179,7 +178,7 @@ function createPptGridCustEdit(data, def) {
  */
 function createCustRenderers(data, def) {
 	var customRenderers = {};
-	if (data != null && def != null) {
+	if (!Ext.isEmpty(data) && !Ext.isEmpty(def)) {
 		for (var i = 0; i < def.length; i++) {
 			var defObj = def[i];
 			var defname = defObj.propertyName;
@@ -187,7 +186,7 @@ function createCustRenderers(data, def) {
 			// if (!data.hasOwnProperty(defname)) {
 			if (pType == 'Boolean') {
 				customRenderers[defname] = function(v) {
-					if (v == null) {
+					if (Ext.isEmpty(v)) {
 						v = false;
 					}
 					return v ? '是' : '否';
