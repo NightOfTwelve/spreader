@@ -134,7 +134,8 @@ function transformdata(id, name, def, data) {
  * @return {Boolean}
  */
 function isPrimitive(type) {
-	var primitives = ['String', 'Integer', 'Float', 'Boolean', 'Character'];
+	var primitives = ['String', 'Integer', 'Float', 'Boolean', 'Character',
+			'Date'];
 	for (var i = 0; i < primitives.length; i++) {
 		if (primitives[i] == type) {
 			return true;
@@ -171,10 +172,10 @@ function createNodeData(node) {
 			var nodedata = node.data;
 			for (var key in nodedata) {
 				var tmpvar = nodedata[key];
-				if(tmpvar==''){
+				if (tmpvar == '') {
 					tmpvar = null;
 				}
-//				data[key] = nodedata[key];
+				// data[key] = nodedata[key];
 				data[key] = tmpvar;
 			}
 			var childarray = node.children;
