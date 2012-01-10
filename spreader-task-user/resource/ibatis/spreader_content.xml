@@ -103,6 +103,9 @@
 			<isNotNull prepend="," property="replyCount">
 				reply_count
 			</isNotNull>
+			<isNotNull prepend="," property="entry">
+				entry
+			</isNotNull>
 			<isNotNull prepend="," property="content">
 				content
 			</isNotNull>
@@ -145,6 +148,9 @@
 			</isNotNull>
 			<isNotNull prepend="," property="replyCount">
 				#replyCount:INTEGER#
+			</isNotNull>
+			<isNotNull prepend="," property="entry">
+				#entry:VARCHAR#
 			</isNotNull>
 			<isNotNull prepend="," property="content">
 				#content:LONGVARCHAR#
