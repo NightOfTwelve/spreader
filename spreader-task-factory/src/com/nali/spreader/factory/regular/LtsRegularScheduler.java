@@ -62,8 +62,8 @@ public class LtsRegularScheduler extends AbstractTask implements
 
 	@Override
 	public PageResult<RegularJob> findRegularJob(String name,
-			Integer triggerType, ConfigableType configableType, int page,
-			int pageSize) {
+			Integer triggerType, Long groupId, ConfigableType configableType,
+			int page, int pageSize) {
 		RegularJobExample example = new RegularJobExample();
 		Criteria c = example.createCriteria().andJobTypeEqualTo(
 				configableType.jobType);
@@ -72,6 +72,9 @@ public class LtsRegularScheduler extends AbstractTask implements
 		}
 		if (triggerType != null) {
 			c.andTriggerTypeEqualTo(triggerType);
+		}
+		if (groupId != null) {
+			c.andGidEqualTo(groupId);
 		}
 		Limit limit = Limit.newInstanceForPage(page, pageSize);
 		example.setLimit(limit);
@@ -83,11 +86,11 @@ public class LtsRegularScheduler extends AbstractTask implements
 
 	@Override
 	public Long scheduleCronTrigger(String name, Object config, String desc,
-			Long gid, String cron) {
+			Long gid, String groupName, String cron) {
 		JobDto triggerInfo = new JobDto();
 		triggerInfo.setCron(cron);
 
-		Long id = registerRegularJob(name, desc, gid, config,
+		Long id = registerRegularJob(name, desc, gid, groupName, config,
 				RegularJob.TRIGGER_TYPE_CRON, triggerInfo);
 		TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(cron);
 		ltsSchedule(name, id, scheInfo);
@@ -96,13 +99,14 @@ public class LtsRegularScheduler extends AbstractTask implements
 
 	@Override
 	public Long scheduleSimpleTrigger(String name, Object config, String desc,
-			Long gid, Date start, int repeatTimes, int repeatInternal) {
+			Long gid, String groupName, Date start, int repeatTimes,
+			int repeatInternal) {
 		JobDto triggerInfo = new JobDto();
 		triggerInfo.setStart(start);
 		triggerInfo.setRepeatInternal(repeatInternal);
 		triggerInfo.setRepeatTimes(repeatTimes);
 
-		Long id = registerRegularJob(name, desc, gid, config,
+		Long id = registerRegularJob(name, desc, gid, groupName, config,
 				RegularJob.TRIGGER_TYPE_SIMPLE, triggerInfo);
 		TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(start, null,
 				repeatTimes, repeatInternal);
@@ -111,8 +115,10 @@ public class LtsRegularScheduler extends AbstractTask implements
 	}
 
 	// modified xiefei 2012.01.09 增加组ID
+	// modified xiefei 2012.01.11 增加组名称
 	private Long registerRegularJob(String name, String desc, Long gid,
-			Object config, Integer triggerType, JobDto triggerInfo) {
+			String groupName, Object config, Integer triggerType,
+			JobDto triggerInfo) {
 		RegularJob regularJob = new RegularJob();
 		regularJob.setName(name);
 		regularJob.setDescription(desc);
@@ -121,6 +127,8 @@ public class LtsRegularScheduler extends AbstractTask implements
 		regularJob.setTriggerType(triggerType);
 		regularJob.setTriggerInfo(jobDto2String(triggerInfo));
 		regularJob.setGid(gid);
+		regularJob.setGname(groupName);
+		// TODO setjobtype xiefei
 		return regularJobDao.insert(regularJob);
 	}
 

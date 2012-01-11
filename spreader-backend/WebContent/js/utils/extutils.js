@@ -183,6 +183,19 @@ function renderImage2(value) {
 	return url;
 }
 /**
+ * 渲染分组类型
+ * 
+ * @param {}
+ *            value
+ */
+function renderGroupType(value) {
+	if (value == 1) {
+		return '简单分组';
+	} else {
+		return '复杂分组';
+	}
+}
+/**
  * 自动缩放图片
  * 
  * @param {}

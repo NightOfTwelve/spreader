@@ -36,15 +36,16 @@ public interface IStrategyGroupService {
 	 * @param regId
 	 * @return
 	 */
-	Boolean checkRegularJobGroupId(Long gid,Long regId);
+	Boolean checkRegularJobGroupId(Long gid, Long regId);
 
 	/**
 	 * 同步RegularJob
 	 * 
 	 * @param gid
+	 * @param groupName
 	 * @param regularJobId
 	 * @return
 	 */
-	void syncRegularJob(Long gid, Long regularJobId);
+	void syncRegularJob(Long gid, String groupName, Long regularJobId);
 
 }

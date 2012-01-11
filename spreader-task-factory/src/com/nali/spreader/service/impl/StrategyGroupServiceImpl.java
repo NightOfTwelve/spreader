@@ -68,11 +68,12 @@ public class StrategyGroupServiceImpl implements IStrategyGroupService {
 	}
 
 	@Override
-	public void syncRegularJob(Long gid, Long regularJobId) {
+	public void syncRegularJob(Long gid, String groupName, Long regularJobId) {
 		if (!checkRegularJobGroupId(gid, regularJobId)) {
 			RegularJob rj = crudRegDao.selectByPrimaryKey(regularJobId);
 			if (rj != null) {
 				rj.setGid(gid);
+				rj.setGname(groupName);
 				crudRegDao.updateByPrimaryKeyWithBLOBs(rj);
 			} else {
 				logger.warn("获取RegularJob失败");

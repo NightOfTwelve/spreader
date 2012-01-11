@@ -12,18 +12,18 @@ public interface RegularScheduler {
 	/**
 	 * 生成cron调度
 	 */
-	Long scheduleCronTrigger(String name, Object config, String desc, Long gid, String cron);
+	Long scheduleCronTrigger(String name, Object config, String desc, Long gid, String groupName, String cron);
 	
 	/**
 	 * 生成simple调度
 	 * @param repeatInternal 毫秒
 	 */
-	Long scheduleSimpleTrigger(String name, Object config, String desc,Long gid, Date start, int repeatTimes, int repeatInternal);
+	Long scheduleSimpleTrigger(String name, Object config, String desc,Long gid, String groupName, Date start, int repeatTimes, int repeatInternal);
 	
 	/**
 	 * 查看已有调度
 	 */
-	PageResult<RegularJob> findRegularJob(String name, Integer triggerType, ConfigableType configableType, int page, int pageSize);
+	PageResult<RegularJob> findRegularJob(String name, Integer triggerType, Long groupId, ConfigableType configableType, int page, int pageSize);
 	
 	/**
 	 * 取消调度

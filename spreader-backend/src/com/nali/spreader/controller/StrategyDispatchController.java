@@ -71,14 +71,14 @@ public class StrategyDispatchController {
 	@ResponseBody
 	@RequestMapping(value = "/strategy/stgdispgridstore")
 	public String stgGridStore(String dispname, Integer triggerType, int start,
-			int limit) throws JsonGenerationException, JsonMappingException,
-			IOException {
+			Long groupId, int limit) throws JsonGenerationException,
+			JsonMappingException, IOException {
 		if (limit <= 0) {
 			limit = 20;
 		}
 		start = start / limit + 1;
 		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname,
-				triggerType, ConfigableType.normal, start, limit);
+				triggerType, groupId, ConfigableType.normal, start, limit);
 		List<RegularJob> list = pr.getList();
 		List<ConfigableInfo> dispnamelist = regularConfigService
 				.listConfigableInfo(ConfigableType.normal);
@@ -206,16 +206,20 @@ public class StrategyDispatchController {
 		Map<String, Object> message = new HashMap<String, Object>();
 		message.put("success", false);
 		if (groupType != null && groupType > 0) {
+			String tmpGroupName = null;
 			// 处理简单分组
 			if (groupType == 1) {
+				tmpGroupName = name;
 				if (groupId != null && groupId > 0) {
 					// 如果分组ID不为null,首先检查并同步策略表
-					groupService.syncRegularJob(groupId, id);
+					groupService.syncRegularJob(groupId, tmpGroupName, id);
 				} else {
 					// 否则先保存分组获取分组ID
-					groupId = getNewGroupId(groupType, name, description);
+					groupId = getNewGroupId(groupType, tmpGroupName,
+							description);
 				}
 			} else {
+				tmpGroupName = groupName;
 				// 处理复杂分组,只检查传入的groupId
 				if (groupId == null || groupId <= 0) {
 					LOGGER.warn("复杂分组传入的groupId为空或小于等于0，不能保存策略");
@@ -236,8 +240,8 @@ public class StrategyDispatchController {
 			if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
 				try {
 					cfgService.scheduleSimpleTrigger(name, configObj,
-							description, groupId, start, repeatTimes,
-							repeatInternal);
+							description, groupId, tmpGroupName, start,
+							repeatTimes, repeatInternal);
 					message.put("success", true);
 				} catch (Exception e) {
 					LOGGER.error("保存SimpleTrigger失败", e);
@@ -246,7 +250,7 @@ public class StrategyDispatchController {
 			} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
 				try {
 					cfgService.scheduleCronTrigger(name, configObj,
-							description, groupId, cron);
+							description, groupId, tmpGroupName, cron);
 					message.put("success", true);
 				} catch (Exception e) {
 					LOGGER.error("保存CronTrigger失败", e);
