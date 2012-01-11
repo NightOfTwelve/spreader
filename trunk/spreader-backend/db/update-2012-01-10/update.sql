@@ -7,7 +7,7 @@ alter table tb_strategy_group  add column group_type int default 1;
 /**
  * 执行此脚本
  */
-create table tb_strategy_group
+create table spreader.tb_strategy_group
 (
    id                   bigint not null auto_increment,
    group_name           varchar(100),
@@ -20,4 +20,4 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;
 
-alter table tb_strategy_group comment '策略分组表';
+alter table spreader.tb_strategy_group comment '策略分组表';

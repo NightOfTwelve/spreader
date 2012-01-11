@@ -12,10 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nali.common.model.Limit;
 import com.nali.spreader.dao.ICrudClientTaskDao;
+import com.nali.spreader.dao.ICrudClientTaskLogDao;
 import com.nali.spreader.dao.ICrudTaskBatchDao;
 import com.nali.spreader.dao.ITaskDao;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.model.ClientTaskExample;
+import com.nali.spreader.model.ClientTaskLog;
 import com.nali.spreader.model.TaskBatch;
 import com.nali.spreader.model.TaskBatchExample;
 import com.nali.spreader.model.TaskResult;
@@ -34,6 +36,8 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 	private ITaskDao taskDao;
 	@Autowired
 	private IResultSender resultSender;
+	@Autowired
+	private ICrudClientTaskLogDao crudClientTaskLogDao;
 
 	@Override
 	public void save(ClientTask task) {
@@ -160,8 +164,6 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 	@Override
 	public void reportTask(List<TaskResult> rlts, Integer taskType, Long clientId) {
 		for (TaskResult taskResult : rlts) {
-			taskResult.setClientId(clientId);
-			//TODO mark success&report fail
 			if(TaskResult.STATUS_SUCCESS.equals(taskResult.getStatus())) {
 				try {
 					resultSender.send(taskResult);
@@ -176,6 +178,14 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 								+ "\r\n" + taskResult.getResult()
 								);
 			}
+			ClientTaskLog log = new ClientTaskLog();
+			log.setClientId(clientId);
+			//log.setErrorCode(errorCode);
+			log.setExecutedTime(taskResult.getExecutedTime());
+			log.setStatus(taskResult.getStatus());
+			log.setTaskCode(taskResult.getTaskCode());
+			log.setTaskId(taskResult.getTaskId());
+			crudClientTaskLogDao.insert(log);
 		}
 	}
 
