@@ -215,7 +215,7 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 		}
 		robot.setProvince(province);
 		robot.setCity(city.getName());
-		Area county = AvgRandomer.randomItem(city.getSubAreas(), random);
+		Area county = city.getSubAreas()==null? city : AvgRandomer.randomItem(city.getSubAreas(), random);
 		robot.setCounty(county.getName());
 		String personId;
 		if (User.GENDER_MALE.equals(gender)) {
