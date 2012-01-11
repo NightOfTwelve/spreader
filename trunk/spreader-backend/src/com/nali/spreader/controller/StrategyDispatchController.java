@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.pagination.PageResult;
+import com.nali.common.util.CollectionUtils;
 import com.nali.lang.StringUtils;
 import com.nali.lts.SchedulerFactory;
 import com.nali.lts.exceptions.SchedulerException;
@@ -316,6 +317,28 @@ public class StrategyDispatchController {
 	}
 
 	/**
+	 * 获取新构建的分组ID
+	 * 
+	 * @param groupType
+	 * @param groupName
+	 * @param groupNote
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/strategy/newgroupid")
+	public String createNewGroupId(Integer groupType, String groupName,
+			String groupNote) throws JsonGenerationException,
+			JsonMappingException, IOException {
+		Long gid = this.getNewGroupId(groupType, groupName, groupNote);
+		Map<String, Long> m = CollectionUtils.newHashMap(1);
+		m.put("groupId", gid);
+		return jacksonMapper.writeValueAsString(m);
+	}
+
+	/**
 	 * 通过分组ID获取调度ID
 	 * 
 	 * @param gid
@@ -340,12 +363,13 @@ public class StrategyDispatchController {
 	 * @param note
 	 * @return
 	 */
-	private Long getNewGroupId(Integer groupType, String groupName, String note) {
+	private Long getNewGroupId(Integer groupType, String groupName,
+			String groupNote) {
 		// 否则先保存分组获取分组ID
 		StrategyGroup sg = new StrategyGroup();
 		sg.setGroupType(groupType);
 		sg.setGroupName(groupName);
-		sg.setDescription(note);
+		sg.setDescription(groupNote);
 		sg.setCreateTime(new Date());
 		return groupService.saveGroupInfo(sg);
 	}

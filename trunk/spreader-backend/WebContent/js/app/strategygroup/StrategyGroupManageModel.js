@@ -612,6 +612,24 @@ Ext.onReady(function() {
 					return;
 				}
 			});
+			// 选择策略的COMB
+	var stgSelectCombo2 = new Ext.form.ComboBox({
+				hiddenName : 'name',
+				id : 'stgSelectCombo2',
+				fieldLabel : '策略',
+				emptyText : '请选择策略...',
+				triggerAction : 'all',
+				store : stgCmbStore,
+				displayField : 'displayName',
+				valueField : 'name',
+				loadingText : '正在加载数据...',
+				mode : 'remote', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取
+				forceSelection : true,
+				typeAhead : true,
+				resizable : true,
+				editable : false,
+				anchor : '100%'
+			});
 	// 嵌入的FORM
 	var addGroupForm = new Ext.form.FormPanel({
 				id : 'addGroupForm',
@@ -633,6 +651,59 @@ Ext.onReady(function() {
 							height : 50, // 设置多行文本框的高度
 							emptyText : '默认初始值', // 设置默认初始值
 							anchor : '100%'
+						}]
+			});
+	// 嵌入的FORM
+	var stgCmbForm = new Ext.form.FormPanel({
+				id : 'stgCmbForm',
+				name : 'stgCmbForm',
+				labelWidth : 50, // 标签宽度
+				frame : true, // 是否渲染表单面板背景色
+				defaultType : 'textfield', // 表单元素默认类型
+				labelAlign : 'right', // 标签对齐方式
+				bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
+				items : [stgSelectCombo2]
+			});
+	// 弹出窗口
+	var stgCmbWindow = new Ext.Window({
+				title : '<span class="commoncss">策略选择</span>', // 窗口标题
+				id : 'stgCmbWindow',
+				closeAction : 'hide',
+				layout : 'fit', // 设置窗口布局模式
+				width : 300, // 窗口宽度
+				height : 150, // 窗口高度
+				// closable : true, // 是否可关闭
+				collapsible : true, // 是否可收缩
+				maximizable : true, // 设置是否可以最大化
+				border : false, // 边框线设置
+				constrain : true, // 设置窗口是否可以溢出父容器
+				pageY : 20, // 页面定位Y坐标
+				pageX : document.documentElement.clientWidth / 2 - 300 / 2, // 页面定位X坐标
+				items : [stgCmbForm], // 嵌入的表单面板
+				buttons : [{ // 窗口底部按钮配置
+					text : '确定', // 按钮文本
+					iconCls : 'tbar_synchronizeIcon', // 按钮图标
+					handler : function() { // 按钮响应函数
+						GDISPID = null;
+						cleanCreateTrigger();
+						GOBJID = stgSelectCombo2.getValue();
+						GDISNAME = stgSelectCombo2.lastSelectionText;
+						editstgWindow.title = GDISNAME;
+						editstgWindow.show();
+						stgCmbWindow.hide();
+					}
+				}, {	// 窗口底部按钮配置
+							text : '重置', // 按钮文本
+							iconCls : 'tbar_synchronizeIcon', // 按钮图标
+							handler : function() { // 按钮响应函数
+								stgCmbForm.form.reset();
+							}
+						}, {
+							text : '关闭',
+							iconCls : 'deleteIcon',
+							handler : function() {
+								stgCmbWindow.hide();
+							}
 						}]
 			});
 	/**
@@ -708,7 +779,7 @@ Ext.onReady(function() {
 	// 定义表格数据源
 	var store = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
-							url : '../dispsys/stgdispgridstore'
+							url : '../strategy/stgdispgridstore'
 						}),
 				reader : new Ext.data.JsonReader({
 							totalProperty : 'cnt',
@@ -730,7 +801,6 @@ Ext.onReady(function() {
 						limit : 25
 					}
 				}
-
 			});
 	// 定义Checkbox
 	var sm = new Ext.grid.CheckboxSelectionModel();
@@ -893,6 +963,11 @@ Ext.onReady(function() {
 							}
 						}]
 			});
+	// 弹出前事件
+	compGroupWindow.on('show', function() {
+				stgdispgridform.form.reset();
+
+			});
 	// 弹出窗口
 	var groupAddWindow = new Ext.Window({
 				title : '<span class="commoncss">创建分组</span>', // 窗口标题
@@ -936,7 +1011,8 @@ Ext.onReady(function() {
 							GGROUPNOTE = gnote;
 							GGROUPTYPE = gType;
 							editstgWindow.title = gname;
-							// TODO
+							// 设置新建的分组ID
+							getCompGroupId(GGROUPTYPE, GGROUPNAME, GGROUPNOTE);
 							compGroupWindow.show();
 						}
 						GGROUPTYPE = gType;
@@ -1035,6 +1111,7 @@ Ext.onReady(function() {
 		tparam['groupType'] = GGROUPTYPE;
 		tparam['_time'] = new Date().getTime();
 		tparam['id'] = GDISPID;
+		tparam['groupId'] = GGROUPID;
 		if (treearray.length > 0) {
 			var arrayobj = treearray[0].attributes;
 			var submitStr = treejson2str(arrayobj);
@@ -1072,6 +1149,7 @@ Ext.onReady(function() {
 						if (result.success) {
 							Ext.Msg.alert("提示", "保存成功");
 							editstgWindow.hide();
+							store.reload();
 							groupStore.reload();
 						} else {
 							Ext.Msg.alert("提示", result.message);
@@ -1277,8 +1355,23 @@ Ext.onReady(function() {
 	/**
 	 * 获取分组ID
 	 */
-	function getCompGroupId(gname, gnote, gType) {
-		
+	function getCompGroupId(groupType, groupName, groupNote) {
+		var params = {};
+		params['groupType'] = groupType;
+		params['groupName'] = groupName;
+		params['groupNote'] = groupNote;
+		Ext.Ajax.request({
+					url : '../strategy/newgroupid',
+					success : function(response, opts) {
+						var result = Ext.util.JSON
+								.decode(response.responseText);
+						GGROUPID = result.groupId;
+					},
+					failure : function(response, opts) {
+						Ext.MessageBox.alert('提示', '保存分组失败，无法进入编辑页面');
+					},
+					params : params
+				});
 	}
 
 	var viewport = new Ext.Viewport({
