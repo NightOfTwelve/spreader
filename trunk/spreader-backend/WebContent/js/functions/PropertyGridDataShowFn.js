@@ -121,7 +121,7 @@ function createPptGridStoreDef(def) {
  *            data
  */
 function createPptGridStoreData(data, def) {
-	if (!Ext.isEmpty(data) && !Ext.isEmpty(def)) {
+	if (data != null && def != null) {
 		for (var i = 0; i < def.length; i++) {
 			var defObj = def[i];
 			var defname = defObj.propertyName;
@@ -151,7 +151,7 @@ function createPptGridStoreData(data, def) {
  */
 function createPptGridCustEdit(data, def) {
 	var custEdit = {};
-	if (!Ext.isEmpty(data) && !Ext.isEmpty(def)) {
+	if (data != null && def != null) {
 		for (var i = 0; i < def.length; i++) {
 			var defObj = def[i];
 			var defname = defObj.propertyName;
@@ -178,7 +178,7 @@ function createPptGridCustEdit(data, def) {
  */
 function createCustRenderers(data, def) {
 	var customRenderers = {};
-	if (!Ext.isEmpty(data) && !Ext.isEmpty(def)) {
+	if (data != null && def != null) {
 		for (var i = 0; i < def.length; i++) {
 			var defObj = def[i];
 			var defname = defObj.propertyName;
