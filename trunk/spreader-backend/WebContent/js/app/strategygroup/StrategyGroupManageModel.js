@@ -936,6 +936,7 @@ Ext.onReady(function() {
 							GGROUPNOTE = gnote;
 							GGROUPTYPE = gType;
 							editstgWindow.title = gname;
+							// TODO
 							compGroupWindow.show();
 						}
 						GGROUPTYPE = gType;
@@ -1071,13 +1072,13 @@ Ext.onReady(function() {
 						if (result.success) {
 							Ext.Msg.alert("提示", "保存成功");
 							editstgWindow.hide();
-							store.reload();
+							groupStore.reload();
 						} else {
-							Ext.Msg.alert("提示", "保存失败");
+							Ext.Msg.alert("提示", result.message);
 						}
 					},
 					failure : function() {
-						Ext.Msg.alert("提示", "保存失败");
+						Ext.Msg.alert("提示", result.message);
 					}
 				});
 	}
@@ -1119,7 +1120,6 @@ Ext.onReady(function() {
 						tsimpleDispForm.findField("repeatInternal")
 								.setValue(repeatInternal);
 						ttriggerDispForm.findField("cron").setValue(cron);
-						// TODO
 						var remindcmp = Ext.getCmp("jobremind");
 						var tstr = '任务:' + rendDispName(GDISNAME) + ',编号:'
 								+ GDISPID + ',目前运行信息:' + remind;
@@ -1273,6 +1273,12 @@ Ext.onReady(function() {
 		} else {
 			return '复杂调度';
 		}
+	}
+	/**
+	 * 获取分组ID
+	 */
+	function getCompGroupId(gname, gnote, gType) {
+		
 	}
 
 	var viewport = new Ext.Viewport({

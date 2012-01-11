@@ -45,8 +45,9 @@ public class StrategyDispatchController {
 	private IStrategyGroupService groupService;
 	// 简单分组
 	private static final Integer SIMPLE_GROUP_TYPE = 1;
+
 	// 复杂分组
-	private static final Integer COMPLEX_GROUP_TYPE = 2;
+	// private static final Integer COMPLEX_GROUP_TYPE = 2;
 
 	/**
 	 * 策略调度列表的显示页
@@ -201,49 +202,62 @@ public class StrategyDispatchController {
 			String groupNote, Long groupId, Integer groupType, Date start,
 			Integer repeatTimes, Integer repeatInternal, String cron, Long id)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		// 如果groupId不为空，首先同步策略表
-		if (groupId != null && groupId > 0) {
-			groupService.syncRegularJob(groupId, id);
-		} else {
-			// 否则先保存分组获取分组ID
-			StrategyGroup sg = new StrategyGroup();
-			sg.setGroupType(groupType);
-			sg.setGroupName(groupType.equals(SIMPLE_GROUP_TYPE) ? name
-					: groupName);
-			sg.setDescription(groupNote);
-			sg.setCreateTime(new Date());
-			groupId = groupService.saveGroupInfo(sg);
-		}
-		// 如果是编辑则先删除
-		if (id != null && id > 0) {
-			cfgService.unSchedule(id);
-		}
-		Map<String, Boolean> message = new HashMap<String, Boolean>();
+		Map<String, Object> message = new HashMap<String, Object>();
 		message.put("success", false);
-		Class<?> dataClass = regularConfigService.getConfigableInfo(name)
-				.getDataClass();
-		Object configObj = null;
-		if (StringUtils.isNotEmptyNoOffset(config)) {
-			configObj = jacksonMapper.readValue(config, dataClass);
-		}
-		if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
-			try {
-				cfgService.scheduleSimpleTrigger(name, configObj, description,
-						groupId, start, repeatTimes, repeatInternal);
-				message.put("success", true);
-			} catch (Exception e) {
-				LOGGER.error("保存SimpleTrigger失败", e);
+		if (groupType != null && groupType > 0) {
+			// 处理简单分组
+			if (groupType == 1) {
+				if (groupId != null && groupId > 0) {
+					// 如果分组ID不为null,首先检查并同步策略表
+					groupService.syncRegularJob(groupId, id);
+				} else {
+					// 否则先保存分组获取分组ID
+					groupId = getNewGroupId(groupType, name, description);
+				}
+			} else {
+				// 处理复杂分组,只检查传入的groupId
+				if (groupId == null || groupId <= 0) {
+					LOGGER.warn("复杂分组传入的groupId为空或小于等于0，不能保存策略");
+					message.put("message", "复杂分组传入的groupId为空或小于等于0，不能保存策略");
+				}
 			}
-		} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
-			try {
-				cfgService.scheduleCronTrigger(name, configObj, description,
-						groupId, cron);
-				message.put("success", true);
-			} catch (Exception e) {
-				LOGGER.error("保存CronTrigger失败", e);
+			// 如果是编辑则先删除
+			if (id != null && id > 0) {
+				cfgService.unSchedule(id);
+			}
+
+			Class<?> dataClass = regularConfigService.getConfigableInfo(name)
+					.getDataClass();
+			Object configObj = null;
+			if (StringUtils.isNotEmptyNoOffset(config)) {
+				configObj = jacksonMapper.readValue(config, dataClass);
+			}
+			if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
+				try {
+					cfgService.scheduleSimpleTrigger(name, configObj,
+							description, groupId, start, repeatTimes,
+							repeatInternal);
+					message.put("success", true);
+				} catch (Exception e) {
+					LOGGER.error("保存SimpleTrigger失败", e);
+					message.put("message", "保存SimpleTrigger失败");
+				}
+			} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
+				try {
+					cfgService.scheduleCronTrigger(name, configObj,
+							description, groupId, cron);
+					message.put("success", true);
+				} catch (Exception e) {
+					LOGGER.error("保存CronTrigger失败", e);
+					message.put("message", "保存CronTrigger失败");
+				}
+			} else {
+				LOGGER.warn("调度类型获取错误,保存失败");
+				message.put("message", "调度类型获取错误,保存失败");
 			}
 		} else {
-			LOGGER.info("调度类型获取错误保存失败");
+			LOGGER.warn("分组类型为空，不能保存策略配置");
+			message.put("message", "分组类型为空，不能保存策略配置");
 		}
 		return jacksonMapper.writeValueAsString(message);
 	}
@@ -302,7 +316,7 @@ public class StrategyDispatchController {
 	}
 
 	/**
-	 * 通过
+	 * 通过分组ID获取调度ID
 	 * 
 	 * @param gid
 	 * @return
@@ -316,6 +330,24 @@ public class StrategyDispatchController {
 			}
 		}
 		return id;
+	}
+
+	/**
+	 * 获取新保存的分组ID
+	 * 
+	 * @param groupType
+	 * @param groupName
+	 * @param note
+	 * @return
+	 */
+	private Long getNewGroupId(Integer groupType, String groupName, String note) {
+		// 否则先保存分组获取分组ID
+		StrategyGroup sg = new StrategyGroup();
+		sg.setGroupType(groupType);
+		sg.setGroupName(groupName);
+		sg.setDescription(note);
+		sg.setCreateTime(new Date());
+		return groupService.saveGroupInfo(sg);
 	}
 
 	/**
