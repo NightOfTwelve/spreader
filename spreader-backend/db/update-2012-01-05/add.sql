@@ -1,4 +1,4 @@
-create table tb_strategy_group
+create table spreader.tb_strategy_group
 (
    id                   bigint not null auto_increment,
    group_name           varchar(100),
@@ -8,4 +8,4 @@ create table tb_strategy_group
    primary key (id)
 );
 
-alter table tb_strategy_group comment '策略分组表';
+alter table spreader.tb_strategy_group comment '策略分组表';
