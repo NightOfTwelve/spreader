@@ -803,14 +803,13 @@ Ext.onReady(function() {
 								}, {
 									name : 'gname'
 								}])
-//								,
-//				autoLoad : {
-//					params : {
-//						start : 0,
-//						limit : 20,
-//						groupId : GGROUPID
-//					}
-//				}
+								,
+				autoLoad : {
+					params : {
+						start : 0,
+						limit : 20
+					}
+				}
 			});
 	// 定义Checkbox
 	var sm = new Ext.grid.CheckboxSelectionModel();

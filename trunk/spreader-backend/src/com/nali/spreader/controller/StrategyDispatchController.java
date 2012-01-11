@@ -70,9 +70,9 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/stgdispgridstore")
-	public String stgGridStore(String dispname, Integer triggerType, int start,
-			Long groupId, int limit) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String stgGridStore(String dispname, Integer triggerType,
+			Long groupId, Integer start, Integer limit)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		if (limit <= 0) {
 			limit = 20;
 		}
