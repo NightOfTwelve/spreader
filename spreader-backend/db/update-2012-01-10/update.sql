@@ -20,5 +20,5 @@ COLLATE = utf8_bin;
 alter table spreader.tb_strategy_group comment '策略分组表';
 
 
-alter table spreader.tb_robot_register set update_time = date_add(now(), INTERVAL -1 DAY);
+update spreader.tb_robot_register set update_time = date_add(now(), INTERVAL -1 DAY);
 
