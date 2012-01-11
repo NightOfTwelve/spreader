@@ -1,5 +1,7 @@
 package com.nali.spreader.service.impl;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,7 @@ public class RobotRegisterService implements IRobotRegisterService {
 
 	@Override
 	public void save(RobotRegister robotRegister) {
+		robotRegister.setUpdateTime(new Date());
 		Long id = robotRegisterDao.saveRobotRegister(robotRegister);
 		robotRegister.setId(id);
 	}
