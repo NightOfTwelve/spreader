@@ -17,7 +17,7 @@ function getTypeDefaultEdit(stype) {
 		} else if (stype == 'Float') {
 			defValue = new Ext.grid.GridEditor(new Ext.form.NumberField());
 		} else if (stype == 'Date') {
-			defValue = new Ext.grid.GridEditor(new Ext.form.DateField());
+			defValue = new Ext.grid.GridEditor(new Ext.ux.form.DateTimeField());
 		}
 	}
 	return defValue;

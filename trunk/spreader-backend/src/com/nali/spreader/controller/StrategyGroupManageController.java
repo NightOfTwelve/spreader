@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -34,6 +35,8 @@ public class StrategyGroupManageController {
 	private IStrategyGroupService groupService;
 	@Autowired
 	private IConfigService<Long> regularConfigService;
+	// 简单分组
+	private static final Integer SIMPLE_GROUP_TYPE = 1;
 
 	/**
 	 * 初始化页面
@@ -67,14 +70,47 @@ public class StrategyGroupManageController {
 		sg.setGroupType(groupType);
 		PageResult<StrategyGroup> pr = groupService
 				.findStrategyGroupPageResult(sg, start, limit);
-		List<StrategyGroup> sgList = pr.getList();
 		int totalCount = pr.getTotalCount();
 		List<ConfigableInfo> dispnamelist = regularConfigService
 				.listConfigableInfo(ConfigableType.normal);
+		List<StrategyGroup> sgList = transformGroupStore(pr.getList(),
+				dispnamelist);
 		Map<String, Object> dataMap = CollectionUtils.newHashMap(3);
 		dataMap.put("totalCount", totalCount);
 		dataMap.put("list", sgList);
-		dataMap.put("dispname", dispnamelist);
+		// dataMap.put("dispname", dispnamelist);
 		return json.writeValueAsString(dataMap);
+	}
+
+	/**
+	 * 转换分组显示列表
+	 * 
+	 * @param groupList
+	 * @param dispnamelist
+	 * @return
+	 */
+	private List<StrategyGroup> transformGroupStore(
+			List<StrategyGroup> groupList, List<ConfigableInfo> dispnamelist) {
+		if (groupList.size() > 0 && dispnamelist.size() > 0) {
+			for (StrategyGroup sg : groupList) {
+				Integer gType = sg.getGroupType();
+				if (SIMPLE_GROUP_TYPE.equals(gType)) {
+					String gName = sg.getGroupName();
+					if (StringUtils.isNotEmpty(gName)) {
+						for (ConfigableInfo cfg : dispnamelist) {
+							String cfgname = cfg.getName();
+							if (StringUtils.isNotEmpty(cfgname)) {
+								if (cfgname.equals(gName)) {
+									sg.setTransformName(cfg.getDisplayName());
+								}
+							}
+						}
+					}
+				} else {
+					sg.setTransformName(sg.getGroupName());
+				}
+			}
+		}
+		return groupList;
 	}
 }

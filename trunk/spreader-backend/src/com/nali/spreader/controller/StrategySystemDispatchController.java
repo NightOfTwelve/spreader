@@ -69,7 +69,7 @@ public class StrategySystemDispatchController {
 		}
 		start = start / limit + 1;
 		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname,
-				triggerType, ConfigableType.system, start, limit);
+				triggerType, null,ConfigableType.system, start, limit);
 		List<RegularJob> list = pr.getList();
 		List<ConfigableInfo> dispnamelist = regularConfigService
 				.listConfigableInfo(ConfigableType.system);
@@ -200,16 +200,16 @@ public class StrategySystemDispatchController {
 		}
 		if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
 			try {
-				cfgService.scheduleSimpleTrigger(name, configObj, description,null,
-						start, repeatTimes, repeatInternal);
+				cfgService.scheduleSimpleTrigger(name, configObj, description,
+						null, null, start, repeatTimes, repeatInternal);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存SimpleTrigger失败", e);
 			}
 		} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
 			try {
-				cfgService.scheduleCronTrigger(name, configObj, description,null,
-						cron);
+				cfgService.scheduleCronTrigger(name, configObj, description,
+						null, null, cron);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存CronTrigger失败", e);

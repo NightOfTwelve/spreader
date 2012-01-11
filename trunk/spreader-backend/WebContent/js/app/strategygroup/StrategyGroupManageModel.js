@@ -384,6 +384,8 @@ Ext.onReady(function() {
 								}, {
 									name : 'groupName'
 								}, {
+									name : 'transformName'
+								}, {
 									name : 'groupType'
 								}, {
 									name : 'createTime'
@@ -410,15 +412,15 @@ Ext.onReady(function() {
 				width : 80
 			}, {
 				header : '分组名称',
-				dataIndex : 'groupName',
-				renderer : rendDispName,
+				dataIndex : 'transformName',
+				// renderer : rendDispName,
 				width : 100
 			}, {
 				header : '分组类型',
 				dataIndex : 'groupType',
-				width : 100
-				// renderer : rendTrigger
-		}	, {
+				width : 100,
+				renderer : renderGroupType
+			}, {
 				header : '分组描述',
 				dataIndex : 'description',
 				renderer : renderBrief,
@@ -524,11 +526,13 @@ Ext.onReady(function() {
 							GISGROUP = true;
 							var gid = data.id;
 							settingCreateTrigger(gid, GISGROUP);
-							editstgWindow.title = rendDispName(GDISNAME);
+							editstgWindow.title = data.transformName;
 							editstgWindow.show();
 						} else {
-
-							GGROUPID;
+							// 复杂分组
+							GGROUPID = data.id;
+							store.setBaseParam('groupId',data.id);
+							store.reload();
 							compGroupWindow.show();
 						}
 					}
@@ -612,7 +616,7 @@ Ext.onReady(function() {
 					return;
 				}
 			});
-			// 选择策略的COMB
+	// 选择策略的COMB
 	var stgSelectCombo2 = new Ext.form.ComboBox({
 				hiddenName : 'name',
 				id : 'stgSelectCombo2',
@@ -794,13 +798,19 @@ Ext.onReady(function() {
 									name : 'triggerInfo'
 								}, {
 									name : 'description'
-								}]),
-				autoLoad : {
-					params : {
-						start : 0,
-						limit : 25
-					}
-				}
+								}, {
+									name : 'gid'
+								}, {
+									name : 'gname'
+								}])
+//								,
+//				autoLoad : {
+//					params : {
+//						start : 0,
+//						limit : 20,
+//						groupId : GGROUPID
+//					}
+//				}
 			});
 	// 定义Checkbox
 	var sm = new Ext.grid.CheckboxSelectionModel();
@@ -822,6 +832,15 @@ Ext.onReady(function() {
 			}, {
 				header : '调度备注',
 				dataIndex : 'triggerInfo',
+				renderer : renderBrief,
+				width : 100
+			}, {
+				header : '分组编号',
+				dataIndex : 'gid',
+				width : 100
+			}, {
+				header : '所属分组',
+				dataIndex : 'gname',
 				renderer : renderBrief,
 				width : 100
 			}, {
