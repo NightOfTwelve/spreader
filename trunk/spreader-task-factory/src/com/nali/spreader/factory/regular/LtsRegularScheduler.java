@@ -86,12 +86,12 @@ public class LtsRegularScheduler extends AbstractTask implements
 
 	@Override
 	public Long scheduleCronTrigger(String name, Object config, String desc,
-			Long gid, String groupName, String cron) {
+			Long gid, String groupName, String cron, Integer jobType) {
 		JobDto triggerInfo = new JobDto();
 		triggerInfo.setCron(cron);
 
 		Long id = registerRegularJob(name, desc, gid, groupName, config,
-				RegularJob.TRIGGER_TYPE_CRON, triggerInfo);
+				RegularJob.TRIGGER_TYPE_CRON, triggerInfo, jobType);
 		TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(cron);
 		ltsSchedule(name, id, scheInfo);
 		return id;
@@ -100,14 +100,14 @@ public class LtsRegularScheduler extends AbstractTask implements
 	@Override
 	public Long scheduleSimpleTrigger(String name, Object config, String desc,
 			Long gid, String groupName, Date start, int repeatTimes,
-			int repeatInternal) {
+			int repeatInternal, Integer jobType) {
 		JobDto triggerInfo = new JobDto();
 		triggerInfo.setStart(start);
 		triggerInfo.setRepeatInternal(repeatInternal);
 		triggerInfo.setRepeatTimes(repeatTimes);
 
 		Long id = registerRegularJob(name, desc, gid, groupName, config,
-				RegularJob.TRIGGER_TYPE_SIMPLE, triggerInfo);
+				RegularJob.TRIGGER_TYPE_SIMPLE, triggerInfo, jobType);
 		TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(start, null,
 				repeatTimes, repeatInternal);
 		ltsSchedule(name, id, scheInfo);
@@ -116,9 +116,10 @@ public class LtsRegularScheduler extends AbstractTask implements
 
 	// modified xiefei 2012.01.09 增加组ID
 	// modified xiefei 2012.01.11 增加组名称
+	// modified xiefei 2012.01.12 增加jobType
 	private Long registerRegularJob(String name, String desc, Long gid,
 			String groupName, Object config, Integer triggerType,
-			JobDto triggerInfo) {
+			JobDto triggerInfo, Integer jobType) {
 		RegularJob regularJob = new RegularJob();
 		regularJob.setName(name);
 		regularJob.setDescription(desc);
@@ -128,7 +129,7 @@ public class LtsRegularScheduler extends AbstractTask implements
 		regularJob.setTriggerInfo(jobDto2String(triggerInfo));
 		regularJob.setGid(gid);
 		regularJob.setGname(groupName);
-		// TODO setjobtype xiefei
+		regularJob.setJobType(jobType);
 		return regularJobDao.insert(regularJob);
 	}
 

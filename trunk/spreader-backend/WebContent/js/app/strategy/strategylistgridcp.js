@@ -63,30 +63,6 @@ var stglistgrid = new Ext.grid.GridPanel({
 			// autoExpandColumn : 'remark',
 			cm : cm,
 			tbar : [{
-						text : '新增',
-						iconCls : 'page_addIcon',
-						handler : function() {
-							addInit();
-						}
-					}, '-', {
-						text : '修改',
-						iconCls : 'page_edit_1Icon',
-						handler : function() {
-							editInit();
-						}
-					}, '-', {
-						text : '删除',
-						iconCls : 'page_delIcon',
-						handler : function() {
-							deleteDeptItems('1', '');
-						}
-					}, {
-						text : '查询',
-						iconCls : 'previewIcon',
-						handler : function() {
-							queryDeptItem();
-						}
-					}, '-', {
 						text : '刷新',
 						iconCls : 'arrow_refreshIcon',
 						handler : function() {

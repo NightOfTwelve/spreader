@@ -40,6 +40,8 @@ public class StrategySystemDispatchController {
 	private RegularScheduler cfgService;
 	@Autowired
 	private IConfigService<Long> regularConfigService;
+	// 系统JOB
+	private final Integer SYSTEM_JOB_TYPE = 2;
 
 	/**
 	 * 策略调度列表的显示页
@@ -69,7 +71,7 @@ public class StrategySystemDispatchController {
 		}
 		start = start / limit + 1;
 		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname,
-				triggerType, null,ConfigableType.system, start, limit);
+				triggerType, null, ConfigableType.system, start, limit);
 		List<RegularJob> list = pr.getList();
 		List<ConfigableInfo> dispnamelist = regularConfigService
 				.listConfigableInfo(ConfigableType.system);
@@ -201,7 +203,8 @@ public class StrategySystemDispatchController {
 		if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
 			try {
 				cfgService.scheduleSimpleTrigger(name, configObj, description,
-						null, null, start, repeatTimes, repeatInternal);
+						null, null, start, repeatTimes, repeatInternal,
+						SYSTEM_JOB_TYPE);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存SimpleTrigger失败", e);
@@ -209,7 +212,7 @@ public class StrategySystemDispatchController {
 		} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
 			try {
 				cfgService.scheduleCronTrigger(name, configObj, description,
-						null, null, cron);
+						null, null, cron, SYSTEM_JOB_TYPE);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存CronTrigger失败", e);
