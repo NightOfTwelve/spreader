@@ -332,44 +332,71 @@ Ext.onReady(function() {
 				items : [{ // 行1
 					layout : "column", // 从左往右的布局
 					items : [{
-								columnWidth : .3, // 该列有整行中所占百分比
-								layout : "form", // 从上往下的布局
-								items : [{
-											fieldLabel : '分组类型',
-											// name:'TIMEFER',
-											xtype : 'combo',
-											width : 100,
-											store : groupTypeStore,
-											id : 'groupType',
-											hiddenName : 'groupType',
-											valueField : 'ID',
-											editable : false,
-											displayField : 'NAME',
-											mode : 'local',
-											forceSelection : false,// 必须选择一项
-											emptyText : '分组类型...',// 默认值
-											triggerAction : 'all'
-										}]
-							}, {
-								columnWidth : .3,
-								layout : "form",
-								items : [{
-											xtype : "textfield",
-											fieldLabel : "分组名称",
-											name : 'groupName',
-											width : 100
-										}]
-							}]
+						columnWidth : .3, // 该列有整行中所占百分比
+						layout : "form", // 从上往下的布局
+						items : [{
+							fieldLabel : '分组类型',
+							name : 'groupTypeCmp',
+							xtype : 'combo',
+							width : 100,
+							store : groupTypeStore,
+							id : 'groupType',
+							hiddenName : 'groupType',
+							valueField : 'ID',
+							editable : false,
+							displayField : 'NAME',
+							mode : 'local',
+							forceSelection : false,// 必须选择一项
+							emptyText : '分组类型...',// 默认值
+							triggerAction : 'all',
+							listeners : {
+								select : function() {
+									var tform = groupForm.getForm();
+									var groupType = tform
+											.findField('groupType').getValue();
+									groupStore.setBaseParam('groupType',
+											groupType);
+									var num = groupNumtext.getValue();
+									groupStore.setBaseParam('limit', Ext
+													.isEmpty(num)
+													? groupNumber
+													: Number(num));
+									groupStore.load();
+								}
+							}
+						}]
+					}, {
+						columnWidth : .3,
+						layout : "form",
+						items : [{
+									xtype : "textfield",
+									fieldLabel : "分组名称",
+									name : 'groupName',
+									width : 100
+								}]
+					}]
 				}],
 				buttonAlign : "center",
 				buttons : [{
-							text : "查询"
-						}, {
-							text : "重置",
-							handler : function() { // 按钮响应函数
-								groupForm.form.reset();
-							}
-						}]
+					text : "查询",
+					handler : function() {
+						var tform = groupForm.getForm();
+						var groupType = tform.findField('groupType').getValue();
+						var groupName = tform.findField('groupName').getValue();
+						var num = groupNumtext.getValue();
+						groupStore.setBaseParam('groupType', groupType);
+						groupStore.setBaseParam('groupName', groupName);
+						groupStore.setBaseParam('limit', Ext.isEmpty(num)
+										? groupNumber
+										: Number(num));
+						groupStore.load();
+					}
+				}, {
+					text : "重置",
+					handler : function() { // 按钮响应函数
+						groupForm.form.reset();
+					}
+				}]
 			});
 	// 策略分组的数据源
 	var groupStore = new Ext.data.Store({
@@ -518,12 +545,15 @@ Ext.onReady(function() {
 						GOBJID = null;
 						GDISPID = null;
 						GISGROUP = null;
+						GGROUPID = null;
 						// 简单分组 TODO
 						if (gType == 1) {
 							GDISNAME = data.groupName;
 							GOBJID = data.groupName;
 							GDISPID = data.id;
+							GGROUPID = data.id;
 							GISGROUP = true;
+							GGROUPTYPE = gType;
 							var gid = data.id;
 							settingCreateTrigger(gid, GISGROUP);
 							editstgWindow.title = data.transformName;
@@ -531,8 +561,14 @@ Ext.onReady(function() {
 						} else {
 							// 复杂分组
 							GGROUPID = data.id;
-							store.setBaseParam('groupId',data.id);
+							GGROUPNAME = data.groupName;
+							var wtitle = '当前分组:' + data.groupName + ',编号:'
+									+ data.id;
+							store.setBaseParam('groupId', data.id);
 							store.reload();
+							// TODO
+							compGroupWindow.title = '<font color = "red">'
+									+ wtitle + '</font>'
 							compGroupWindow.show();
 						}
 					}
@@ -802,8 +838,7 @@ Ext.onReady(function() {
 									name : 'gid'
 								}, {
 									name : 'gname'
-								}])
-								,
+								}]),
 				autoLoad : {
 					params : {
 						start : 0,
@@ -940,6 +975,7 @@ Ext.onReady(function() {
 						GDISNAME = data.name;
 						GOBJID = data.name;
 						GDISPID = data.id;
+						GGROUPTYPE = 21;
 						var trgid = data.id;
 						settingCreateTrigger(trgid);
 						editstgWindow.title = rendDispName(GDISNAME);

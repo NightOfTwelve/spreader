@@ -44,11 +44,14 @@ public class StrategyDispatchController {
 	private IConfigService<Long> regularConfigService;
 	@Autowired
 	private IStrategyGroupService groupService;
+	// 普通JOBTYPE
+	private final Integer NORMAL_JOB_TYPE = 1;
 	// 简单分组
-	private static final Integer SIMPLE_GROUP_TYPE = 1;
-
+	private final Integer SIMPLE_GROUP_TYPE = 1;
 	// 复杂分组
-	// private static final Integer COMPLEX_GROUP_TYPE = 2;
+	private final Integer COMPLEX_GROUP_TYPE = 2;
+	// 复杂分组下的调度配置
+	private final Integer COMPLEX_GROUP_DISP_TYPE = 21;
 
 	/**
 	 * 策略调度列表的显示页
@@ -206,13 +209,24 @@ public class StrategyDispatchController {
 		Map<String, Object> message = new HashMap<String, Object>();
 		message.put("success", false);
 		if (groupType != null && groupType > 0) {
+			// 分组名临时变量
 			String tmpGroupName = null;
 			// 处理简单分组
-			if (groupType == 1) {
+			if (groupType == SIMPLE_GROUP_TYPE
+					&& groupType != COMPLEX_GROUP_DISP_TYPE) {
 				tmpGroupName = name;
 				if (groupId != null && groupId > 0) {
-					// 如果分组ID不为null,首先检查并同步策略表
-					groupService.syncRegularJob(groupId, tmpGroupName, id);
+					Long regId = this.getRegularIdBYGid(groupId);
+					if (regId != null && regId > 0) {
+						// 如果分组ID不为null,首先检查并同步策略表
+						groupService.syncRegularJob(groupId, tmpGroupName,
+								regId);
+					} else {
+						LOGGER.warn("通过组ID:" + groupId + ",获取regularJob失败");
+						message.put("message", "通过组ID:" + groupId
+								+ ",获取regularJob失败");
+						return jacksonMapper.writeValueAsString(message);
+					}
 				} else {
 					// 否则先保存分组获取分组ID
 					groupId = getNewGroupId(groupType, tmpGroupName,
@@ -227,10 +241,24 @@ public class StrategyDispatchController {
 				}
 			}
 			// 如果是编辑则先删除
+			// 取消调度要考虑简单分组
 			if (id != null && id > 0) {
-				cfgService.unSchedule(id);
+				if (groupType == SIMPLE_GROUP_TYPE) {
+					Long regId = this.getRegularIdBYGid(id);
+					if (regId != null && regId > 0) {
+						cfgService.unSchedule(regId);
+					}
+				} else if (groupType == COMPLEX_GROUP_DISP_TYPE) {
+					cfgService.unSchedule(id);
+				}
 			}
-
+			// 执行次数默认为0
+			if (repeatTimes == null || repeatTimes <= 0) {
+				repeatTimes = 0;
+			}
+			if (repeatInternal == null) {
+				repeatInternal = 1;
+			}
 			Class<?> dataClass = regularConfigService.getConfigableInfo(name)
 					.getDataClass();
 			Object configObj = null;
@@ -241,7 +269,7 @@ public class StrategyDispatchController {
 				try {
 					cfgService.scheduleSimpleTrigger(name, configObj,
 							description, groupId, tmpGroupName, start,
-							repeatTimes, repeatInternal);
+							repeatTimes, repeatInternal, NORMAL_JOB_TYPE);
 					message.put("success", true);
 				} catch (Exception e) {
 					LOGGER.error("保存SimpleTrigger失败", e);
@@ -250,7 +278,8 @@ public class StrategyDispatchController {
 			} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
 				try {
 					cfgService.scheduleCronTrigger(name, configObj,
-							description, groupId, tmpGroupName, cron);
+							description, groupId, tmpGroupName, cron,
+							NORMAL_JOB_TYPE);
 					message.put("success", true);
 				} catch (Exception e) {
 					LOGGER.error("保存CronTrigger失败", e);

@@ -15,12 +15,14 @@ var menuTree_Stg = new Ext.tree.TreePanel({
 									text : "策略配置",
 									leaf : true,
 									url : '../strategy/showlist'
-								}, {
-									id : 'stgnode2',
-									text : "调度配置",
-									leaf : true,
-									url : '../strategy/dispatchlist'
-								}, {
+								}, 
+//									{
+//									id : 'stgnode2',
+//									text : "调度配置",
+//									leaf : true,
+//									url : '../strategy/dispatchlist'
+//								},
+								{
 									id : 'stgnode3',
 									text : "系统策略配置",
 									leaf : true,

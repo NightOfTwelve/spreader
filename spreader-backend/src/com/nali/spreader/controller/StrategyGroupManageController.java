@@ -65,6 +65,8 @@ public class StrategyGroupManageController {
 	public String groupGridStore(String groupName, Integer groupType,
 			Integer start, Integer limit) throws JsonGenerationException,
 			JsonMappingException, IOException {
+		if (start == null)
+			start = 0;
 		StrategyGroup sg = new StrategyGroup();
 		sg.setGroupName(groupName);
 		sg.setGroupType(groupType);
