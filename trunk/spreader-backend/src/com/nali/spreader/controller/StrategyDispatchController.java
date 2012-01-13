@@ -237,6 +237,7 @@ public class StrategyDispatchController {
 				if (groupId == null || groupId <= 0) {
 					LOGGER.warn("复杂分组传入的groupId为空或小于等于0，不能保存策略");
 					message.put("message", "复杂分组传入的groupId为空或小于等于0，不能保存策略");
+					return jacksonMapper.writeValueAsString(message);
 				}
 			}
 			// 如果是编辑则先删除

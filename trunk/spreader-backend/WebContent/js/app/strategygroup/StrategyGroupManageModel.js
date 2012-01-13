@@ -310,8 +310,7 @@ Ext.onReady(function() {
 	// 分组类型的数据源
 	var groupTypeStore = new Ext.data.ArrayStore({
 				fields : ['ID', 'NAME'],
-				data : [['-1', '----------------------'], ['1', '简单'],
-						['2', '复杂']]
+				data : [['-1', '--'], ['1', '简单'], ['2', '复杂']]
 			});
 	// 增加分组选择策略的数据源
 	var addGroupTypeStore = new Ext.data.ArrayStore({
@@ -564,11 +563,11 @@ Ext.onReady(function() {
 							GGROUPNAME = data.groupName;
 							var wtitle = '当前分组:' + data.groupName + ',编号:'
 									+ data.id;
-							store.setBaseParam('groupId', data.id);
-							store.reload();
 							// TODO
 							compGroupWindow.title = '<font color = "red">'
-									+ wtitle + '</font>'
+									+ wtitle + '</font>';
+							store.setBaseParam('groupId', data.id);
+							store.reload();
 							compGroupWindow.show();
 						}
 					}
@@ -1065,6 +1064,7 @@ Ext.onReady(function() {
 							GGROUPNOTE = gnote;
 							GGROUPTYPE = gType;
 							editstgWindow.title = gname;
+							compGroupWindow.title = gname;
 							// 设置新建的分组ID
 							getCompGroupId(GGROUPTYPE, GGROUPNAME, GGROUPNOTE);
 							compGroupWindow.show();
