@@ -212,8 +212,7 @@ public class StrategyDispatchController {
 			// 分组名临时变量
 			String tmpGroupName = null;
 			// 处理简单分组
-			if (groupType == SIMPLE_GROUP_TYPE
-					&& groupType != COMPLEX_GROUP_DISP_TYPE) {
+			if (groupType == SIMPLE_GROUP_TYPE) {
 				tmpGroupName = name;
 				if (groupId != null && groupId > 0) {
 					Long regId = this.getRegularIdBYGid(groupId);
