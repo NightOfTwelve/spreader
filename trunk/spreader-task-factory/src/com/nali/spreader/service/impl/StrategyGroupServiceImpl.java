@@ -44,7 +44,7 @@ public class StrategyGroupServiceImpl implements IStrategyGroupService {
 		String groupName = params.getGroupName();
 		Integer groupType = params.getGroupType();
 		if (groupName != null && !"".equals(groupName)) {
-			criteria.andGroupNameLike(groupName);
+			criteria.andGroupNameLike('%'+groupName+"%");
 		}
 		if (groupType != null && groupType > 0) {
 			criteria.andGroupTypeEqualTo(groupType);
