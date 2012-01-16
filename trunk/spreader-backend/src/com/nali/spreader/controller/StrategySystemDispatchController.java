@@ -41,7 +41,7 @@ public class StrategySystemDispatchController {
 	@Autowired
 	private IConfigService<Long> regularConfigService;
 	// 系统JOB
-	private final Integer SYSTEM_JOB_TYPE = 2;
+	private final Integer SYSTEM_JOB_TYPE = 0;
 
 	/**
 	 * 策略调度列表的显示页

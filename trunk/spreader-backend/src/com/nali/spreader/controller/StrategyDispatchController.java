@@ -76,10 +76,14 @@ public class StrategyDispatchController {
 	public String stgGridStore(String dispname, Integer triggerType,
 			Long groupId, Integer start, Integer limit)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		if (limit <= 0) {
+		if (limit == null) {
 			limit = 20;
 		}
-		start = start / limit + 1;
+		if (start == null) {
+			start = 0;
+		} else {
+			start = start / limit + 1;
+		}
 		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname,
 				triggerType, groupId, ConfigableType.normal, start, limit);
 		List<RegularJob> list = pr.getList();

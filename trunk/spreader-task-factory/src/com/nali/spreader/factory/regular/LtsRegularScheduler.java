@@ -76,7 +76,7 @@ public class LtsRegularScheduler extends AbstractTask implements
 		if (groupId != null) {
 			c.andGidEqualTo(groupId);
 		}
-		Limit limit = Limit.newInstanceForPage(page, pageSize);
+		Limit limit = Limit.newInstanceForLimit(page, pageSize);
 		example.setLimit(limit);
 		List<RegularJob> list = crudRegularJobDao
 				.selectByExampleWithoutBLOBs(example);

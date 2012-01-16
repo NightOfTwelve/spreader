@@ -4,7 +4,7 @@
 // 定义表格数据源
 var store = new Ext.data.Store({
 			proxy : new Ext.data.HttpProxy({
-						url : '../strategy/stgdispgridstore'
+						url : '../strategy/stgdispgridstore?start=0&limit=20'
 					}),
 			reader : new Ext.data.JsonReader({
 						totalProperty : 'cnt',
@@ -175,22 +175,64 @@ var stgCmbStore = new Ext.data.Store({
 								name : 'displayName'
 							}])
 		});
+		
+		
+		/////////////////////////
+		var store2 = new Ext.data.Store({
+			proxy : new Ext.data.HttpProxy({
+						url : '../utils/combo'
+					}),
+			reader : new Ext.data.JsonReader({
+						totalProperty : 'totalCount',
+						root : 'list'
+					}, [{
+								name : 'id'
+							}, {
+								name : 'groupName'
+							}])
+		});
+		//TODO
+		var resultTpl = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{id}({groupName})</span></div></tpl>');
+		var stgSelectCombo2 = new Ext.form.ComboBox({
+        store: store2,
+        typeAhead: true,
+        emptyText:'请输入代码',
+        loadingText: '加载中...',
+        width: 120,
+        listWidth:220,
+        minChars:2,
+        pageSize:10,
+        tpl: resultTpl,
+        title:'请选择',
+        hideTrigger:true,
+        //                renderTo: 'fundSelect',//如果放在其他容器中这一行可以去掉
+        itemSelector: 'div.x-combo-list-item',
+        mode: 'remote',
+        fieldLabel :'基金',
+        valueField: 'id',
+        displayField:'groupName',
+        hiddenName:'id'//对应form中的input里面的name属性
+    });
 // 选择策略的COMB
 var stgSelectCombo = new Ext.form.ComboBox({
-			hiddenName : 'name',
+			hiddenName : 'id',
 			id : 'stgSelectCombo',
 			fieldLabel : '策略',
 			emptyText : '请选择策略...',
 			triggerAction : 'all',
-			store : stgCmbStore,
-			displayField : 'displayName',
-			valueField : 'name',
+			store : store2,
+			displayField : 'groupName',
+			valueField : 'id',
 			loadingText : '正在加载数据...',
 			mode : 'remote', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取
 			forceSelection : true,
 			typeAhead : true,
 			resizable : true,
-			editable : false,
+			minChars:1,
+        pageSize:10,
+			itemSelector: 'div.x-combo-list-item',
+			tpl:resultTpl,
+			editable : true,
 			anchor : '100%'
 		});
 // 选择事件，用于联动 TODO
