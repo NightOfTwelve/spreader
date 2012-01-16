@@ -8,7 +8,7 @@ public class EnumUtils {
 	  if(!String.valueOf(value).equals(match)) {
 		  if(!name.equalsIgnoreCase(match)) {
 			  for(String description : descriptions) {
-				  if(description.equals(description)) {
+				  if(description.equals(match)) {
 					  break;
 				  }
 			  }
