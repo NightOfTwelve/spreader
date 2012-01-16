@@ -1,8 +1,8 @@
 package com.nali.spreader.util;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public abstract class DataIterator<E> implements Iterator<List<E>> {
 	private long count;
@@ -37,7 +37,7 @@ public abstract class DataIterator<E> implements Iterator<List<E>> {
 	@Override
 	public List<E> next() {
 		if (hasNext() == false) {
-			return Collections.emptyList();
+			throw new NoSuchElementException("No element in data iterator, please use hasNext first to check!");
 		}
 
 		long queryEndIndex = offset + batchSize - 1;
