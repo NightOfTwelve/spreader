@@ -1,6 +1,6 @@
 package com.nali.spreader.group.exception;
 
-public class AssembleException extends Throwable {
+public class AssembleException extends Exception {
 	
 	public AssembleException(String message) {
 		super(message);
