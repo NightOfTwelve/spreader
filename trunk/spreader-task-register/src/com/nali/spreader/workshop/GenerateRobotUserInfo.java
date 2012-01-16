@@ -202,6 +202,24 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 		Constellation constellation = getConstellation(robot.getBirthdayMonth(), robot.getBirthdayDay());
 		robot.setConstellation(constellation.ordinal());
 
+		setAreaAndId(robot);
+		//TODO
+		//pwd 6-16
+		//nickname 4-20
+		//realname=4-16
+		
+		robot.setPwd(makePwd(robot));
+
+		// robot.setCareer(career);
+		// robot.setSchool(school);
+		// robot.setIntroduction(introduction);
+
+		 robot.setNickName(robot.getFullName());//temp
+		// robot.setEmail(email);
+		return robot;
+	}
+
+	void setAreaAndId(RobotRegister robot) {//require gender
 		String province;
 		Area city;
 		if(Math.random()<directRate) {
@@ -218,7 +236,7 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 		Area county = city.getSubAreas()==null? city : AvgRandomer.randomItem(city.getSubAreas(), random);
 		robot.setCounty(county.getName());
 		String personId;
-		if (User.GENDER_MALE.equals(gender)) {
+		if (User.GENDER_MALE.equals(robot.getGender())) {
 			personId = IDGenerator.generate(county.getCode(), robot.getBirthdayYear(),
 					robot.getBirthdayMonth(), robot.getBirthdayDay(), true);
 		} else {
@@ -227,20 +245,6 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 		}
 		robot.setPersonId(personId);
 		robot.setStudentId(StudentIDGenerator.generate(robot));
-		//TODO
-		//pwd 6-16
-		//nickname 4-20
-		//realname=4-16
-		
-		robot.setPwd(makePwd(robot));
-
-		// robot.setCareer(career);
-		// robot.setSchool(school);
-		// robot.setIntroduction(introduction);
-
-		 robot.setNickName(robot.getFullName());//temp
-		// robot.setEmail(email);
-		return robot;
 	}
 
 	private String makePwd(RobotRegister robot) {//TODO 更合理的方式处理密码长度

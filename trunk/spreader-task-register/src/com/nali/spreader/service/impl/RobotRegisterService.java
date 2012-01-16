@@ -65,4 +65,12 @@ public class RobotRegisterService implements IRobotRegisterService {
 		return robotRegisterDao.getRegisteringAccount(websiteId, registerId);
 	}
 
+	@Override
+	public void updateSelective(RobotRegister robotRegister) {
+		if(robotRegister==null || robotRegister.getId()==null) {
+			throw new IllegalArgumentException("object or id cannot be null");
+		}
+		crudRobotRegisterDao.updateByPrimaryKeySelective(robotRegister);
+	}
+
 }

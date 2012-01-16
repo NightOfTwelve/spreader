@@ -10,6 +10,8 @@ public interface IRobotRegisterService {
 	 * 保存并设置id
 	 */
 	void save(RobotRegister robotRegister);
+	
+	void updateSelective(RobotRegister robotRegister);
 
 	void addRegisteringAccount(Integer websiteId, Long registerId, String nickname);
 
