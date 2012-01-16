@@ -540,12 +540,8 @@ Ext.onReady(function() {
 						var data = record.data;
 						// 获取分组类型分别做判断
 						var gType = data.groupType;
-						GDISNAME = null;
-						GOBJID = null;
-						GDISPID = null;
-						GISGROUP = null;
-						GGROUPID = null;
-						// 简单分组 TODO
+						cleanGlobalVar();
+						// 简单分组
 						if (gType == 1) {
 							GDISNAME = data.groupName;
 							GOBJID = data.groupName;
@@ -745,6 +741,9 @@ Ext.onReady(function() {
 							}
 						}]
 			});
+	stgCmbWindow.on('show', function() {
+//				stgCmbForm.form.reset();
+			});
 	/**
 	 * 调度类型的COMB的数据源
 	 */
@@ -771,35 +770,37 @@ Ext.onReady(function() {
 				labelAlign : "right",
 				items : [{ // 行1
 					layout : "column", // 从左往右的布局
-					items : [{
-								columnWidth : .5, // 该列有整行中所占百分比
-								layout : "form", // 从上往下的布局
-								items : [{
-											fieldLabel : '调度类型',
-											// name:'TIMEFER',
-											xtype : 'combo',
-											width : 100,
-											store : tgTypeStore,
-											id : 'triggerType1',
-											hiddenName : 'triggerType',
-											valueField : 'ID',
-											editable : false,
-											displayField : 'NAME',
-											mode : 'local',
-											forceSelection : false,// 必须选择一项
-											emptyText : '调度类型...',// 默认值
-											triggerAction : 'all'
-										}]
-							}, {
-								columnWidth : .5,
-								layout : "form",
-								items : [{
-											xtype : "textfield",
-											fieldLabel : "调度名称",
-											name : 'dispname1',
-											width : 100
-										}]
-							}]
+					items : [
+							// {
+							// columnWidth : .5, // 该列有整行中所占百分比
+							// layout : "form", // 从上往下的布局
+							// items : [{
+							// fieldLabel : '调度类型',
+							// // name:'TIMEFER',
+							// xtype : 'combo',
+							// width : 100,
+							// store : tgTypeStore,
+							// id : 'triggerType1',
+							// hiddenName : 'triggerType',
+							// valueField : 'ID',
+							// editable : false,
+							// displayField : 'NAME',
+							// mode : 'local',
+							// forceSelection : false,// 必须选择一项
+							// emptyText : '调度类型...',// 默认值
+							// triggerAction : 'all'
+							// }]
+							// },
+							{
+						columnWidth : .5,
+						layout : "form",
+						items : [{
+									xtype : "textfield",
+									fieldLabel : "调度名称",
+									name : 'dispname1',
+									width : 100
+								}]
+					}]
 				}],
 				buttonAlign : "center",
 				buttons : [{
@@ -817,34 +818,35 @@ Ext.onReady(function() {
 	 */
 	// 定义表格数据源
 	var store = new Ext.data.Store({
-				proxy : new Ext.data.HttpProxy({
-							url : '../strategy/stgdispgridstore'
-						}),
-				reader : new Ext.data.JsonReader({
-							totalProperty : 'cnt',
-							root : 'data'
-						}, [{
-									name : 'id'
-								}, {
-									name : 'name'
-								}, {
-									name : 'triggerType'
-								}, {
-									name : 'triggerInfo'
-								}, {
-									name : 'description'
-								}, {
-									name : 'gid'
-								}, {
-									name : 'gname'
-								}]),
-				autoLoad : {
-					params : {
-						start : 0,
-						limit : 20
-					}
-				}
-			});
+		proxy : new Ext.data.HttpProxy({
+					url : '../strategy/stgdispgridstore'
+				}),
+		reader : new Ext.data.JsonReader({
+					totalProperty : 'cnt',
+					root : 'data'
+				}, [{
+							name : 'id'
+						}, {
+							name : 'name'
+						}, {
+							name : 'triggerType'
+						}, {
+							name : 'triggerInfo'
+						}, {
+							name : 'description'
+						}, {
+							name : 'gid'
+						}, {
+							name : 'gname'
+						}])
+			// ,
+			// autoLoad : {
+			// params : {
+			// start : 0,
+			// limit : 20
+			// }
+			// }
+		});
 	// 定义Checkbox
 	var sm = new Ext.grid.CheckboxSelectionModel();
 	// 定义表格列CM
@@ -855,7 +857,7 @@ Ext.onReady(function() {
 			}, {
 				header : '调度名称',
 				dataIndex : 'name',
-				renderer : rendDispName,
+//				renderer : rendDispName,
 				width : 100
 			}, {
 				header : '调度类型',
@@ -981,7 +983,6 @@ Ext.onReady(function() {
 						editstgWindow.show();
 					}
 				}
-
 			});
 	// 注册事件
 	stgdisplistgrid.on('cellclick', stgdisplistgrid.onCellClick,
@@ -1019,7 +1020,6 @@ Ext.onReady(function() {
 	// 弹出前事件
 	compGroupWindow.on('show', function() {
 				stgdispgridform.form.reset();
-
 			});
 	// 弹出窗口
 	var groupAddWindow = new Ext.Window({
@@ -1045,10 +1045,7 @@ Ext.onReady(function() {
 						var tform = addGroupForm.getForm();
 						var gname = tform.findField("groupName").getValue();
 						var gnote = tform.findField("description").getValue();
-						GGROUPTYPE = null;
-						GDISPID = null;
-						GGROUPNAME = null;
-						GGROUPNOTE = null;
+						cleanGlobalVar();
 						cleanCreateTrigger();
 						// 简单分组
 						if (gType == 1) {
@@ -1067,6 +1064,7 @@ Ext.onReady(function() {
 							compGroupWindow.title = gname;
 							// 设置新建的分组ID
 							getCompGroupId(GGROUPTYPE, GGROUPNAME, GGROUPNOTE);
+							groupStore.reload();
 							compGroupWindow.show();
 						}
 						GGROUPTYPE = gType;
@@ -1148,6 +1146,7 @@ Ext.onReady(function() {
 		// }, 10);
 		// });// 将上级树形展开
 	}
+
 	/**
 	 * 提交数据的函数
 	 */
@@ -1214,6 +1213,7 @@ Ext.onReady(function() {
 					}
 				});
 	}
+
 	/**
 	 * 设置调度配置的相关参数
 	 * 
@@ -1263,6 +1263,7 @@ Ext.onReady(function() {
 					}
 				});
 	}
+
 	/**
 	 * 设置简单分组调度配置的相关参数
 	 * 
@@ -1311,6 +1312,7 @@ Ext.onReady(function() {
 					}
 				});
 	}
+
 	/**
 	 * 初始化新增对象的参数
 	 * 
@@ -1332,6 +1334,7 @@ Ext.onReady(function() {
 		var remindcmp = Ext.getCmp("jobremind");
 		remindcmp.setText(null);
 	}
+
 	/**
 	 * 删除调度信息
 	 * 
@@ -1376,6 +1379,7 @@ Ext.onReady(function() {
 			return;
 		}
 	}
+
 	/**
 	 * 渲染策略名称为中文名
 	 * 
@@ -1393,6 +1397,7 @@ Ext.onReady(function() {
 			}
 		}
 	}
+
 	/**
 	 * 
 	 * @param {}
@@ -1406,6 +1411,7 @@ Ext.onReady(function() {
 			return '复杂调度';
 		}
 	}
+
 	/**
 	 * 获取分组ID
 	 */
@@ -1420,12 +1426,35 @@ Ext.onReady(function() {
 						var result = Ext.util.JSON
 								.decode(response.responseText);
 						GGROUPID = result.groupId;
+						store.setBaseParam('groupId', GGROUPID);
+						// TODO
+						store.reload();
 					},
 					failure : function(response, opts) {
 						Ext.MessageBox.alert('提示', '保存分组失败，无法进入编辑页面');
 					},
 					params : params
 				});
+	}
+
+	/**
+	 * 清空所有全局变量
+	 */
+	function cleanGlobalVar() {
+		GOBJID = null;
+		GDISNAME = null;
+		// 全局调度ID
+		GDISPID;
+		// 全局分组类型
+		GGROUPTYPE = null;
+		// 全局分组ID
+		GGROUPID = null;
+		// 复杂分组名称
+		GGROUPNAME = null;
+		// 复杂分组说明
+		GGROUPNOTE = null;
+		// 是否是分组
+		GISGROUP = null;
 	}
 
 	var viewport = new Ext.Viewport({
