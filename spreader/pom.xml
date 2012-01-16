@@ -225,6 +225,11 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
+			<groupId>com.nali</groupId>
+			<artifactId>lang</artifactId>
+			<version>0.9</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
 			<version>1.5</version>
