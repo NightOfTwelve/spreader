@@ -78,22 +78,48 @@ public class TestUserGroup extends UserGroupSupportedImpl implements RegularAnal
 					}
 				};
 			}
-			
-			@Override
-			public List<Long> queryExcludeUids(long gid) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public List<GrouppedUser> queryGrouppedUsers(long gid, long manualCount, long propertyCount, int offset,
-					int limit, List<Long> excludeUsers) throws GroupUserQueryException {
-				// TODO Auto-generated method stub
-				return null;
-			}
 
 			@Override
 			public PageResult<GrouppedUser> gueryGrouppedUsers(long gid, Limit limit) throws GroupUserQueryException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public void excludeUsers(long gid, long... uids) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void addManualUsers(long gid, long... uids) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void rollbackExcludeUsers(long gid, long... uids) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void removeManualUsers(long gid, long... uids) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public PageResult<GrouppedUser> queryExcludeUids(long gid,
+					Limit limit) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public List<GrouppedUser> queryGrouppedUsers(long gid,
+					long manualCount, long propertyCount, int offset, int limit)
+					throws GroupUserQueryException {
 				// TODO Auto-generated method stub
 				return null;
 			}
