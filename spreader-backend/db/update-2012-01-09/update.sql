@@ -19,3 +19,21 @@ DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;
 
 alter table spreader.tb_client_task_log comment '任务返回';
+
+alter table spreader.tb_regular_job add column (
+   extend_type          varchar(50) comment '扩展类型',
+   extend_config        varchar(4000) comment '扩展配置'
+);
+
+create table spreader.tb_strategy_user_group
+(
+   sid                  bigint not null,
+   from_user_group      bigint,
+   to_user_group        bigint,
+   primary key (sid)
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table spreader.tb_strategy_user_group comment '定时任务表';

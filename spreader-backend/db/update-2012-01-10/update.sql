@@ -4,6 +4,7 @@ alter table tb_strategy_group drop column group_type;
 alter table tb_strategy_group  add column group_type int default 1;
  */
 
+drop table spreader.tb_strategy_group;
 create table spreader.tb_strategy_group
 (
    id                   bigint not null auto_increment,
@@ -21,4 +22,3 @@ alter table spreader.tb_strategy_group comment '策略分组表';
 
 
 update spreader.tb_robot_register set update_time = date_add(now(), INTERVAL -10 DAY);
-
