@@ -13,6 +13,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import com.nali.spreader.factory.config.extend.ExtendExecuter;
+import com.nali.spreader.factory.config.extend.ExtendInfo;
 import com.nali.spreader.factory.exporter.ClientTaskExporterFactory;
 import com.nali.spreader.factory.exporter.Exporter;
 import com.nali.spreader.factory.exporter.ExporterProvider;
@@ -28,6 +30,8 @@ public class RegularProducerManager {
 	private ApplicationContext context;
 	@Autowired
 	private RegularConfigService regularConfigService;
+	@Autowired
+	private ExtendExecuter extendExecuter;
 	
 	@PostConstruct
 	public void init() {
@@ -40,8 +44,11 @@ public class RegularProducerManager {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public<T> void invokeRegularObject(String name, T params) {
+	public<T> void invokeRegularObject(String name, T params, ExtendInfo extendInfo) {
 		RegularObject regularObject = regularConfigService.getRegularObject(name, params);
+		if(extendInfo.isExtend()) {
+			extendExecuter.extend(regularObject, extendInfo);
+		}
 		if (regularObject instanceof RegularAnalyzer) {
 			((RegularAnalyzer) regularObject).work();
 		} else if (regularObject instanceof RegularTaskProducer) {
@@ -76,4 +83,5 @@ public class RegularProducerManager {
 	public Object unSerializeConfigData(String configStr, String name) throws Exception {
 		return regularConfigService.unSerializeConfigData(configStr, name);
 	}
+	
 }

@@ -1,6 +1,5 @@
 package com.nali.spreader.data;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.nali.common.util.CollectionUtils;

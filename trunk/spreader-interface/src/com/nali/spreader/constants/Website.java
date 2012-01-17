@@ -2,6 +2,7 @@ package com.nali.spreader.constants;
 
 import java.util.Map;
 
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.util.EnumUtils;
 
 public enum Website {
@@ -16,6 +17,7 @@ public enum Website {
 	
 	static{
 		Website[] websites = Website.values();
+		websitesMap = CollectionUtils.newHashMap(websites.length);
 		for(Website website : websites) {
 			websitesMap.put(website.getId(), website);
 		}
