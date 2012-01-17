@@ -1,24 +1,35 @@
 package com.nali.spreader.model;
 
+import com.nali.spreader.data.User;
+
 public class GrouppedUser {
-	private long uid;
+	private User user;
 	private boolean manual;
-	private long gid;
+	private Long uid;
+
+	public GrouppedUser() {
+		
+	}
 	
-	public long getGid() {
-		return gid;
+	public GrouppedUser(Long uid, boolean manual) {
+		this.uid = uid;
+		this.manual = manual;
 	}
-
-	public void setGid(long gid) {
-		this.gid = gid;
-	}
-
-	public long getUid() {
+	
+	public Long getUid() {
 		return uid;
 	}
 
-	public void setUid(long uid) {
+	public void setUid(Long uid) {
 		this.uid = uid;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public boolean isManual() {
