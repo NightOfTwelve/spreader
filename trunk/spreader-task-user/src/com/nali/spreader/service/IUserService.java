@@ -30,6 +30,8 @@ public interface IUserService {
 
 	User getUserById(Long id);
 	
+	List<User> getUsersByIds(List<Long> uids);
+	
 	User getUserByWebsiteUid(Long websiteUid);
 
 	void createRelation(UserRelation relation);
