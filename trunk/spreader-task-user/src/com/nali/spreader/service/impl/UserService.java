@@ -227,4 +227,11 @@ public class UserService extends WebsiteBaseService implements IUserService {
 		dto.setWebsiteId(getWebsiteId());
 		return userDao.findUserFansInfoByDto(dto);
 	}
+
+	@Override
+	public List<User> getUsersByIds(List<Long> ids) {
+		UserExample example = new UserExample();
+		example.createCriteria().andIdIn(ids);
+		return this.crudUserDao.selectByExample(example);
+	}
 }
