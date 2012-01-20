@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.nali.spreader.config.Range;
-import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.Constellation;
 import com.nali.spreader.factory.config.desc.PropertyDescription;
 import com.nali.spreader.group.meta.Gender;
@@ -17,10 +16,8 @@ public class PropertyExpressionDTO implements Serializable{
 	@PropertyDescription("出生日期")
 	private Range<Date> birthDay;
 	
+	@PropertyDescription("星座")
 	private String constellation; 
-	
-	@PropertyDescription("网站")
-	private String website;
 	
 	@PropertyDescription("关注数")
 	private Range<Long> attentions;
@@ -162,13 +159,13 @@ public class PropertyExpressionDTO implements Serializable{
 	    Boolean vType = propertyExpression.getVType();
 	    expressionDTO.setVType(vType);
 	    
-	    Integer websiteInteger = propertyExpression.getWebsite();
-	    if(websiteInteger != null) {
-	    	Website website = Website.valueOf(websiteInteger);
-	    	if(website != null) {
-	    		expressionDTO.setWebsite(website.getName());
-	    	}
-	    }
+//	    Integer websiteInteger = propertyExpression.getWebsite();
+//	    if(websiteInteger != null) {
+//	    	Website website = Website.valueOf(websiteInteger);
+//	    	if(website != null) {
+//	    		expressionDTO.setWebsite(website.getName());
+//	    	}
+//	    }
 	}
 	
 	public Boolean getVType() {
@@ -253,14 +250,6 @@ public class PropertyExpressionDTO implements Serializable{
 
 	public void setConstellation(String constellation) {
 		this.constellation = constellation;
-	}
-
-	public String getWebsite() {
-		return website;
-	}
-
-	public void setWebsite(String website) {
-		this.website = website;
 	}
 
 	public Range<Long> getAttentions() {

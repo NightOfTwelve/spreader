@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.nali.lang.StringUtils;
 import com.nali.spreader.config.Range;
-import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.Constellation;
 import com.nali.spreader.group.meta.Gender;
 
@@ -18,8 +17,6 @@ public class PropertyExpression {
 	private Date birthDayGte;
 	
 	private Integer constellation; 
-	
-	private Integer website;
 	
 	private Long attentionsLte;
 	
@@ -132,17 +129,112 @@ public class PropertyExpression {
 		
 		this.vType = propertyExpressionDTO.getVType();
 		
-		String websiteStr = propertyExpressionDTO.getWebsite();
-		if(StringUtils.isNotEmptyNoOffset(websiteStr)) {
-			Website website = Website.matched(websiteStr);
-			if(website != null) {
-				this.website = website.getId();
-			}else{
-				throw new IllegalArgumentException("Ilegal input website!");
-			}
-		}
+//		String websiteStr = propertyExpressionDTO.getWebsite();
+//		if(StringUtils.isNotEmptyNoOffset(websiteStr)) {
+//			Website website = Website.matched(websiteStr);
+//			if(website != null) {
+//				this.website = website.getId();
+//			}else{
+//				throw new IllegalArgumentException("Ilegal input website!");
+//			}
+//		}
 	}
 	
+	public PropertyExpression() {
+	}
+	
+	public void setPropVal(int propVal) {
+		this.propVal = propVal;
+	}
+
+	public void setIsRobot(Boolean isRobot) {
+		this.isRobot = isRobot;
+	}
+
+	public void setBirthDayLte(Date birthDayLte) {
+		this.birthDayLte = birthDayLte;
+	}
+
+	public void setBirthDayGte(Date birthDayGte) {
+		this.birthDayGte = birthDayGte;
+	}
+
+	public void setConstellation(Integer constellation) {
+		this.constellation = constellation;
+	}
+
+	public void setAttentionsLte(Long attentionsLte) {
+		this.attentionsLte = attentionsLte;
+	}
+
+	public void setAttentionsGte(Long attentionsGte) {
+		this.attentionsGte = attentionsGte;
+	}
+
+	public void setFansLte(Long fansLte) {
+		this.fansLte = fansLte;
+	}
+
+	public void setFansGte(Long fansGte) {
+		this.fansGte = fansGte;
+	}
+
+	public void setArticlesLte(Long articlesLte) {
+		this.articlesLte = articlesLte;
+	}
+
+	public void setArticlesGte(Long articlesGte) {
+		this.articlesGte = articlesGte;
+	}
+
+	public void setGender(Integer gender) {
+		this.gender = gender;
+	}
+
+	public void setRobotFansLte(Long robotFansLte) {
+		this.robotFansLte = robotFansLte;
+	}
+
+	public void setRobotFansGte(Long robotFansGte) {
+		this.robotFansGte = robotFansGte;
+	}
+
+	public void setScoreGte(Float scoreGte) {
+		this.scoreGte = scoreGte;
+	}
+
+	public void setScoreLte(Float scoreLte) {
+		this.scoreLte = scoreLte;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public void setIntroduction(String introduction) {
+		this.introduction = introduction;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public void setVType(Boolean type) {
+		vType = type;
+	}
+
 	public int getPropVal() {
 		return propVal;
 	}
@@ -161,10 +253,6 @@ public class PropertyExpression {
 
 	public Integer getConstellation() {
 		return constellation;
-	}
-
-	public Integer getWebsite() {
-		return website;
 	}
 
 	public Long getAttentionsLte() {
