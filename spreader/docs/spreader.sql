@@ -51,10 +51,10 @@ drop table if exists tb_relation;
 create table tb_admin
 (
    id                   int not null auto_increment,
-   user_name            varchar(30) not null comment 'µÇÂ¼ÓÃ»§Ãû',
-   pwd                  varchar(20) not null comment 'µÇÂ¼ÃÜÂë',
-   role                 int not null comment '½ÇÉ«',
-   employee_id          int comment 'Ô±¹¤ºÅ',
+   user_name            varchar(30) not null comment 'ï¿½ï¿½Â¼ï¿½Ã»ï¿½ï¿½ï¿½',
+   pwd                  varchar(20) not null comment 'ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½',
+   role                 int not null comment 'ï¿½ï¿½É«',
+   employee_id          int comment 'Ô±ï¿½ï¿½ï¿½ï¿½',
    real_name            varchar(30),
    create_time          datetime not null,
    last_login_time      datetime not null,
@@ -67,12 +67,12 @@ create table tb_admin
 create table tb_client
 (
    id                   int not null auto_increment,
-   user_name            varchar(30) not null comment 'ÓÃ»§µÇÂ¼Ãû',
-   pwd                  varchar(20) not null comment 'µÇÂ¼ÃÜÂë',
-   real_name            varchar(20) not null comment 'ÓÃ»§ÊµÃû',
-   id_card              varchar(20) not null comment 'Éí·ÝÖ¤ºÅ',
+   user_name            varchar(30) not null comment 'ï¿½Ã»ï¿½ï¿½ï¿½Â¼ï¿½ï¿½',
+   pwd                  varchar(20) not null comment 'ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½',
+   real_name            varchar(20) not null comment 'ï¿½Ã»ï¿½Êµï¿½ï¿½',
+   id_card              varchar(20) not null comment 'ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½',
    sex                  int,
-   cellphone            varchar(15) not null comment 'ÊÖ»úºÅ',
+   cellphone            varchar(15) not null comment 'ï¿½Ö»ï¿½ï¿½',
    tel                  varchar(15),
    address              varchar(100),
    post_code            int,
@@ -85,7 +85,7 @@ create table tb_client
    primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_client comment 'ÄÇÀïÍÆ¹ã¿Í»§¶ËÊ¹ÓÃµÄÓÃ»§ÕÊºÅÃÜÂë±í';
+alter table tb_client comment 'ï¿½ï¿½ï¿½ï¿½ï¿½Æ¹ï¿½Í»ï¿½ï¿½ï¿½Ê¹ï¿½Ãµï¿½ï¿½Ã»ï¿½ï¿½Êºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½';
 
 /*==============================================================*/
 /* Table: tb_content                                            */
@@ -102,7 +102,7 @@ create table tb_content
    primary key (content_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_content comment 'Í¨ÓÃÄÚÈÝ¿â¡£';
+alter table tb_content comment 'Í¨ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿â¡£';
 
 /*==============================================================*/
 /* Table: tb_content_parameters                                 */
@@ -116,7 +116,7 @@ create table tb_content_parameters
    primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_content_parameters comment 'Í¨ÓÃÄÚÈÝµÄ²ÎÊýÁÐ±í';
+alter table tb_content_parameters comment 'Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ²ï¿½ï¿½ï¿½ï¿½Ð±ï¿½';
 
 /*==============================================================*/
 /* Table: tb_data_type                                          */
@@ -128,7 +128,7 @@ create table tb_data_type
    primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_data_type comment '³£ÓÃÊý¾ÝÀàÐÍ±í£¬ÓÃÓÚÐ£Ñé';
+alter table tb_data_type comment 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í±?ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½';
 
 /*==============================================================*/
 /* Table: tb_parameters                                         */
@@ -147,9 +147,9 @@ create table tb_parameters
 create table tb_profile
 (
    id                   int not null auto_increment,
-   user_name            varchar(30) not null comment 'µÇÂ¼ÓÃ»§Ãû',
-   pwd                  varchar(20) not null comment 'µÇÂ¼ÃÜÂë',
-   email                varchar(30) not null comment '×¢²áÊ±ÓÃµÄemail',
+   user_name            varchar(30) not null comment 'ï¿½ï¿½Â¼ï¿½Ã»ï¿½ï¿½ï¿½',
+   pwd                  varchar(20) not null comment 'ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½',
+   email                varchar(30) not null comment '×¢ï¿½ï¿½Ê±ï¿½Ãµï¿½email',
    nationality          varchar(100),
    province             varchar(15),
    city                 varchar(30),
@@ -171,11 +171,11 @@ create table tb_profile
    interest             varchar(50),
    skill                varchar(50),
    profession           varchar(20),
-   create_time          datetime not null comment 'ÓÃ»§´´½¨Ê±¼ä',
+   create_time          datetime not null comment 'ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½',
    primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_profile comment '»úÆ÷ÈËµÄÐÅÏ¢¡£°üÀ¨Ö°Òµ£¬ÐÔ±ð£¬ÐËÈ¤µÈÐÅÏ¢';
+alter table tb_profile comment 'ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö°Òµï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½È¤ï¿½ï¿½ï¿½ï¿½Ï¢';
 
 /*==============================================================*/
 /* Table: tb_target_param_values                                */
@@ -187,26 +187,26 @@ create table tb_target_param_values
    primary key (param_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_target_param_values comment 'Ä¿±êÍøÕ¾¹Ì¶¨²ÎÊýµÄÖµ';
+alter table tb_target_param_values comment 'Ä¿ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½Ì¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ';
 
 /*==============================================================*/
 /* Table: tb_target_template                                    */
 /*==============================================================*/
 create table tb_target_template
 (
-   id                   bigint not null  auto_increment comment 'Ö÷¼ü',
-   name                 varchar(50) not null comment 'Ä£°åÃû³Æ',
-   description          varchar(200) comment 'Ä£°åÃèÊö',
+   id                   bigint not null  auto_increment comment 'ï¿½ï¿½ï¿½ï¿½',
+   name                 varchar(50) not null comment 'Ä£ï¿½ï¿½ï¿½ï¿½ï¿½',
+   description          varchar(200) comment 'Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½',
    url                  varchar(200) not null,
    created_time         timestamp not null,
    website_id           int not null,
-   has_problem          tinyint(1) not null comment 'ÊÇ·ñÓÐÎÊÌâ',
-   template_type        int comment 'Ä£°åÀàÐÍ£¬Ìû×Ó£¬Î¢±¡£¬ÊÓÆµ£¬ÕÕÆ¬µÈµÈ',
+   has_problem          tinyint(1) not null comment 'ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½',
+   template_type        int comment 'Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½Ó£ï¿½Î¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½Æ¬ï¿½Èµï¿½',
    last_modified_time   timestamp,
    primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_target_template comment '¸÷´óÍøÕ¾±íµ¥Ä£°å£¬²»ÐèÒªËùÓÐÄ£°å¶¼ºÍÍ¨ÓÃÄ£°åÓ³ÉäÉÏ£¬¿ÉÒÔÓÐÌØÊâµÄÃ»ÓÐÓ³ÉäÉÏµÄ¡£';
+alter table tb_target_template comment 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½?Ä£ï¿½å£¬ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ä£ï¿½å¶¼ï¿½ï¿½Í¨ï¿½ï¿½Ä£ï¿½ï¿½Ó³ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ó³ï¿½ï¿½ï¿½ÏµÄ¡ï¿½';
 
 /*==============================================================*/
 /* Table: tb_target_template_parameters                         */
@@ -223,7 +223,7 @@ create table tb_target_template_parameters
    primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_target_template_parameters comment 'Ä¿±êÍøÕ¾±íµ¥Ä£°åµÄ²ÎÊýÁÐ±í';
+alter table tb_target_template_parameters comment 'Ä¿ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½?Ä£ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ï¿½Ð±ï¿½';
 
 /*==============================================================*/
 /* Table: tb_task                                               */
@@ -242,7 +242,7 @@ create table tb_task
    primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_task comment 'ÍøÕ¾ÈÎÎñÁÐ±í';
+alter table tb_task comment 'ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½';
 
 /*==============================================================*/
 /* Table: tb_template                                           */
@@ -257,7 +257,7 @@ create table tb_template
    primary key (template_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_template comment 'Í¨ÓÃÄ£°å£¬³éÏó¶¨Òå';
+alter table tb_template comment 'Í¨ï¿½ï¿½Ä£ï¿½å£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½';
 
 /*==============================================================*/
 /* Table: tb_user                                               */
@@ -265,11 +265,11 @@ alter table tb_template comment 'Í¨ÓÃÄ£°å£¬³éÏó¶¨Òå';
 create table tb_robot_user
 (
    uid                  bigint not null auto_increment,
-   website_id           int not null comment 'ÍøÕ¾ID',
+   website_id           int not null comment 'ï¿½ï¿½Õ¾ID',
    profile_id           bigint not null,
    admin_id             int,
    level                int not null,
-   register_time        datetime not null comment '×¢²áÊ±¼ä',
+   register_time        datetime not null comment '×¢ï¿½ï¿½Ê±ï¿½ï¿½',
    home_url             varchar(300) not null,
    score                int,
    fans_count           int,
@@ -277,7 +277,7 @@ create table tb_robot_user
    primary key (uid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_robot_user comment 'ÕË»§±í£¬ÓÃ»§µÇÂ¼¸÷´óÍøÕ¾';
+alter table tb_robot_user comment 'ï¿½Ë»ï¿½ï¿½?ï¿½Ã»ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¾';
 
 /*==============================================================*/
 /* Table: tb_web_content                                        */
@@ -295,7 +295,7 @@ create table tb_web_content
    primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_web_content comment 'Ä³ÍøÕ¾ÌØ¶¨µÄÄÚÈÝ¿â';
+alter table tb_web_content comment 'Ä³ï¿½ï¿½Õ¾ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½';
 
 /*==============================================================*/
 /* Table: tb_web_content_parameters                             */
@@ -310,7 +310,7 @@ create table tb_web_content_parameters
    primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_web_content_parameters comment 'Ä³ÍøÕ¾ÌØ¶¨ÄÚÈÝµÄ²ÎÊýÁÐ±í';
+alter table tb_web_content_parameters comment 'Ä³ï¿½ï¿½Õ¾ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ÝµÄ²ï¿½ï¿½ï¿½ï¿½Ð±ï¿½';
 
 /*==============================================================*/
 /* Table: tb_websites                                           */
@@ -327,7 +327,7 @@ create table tb_websites
    primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table tb_websites comment 'ÄÇÀïÍÆ¹ãµÄÄ¿±êÍøÕ¾ÁÐ±í';
+alter table tb_websites comment 'ï¿½ï¿½ï¿½ï¿½ï¿½Æ¹ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½Ð±ï¿½';
 
 
 
@@ -391,5 +391,3 @@ create table tb_relation
    relation_name        varchar(30),
    relation_level       int
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
