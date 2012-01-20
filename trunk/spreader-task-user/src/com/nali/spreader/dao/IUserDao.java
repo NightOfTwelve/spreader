@@ -2,7 +2,9 @@ package com.nali.spreader.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import com.nali.common.model.Limit;
 import com.nali.spreader.config.ContentDto;
 import com.nali.spreader.config.UserDto;
 import com.nali.spreader.config.UserTagParamsDto;
@@ -61,4 +63,7 @@ public interface IUserDao {
 	 */
 	Integer countUserFansNumer(UserTagParamsDto utp);
 
+	List<Long> queryUidsByProperties(Map<String, Object> properties, Limit limit);
+	
+	int countByProperties(Map<String, Object> properties);
 }
