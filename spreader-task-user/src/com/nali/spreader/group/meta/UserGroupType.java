@@ -25,7 +25,7 @@ public enum UserGroupType {
 	private UserGroupType(int typeVal) {
 		this.typeVal = typeVal;
 	}
-
+	
 	public int getTypeVal() {
 		return typeVal;
 	}
