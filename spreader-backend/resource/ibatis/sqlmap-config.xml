@@ -18,8 +18,10 @@
   <sqlMap resource="ibatis/spreader_tb_regular_job_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_photo_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_task_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_user_group_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_strategy_group_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_strategy_user_group_SqlMap.xml" />
+
   
   <!-- ×Ô¶¨Òå -->
   <sqlMap resource="ibatis/spreader_tb_photo.xml" />
@@ -28,6 +30,7 @@
   <sqlMap resource="ibatis/spreader_regular_job.xml" />
   <sqlMap resource="ibatis/spreader_register.xml" />
   <sqlMap resource="ibatis/spreader_task.xml" />
+  <sqlMap resource="ibatis/spreader_user_group.xml" />
   <sqlMap resource="ibatis/spreader_strategy_group.xml" />
 </sqlMapConfig>
 
