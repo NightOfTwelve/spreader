@@ -6,10 +6,10 @@ import java.util.List;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.constants.Website;
+import com.nali.spreader.data.UserGroup;
 import com.nali.spreader.group.exception.GroupUserQueryException;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.model.GrouppedUser;
-import com.nali.spreader.model.UserGroup;
 import com.nali.spreader.util.DataIterator;
 
 /**
@@ -28,13 +28,19 @@ public interface IUserGroupService {
 	 * @return
 	 */
 	UserGroup queryUserGroup(long gid);
-
+	
+	/**
+	 *删除一个用户分组 
+	 * @param gid
+	 */
+	void deleteUserGroup(long gid);
+	
 	/**
 	 * 保存一个用户分组
 	 * 
 	 * @param userGroup
 	 */
-	void saveGroup(UserGroup userGroup);
+	long createGroup(UserGroup userGroup);
 
 	/**
 	 * 更新一个用户分组
@@ -82,8 +88,17 @@ public interface IUserGroupService {
 	 * @param limit
 	 * @return
 	 */
-	PageResult<GrouppedUser> queryExcludeUids(long gid, Limit limit);
-
+	PageResult<GrouppedUser> queryExcludeUsers(long gid, Limit limit);
+	
+	
+	/**
+	 * 查询手动添加用户
+	 * @param gid
+	 * @param limit
+	 * @return
+	 */
+	PageResult<GrouppedUser> queryManualUsers(long gid, Limit limit);
+	
 	/**
 	 * 查询某个分组的用户的uids。
 	 * 
@@ -103,23 +118,23 @@ public interface IUserGroupService {
 	 * @return
 	 * @throws GroupUserQueryException
 	 */
-	PageResult<GrouppedUser> gueryGrouppedUsers(long gid, Limit limit)
+	PageResult<GrouppedUser> queryGrouppedUsers(long gid, Limit limit)
 			throws GroupUserQueryException;
 
 	/**
 	 * 分页查询所有满足条件的用户分组
 	 * 
 	 * @param website
-	 * @param name
+	 * @param gname
 	 * @param userGroupType
-	 * @param prop_val
+	 * @param propVal
 	 * @param fromModifiedTime
 	 * @param toModifiedTime
 	 * @return
 	 */
-	PageResult<UserGroup> queryUserGroups(Website website, String name,
-			UserGroupType userGroupType, int prop_val, Date fromModifiedTime,
-			Date toModifiedTime);
+	PageResult<UserGroup> queryUserGroups(Website website, String gname,
+			UserGroupType userGroupType, int propVal, Date fromModifiedTime,
+			Date toModifiedTime, Limit limit);
 	
 	List<GrouppedUser> queryGrouppedUsers(long gid, long manualCount,
 			long propertyCount, int offset, int limit)
