@@ -1,9 +1,7 @@
 package com.nali.spreader.group.exception;
 
-public class AssembleException extends Exception {
+public class AssembleException extends Throwable {
 	
-	private static final long serialVersionUID = -1113978447599396372L;
-
 	public AssembleException(String message) {
 		super(message);
 	}
