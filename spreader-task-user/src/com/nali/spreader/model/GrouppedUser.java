@@ -39,4 +39,9 @@ public class GrouppedUser {
 	public void setManual(boolean manual) {
 		this.manual = manual;
 	}
+	
+	@Override
+	public String toString() {
+		return new StringBuilder("Uid: ").append(uid).append(", manual: ").append(manual).toString();
+	}
 }
