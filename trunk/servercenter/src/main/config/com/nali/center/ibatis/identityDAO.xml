@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="IdentityDAO">
+
+	<resultMap class="com.nali.center.model.IdentityMeta" id="im" >
+		<result property="appId" column="app_id"/>
+		<result property="appName" column="app_name" />
+		<result property="lastModifyTime" column="last_modify_time"/>
+		<result property="id" column="id"/>
+	</resultMap>
+	
+    <select id="getIdentityMeta" resultMap="im" >
+        SELECT * FROM tb_identity WHERE app_name = #value#
+    </select>
+    
+    <select id="getAllIdentityMeta" resultMap="im" >
+        SELECT * FROM tb_identity
+    </select>
+	
+    <update id="updateIdentity" parameterClass="java.util.Map">
+    	UPDATE tb_identity SET id = #id# WHERE app_id=#appId#
+    </update>
+	
+</sqlMap>
