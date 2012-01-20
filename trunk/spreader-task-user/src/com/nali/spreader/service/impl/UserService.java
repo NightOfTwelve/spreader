@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
 
 import com.nali.common.model.Limit;
 import com.nali.spreader.config.UserDto;
@@ -28,6 +29,7 @@ import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.WebsiteBaseService;
 import com.nali.spreader.util.SpecialDateUtil;
 
+@Service
 public class UserService extends WebsiteBaseService implements IUserService {
 	private static final int EXPIRED_DAY = -10;
 	private static Logger logger = Logger.getLogger(UserService.class);
