@@ -2,12 +2,14 @@ package com.nali.spreader.dao.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.keyvalue.redis.core.RedisTemplate;
 import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.nali.common.model.Limit;
 import com.nali.spreader.config.ContentDto;
 import com.nali.spreader.config.UserDto;
 import com.nali.spreader.config.UserTagParamsDto;
@@ -87,5 +89,17 @@ public class UserDao implements IUserDao {
 	public Integer countUserFansNumer(UserTagParamsDto utp) {
 		return (Integer) sqlMap.queryForObject(
 				"spreader_user.getUserFansCountByDto", utp);
+	}
+
+	@Override
+	public int countByProperties(Map<String, Object> properties) {
+		return (Integer) sqlMap.queryForObject("spreader_user.countByProperties", properties);
+	}
+
+	@Override
+	public List<Long> queryUidsByProperties(Map<String, Object> properties, 
+			Limit limit) {
+		properties.put("limit", limit);
+		return sqlMap.queryForList("spreader_user.queryUidsByProperties", properties);
 	}
 }
