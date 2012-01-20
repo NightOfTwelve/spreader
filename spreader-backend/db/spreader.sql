@@ -449,6 +449,8 @@ create table tb_user
    articles             bigint comment '文章数',
    attentions_relation_update_time datetime,
    robot_fans           bigint default 0 comment '机器人粉丝数',
+   pid                  bigint,
+   score                decimal(2,2),
    primary key (id),
    key uk_tb_user_website_user (website_id, website_uid)
 )
@@ -520,3 +522,25 @@ COLLATE = utf8_bin;
 
 alter table tb_websites comment '那里推广的目标网站列表';
 
+
+
+/*==============================================================*/
+/* Table: tb_user_group                                         */
+/*==============================================================*/
+create table spreader.tb_user_group
+(
+   gid                  bigint not null auto_increment,
+   gname                varchar(60) not null,
+   description          varchar(300) not null,
+   gtype                int not null,
+   prop_exp             text,
+   create_time          datetime not null,
+   last_modified_time   datetime not null,
+   website_id           int not null,
+   primary key (gid)
+);
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+alter table tb_user_group comment '用户分组表';
