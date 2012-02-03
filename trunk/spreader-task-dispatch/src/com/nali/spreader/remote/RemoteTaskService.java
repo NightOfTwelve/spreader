@@ -16,6 +16,7 @@ import com.nali.lwtmq.receiver.Receiver;
 import com.nali.spreader.constants.TaskType;
 import com.nali.spreader.front.ClientContext;
 import com.nali.spreader.model.ClientTask;
+import com.nali.spreader.model.TaskError;
 import com.nali.spreader.model.TaskResult;
 import com.nali.spreader.service.IPassiveTaskService;
 import com.nali.spreader.service.ITaskService;
@@ -88,6 +89,14 @@ public class RemoteTaskService implements IRemoteTaskService {//TODO 减少queue
 		Long clientId = context.getClientId();
 		Integer taskType = context.getTaskType();
 		taskService.reportTask(rlts, taskType, clientId);
+	}
+
+	@Override
+	public void reportError(TaskError error) {
+		ClientContext context = ClientContext.getCurrentContext();
+		Long clientId = context.getClientId();
+		error.setClientId(clientId);
+		taskService.reportError(error);
 	}
 
 }

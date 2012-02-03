@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Website;
+import com.nali.spreader.dao.ICrudRobotUserDao;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.remote.ILoginConfigManageService;
 import com.nali.spreader.service.IGlobalRobotUserService;
@@ -19,6 +20,8 @@ public class GlobalRobotUserService implements IGlobalRobotUserService {
 	private static ObjectMapper objectMapper = new ObjectMapper();
 	@Autowired
 	private ILoginConfigManageService loginConfigManageService;
+	@Autowired
+	private ICrudRobotUserDao crudRobotUserDao;
 
 	//TODO temp
 	private Long getLoginActionId(Integer websiteId) {
@@ -28,6 +31,15 @@ public class GlobalRobotUserService implements IGlobalRobotUserService {
 			throw new IllegalArgumentException();
 		}
 	}
+
+	@Override
+	public void disableAccount(Long uid) {
+		RobotUser record = new RobotUser();
+		record.setUid(uid);
+		record.setAccountState(RobotUser.ACCOUNT_STATE_DISABLE);
+		crudRobotUserDao.updateByPrimaryKeySelective(record);
+	}
+	
 	@Override
 	public void syncLoginConfig(RobotUser robotUser) {
 		try {

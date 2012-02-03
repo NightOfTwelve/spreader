@@ -20,6 +20,7 @@ import com.nali.spreader.model.ClientTaskExample;
 import com.nali.spreader.model.ClientTaskLog;
 import com.nali.spreader.model.TaskBatch;
 import com.nali.spreader.model.TaskBatchExample;
+import com.nali.spreader.model.TaskError;
 import com.nali.spreader.model.TaskResult;
 import com.nali.spreader.model.UserTaskCount;
 import com.nali.spreader.util.CompareUtil;
@@ -36,6 +37,8 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 	private ITaskDao taskDao;
 	@Autowired
 	private IResultSender resultSender;
+	@Autowired
+	private IErrorSender errorSender;
 	@Autowired
 	private ICrudClientTaskLogDao crudClientTaskLogDao;
 
@@ -170,7 +173,7 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 				} catch (Exception e) {
 					logger.error("handle result error, taskCode:" + taskResult.getTaskCode(), e);
 				}
-			} else {
+			} else {//TODO 旧客户端流程
 				logger.error("task failed, id:" + taskResult.getTaskId()
 								+ ", code:" + taskResult.getTaskCode()
 								+ ", status:" + taskResult.getStatus()
@@ -182,11 +185,25 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 			log.setClientId(clientId);
 			//log.setErrorCode(errorCode);
 			log.setExecutedTime(taskResult.getExecutedTime());
-			log.setStatus(taskResult.getStatus());
+			log.setStatus(taskResult.getStatus());//TODO set success status
 			log.setTaskCode(taskResult.getTaskCode());
 			log.setTaskId(taskResult.getTaskId());
-			crudClientTaskLogDao.insert(log);
+			crudClientTaskLogDao.insert(log);//TODO check why DuplicateKeyException
 		}
+	}
+
+	@Override
+	public void reportError(TaskError error) {//TODO handle give up and expire
+		errorSender.send(error);
+		ClientTaskLog log = new ClientTaskLog();
+		log.setClientId(error.getClientId());
+		log.setErrorCode(error.getErrorCode());
+		log.setErrorDesc(error.getErrorDesc());
+		log.setExecutedTime(error.getErrorTime());
+		log.setStatus(TaskResult.STATUS_FAILED);
+		log.setTaskCode(error.getTaskCode());
+		log.setTaskId(error.getTaskId());
+		crudClientTaskLogDao.insert(log);
 	}
 
 }

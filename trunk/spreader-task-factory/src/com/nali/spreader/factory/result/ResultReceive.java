@@ -1,7 +1,6 @@
 package com.nali.spreader.factory.result;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -32,7 +31,7 @@ public class ResultReceive {
 	private static Logger logger = Logger.getLogger(ResultReceive.class);
 	@Autowired
 	private ApplicationContext context;
-	private Map<String, Dispatcher> dispatchers = new HashMap<String, Dispatcher>();
+	private Map<String, Dispatcher> dispatchers;
 	@Autowired
 	private PassiveConfigService passiveConfigService;
 	@Autowired

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.nali.spreader.model.ClientTask;
+import com.nali.spreader.model.TaskError;
 import com.nali.spreader.model.TaskResult;
 import com.nali.spreader.model.UserTaskCount;
 import com.nali.spreader.util.avg.ItemCount;
@@ -30,5 +31,7 @@ public interface ITaskService {
 	 * 记录未完成的任务
 	 */
 	void assignToBatch(List<ClientTask> tasks, Integer taskType, Date expireTime);
+
+	void reportError(TaskError error);
 
 }
