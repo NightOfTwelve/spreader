@@ -42,6 +42,10 @@
 	<bean id="taskResultProtoStuffRedisSerializer" class="com.nali.lwtmq.protobuf.ProtoStuffRedisSerializer">
 		<property name="className" value="com.nali.spreader.model.TaskResult" />
 	</bean>
+	
+	<bean id="taskErrorProtoStuffRedisSerializer" class="com.nali.lwtmq.protobuf.ProtoStuffRedisSerializer">
+		<property name="className" value="com.nali.spreader.model.TaskError" />
+	</bean>
 
 	<bean id="manager" class="com.nali.lwtmq.core.queue.redis.RedisManager">
 	</bean>
@@ -60,6 +64,22 @@
 	<bean id="asyncResultSender" class="com.nali.lwtmq.sender.AsyncSender">
 		<property name="sender" ref="lwtmqResultSender"></property>
 		<property name="concurrentSenders" value="#{lwtmq['lwtmq.resultQueue.concurrentSenders']}"></property>
+	</bean>
+	
+	<bean id="errorQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">
+		<property name="valueSerializer" ref="taskErrorProtoStuffRedisSerializer"></property>
+		<property name="connectionFactory" ref="redisConnectionFactory"></property>
+		<property name="name" value="errorQueue"></property>
+	</bean>
+	
+	<bean id="lwtmqErrorSender" class="com.nali.lwtmq.sender.RedisSender">
+		<property name="queueName" value="errorQueue"></property>
+		<property name="manager" ref="manager"></property>
+	</bean>
+	
+	<bean id="asyncErrorSender" class="com.nali.lwtmq.sender.AsyncSender">
+		<property name="sender" ref="lwtmqErrorSender"></property>
+		<property name="concurrentSenders" value="#{lwtmq['lwtmq.errorQueue.concurrentSenders']}"></property>
 	</bean>
 	
 	<bean id="taskQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">

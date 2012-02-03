@@ -42,6 +42,10 @@
 	<bean id="taskResultProtoStuffRedisSerializer" class="com.nali.lwtmq.protobuf.ProtoStuffRedisSerializer">
 		<property name="className" value="com.nali.spreader.model.TaskResult" />
 	</bean>
+	
+	<bean id="taskErrorProtoStuffRedisSerializer" class="com.nali.lwtmq.protobuf.ProtoStuffRedisSerializer">
+		<property name="className" value="com.nali.spreader.model.TaskError" />
+	</bean>
 
 	<bean id="manager" class="com.nali.lwtmq.core.queue.redis.RedisManager">
 	</bean>
@@ -73,12 +77,31 @@
 		<property name="manager" ref="manager"></property>
 	</bean>
 	
-	<bean id="listenerContainer" class="com.nali.lwtmq.receiver.container.PollingMessageListenerContainer">
+	<bean id="resultListenerContainer" class="com.nali.lwtmq.receiver.container.PollingMessageListenerContainer">
 		<property name="concurrentListeners" value="#{lwtmq['lwtmq.resultQueue.concurrentListeners']}"></property>
 		<property name="timeout" value="#{lwtmq['lwtmq.resultQueue.blockedTimeout']}"></property>
 		<property name="receiver" ref="resultReceiver"></property>
 		<property name="concurrentTaskExecutors" value="#{lwtmq['lwtmq.resultQueue.concurrentTaskExecutors']}"></property>
 		<property name="listener" ref="resultListener"></property>
+	</bean>
+	
+	<bean id="errorQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">
+		<property name="valueSerializer" ref="taskErrorProtoStuffRedisSerializer"></property>
+		<property name="connectionFactory" ref="redisConnectionFactory"></property>
+		<property name="name" value="errorQueue"></property>
+	</bean>
+	
+	<bean id="errorReceiver" class="com.nali.lwtmq.receiver.RedisReceiver">
+		<property name="queueName" value="errorQueue"></property>
+		<property name="manager" ref="manager"></property>
+	</bean>
+	
+	<bean id="errorListenerContainer" class="com.nali.lwtmq.receiver.container.PollingMessageListenerContainer">
+		<property name="concurrentListeners" value="#{lwtmq['lwtmq.errorQueue.concurrentListeners']}"></property>
+		<property name="timeout" value="#{lwtmq['lwtmq.errorQueue.blockedTimeout']}"></property>
+		<property name="receiver" ref="errorReceiver"></property>
+		<property name="concurrentTaskExecutors" value="#{lwtmq['lwtmq.errorQueue.concurrentTaskExecutors']}"></property>
+		<property name="listener" ref="errorListener"></property>
 	</bean>
 	
 	<bean id="weiboNormalPassiveTaskQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">

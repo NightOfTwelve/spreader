@@ -17,7 +17,7 @@ import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.test.util.RandomUtils;
 
-@Component
+//@Component
 public class UserGroupCreater {
 	
 	@Autowired

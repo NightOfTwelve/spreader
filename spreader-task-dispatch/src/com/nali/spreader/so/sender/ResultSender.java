@@ -10,10 +10,10 @@ import com.nali.spreader.service.IResultSender;
 @Component
 public class ResultSender implements IResultSender {
 	@Autowired
-	private AsyncSender<TaskResult> lwtmqSender;
+	private AsyncSender<TaskResult> asyncResultSender;
 
 	@Override
 	public void send(TaskResult taskResult) {
-		lwtmqSender.send(taskResult);
+		asyncResultSender.send(taskResult);
 	}
 }
