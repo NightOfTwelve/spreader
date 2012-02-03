@@ -39,7 +39,7 @@
 		<property name="group" value="Spreader.SynAvatar"></property>
 		 <property name="stateful" value="true"></property>
 		<property name="repeatInterval" value="30000"></property>
-		<property name="repeatCount" value="1"></property>
+		<property name="repeatCount" value="0"></property>
 		<!--  <property name="cronExp" value="0 0/50 * * * ?"></property> -->
 		<property name="task" ref="synchronAvatarFileDataJob" />
 	</bean>
