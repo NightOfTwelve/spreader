@@ -17,6 +17,7 @@ import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.ICrudUserTagDao;
 import com.nali.spreader.dao.IUserDao;
 import com.nali.spreader.data.Content;
+import com.nali.spreader.data.ContentExample;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserExample;
 import com.nali.spreader.data.UserTag;
@@ -72,6 +73,10 @@ public class ContentService implements IContentService {
 		checkNotNull(content.getWebsiteId());
 		checkNotNull(content.getWebsiteContentId());
 		checkNotNull(content.getType());
+		Long existId = findByUniqueKey(content.getType(), content.getWebsiteId(), content.getWebsiteContentId());
+		if(existId!=null) {
+			return;
+		}
 		if(content.getUid()==null) {
 			UserExample example = new UserExample();
 			example.createCriteria()
@@ -98,6 +103,16 @@ public class ContentService implements IContentService {
 		}
 		Long contentId = userDao.insertContent(content);
 		contentCategoryMatch.registerContentId(contentId, categoryIds);
+	}
+
+	private Long findByUniqueKey(Integer type, Integer websiteId, Long websiteContentId) {
+		ContentExample example = new ContentExample();
+		example.createCriteria().andTypeEqualTo(type).andWebsiteIdEqualTo(websiteId).andWebsiteContentIdEqualTo(websiteContentId);
+		List<Content> contents = crudContentDao.selectByExampleWithoutBLOBs(example);
+		if(contents.size()==0) {
+			return null;
+		}
+		return contents.get(0).getId();
 	}
 
 	private void checkNotNull(Object param) {
