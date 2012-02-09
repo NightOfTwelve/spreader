@@ -113,8 +113,8 @@
 					</executions>
 					<configuration>
 						<excludes>
-							<exclude>**/*.xml</exclude>
-							<exclude>**/*.properties</exclude>
+							<exclude>*.xml</exclude>
+							<exclude>*.properties</exclude>
 						</excludes>
 					</configuration>
 				</plugin>
