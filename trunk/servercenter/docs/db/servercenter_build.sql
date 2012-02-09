@@ -1,5 +1,5 @@
 
-CREATE TABLE `tb_identity` (
+CREATE TABLE spreader.`tb_identity` (
   `app_id` int(11) NOT NULL auto_increment,
   `app_name` varchar(50) default NULL,
   `id` int(11) NOT NULL,
