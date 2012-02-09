@@ -83,7 +83,7 @@
 									true
 								</overWriteIfNewer>
 								<excludeTypes>pom</excludeTypes>
-								<excludeScope>test</excludeScope>
+								<includeScope>complie</includeScope>
 							</configuration>
 						</execution>
 					</executions>
