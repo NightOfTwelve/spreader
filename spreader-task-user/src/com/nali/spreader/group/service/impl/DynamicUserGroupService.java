@@ -3,6 +3,7 @@ package com.nali.spreader.group.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -131,6 +132,21 @@ public class DynamicUserGroupService implements IDynamicUserGroupService, Initia
 			}
 			
 		}, true, true);
+	}
+	
+	public Set<Long> containUsers(long gid, final long...uids) {
+		final String key = this.getManualGroupKey(gid);
+		Set<Long> excludeUidSet = null;
+		for(long uid : uids) {
+			boolean removed = this.zSetOperations.remove(key, uid);
+			if(!removed) {
+				if(excludeUidSet == null) {
+					excludeUidSet = new HashSet<Long>();
+				}
+				excludeUidSet.add(uid);
+			}
+		}
+		return excludeUidSet;
 	}
 	
 	@Override
