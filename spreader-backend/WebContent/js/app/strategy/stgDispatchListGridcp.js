@@ -305,7 +305,7 @@ var simpleDispForm = new Ext.form.FormPanel({
 			buttons : [{
 						text : '保存',
 						handler : function() {
-							submitTreeData();
+							strategyDispatchSubmitTreeData();
 						}
 					}, {
 						text : "重置",
@@ -340,7 +340,7 @@ var triggerDispForm = new Ext.form.FormPanel({
 			buttons : [{
 						text : '保存',
 						handler : function() {
-							submitTreeData();
+							strategyDispatchSubmitTreeData();
 						}
 					}, {
 						text : "重置",
