@@ -133,6 +133,12 @@ public class TestUserGroup extends UserGroupSupportedImpl implements RegularAnal
 				// TODO Auto-generated method stub
 				return null;
 			}
+
+			@Override
+			public void removeUsers(long gid, long... uids) {
+				// TODO Auto-generated method stub
+				
+			}
 			
 			
 		};

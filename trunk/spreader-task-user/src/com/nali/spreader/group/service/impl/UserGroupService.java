@@ -6,13 +6,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.SetUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nali.center.service.IIdentityService;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.dao.ICrudUserGroupDao;
 import com.nali.spreader.dao.IUserGroupDao;
@@ -238,5 +242,18 @@ public class UserGroupService implements IUserGroupService {
 			list = grouppedUserList;
 		}
 		return new PageResult<GrouppedUser>(list, limit, (int)count);
+	}
+
+	@Override
+	public void removeUsers(long gid, long... uids) {
+		Set<Long> excludeUidSet = this.dynamicUserGroupService.containUsers(gid, uids);
+		
+		if(!CollectionUtils.isEmpty(excludeUidSet)) {
+			Long[] excludeLongUids = new Long[excludeUidSet.size()];
+			excludeLongUids = excludeUidSet.toArray(excludeLongUids);
+			
+			long[] excludeUids = ArrayUtils.toPrimitive(excludeLongUids);
+			this.dynamicUserGroupService.addExcludeUsers(gid, excludeUids);
+		}
 	}
 }

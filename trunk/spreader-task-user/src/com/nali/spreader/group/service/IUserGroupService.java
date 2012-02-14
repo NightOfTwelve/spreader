@@ -80,6 +80,13 @@ public interface IUserGroupService {
 	 * @param uids
 	 */
 	void removeManualUsers(long gid, long... uids);
+	
+	/**
+	 * 根据UID删除某个分组的用户
+	 * @param gid
+	 * @param uids
+	 */
+	void removeUsers(long gid, long...uids);
 
 	/**
 	 * 分页查询被排除分组的用户
