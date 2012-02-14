@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.SetUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,13 @@ import com.nali.spreader.dao.ICrudUserGroupDao;
 import com.nali.spreader.dao.IUserGroupDao;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserGroup;
+import com.nali.spreader.group.assembler.UserGroupAssembler;
+import com.nali.spreader.group.exception.AssembleException;
 import com.nali.spreader.group.exception.GroupUserQueryException;
+import com.nali.spreader.group.exception.UserGroupException;
+import com.nali.spreader.group.exp.PropertyExpParser;
+import com.nali.spreader.group.exp.PropertyExpression;
+import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.filter.IGrouppedUserFilter;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.group.service.IDynamicUserGroupService;
@@ -57,6 +62,12 @@ public class UserGroupService implements IUserGroupService {
 	@Autowired
 	private IGrouppedUserFilter grouppedUserFilter;
 	
+	@Autowired
+	private PropertyExpParser propertyExpParser;
+	
+	@Autowired
+	private UserGroupAssembler userGroupAssembler;
+	
 	@Override
 	public UserGroup queryUserGroup(long gid) {
 		return this.crudUserGroupDao.selectByPrimaryKey(gid);
@@ -89,6 +100,28 @@ public class UserGroupService implements IUserGroupService {
 		userGroup.setLastModifiedTime(now);
 		this.crudUserGroupDao.updateByPrimaryKeySelective(userGroup);
 	}
+	
+	
+	public void updateUserGroup(long gid, PropertyExpressionDTO propertyExpressionDTO) {
+		UserGroup userGroup = new UserGroup();
+		
+		PropertyExpression expression = new PropertyExpression(propertyExpressionDTO);
+		String expJson = null;
+		try {
+			 expJson = this.userGroupAssembler.toJson(expression);
+		} catch (AssembleException e) {
+			throw new UserGroupException("update user group fails, because to json ecounters error", e);
+		}
+		userGroup.setPropExp(expJson);
+		
+		int propVal = this.propertyExpParser.parsePropVal(propertyExpressionDTO);
+		userGroup.setPropVal(propVal);
+		
+		Date now = new Date();
+		userGroup.setLastModifiedTime(now);
+		this.crudUserGroupDao.updateByPrimaryKeySelective(userGroup);
+	}
+
 
 	@Override
 	public PageResult<UserGroup> queryUserGroups(Website website, String gname,

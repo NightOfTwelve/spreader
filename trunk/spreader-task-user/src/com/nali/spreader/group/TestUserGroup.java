@@ -14,6 +14,7 @@ import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupSupportedImpl;
 import com.nali.spreader.group.exception.GroupUserQueryException;
+import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.group.service.IUserGroupService;
 import com.nali.spreader.model.GrouppedUser;
@@ -136,6 +137,13 @@ public class TestUserGroup extends UserGroupSupportedImpl implements RegularAnal
 
 			@Override
 			public void removeUsers(long gid, long... uids) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void updateUserGroup(long gid,
+					PropertyExpressionDTO propertyExpressionDTO) {
 				// TODO Auto-generated method stub
 				
 			}

@@ -8,6 +8,7 @@ import com.nali.common.pagination.PageResult;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.UserGroup;
 import com.nali.spreader.group.exception.GroupUserQueryException;
+import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.util.DataIterator;
@@ -49,6 +50,14 @@ public interface IUserGroupService {
 	 */
 	void updateUserGroup(UserGroup userGroup);
 
+	
+	/**
+	 * 根据用户属性列表更新用户分组
+	 * @param gid
+	 * @param propertyExpressionDTO
+	 */
+	void updateUserGroup(long gid, PropertyExpressionDTO propertyExpressionDTO); 
+	
 	/**
 	 * 添加分组中排除的用户
 	 * 
