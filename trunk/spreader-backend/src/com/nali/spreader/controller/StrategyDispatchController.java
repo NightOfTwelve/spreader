@@ -49,7 +49,7 @@ public class StrategyDispatchController {
 	// 简单分组
 	private final Integer SIMPLE_GROUP_TYPE = 1;
 	// 复杂分组
-	private final Integer COMPLEX_GROUP_TYPE = 2;
+//	private final Integer COMPLEX_GROUP_TYPE = 2;
 	// 复杂分组下的调度配置
 	private final Integer COMPLEX_GROUP_DISP_TYPE = 21;
 
@@ -113,7 +113,7 @@ public class StrategyDispatchController {
 	public String createStgTreeData(String name, Long id, Boolean isGroup)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		if (Boolean.TRUE.equals(isGroup)) {
-			id = getRegularIdBYGid(id);
+			id = getRegularIdByGid(id);
 		}
 		return jacksonMapper
 				.writeValueAsString(new DispatchData(null, regularConfigService
@@ -139,7 +139,7 @@ public class StrategyDispatchController {
 			throws JsonGenerationException, JsonMappingException, IOException,
 			SchedulerException {
 		if (isGroup != null && isGroup) {
-			id = getRegularIdBYGid(id);
+			id = getRegularIdByGid(id);
 		}
 		JobDto job = cfgService.getConfig(id);
 		String remind = "";
@@ -219,7 +219,7 @@ public class StrategyDispatchController {
 			if (groupType == SIMPLE_GROUP_TYPE) {
 				tmpGroupName = name;
 				if (groupId != null && groupId > 0) {
-					Long regId = this.getRegularIdBYGid(groupId);
+					Long regId = this.getRegularIdByGid(groupId);
 					if (regId != null && regId > 0) {
 						// 如果分组ID不为null,首先检查并同步策略表
 						groupService.syncRegularJob(groupId, tmpGroupName,
@@ -248,7 +248,7 @@ public class StrategyDispatchController {
 			// 取消调度要考虑简单分组
 			if (id != null && id > 0) {
 				if (groupType == SIMPLE_GROUP_TYPE) {
-					Long regId = this.getRegularIdBYGid(id);
+					Long regId = this.getRegularIdByGid(id);
 					if (regId != null && regId > 0) {
 						cfgService.unSchedule(regId);
 					}
@@ -381,7 +381,7 @@ public class StrategyDispatchController {
 	 * @param gid
 	 * @return
 	 */
-	private Long getRegularIdBYGid(Long gid) {
+	private Long getRegularIdByGid(Long gid) {
 		Long id = null;
 		if (gid != null) {
 			RegularJob rj = cfgService.findRegularJobBySimpleGroupId(gid);
