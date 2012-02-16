@@ -125,9 +125,41 @@ function strategySubmitTreeData() {
 	}
 }
 /**
+ * 用户分组提交树的数据对象
+ */
+function userGroupSubmitTreeData() {
+	// 获取ROOT数组
+	var treearray = userGroupPropExpTree.root.childNodes;
+	// 循环ROOT数组
+	for (var i = 0; i < treearray.length; i++) {
+		var arrayobj = treearray[i].attributes;
+		var submitStr = treejson2str(arrayobj);
+		Ext.Ajax.request({
+					url : '../strategy/cfgsave',
+					params : {
+						'name' : GOBJID,
+						'config' : submitStr
+					},
+					scope : userGroupPropExpTree,
+					success : function(response) {
+						var result = Ext.decode(response.responseText);
+						if (result.success) {
+							userGroupPropExpTree.getRootNode().reload();
+							Ext.Msg.alert("提示", "保存成功");
+						} else {
+							Ext.Msg.alert("提示", "保存失败");
+						}
+					},
+					failure : function() {
+						Ext.Msg.alert("提示", "保存失败");
+					}
+				});
+	}
+}
+/**
  * 调度提交数据的函数
  */
-function strategyDispatchSubmitTreeData() {
+function strategyDispatchSubmitTreeData(stgdisptree,triggerDispForm,radioForm,simpleDispForm,editstgWindow,store) {
 	// 获取ROOT数组
 	var treearray = stgdisptree.root.childNodes;
 	var tparam = {};
@@ -163,7 +195,7 @@ function strategyDispatchSubmitTreeData() {
 		tparam['cron'] = cron;
 	}
 	Ext.Ajax.request({
-				url : '../strategy/dispsave',
+				url : '../dispsys/dispsave',
 				params : tparam,
 				scope : stgdisptree,
 				success : function(response) {
@@ -186,7 +218,7 @@ function strategyDispatchSubmitTreeData() {
 /**
  * 策略分组树提交数据的函数
  */
-function strategyGroupSubmitTreeData() {
+function strategyGroupSubmitTreeData(stgdisptree,triggerDispForm,radioForm,simpleDispForm,editstgWindow,store,groupStore) {
 	// 获取ROOT数组
 	var treearray = stgdisptree.root.childNodes;
 	var tparam = {};

@@ -430,7 +430,7 @@ Ext.onReady(function() {
 				buttons : [{
 							text : '保存',
 							handler : function() {
-								strategyDispatchSubmitTreeData();
+								strategyDispatchSubmitTreeData(stgdisptree,triggerDispForm,radioForm,simpleDispForm,editstgWindow,store);
 							}
 						}, {
 							text : "重置",

@@ -196,6 +196,34 @@ function renderGroupType(value) {
 	}
 }
 /**
+ * 用户分组类型渲染
+ * 
+ * @param {}
+ *            value
+ * @return {String}
+ */
+function renderUserGroupType(value) {
+	if (value == 0) {
+		return 'fixed';
+	} else {
+		return 'dynamic';
+	}
+}
+/**
+ * 网站类型渲染
+ * 
+ * @param {}
+ *            value
+ * @return {String}
+ */
+function renderWebsiteType(value) {
+	if (value == 1) {
+		return '新浪微博';
+	} else {
+		return '其它';
+	}
+}
+/**
  * 自动缩放图片
  * 
  * @param {}
