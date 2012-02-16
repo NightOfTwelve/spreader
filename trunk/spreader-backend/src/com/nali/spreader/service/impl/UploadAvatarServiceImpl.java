@@ -1,5 +1,6 @@
 package com.nali.spreader.service.impl;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +44,9 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 	@Override
 	public List<Photo> findPhotoListByWeight(Map<List<Photo>, Integer> m) {
 		WeightRandomer<List<Photo>> weightList = new WeightRandomer<List<Photo>>();
+		List<Photo> result = new ArrayList<Photo>();
 		Set<Entry<List<Photo>, Integer>> set = m.entrySet();
-		if (set != null) {
+		if (set != null && !set.isEmpty()) {
 			Iterator<Entry<List<Photo>, Integer>> it = set.iterator();
 			while (it.hasNext()) {
 				Map.Entry<List<Photo>, Integer> entry = it.next();
@@ -52,8 +54,8 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 				Integer weight = entry.getValue();
 				weightList.add(wList, weight);
 			}
+			result = weightList.get();
 		}
-		List<Photo> result = weightList.get();
 		return result;
 	}
 
@@ -105,7 +107,7 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 						.toString());
 				Integer general = Integer.parseInt(propMap.get("general")
 						.toString());
-				map = CollectionUtils.newHashMap(5);
+				map = CollectionUtils.newHashMap(2);
 				map.put("gender", gender);
 				map.put("general", general);
 			}
@@ -146,15 +148,15 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 			genderWeight = weightMap.get("gender");
 			generalWeight = weightMap.get("general");
 		}
-		Map<List<Photo>, Integer> m = CollectionUtils.newHashMap(5);
+		Map<List<Photo>, Integer> m = CollectionUtils.newHashMap(2);
 		// 这里做判断SIZE=0的List不进入随机筛选，否则会有异常
 		if (genderList.size() > 0) {
 			m.put(genderList, genderWeight);
-			logger.info("genderList不为空进入筛选");
+			logger.debug("genderList不为空进入筛选");
 		}
 		if (generalList.size() > 0) {
 			m.put(generalList, generalWeight);
-			logger.info("generalList不为空进入筛选");
+			logger.debug("generalList不为空进入筛选");
 		}
 		return m;
 	}
