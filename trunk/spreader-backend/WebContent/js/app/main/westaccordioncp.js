@@ -11,32 +11,30 @@ var menuTree_Stg = new Ext.tree.TreePanel({
 						id : '-1',
 						text : '相关配置',
 						children : [{
-									id : 'stgnode1',
+									id : 'cfgmenu1',
 									text : "策略配置",
 									leaf : true,
 									url : '../strategy/showlist'
-								}, 
-//									{
-//									id : 'stgnode2',
-//									text : "调度配置",
-//									leaf : true,
-//									url : '../strategy/dispatchlist'
-//								},
-								{
-									id : 'stgnode3',
+								}, {
+									id : 'cfgmenu2',
 									text : "系统策略配置",
 									leaf : true,
 									url : '../strategysys/init'
 								}, {
-									id : 'stgnode4',
+									id : 'cfgmenu3',
 									text : "系统调度配置",
 									leaf : true,
 									url : '../dispsys/dispatchlist'
 								}, {
-									id : 'stgnode5',
-									text : "分组配置",
+									id : 'cfgmenu4',
+									text : "策略分组配置",
 									leaf : true,
 									url : '../stggroup/init'
+								}, {
+									id : 'cfgmenu5',
+									text : "用户分组配置",
+									leaf : true,
+									url : '../usergroup/init'
 								}]
 					}),
 			// 添加监听事件
@@ -67,17 +65,17 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 						id : '-1',
 						text : '信息查询',
 						children : [{
-									id : 'infonode1',
+									id : 'querymenu1',
 									text : "用户查询",
 									leaf : true,
 									url : '../userinfo/init'
 								}, {
-									id : 'infonode2',
+									id : 'querymenu2',
 									text : "机器人查询",
 									leaf : true,
 									url : '../rbtregist/init'
 								}, {
-									id : 'infonode3',
+									id : 'querymenu3',
 									text : "队列查询",
 									leaf : true,
 									url : '../queuemoitor/init'
