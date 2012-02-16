@@ -16,7 +16,7 @@ var stgtree = new Ext.tree.TreePanel({
 				text : '保存修改',
 				iconCls : 'addIcon',
 				tooltip : '<button type="button" value="增加">增加</button>',
-				tooltipType : 'qtip',
+//				tooltipType : 'qtip',
 				handler : function() {
 					strategySubmitTreeData();
 				}

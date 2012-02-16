@@ -193,26 +193,6 @@ var stgCmbStore = new Ext.data.Store({
 		});
 		//TODO
 		var resultTpl = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{id}({groupName})</span></div></tpl>');
-		var stgSelectCombo2 = new Ext.form.ComboBox({
-        store: store2,
-        typeAhead: true,
-        emptyText:'请输入代码',
-        loadingText: '加载中...',
-        width: 120,
-        listWidth:220,
-        minChars:2,
-        pageSize:10,
-        tpl: resultTpl,
-        title:'请选择',
-        hideTrigger:true,
-        //                renderTo: 'fundSelect',//如果放在其他容器中这一行可以去掉
-        itemSelector: 'div.x-combo-list-item',
-        mode: 'remote',
-        fieldLabel :'基金',
-        valueField: 'id',
-        displayField:'groupName',
-        hiddenName:'id'//对应form中的input里面的name属性
-    });
 // 选择策略的COMB
 var stgSelectCombo = new Ext.form.ComboBox({
 			hiddenName : 'id',

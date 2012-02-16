@@ -141,7 +141,7 @@ Ext.onReady(function() {
 				buttons : [{
 							text : '保存',
 							handler : function() {
-								strategyGroupSubmitTreeData();
+								strategyGroupSubmitTreeData(stgdisptree,triggerDispForm,radioForm,simpleDispForm,editstgWindow,store,groupStore);
 							}
 						}, {
 							text : "重置",
