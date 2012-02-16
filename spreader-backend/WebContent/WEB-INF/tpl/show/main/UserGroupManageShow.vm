@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>用户分组管理</title>
+<script>
+	// 全局对象ID
+	//分组类型
+	//GGROUPTYPE = null;
+	//网站类型
+	//GWEBSITEID = null;
+	//分组名称
+	//GGROUPNAME = null;
+	//分组说明
+	//GDESCRIPTION = null;
+	//全局用户分组ID
+	GUSERGROUPID = null;
+</script>
+#parse("/show/comm/PublicInclude.vm")
+#parse("/show/comm/DateTimeFieldInclude.vm")
+#parse("/show/comm/FunctionsInclude.vm")
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/usergroup/UserGroupManageModel.js'))"></script>
+</head>
+<body>
+</body>
+</html>
