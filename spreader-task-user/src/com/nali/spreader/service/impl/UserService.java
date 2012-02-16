@@ -159,11 +159,6 @@ public class UserService extends WebsiteBaseService implements IUserService {
 	}
 
 	@Override
-	public User getUserById(Long id) {
-		return crudUserDao.selectByPrimaryKey(id);
-	}
-
-	@Override
 	public User getUserByWebsiteUid(Long websiteUid) {
 		UserExample example = new UserExample();
 		example.createCriteria().andWebsiteIdEqualTo(getWebsiteId()).andWebsiteUidEqualTo(websiteUid);

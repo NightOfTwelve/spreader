@@ -89,6 +89,11 @@ public class GlobalUserService implements IGlobalUserService {
 	}
 
 	@Override
+	public User getUserById(Long id) {
+		return crudUserDao.selectByPrimaryKey(id);
+	}
+
+	@Override
 	public void updateUserTags(Long uid, List<UserTag> tags) {
 		UserTagExample example = new UserTagExample();
 		example.createCriteria().andUidEqualTo(uid);

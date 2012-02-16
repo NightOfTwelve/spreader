@@ -17,9 +17,8 @@ import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
+import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUploadAvatarService;
-import com.nali.spreader.service.IUserService;
-import com.nali.spreader.service.IUserServiceFactory;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
@@ -29,12 +28,8 @@ public class UploadUserAvatar extends SingleTaskMachineImpl implements
 			.getLogger(UploadUserAvatar.class);
 	@Autowired
 	private IUploadAvatarService uploadService;
-	private IUserService userService;
-
 	@Autowired
-	public void initUserService(IUserServiceFactory userServiceFactory) {
-		userService = userServiceFactory.getUserService(websiteId);
-	}
+	private IGlobalUserService globalUserService;
 
 	public UploadUserAvatar() {
 		super(SimpleActionConfig.uploadAvatar, Website.weibo, Channel.normal);
@@ -42,7 +37,7 @@ public class UploadUserAvatar extends SingleTaskMachineImpl implements
 
 	@Override
 	public void work(Long uid, SingleTaskExporter exporter) {
-		User user = userService.getUserById(uid);
+		User user = globalUserService.getUserById(uid);
 		Integer gender = 3;
 		if (user != null) {
 			gender = user.getGender();
