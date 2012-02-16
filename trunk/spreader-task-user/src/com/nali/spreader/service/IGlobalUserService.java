@@ -12,6 +12,8 @@ public interface IGlobalUserService {
 	List<Long> findRelationUserId(Long toUid, Integer attentionType, Boolean isRobot);
 
 	void updateUserTags(Long uid, List<UserTag> tags);
+
+	User getUserById(Long id);
 	
 	Long getWebsiteUid(Long uid);
 	//add by xiefei

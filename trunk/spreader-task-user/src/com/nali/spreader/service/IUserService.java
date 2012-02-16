@@ -27,8 +27,6 @@ public interface IUserService {
 	List<User> getUninitializedUser(long offset, int batchSize);
 
 	List<User> getExpiredUser(long offset, int batchSize);
-
-	User getUserById(Long id);
 	
 	List<User> getUsersByIds(List<Long> uids);
 	
