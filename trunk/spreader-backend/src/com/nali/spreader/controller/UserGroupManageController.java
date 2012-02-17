@@ -334,6 +334,31 @@ public class UserGroupManageController {
 	}
 
 	/**
+	 * 更新编辑后的分组数据
+	 * 
+	 * @param gid
+	 * @param propexp
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/updategroup")
+	public String updateGroupData(Long gid, String propexp)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
+		result.put("success", false);
+		if (gid != null && gid > 0) {
+			UserGroup group = userGroupService.queryUserGroup(gid);
+			group.setPropExp(propexp);
+			userGroupService.updateUserGroup(group);
+			result.put("success", true);
+		}
+		return json.writeValueAsString(result);
+	}
+
+	/**
 	 * 前台显示树结构DTO
 	 * 
 	 * @author xiefei

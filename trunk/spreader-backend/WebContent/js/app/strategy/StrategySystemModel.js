@@ -19,7 +19,7 @@ Ext.onReady(function() {
 					tooltip : '<button type="button" value="增加">增加</button>',
 					tooltipType : 'qtip',
 					handler : function() {
-						strategySubmitTreeData();
+						strategySubmitTreeData(stgtree);
 					}
 				}],
 		root : stgroot,
@@ -76,7 +76,7 @@ Ext.onReady(function() {
 							id : 'delNode',
 							text : '删除',
 							handler : function(tree) {
-								strategyDeleteNode();
+								strategyDeleteNode(stgtree);
 							}
 						}]
 			});

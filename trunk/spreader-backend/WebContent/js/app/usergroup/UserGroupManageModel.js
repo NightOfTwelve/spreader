@@ -17,9 +17,8 @@ Ext.onReady(function() {
 		tbar : [{
 					text : '保存修改',
 					iconCls : 'addIcon',
-					tooltip : '<button type="button" value="增加">增加</button>',
 					handler : function() {
-						userGroupSubmitTreeData();
+						userGroupSubmitTreeData(userGroupPropExpTree);
 					}
 				}],
 		loader : new Ext.tree.TreeLoader({
@@ -223,6 +222,7 @@ Ext.onReady(function() {
 					xtype : 'fieldset',
 					title : '属性筛选',
 					autoHeight : true,
+					animCollapse : true,
 					layout : 'form',
 					collapsed : false,
 					collapsible : true,
@@ -676,7 +676,7 @@ Ext.onReady(function() {
 					if (userArray.indexOf(uid) < 0) {
 						userArray.push(uid);
 						var selectstr = Ext.getCmp('selectusername');
-						selectstr.setValue(uname + ";" + selectstr.getValue());
+						selectstr.setText(uname + ";" + selectstr.text);
 					} else {
 						Ext.MessageBox.alert("提示:", uname + "已添加，请勿重复添加");
 					}
@@ -703,13 +703,11 @@ Ext.onReady(function() {
 					labelStyle : 'padding:0px',
 					text : ''
 				}, selectComboUtil, {
-					xtype : 'textarea',
-					anchor : '100%',
+					xtype : 'label',
 					fieldLabel : '已筛选人员',
-					height : 60,
-					readOnly : true,
 					id : 'selectusername',
-					flex : 1
+					labelStyle : 'padding:0px',
+					text : ''
 				}],
 		buttonAlign : "center",
 		buttons : [{
@@ -889,6 +887,9 @@ Ext.onReady(function() {
 						var uid = rows[i].data['user.id'];
 						delUserArray.push(uid);
 					}
+				} else {
+					Ext.Msg.alert("提示", "请至少一个人员");
+					return;
 				}
 				Ext.Msg.show({
 					title : '确认信息',
@@ -1219,7 +1220,7 @@ Ext.onReady(function() {
 	function cleanParams() {
 		userArray = [];
 		var namestr = Ext.getCmp('selectusername');
-		namestr.setValue('');
+		namestr.setText('');
 	}
 	/**
 	 * 渲染策略名称为中文名

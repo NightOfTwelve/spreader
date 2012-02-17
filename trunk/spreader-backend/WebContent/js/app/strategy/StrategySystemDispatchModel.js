@@ -71,13 +71,7 @@ Ext.onReady(function() {
 							id : 'delNode',
 							text : '删除',
 							handler : function(tree) {
-								dispatchDeleteNode();
-							}
-						}, {
-							id : 'viewNode',
-							text : '查看',
-							handler : function(tree) {
-								veiwNodeAction();
+								dispatchDeleteNode(stgdisptree);
 							}
 						}]
 			});

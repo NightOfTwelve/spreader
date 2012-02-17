@@ -106,7 +106,7 @@ var rightMenu = new Ext.menu.Menu({
 				id : 'delNode',
 				text : '删除',
 				handler : function(tree) {
-					dispatchDeleteNode();
+					dispatchDeleteNode(stgdisptree);
 				}
 			}
 					// , {
@@ -116,13 +116,14 @@ var rightMenu = new Ext.menu.Menu({
 					// modifNode()
 					// }
 					// }
-			, {
-				id : 'viewNode',
-				text : '查看',
-				handler : function(tree) {
-					veiwNodeAction();
-				}
-			}]
+//			, {
+//				id : 'viewNode',
+//				text : '查看',
+//				handler : function(tree) {
+//					veiwNodeAction();
+//				}
+//			}
+			]
 		});
 // 添加点击事件
 stgdisptree.on('click', function(node) {
