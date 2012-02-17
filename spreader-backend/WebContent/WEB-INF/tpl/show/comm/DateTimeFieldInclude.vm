@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/ux/datetimefield/css/Spinner.css')" />
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/DateTimeField.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/Spinner.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/datetimefield/SpinnerField.js')"></script>
