@@ -65,13 +65,7 @@ Ext.onReady(function() {
 							id : 'delNode',
 							text : '删除',
 							handler : function(tree) {
-								dispatchDeleteNode();
-							}
-						}, {
-							id : 'viewNode',
-							text : '查看',
-							handler : function(tree) {
-								veiwNodeAction();
+								dispatchDeleteNode(stgdisptree);
 							}
 						}]
 			});
@@ -139,16 +133,18 @@ Ext.onReady(function() {
 				}],
 				buttonAlign : "center",
 				buttons : [{
-							text : '保存',
-							handler : function() {
-								strategyGroupSubmitTreeData(stgdisptree,triggerDispForm,radioForm,simpleDispForm,editstgWindow,store,groupStore);
-							}
-						}, {
-							text : "重置",
-							handler : function() { // 按钮响应函数
-								simpleDispForm.form.reset();
-							}
-						}]
+					text : '保存',
+					handler : function() {
+						strategyGroupSubmitTreeData(stgdisptree,
+								triggerDispForm, radioForm, simpleDispForm,
+								editstgWindow, store, groupStore);
+					}
+				}, {
+					text : "重置",
+					handler : function() { // 按钮响应函数
+						simpleDispForm.form.reset();
+					}
+				}]
 			});
 
 	// 表达式配置FORM
@@ -175,16 +171,18 @@ Ext.onReady(function() {
 				}],
 				buttonAlign : "center",
 				buttons : [{
-							text : '保存',
-							handler : function() {
-								strategyGroupSubmitTreeData();
-							}
-						}, {
-							text : "重置",
-							handler : function() { // 按钮响应函数
-								triggerDispForm.form.reset();
-							}
-						}]
+					text : '保存',
+					handler : function() {
+						strategyGroupSubmitTreeData(stgdisptree,
+								triggerDispForm, radioForm, simpleDispForm,
+								editstgWindow, store, groupStore);
+					}
+				}, {
+					text : "重置",
+					handler : function() { // 按钮响应函数
+						triggerDispForm.form.reset();
+					}
+				}]
 			});
 	// 首先创建一个card布局的Panel
 	var cardPanel = new Ext.Panel({
@@ -234,10 +232,13 @@ Ext.onReady(function() {
 								'change' : function(group, ck) {
 									var cardPanelCmp = Ext.getCmp('cardPanel').layout;
 									var activeid = cardPanelCmp.activeItem.id;
+									var t = radioForm.getForm();
 									if (ck.inputValue == '1') {
 										cardPanelCmp.setActiveItem(0);
+										triggerDispForm.getForm().reset();
 									} else {
 										cardPanelCmp.setActiveItem(1);
+										simpleDispForm.getForm().reset();
 									}
 								}
 							}
@@ -498,78 +499,113 @@ Ext.onReady(function() {
 
 	// 策略分组grid
 	var groupGrid = new Ext.grid.GridPanel({
-				height : 500,
-				autoWidth : true,
-				autoScroll : true,
-				split : true,
-				region : 'center',
-				store : groupStore,
-				loadMask : {
-					msg : '正在加载表格数据,请稍等...'
-				},
-				// stripeRows : true,
-				frame : true,
-				// autoExpandColumn : 'remark',
-				sm : groupsm,
-				cm : groupcm,
-				tbar : [{
-							text : '新增',
-							iconCls : 'page_addIcon',
-							handler : function() {
-								groupAddWindow.show();
-							}
-						}, '-', {
-							text : '删除',
-							iconCls : 'page_delIcon',
-							handler : function() {
-								// TODO
-								// deleteData();
-							}
-						}, '-', {
-							text : '刷新',
-							iconCls : 'arrow_refreshIcon',
-							handler : function() {
-								groupStore.reload();
-							}
-						}],
-				bbar : groupBbar,
-				onCellClick : function(grid, rowIndex, columnIndex, e) {
-					// 找出表格中‘配置’按钮
-					if (e.target.defaultValue == '配置') {
-						var record = grid.getStore().getAt(rowIndex);
-						var data = record.data;
-						// 获取分组类型分别做判断
-						var gType = data.groupType;
-						cleanGlobalVar();
-						// 简单分组
-						if (gType == 1) {
-							GDISNAME = data.groupName;
-							GOBJID = data.groupName;
-							GDISPID = data.id;
-							GGROUPID = data.id;
-							GISGROUP = true;
-							GGROUPTYPE = gType;
-							var gid = data.id;
-							settingCreateTrigger(gid, GISGROUP);
-							editstgWindow.title = data.transformName;
-							editstgWindow.show();
-						} else {
-							// 复杂分组
-							GGROUPID = data.id;
-							GGROUPNAME = data.groupName;
-							var wtitle = '当前分组:' + data.groupName + ',编号:'
-									+ data.id;
-							// TODO
-							compGroupWindow.title = '<font color = "red">'
-									+ wtitle + '</font>';
-							store.setBaseParam('groupId', data.id);
-							store.reload();
-							compGroupWindow.show();
-						}
+		height : 500,
+		autoWidth : true,
+		autoScroll : true,
+		split : true,
+		region : 'center',
+		store : groupStore,
+		loadMask : {
+			msg : '正在加载表格数据,请稍等...'
+		},
+		// stripeRows : true,
+		frame : true,
+		// autoExpandColumn : 'remark',
+		sm : groupsm,
+		cm : groupcm,
+		tbar : [{
+					text : '新增',
+					iconCls : 'page_addIcon',
+					handler : function() {
+						groupAddWindow.show();
 					}
+				}, '-', {
+					text : '删除',
+					iconCls : 'page_delIcon',
+					handler : function() {
+						var gidArray = [];
+						var rows = groupGrid.getSelectionModel()
+								.getSelections();
+						if (rows.length > 0) {
+							for (var i = 0; i < rows.length; i++) {
+								var uid = rows[i].data.id;
+								gidArray.push(uid);
+							}
+						} else {
+							Ext.Msg.alert("提示", "请至少选择一个分组");
+							return;
+						}
+						Ext.Msg.show({
+							title : '确认信息',
+							msg : '确定删除?',
+							buttons : Ext.Msg.YESNO,
+							fn : function(ans) {
+								if (ans == 'yes') {
+									Ext.Ajax.request({
+										url : '../stggroup/deletegroup?_time'
+												+ new Date().getTime(),
+										params : {
+											gids : gidArray
+										},
+										success : function(response) {
+											var result = Ext
+													.decode(response.responseText);
+											if (result.success) {
+												Ext.Msg.alert("提示", "删除成功");
+											} else {
+												Ext.Msg.alert("提示", "删除失败");
+											}
+											groupStore.reload();
+										},
+										failure : function() {
+											Ext.Msg.alert("提示", "删除失败");
+										}
+									});
+								}
+							}
+						});
+					}
+				}, '-', {
+					text : '刷新',
+					iconCls : 'arrow_refreshIcon',
+					handler : function() {
+						groupStore.reload();
+					}
+				}],
+		bbar : groupBbar,
+		onCellClick : function(grid, rowIndex, columnIndex, e) {
+			// 找出表格中‘配置’按钮
+			if (e.target.defaultValue == '配置') {
+				var record = grid.getStore().getAt(rowIndex);
+				var data = record.data;
+				// 获取分组类型分别做判断
+				var gType = data.groupType;
+				cleanGlobalVar();
+				// 简单分组
+				if (gType == 1) {
+					GDISNAME = data.groupName;
+					GOBJID = data.groupName;
+					GDISPID = data.id;
+					GGROUPID = data.id;
+					GISGROUP = true;
+					GGROUPTYPE = gType;
+					var gid = data.id;
+					settingCreateTrigger(gid, GISGROUP);
+					editstgWindow.title = data.transformName;
+					editstgWindow.show();
+				} else {
+					// 复杂分组
+					GGROUPID = data.id;
+					GGROUPNAME = data.groupName;
+					var wtext = '当前分组:' + data.groupName + ',编号:' + data.id;
+					Ext.getCmp('groupinfo').setText(wtext);
+					compGroupWindow.show();
+					store.setBaseParam('groupId', data.id);
+					store.reload();
 				}
-
-			});
+			}
+		}
+	});
 	// 注册事件
 	groupGrid.on('cellclick', groupGrid.onCellClick, groupGrid);
 	// 增加策略分组的ComboBox
@@ -770,37 +806,22 @@ Ext.onReady(function() {
 				labelAlign : "right",
 				items : [{ // 行1
 					layout : "column", // 从左往右的布局
-					items : [
-							// {
-							// columnWidth : .5, // 该列有整行中所占百分比
-							// layout : "form", // 从上往下的布局
-							// items : [{
-							// fieldLabel : '调度类型',
-							// // name:'TIMEFER',
-							// xtype : 'combo',
-							// width : 100,
-							// store : tgTypeStore,
-							// id : 'triggerType1',
-							// hiddenName : 'triggerType',
-							// valueField : 'ID',
-							// editable : false,
-							// displayField : 'NAME',
-							// mode : 'local',
-							// forceSelection : false,// 必须选择一项
-							// emptyText : '调度类型...',// 默认值
-							// triggerAction : 'all'
-							// }]
-							// },
-							{
-						columnWidth : .5,
-						layout : "form",
-						items : [{
-									xtype : "textfield",
-									fieldLabel : "调度名称",
-									name : 'dispname1',
-									width : 100
-								}]
-					}]
+					items : [{
+								columnWidth : .5,
+								layout : "form",
+								items : [{
+											xtype : "textfield",
+											fieldLabel : "调度名称",
+											name : 'dispname1',
+											width : 100
+										}, {
+											xtype : 'label',
+											fieldLabel : '分组信息',
+											id : 'groupinfo',
+											labelStyle : 'padding:0px',
+											text : ''
+										}]
+							}]
 				}],
 				buttonAlign : "center",
 				buttons : [{

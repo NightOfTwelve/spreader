@@ -3,15 +3,6 @@
 <head>
 <title>用户分组管理</title>
 <script>
-	// 全局对象ID
-	//分组类型
-	//GGROUPTYPE = null;
-	//网站类型
-	//GWEBSITEID = null;
-	//分组名称
-	//GGROUPNAME = null;
-	//分组说明
-	//GDESCRIPTION = null;
 	//全局用户分组ID
 	GUSERGROUPID = null;
 </script>

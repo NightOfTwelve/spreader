@@ -1,6 +1,9 @@
 package com.nali.spreader.service;
 
+import java.util.List;
+
 import com.nali.common.pagination.PageResult;
+import com.nali.spreader.model.RegularJob;
 import com.nali.spreader.model.StrategyGroup;
 
 /**
@@ -48,4 +51,18 @@ public interface IStrategyGroupService {
 	 */
 	void syncRegularJob(Long gid, String groupName, Long regularJobId);
 
+	/**
+	 * 批量删除StrategyGroups 需要区分分组类型
+	 * 
+	 * @param gids
+	 */
+	void batRemoveStrategyGroup(Long... gids);
+
+	/**
+	 * 根据gid获取策略实例
+	 * 
+	 * @param gid
+	 * @return
+	 */
+	List<RegularJob> findRegularJobListByStrategyGroupId(Long gid);
 }

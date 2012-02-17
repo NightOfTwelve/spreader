@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
+import com.nali.log.MessageLogger;
+import com.nali.log.impl.LoggerFactory;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.factory.config.IConfigService;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
@@ -37,6 +39,8 @@ public class StrategyGroupManageController {
 	private IConfigService<Long> regularConfigService;
 	// 简单分组
 	private static final Integer SIMPLE_GROUP_TYPE = 1;
+	private static final MessageLogger logger = LoggerFactory
+			.getLogger(StrategyGroupManageController.class);
 
 	/**
 	 * 初始化页面
@@ -114,5 +118,31 @@ public class StrategyGroupManageController {
 			}
 		}
 		return groupList;
+	}
+
+	/**
+	 * 删除策略组
+	 * 
+	 * @param gids
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/deletegroup")
+	public String deleteStrategyGroup(Long[] gids)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
+		result.put("success", false);
+		if (gids.length > 0) {
+			try {
+				this.groupService.batRemoveStrategyGroup(gids);
+				result.put("success", true);
+			} catch (Exception e) {
+				logger.debug("删除失败", e);
+			}
+		}
+		return json.writeValueAsString(result);
 	}
 }

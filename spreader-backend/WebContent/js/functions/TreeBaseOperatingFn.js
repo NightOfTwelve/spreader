@@ -3,7 +3,7 @@
  * 策略树操作
  */
 // 删除节点事件实现
-function strategyDeleteNode() {
+function strategyDeleteNode(stgtree) {
 	// 得到选中的节点
 	var selectedNode = stgtree.getSelectionModel().getSelectedNode();
 	var parent = selectedNode.parentNode;
@@ -39,7 +39,7 @@ function strategyInsertNode() {
  * 调度树操作
  */
 // 删除节点事件实现
-function dispatchDeleteNode() {
+function dispatchDeleteNode(stgdisptree) {
 	// 得到选中的节点
 	var selectedNode = stgdisptree.getSelectionModel().getSelectedNode();
 	var parent = selectedNode.parentNode;
@@ -95,7 +95,7 @@ function appendNodeAction(node) {
 /**
  * 策略提交树的数据对象
  */
-function strategySubmitTreeData() {
+function strategySubmitTreeData(stgtree) {
 	// 获取ROOT数组
 	var treearray = stgtree.root.childNodes;
 	// 循环ROOT数组
@@ -127,7 +127,7 @@ function strategySubmitTreeData() {
 /**
  * 用户分组提交树的数据对象
  */
-function userGroupSubmitTreeData() {
+function userGroupSubmitTreeData(userGroupPropExpTree) {
 	// 获取ROOT数组
 	var treearray = userGroupPropExpTree.root.childNodes;
 	// 循环ROOT数组
@@ -135,10 +135,10 @@ function userGroupSubmitTreeData() {
 		var arrayobj = treearray[i].attributes;
 		var submitStr = treejson2str(arrayobj);
 		Ext.Ajax.request({
-					url : '../strategy/cfgsave',
+					url : '../usergroup/updategroup',
 					params : {
-						'name' : GOBJID,
-						'config' : submitStr
+						'gid' : GUSERGROUPID,
+						'propexp' : submitStr
 					},
 					scope : userGroupPropExpTree,
 					success : function(response) {
@@ -159,7 +159,8 @@ function userGroupSubmitTreeData() {
 /**
  * 调度提交数据的函数
  */
-function strategyDispatchSubmitTreeData(stgdisptree,triggerDispForm,radioForm,simpleDispForm,editstgWindow,store) {
+function strategyDispatchSubmitTreeData(stgdisptree, triggerDispForm,
+		radioForm, simpleDispForm, editstgWindow, store) {
 	// 获取ROOT数组
 	var treearray = stgdisptree.root.childNodes;
 	var tparam = {};
@@ -218,7 +219,8 @@ function strategyDispatchSubmitTreeData(stgdisptree,triggerDispForm,radioForm,si
 /**
  * 策略分组树提交数据的函数
  */
-function strategyGroupSubmitTreeData(stgdisptree,triggerDispForm,radioForm,simpleDispForm,editstgWindow,store,groupStore) {
+function strategyGroupSubmitTreeData(stgdisptree, triggerDispForm, radioForm,
+		simpleDispForm, editstgWindow, store, groupStore) {
 	// 获取ROOT数组
 	var treearray = stgdisptree.root.childNodes;
 	var tparam = {};
@@ -243,7 +245,7 @@ function strategyGroupSubmitTreeData(stgdisptree,triggerDispForm,radioForm,simpl
 	var ttriggerDispForm = triggerDispForm.getForm();
 	var tsimpleDispForm = simpleDispForm.getForm();
 	// 获取调度参数
-	var triggerType = tradioForm.findField("triggerType").inputValue;
+	var triggerType = tradioForm.findField("triggerType").getGroupValue();
 	var description = tradioForm.findField("description").getValue();
 	tparam['description'] = description;
 	tparam['triggerType'] = triggerType;
