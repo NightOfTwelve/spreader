@@ -252,11 +252,12 @@ public class UserGroupService implements IUserGroupService {
 			long propertyEndIndex = propertyCount - 1;
 			queryEndIndex = leftOffset + leftLimit - 1;
 			endIndex = Math.min(queryEndIndex, propertyEndIndex);
-
-			List<Long> propertyUids = this.propertiesGrouppedUserService
-					.queryGrouppedUids(gid, leftOffset, (int) (endIndex
-							- leftOffset + 1));
-			propertyList = this.convertUidToGrouppedUser(propertyUids, false);
+			if(endIndex >= 0) {
+				List<Long> propertyUids = this.propertiesGrouppedUserService
+						.queryGrouppedUids(gid, leftOffset, (int) (endIndex
+								- leftOffset + 1));
+				propertyList = this.convertUidToGrouppedUser(propertyUids, false);
+			}
 		}
 
 		propertyList = this.grouppedUserFilter
