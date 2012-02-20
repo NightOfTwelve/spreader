@@ -24,6 +24,8 @@ import com.nali.spreader.factory.config.desc.DescriptionResolve;
 import com.nali.spreader.group.assembler.UserGroupAssembler;
 import com.nali.spreader.group.exception.AssembleException;
 import com.nali.spreader.group.exception.UserGroupException;
+import com.nali.spreader.group.exp.PropertyExpParser;
+import com.nali.spreader.group.exp.PropertyExpression;
 import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.group.service.IUserGroupService;
@@ -45,6 +47,8 @@ public class UserGroupManageController {
 	private IUserGroupService userGroupService;
 	@Autowired
 	private UserGroupAssembler userGroupAssembler;
+	@Autowired
+	private PropertyExpParser expParser;
 
 	/**
 	 * 初始化页面
@@ -124,7 +128,7 @@ public class UserGroupManageController {
 				if (gid > 0) {
 					result.put("success", true);
 					result.put("gid", gid);
-					logger.info("usergroup创建成功,gid=" + gid);
+					logger.debug("usergroup创建成功,gid=" + gid);
 				}
 			} catch (UserGroupException e) {
 				logger.error("usergroup创建异常", e);
@@ -170,16 +174,54 @@ public class UserGroupManageController {
 			JsonGenerationException, JsonMappingException, IOException {
 		ConfigDefinition def = null;
 		ConfigableInfo configableInfo = null;
+		Object data = null;
 		if (gid != null && gid > 0) {
 			UserGroup usergroup = this.userGroupService.queryUserGroup(gid);
 			if (usergroup != null) {
+				String propexp = usergroup.getPropExp();
+				PropertyExpression pexp = this.userGroupAssembler
+						.toExpression(propexp);
+				data = new PropertyExpressionDTO(pexp);
 				def = DescriptionResolve.get(PropertyExpressionDTO.class);
 				configableInfo = DescriptionResolve.getConfigableInfo(
 						PropertyExpressionDTO.class, usergroup.getGname());
 			}
 		}
 		return json.writeValueAsString(new UserGroupExpTreeDto(configableInfo,
-				def, null));
+				def, data));
+	}
+
+	/**
+	 * 更新编辑后的分组数据
+	 * 
+	 * @param gid
+	 * @param propexp
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 * @throws AssembleException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/updategroup")
+	public String updateGroupData(Long gid, String propexp)
+			throws JsonGenerationException, JsonMappingException, IOException,
+			AssembleException {
+		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
+		result.put("success", false);
+		if (gid != null && gid > 0) {
+			UserGroup group = userGroupService.queryUserGroup(gid);
+			PropertyExpressionDTO dto = json.readValue(propexp,
+					PropertyExpressionDTO.class);
+			PropertyExpression pexp = new PropertyExpression(dto);
+			String jsonPexp = this.userGroupAssembler.toJson(pexp);
+			group.setPropExp(jsonPexp);
+			int propVal = expParser.parsePropVal(dto);
+			group.setPropVal(propVal);
+			userGroupService.updateUserGroup(group);
+			result.put("success", true);
+		}
+		return json.writeValueAsString(result);
 	}
 
 	/**
@@ -334,25 +376,24 @@ public class UserGroupManageController {
 	}
 
 	/**
-	 * 更新编辑后的分组数据
+	 * 批量删除用户分组
 	 * 
-	 * @param gid
-	 * @param propexp
+	 * @param gids
 	 * @return
 	 * @throws IOException
 	 * @throws JsonMappingException
 	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/updategroup")
-	public String updateGroupData(Long gid, String propexp)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	@RequestMapping(value = "/removegroup")
+	public String deleteUserGroup(long[] gids) throws JsonGenerationException,
+			JsonMappingException, IOException {
 		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
-		if (gid != null && gid > 0) {
-			UserGroup group = userGroupService.queryUserGroup(gid);
-			group.setPropExp(propexp);
-			userGroupService.updateUserGroup(group);
+		if (gids != null && gids.length > 0) {
+			for (long gid : gids) {
+				this.userGroupService.deleteUserGroup(gid);
+			}
 			result.put("success", true);
 		}
 		return json.writeValueAsString(result);

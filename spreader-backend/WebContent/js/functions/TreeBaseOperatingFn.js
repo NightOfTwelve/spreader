@@ -127,7 +127,7 @@ function strategySubmitTreeData(stgtree) {
 /**
  * 用户分组提交树的数据对象
  */
-function userGroupSubmitTreeData(userGroupPropExpTree) {
+function userGroupSubmitTreeData(userGroupPropExpTree, store) {
 	// 获取ROOT数组
 	var treearray = userGroupPropExpTree.root.childNodes;
 	// 循环ROOT数组
@@ -146,12 +146,15 @@ function userGroupSubmitTreeData(userGroupPropExpTree) {
 						if (result.success) {
 							userGroupPropExpTree.getRootNode().reload();
 							Ext.Msg.alert("提示", "保存成功");
+							store.reload();
 						} else {
 							Ext.Msg.alert("提示", "保存失败");
+							store.reload();
 						}
 					},
 					failure : function() {
 						Ext.Msg.alert("提示", "保存失败");
+						store.reload();
 					}
 				});
 	}
