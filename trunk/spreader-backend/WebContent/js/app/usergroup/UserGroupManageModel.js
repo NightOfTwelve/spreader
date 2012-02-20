@@ -18,7 +18,7 @@ Ext.onReady(function() {
 					text : '保存修改',
 					iconCls : 'addIcon',
 					handler : function() {
-						userGroupSubmitTreeData(userGroupPropExpTree);
+						userGroupSubmitTreeData(userGroupPropExpTree, store);
 					}
 				}],
 		loader : new Ext.tree.TreeLoader({
@@ -227,17 +227,12 @@ Ext.onReady(function() {
 					collapsed : false,
 					collapsible : true,
 					items : [{
-								xtype : 'textfield',
-								name : 'alladdress',
-								fieldLabel : '选中的条件',
-								anchor : '95%'
-							}, {
 								xtype : 'checkboxgroup',
 								fieldLabel : '条件',
 								items : [{
 											boxLabel : '网站',
-											name : 'website',
-											checked : true
+											// checked : true,
+											name : 'website'
 										}, {
 											boxLabel : '分类',
 											name : 'category'
@@ -370,71 +365,106 @@ Ext.onReady(function() {
 
 	// 用户分组列表
 	var userGroupGrid = new Ext.grid.GridPanel({
-				height : 500,
-				autoWidth : true,
-				autoScroll : true,
-				split : true,
-				region : 'center',
-				store : store,
-				loadMask : {
-					msg : '正在加载表格数据,请稍等...'
-				},
-				// stripeRows : true,
-				frame : true,
-				// autoExpandColumn : 'remark',
-				sm : sm,
-				cm : cm,
-				tbar : [{
-							text : '新增',
-							iconCls : 'page_addIcon',
-							handler : function() {
-								addGroupCmbForm.form.reset();
-								addGroupWindow.show();
-							}
-						}, '-', {
-							text : '删除',
-							iconCls : 'page_delIcon',
-							handler : function() {
-								// TODO
-								deleteData();
-							}
-						}, {
-							text : '查询',
-							iconCls : 'previewIcon',
-							handler : function() {
-							}
-						}, '-', {
-							text : '刷新',
-							iconCls : 'arrow_refreshIcon',
-							handler : function() {
-								store.reload();
-							}
-						}],
-				bbar : bbar,
-				onCellClick : function(grid, rowIndex, columnIndex, e) {
-					GUSERGROUPID = null;
-					var buttons = e.target.defaultValue;
-					var record = grid.getStore().getAt(rowIndex);
-					var data = record.data;
-					// 找出表格中‘配置’按钮
-					if (buttons == '配置') {
-						var gname = data.gname;
-						GUSERGROUPID = data.gid;
-						editstgWindow.title = gname;
-						editstgWindow.show();
+		height : 500,
+		autoWidth : true,
+		autoScroll : true,
+		split : true,
+		region : 'center',
+		store : store,
+		loadMask : {
+			msg : '正在加载表格数据,请稍等...'
+		},
+		// stripeRows : true,
+		frame : true,
+		// autoExpandColumn : 'remark',
+		sm : sm,
+		cm : cm,
+		tbar : [{
+					text : '新增',
+					iconCls : 'page_addIcon',
+					handler : function() {
+						addGroupCmbForm.form.reset();
+						addGroupWindow.show();
 					}
-					if (buttons == '添加成员') {
-						GUSERGROUPID = data.gid;
-						Ext.getCmp("groupinfo").setText(data.gname + ',编号:'
-								+ GUSERGROUPID);
-						addGroupUserWindow.show();
-						deleteUserStore.setBaseParam('gid', GUSERGROUPID);
-						selectUserStore.setBaseParam('gid', GUSERGROUPID);
-						deleteUserStore.load();
-						selectUserStore.load();
+				}, '-', {
+					text : '删除',
+					iconCls : 'page_delIcon',
+					handler : function() {
+						var delGroupArray = [];
+						var rows = userGroupGrid.getSelectionModel()
+								.getSelections();
+						if (rows.length > 0) {
+							for (var i = 0; i < rows.length; i++) {
+								var gid = rows[i].data.gid
+								delGroupArray.push(gid);
+							}
+						} else {
+							Ext.Msg.alert("提示", "请至少选择一个分组");
+							return;
+						}
+						Ext.Msg.show({
+							title : '确认信息',
+							msg : '确定删除?',
+							buttons : Ext.Msg.YESNO,
+							fn : function(ans) {
+								if (ans == 'yes') {
+									Ext.Ajax.request({
+										url : '../usergroup/removegroup?_time'
+												+ new Date().getTime(),
+										params : {
+											gids : delGroupArray
+										},
+										success : function(response) {
+											var result = Ext
+													.decode(response.responseText);
+											if (result.success) {
+												Ext.Msg.alert("提示", "删除成功");
+											} else {
+												Ext.Msg.alert("提示", "删除失败");
+											}
+											store.reload();
+										},
+										failure : function() {
+											Ext.Msg.alert("提示", "删除失败");
+											store.reload();
+										}
+									});
+								}
+							}
+						});
 					}
-				}
-			});
+				}, '-', {
+					text : '刷新',
+					iconCls : 'arrow_refreshIcon',
+					handler : function() {
+						store.reload();
+					}
+				}],
+		bbar : bbar,
+		onCellClick : function(grid, rowIndex, columnIndex, e) {
+			GUSERGROUPID = null;
+			var buttons = e.target.defaultValue;
+			var record = grid.getStore().getAt(rowIndex);
+			var data = record.data;
+			// 找出表格中‘配置’按钮
+			if (buttons == '配置') {
+				var gname = data.gname;
+				GUSERGROUPID = data.gid;
+				editstgWindow.title = gname;
+				editstgWindow.show();
+			}
+			if (buttons == '添加成员') {
+				GUSERGROUPID = data.gid;
+				Ext.getCmp("groupinfo").setText(data.gname + ',编号:'
+						+ GUSERGROUPID);
+				addGroupUserWindow.show();
+				deleteUserStore.setBaseParam('gid', GUSERGROUPID);
+				selectUserStore.setBaseParam('gid', GUSERGROUPID);
+				deleteUserStore.load();
+				selectUserStore.load();
+			}
+		}
+	});
 	// 注册事件
 	userGroupGrid.on('cellclick', userGroupGrid.onCellClick, userGroupGrid);
 
@@ -888,7 +918,7 @@ Ext.onReady(function() {
 						delUserArray.push(uid);
 					}
 				} else {
-					Ext.Msg.alert("提示", "请至少一个人员");
+					Ext.Msg.alert("提示", "请至少选择一个人员");
 					return;
 				}
 				Ext.Msg.show({
@@ -1151,7 +1181,7 @@ Ext.onReady(function() {
 							text : '关闭',
 							iconCls : 'deleteIcon',
 							handler : function() {
-								editstgWindow.hide();
+								addGroupUserWindow.hide();
 							}
 						}]
 			});
