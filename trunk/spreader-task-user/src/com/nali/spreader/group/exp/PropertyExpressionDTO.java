@@ -62,7 +62,6 @@ public class PropertyExpressionDTO implements Serializable{
 	
 	
 	public PropertyExpressionDTO(PropertyExpression propertyExpression) {
-		PropertyExpressionDTO expressionDTO = new PropertyExpressionDTO();
 		
 		Long articlesLte = propertyExpression.getArticlesLte();
 		Long articlesGte = propertyExpression.getArticlesGte();
@@ -70,7 +69,7 @@ public class PropertyExpressionDTO implements Serializable{
 			Range<Long> articlesRange = new Range<Long> ();
 			articlesRange.setLte(articlesLte);
 			articlesRange.setGte(articlesGte);
-			expressionDTO.setArticles(articlesRange);
+			this.setArticles(articlesRange);
 		}
 		
 		Long attentionsLte = propertyExpression.getAttentionsLte();
@@ -79,7 +78,7 @@ public class PropertyExpressionDTO implements Serializable{
 			Range<Long> attentionRange = new Range<Long>();
 			attentionRange.setLte(attentionsLte);
 			attentionRange.setGte(attentionsGte);
-			expressionDTO.setAttentions(attentionRange);
+			this.setAttentions(attentionRange);
 		}
 		
 		Date birthDayLte = propertyExpression.getBirthDayLte();
@@ -88,20 +87,20 @@ public class PropertyExpressionDTO implements Serializable{
 			Range<Date> birthDayRange = new Range<Date>();
 			birthDayRange.setLte(birthDayLte);
 			birthDayRange.setGte(birthDayGtte);
-			expressionDTO.setBirthDay(birthDayRange);
+			this.setBirthDay(birthDayRange);
 		}
 		
 		String category = propertyExpression.getCategory();
-		expressionDTO.setCategory(category);
+		this.setCategory(category);
 		
 		String city = propertyExpression.getCity();
-		expressionDTO.setCity(city);
+		this.setCity(city);
 		
 		Integer constellationInteger = propertyExpression.getConstellation();
 	    if(null != constellation) {
 	    	Constellation constellation = Constellation.valueOf(constellationInteger);
 	    	if(constellation != null) {
-	    		expressionDTO.setConstellation(constellation.getName());
+	    		this.setConstellation(constellation.getName());
 	    	}
 	    }
 	    
@@ -111,7 +110,7 @@ public class PropertyExpressionDTO implements Serializable{
 	    	Range<Long> fansRange = new Range<Long> ();
 	    	fansRange.setLte(fansLte);
 	    	fansRange.setGte(fansGte);
-	    	expressionDTO.setFans(fansRange);
+	    	this.setFans(fansRange);
 	    }
 	    
 	    
@@ -119,24 +118,24 @@ public class PropertyExpressionDTO implements Serializable{
 	    if(genderInteger != null) {
 	    	Gender gender = Gender.valueOf(genderInteger);
 	    	if(gender != null) {
-	    		expressionDTO.setGender(gender.getName());
+	    		this.setGender(gender.getName());
 	    	}
 	    }
 	    
 	    String introduction = propertyExpression.getIntroduction();
-	    expressionDTO.setIntroduction(introduction);
+	    this.setIntroduction(introduction);
 	    
 	    Boolean isRobot = propertyExpression.getIsRobot();
-	    expressionDTO.setIsRobot(isRobot);
+	    this.setIsRobot(isRobot);
 	    
 	    String nationnality = propertyExpression.getNationality();
-	    expressionDTO.setNationality(nationnality);
+	    this.setNationality(nationnality);
 	    
 	    String nickName = propertyExpression.getNickName();
-	    expressionDTO.setNickName(nickName);
+	    this.setNickName(nickName);
 	    
 	    String province = propertyExpression.getProvince();
-	    expressionDTO.setProvince(province);
+	    this.setProvince(province);
 	    
 	    Long robotFansLte = propertyExpression.getRobotFansLte();
 	    Long robotFansGte = propertyExpression.getRobotFansGte();
@@ -144,7 +143,7 @@ public class PropertyExpressionDTO implements Serializable{
 	    	Range<Long> robotFansRange = new Range<Long>();
 	    	robotFansRange.setLte(robotFansLte);
 	    	robotFansRange.setGte(robotFansGte);
-	    	expressionDTO.setRobotFans(robotFansRange);
+	    	this.setRobotFans(robotFansRange);
 	    }
 	    
 	    Float scoreGte = propertyExpression.getScoreGte();
@@ -153,17 +152,17 @@ public class PropertyExpressionDTO implements Serializable{
 	    	Range<Float> scoreRange = new Range<Float>();
 	    	scoreRange.setGte(scoreGte);
 	    	scoreRange.setLte(scoreLte);
-	    	expressionDTO.setScore(scoreRange);
+	    	this.setScore(scoreRange);
 	    }
 	    
 	    Boolean vType = propertyExpression.getVType();
-	    expressionDTO.setVType(vType);
+	    this.setVType(vType);
 	    
 //	    Integer websiteInteger = propertyExpression.getWebsite();
 //	    if(websiteInteger != null) {
 //	    	Website website = Website.valueOf(websiteInteger);
 //	    	if(website != null) {
-//	    		expressionDTO.setWebsite(website.getName());
+//	    		this.setWebsite(website.getName());
 //	    	}
 //	    }
 	}
