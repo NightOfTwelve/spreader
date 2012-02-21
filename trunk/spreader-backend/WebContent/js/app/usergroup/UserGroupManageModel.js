@@ -219,6 +219,27 @@ Ext.onReady(function() {
 										}]
 							}]
 				}, {
+					layout : "column", // 从左往右的布局
+					items : [{
+								columnWidth : .3, // 该列有整行中所占百分比
+								layout : "form", // 从上往下的布局
+								items : [{
+											xtype : "datetimefield",
+											fieldLabel : "开始时间",
+											name : 'fromModifiedTime',
+											width : 150
+										}]
+							}, {
+								columnWidth : .3, // 该列有整行中所占百分比
+								layout : "form", // 从上往下的布局
+								items : [{
+											xtype : "datetimefield",
+											fieldLabel : "结束时间",
+											name : 'toModifiedTime',
+											width : 150
+										}]
+							}]
+				}, {
 					xtype : 'fieldset',
 					title : '属性筛选',
 					autoHeight : true,
@@ -229,43 +250,112 @@ Ext.onReady(function() {
 					items : [{
 								xtype : 'checkboxgroup',
 								fieldLabel : '条件',
+								name : 'propValBox',
 								items : [{
-											boxLabel : '网站',
-											// checked : true,
-											name : 'website'
-										}, {
 											boxLabel : '分类',
+											value : 1,
 											name : 'category'
 										}, {
-											boxLabel : '粉丝数',
+											boxLabel : '评分',
+											value : 2,
 											name : 'score'
 										}, {
-											boxLabel : '关注数',
+											boxLabel : '粉丝数',
+											value : 4,
 											name : 'fans'
 										}, {
-											boxLabel : '文章数',
+											boxLabel : '关注数',
+											value : 8,
 											name : 'attentions'
 										}, {
+											boxLabel : '文章数',
+											value : 16,
+											name : 'articles'
+										}, {
 											boxLabel : '性别',
+											value : 32,
 											name : 'gender'
 										}, {
 											boxLabel : '机器人粉丝数',
+											value : 64,
 											name : 'robotFans'
 										}, {
 											boxLabel : '星座',
+											value : 128,
 											name : 'constellation'
+										}, {
+											boxLabel : '出生日期',
+											value : 256,
+											name : 'birthDay'
+										}, {
+											boxLabel : '是否机器人',
+											value : 512,
+											name : 'isRobot'
+										}, {
+											boxLabel : '是否认证',
+											value : 1024,
+											name : 'vType'
+										}, {
+											boxLabel : '昵称',
+											value : 2048,
+											name : 'nickName'
+										}, {
+											boxLabel : '国家',
+											value : 4096,
+											name : 'nationality'
+										}, {
+											boxLabel : '省份',
+											value : 8192,
+											name : 'province'
+										}, {
+											boxLabel : '城市',
+											value : 16384,
+											name : 'city'
+										}, {
+											boxLabel : '个人简介',
+											value : 32768,
+											name : 'introduction'
 										}]
 							}]
 				}],
 				buttonAlign : "center",
 				buttons : [{
-							text : "查询"
-						}, {
-							text : "重置",
-							handler : function() { // 按钮响应函数
-								userGroupForm.form.reset();
+					text : "查询",
+					handler : function() {
+						var tform = userGroupForm.getForm();
+						var tstime = tform.findField('fromModifiedTime')
+								.getValue();
+						var tetime = tform.findField('toModifiedTime')
+								.getValue();
+						var groupName = tform.findField('groupName').getValue();
+						var gtype = tform.findField('gtype').getValue();
+						var websiteid = tform.findField('websiteid').getValue();
+						var propField = tform.findField('propValBox')
+								.getValue();
+						var propValue = 0;
+						if (propField.length > 0) {
+							for (var i = 0; i < propField.length; i++) {
+								propValue += propField[i].value;
 							}
-						}]
+						}
+						store.setBaseParam('gtype', gtype);
+						store.setBaseParam('websiteid', websiteid);
+						store.setBaseParam('propVal', propValue);
+						store.setBaseParam('gname', groupName);
+						store.setBaseParam('fromModifiedTime', tstime != null
+										&& tstime != '' ? new Date(tstime)
+										.format('Y-m-d') : null);
+						store.setBaseParam('toModifiedTime', tetime != null
+										&& tetime != '' ? new Date(tetime)
+										.format('Y-m-d') : null);
+						store.load();
+					}
+				}, {
+					text : "重置",
+					handler : function() {
+						userGroupForm.form.reset();
+					}
+				}]
 			});
 
 	// 定义表格数据源
