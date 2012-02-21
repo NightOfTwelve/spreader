@@ -33,7 +33,8 @@ public class ExtjsComponentsUtilController {
 	private IStrategyGroupService groupService;
 	@Autowired
 	private IExtjsComponentsUtilService extjsService;
-	private static final MessageLogger ml = LoggerFactory
+	@SuppressWarnings("unused")
+	private static final MessageLogger logger = LoggerFactory
 			.getLogger(ExtjsComponentsUtilController.class);
 
 	/**
@@ -78,7 +79,8 @@ public class ExtjsComponentsUtilController {
 	@ResponseBody
 	@RequestMapping(value = "/usercombo")
 	public String userGroupComboxStore(String query, Integer start,
-			Integer limit) throws JsonGenerationException, JsonMappingException, IOException {
+			Integer limit) throws JsonGenerationException,
+			JsonMappingException, IOException {
 		if (start == null)
 			start = 0;
 		if (limit == null)
