@@ -25,7 +25,7 @@ public class PhotoHelper {
 	public static final String WEBDAV_FILE = "/avatarconfig/webDavService.properties";
 	public static final String MALE_FIEL = "/avatarconfig/malePhotoType.properties";
 	public static final String FEMALE_FILE = "/avatarconfig/femalePhotoType.properties";
-	public static final String GENERAL_FILE = "/avatarconfig/femalePhotoType.properties";
+	public static final String GENERAL_FILE = "/avatarconfig/generalPhotoType.properties";
 	public static final String TYPEWEIGHT_FILE = "/avatarconfig/AvatarTypeWeight.properties";
 
 	/**
