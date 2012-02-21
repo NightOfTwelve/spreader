@@ -1,6 +1,7 @@
 package com.nali.spreader.controller;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -76,7 +77,8 @@ public class UserGroupManageController {
 	@ResponseBody
 	@RequestMapping(value = "/grouplist")
 	public String queryAllUserGroup(Integer websiteid, String gname,
-			Integer gtype, Integer start, Integer limit)
+			Integer gtype, Integer propVal, Date fromModifiedTime,
+			Date toModifiedTime, Integer start, Integer limit)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		if (limit == null) {
 			limit = 20;
@@ -90,10 +92,14 @@ public class UserGroupManageController {
 		if (gtype == null) {
 			gtype = 1;
 		}
+		if (propVal == null) {
+			propVal = 0;
+		}
 		Limit lit = Limit.newInstanceForLimit(start, limit);
 		PageResult<UserGroup> result = userGroupService.queryUserGroups(
 				Website.valueOf(websiteid), gname,
-				UserGroupType.valueOf(gtype), 0, null, null, lit);
+				UserGroupType.valueOf(gtype), propVal, fromModifiedTime,
+				toModifiedTime, lit);
 		return json.writeValueAsString(result);
 	}
 
