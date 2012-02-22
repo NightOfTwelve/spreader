@@ -41,4 +41,9 @@ public interface IUserService {
 	List<KeyValue<Long, Long>> findUidToWebsiteUidMapByDto(UserDto dto);
 
 	List<User> findUserFansInfoByDto(UserDto userDto);
+	/**
+	 * 查询所有无头像的机器人用户
+	 * @return
+	 */
+	List<User> findNoAvatarRobotUserList();
 }

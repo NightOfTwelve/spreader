@@ -341,4 +341,8 @@
         limit $limit.offset$,$limit.maxRows$
     </isNotNull>
   </select>
+  
+  <select id="queryNoAvatarRobotUser" resultMap="spreader_tb_user.ibatorgenerated_BaseResultMap">
+  	select * from spreader.tb_user where pid is null and is_robot = true
+  </select>
 </sqlMap>

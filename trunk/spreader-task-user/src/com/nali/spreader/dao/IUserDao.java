@@ -66,4 +66,10 @@ public interface IUserDao {
 	List<Long> queryUidsByProperties(Map<String, Object> properties, Limit limit);
 	
 	int countByProperties(Map<String, Object> properties);
+	
+	/**
+	 * 获取无头像的机器人用户
+	 * @return
+	 */
+	List<User> queryNoAvatarRobotUser();
 }

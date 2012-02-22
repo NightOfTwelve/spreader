@@ -231,4 +231,9 @@ public class UserService extends WebsiteBaseService implements IUserService {
 		example.createCriteria().andIdIn(ids);
 		return this.crudUserDao.selectByExample(example);
 	}
+
+	@Override
+	public List<User> findNoAvatarRobotUserList() {
+		return this.userDao.queryNoAvatarRobotUser();
+	}
 }
