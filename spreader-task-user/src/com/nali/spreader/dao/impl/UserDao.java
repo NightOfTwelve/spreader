@@ -102,4 +102,9 @@ public class UserDao implements IUserDao {
 		properties.put("limit", limit);
 		return sqlMap.queryForList("spreader_user.queryUidsByProperties", properties);
 	}
+
+	@Override
+	public List<User> queryNoAvatarRobotUser() {
+		return sqlMap.queryForList("spreader_user.queryNoAvatarRobotUser");
+	}
 }

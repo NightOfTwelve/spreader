@@ -411,12 +411,24 @@ Ext.onReady(function() {
 				renderer : renderWebsiteType,
 				width : 100
 			}, {
-				header : '相关操作',
-				renderer : function showbutton() {
-					var returnStr = "<input type='button' value='配置'/><input type='button' value='添加成员'/>";
+				header : '属性配置',
+				renderer : function showbutton(value, cellmeta, record,
+						rowIndex, columnIndex, store) {
+					var gtype = record.data['gtype'];
+					var returnStr = "";
+					if (gtype != 3) {
+						returnStr = "<input type='button' value='配置'/>";
+					}
 					return returnStr;
 				},
-				width : 150
+				width : 100
+			}, {
+				header : '添加成员',
+				renderer : function showbutton() {
+					var returnStr = "<input type='button' value='添加'/>";
+					return returnStr;
+				},
+				width : 100
 			}]);
 	// 页数
 	var number = 20;
@@ -543,7 +555,7 @@ Ext.onReady(function() {
 				editstgWindow.title = gname;
 				editstgWindow.show();
 			}
-			if (buttons == '添加成员') {
+			if (buttons == '添加') {
 				GUSERGROUPID = data.gid;
 				Ext.getCmp("groupinfo").setText(data.gname + ',编号:'
 						+ GUSERGROUPID);
