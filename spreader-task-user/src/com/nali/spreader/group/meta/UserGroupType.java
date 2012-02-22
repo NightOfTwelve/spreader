@@ -5,7 +5,7 @@ import java.util.Map;
 import com.nali.common.util.CollectionUtils;
 
 public enum UserGroupType {
-	fixed(0), dynamic(1);
+	fixed(0), dynamic(1), manual(2);
 	private int typeVal;
 	private static Map<Integer, UserGroupType> types;
 	
