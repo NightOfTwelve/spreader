@@ -6,10 +6,12 @@
 function strategyDeleteNode(stgtree) {
 	// 得到选中的节点
 	var selectedNode = stgtree.getSelectionModel().getSelectedNode();
+	var selectid = selectedNode.id;
 	var parent = selectedNode.parentNode;
+	var parentArray = parent.attributes.children;
+	var idx = findArrayIndex(parentArray, selectid);
 	parent.removeChild(selectedNode);
-	parent.attributes.children.pop(selectedNode);
-	// selectedNode.remove();
+	parentArray.splice(idx, 1);
 };
 // 修改节点事件实现
 function strategyModifNode() {
@@ -40,12 +42,13 @@ function strategyInsertNode() {
  */
 // 删除节点事件实现
 function dispatchDeleteNode(stgdisptree) {
-	// 得到选中的节点
 	var selectedNode = stgdisptree.getSelectionModel().getSelectedNode();
+	var selectid = selectedNode.id;
 	var parent = selectedNode.parentNode;
+	var parentArray = parent.attributes.children;
+	var idx = findArrayIndex(parentArray, selectid);
 	parent.removeChild(selectedNode);
-	parent.attributes.children.pop(selectedNode);
-	// selectedNode.remove();
+	parentArray.splice(idx, 1);
 };
 // 修改节点事件实现
 function dispatchModifNode() {
@@ -283,4 +286,23 @@ function strategyGroupSubmitTreeData(stgdisptree, triggerDispForm, radioForm,
 					Ext.Msg.alert("提示", result.message);
 				}
 			});
+}
+/**
+ * 获取选中元素的下标
+ * 
+ * @param {}
+ *            array
+ * @param {}
+ *            item
+ */
+function findArrayIndex(array, item) {
+	var tindex = -1;
+	if (!Ext.isEmpty(array) && array.length > 0) {
+		for (var i in array) {
+			if (array[i].id == item) {
+				tindex = i;
+			}
+		}
+	}
+	return tindex;
 }

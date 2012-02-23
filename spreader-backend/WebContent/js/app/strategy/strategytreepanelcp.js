@@ -15,8 +15,8 @@ var stgtree = new Ext.tree.TreePanel({
 	tbar : [{
 				text : '保存修改',
 				iconCls : 'addIcon',
-//				tooltip : '<button type="button" value="增加">增加</button>',
-//				tooltipType : 'qtip',
+				// tooltip : '<button type="button" value="增加">增加</button>',
+				// tooltipType : 'qtip',
 				handler : function() {
 					strategySubmitTreeData(stgtree);
 				}
@@ -95,8 +95,8 @@ var rightMenu = new Ext.menu.Menu({
 					{
 				id : 'delNode',
 				text : '删除',
-				handler : function(tree) {
-					strategyDeleteNode();
+				handler : function() {
+					strategyDeleteNode(stgtree);
 				}
 			}
 			// , {
