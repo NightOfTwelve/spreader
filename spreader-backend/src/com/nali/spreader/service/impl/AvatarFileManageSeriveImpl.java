@@ -78,7 +78,7 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 				}
 				createPhotoTypeDir(sardine, generalTypeMap, generalBuff);
 			} else {
-				LOGGER.info(serviceUrl + "已经创建,继续检查下一级目录");
+				LOGGER.debug(serviceUrl + "已经创建,继续检查下一级目录");
 				// 男性
 				StringBuffer maleBuff = new StringBuffer(serviceUrl);
 				// 女性
@@ -127,7 +127,7 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 						.append("/").toString();
 				if (!sardine.exists(dirStr)) {
 					sardine.createDirectory(dirStr);
-					LOGGER.info("创建路径:" + dirStr);
+					LOGGER.debug("创建路径:" + dirStr);
 				}
 			}
 		} catch (SardineException e) {
@@ -211,9 +211,9 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 									params.put("CREATETIME",
 											davImg.getCreation());
 									paramsList.add(params);
-									LOGGER.info(fileUri);
+									LOGGER.debug(fileUri);
 								} else {
-									LOGGER.info("不是图片文件，跳过处理");
+									LOGGER.debug("不是图片文件，跳过处理");
 								}
 							}
 						}
