@@ -204,6 +204,8 @@ var sinaUserStore = new Ext.data.Store({
 								name : 'tag'
 							}, {
 								name : 'avatarUrl'
+							}, {
+								name : 'websiteUid'
 							}]),
 			autoLoad : {
 				params : {
@@ -245,6 +247,11 @@ var rownums = new Ext.grid.RowNumberer({
 var cm = new Ext.ux.grid.LockingColumnModel([rownums, {
 			header : '编号',
 			dataIndex : 'id',
+			locked : true,
+			width : 80
+		}, {
+			header : '网站编号',
+			dataIndex : 'websiteUid',
 			locked : true,
 			width : 80
 		}, {
