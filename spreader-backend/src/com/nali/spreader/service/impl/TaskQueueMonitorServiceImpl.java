@@ -19,6 +19,10 @@ public class TaskQueueMonitorServiceImpl implements ITaskQueueMonitorService {
 	@Autowired
 	private RedisQueue weiboInstantPassiveTaskQueue;// 微博实时任务队列:
 
+	private final String NORMAL_QUEUE = "normal";
+	private final String REGISTER_QUEUE = "register";
+	private final String INSTANT_QUEUE = "instant";
+
 	@Override
 	public List<TaskQueueInfoDto> findQueueSizeList() {
 		Long normalSize = weiboNormalPassiveTaskQueue.size();
@@ -33,4 +37,25 @@ public class TaskQueueMonitorServiceImpl implements ITaskQueueMonitorService {
 		return list;
 	}
 
+	@Override
+	public void deleteQueueByType(String type) {
+		if (this.NORMAL_QUEUE.equals(type)) {
+			Object obj;
+			while ((obj = weiboNormalPassiveTaskQueue.pop(1)) != null) {
+			}
+			;
+		}
+		if (this.REGISTER_QUEUE.equals(type)) {
+			Object obj;
+			while ((obj = weiboRegisterPassiveTaskQueue.pop(1)) != null) {
+			}
+			;
+		}
+		if (this.INSTANT_QUEUE.equals(type)) {
+			Object obj;
+			while ((obj = weiboInstantPassiveTaskQueue.pop(1)) != null) {
+			}
+			;
+		}
+	}
 }

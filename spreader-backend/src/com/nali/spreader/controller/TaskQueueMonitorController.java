@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.dto.TaskQueueInfoDto;
 import com.nali.spreader.service.ITaskQueueMonitorService;
 
@@ -49,5 +50,29 @@ public class TaskQueueMonitorController {
 		Map<String, List<TaskQueueInfoDto>> map = new HashMap<String, List<TaskQueueInfoDto>>();
 		map.put("list", list);
 		return json.writeValueAsString(map);
+	}
+
+	/**
+	 * 清空队列
+	 * 
+	 * @param qtype
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/remove")
+	public String removeQueue(String qtype) throws JsonGenerationException,
+			JsonMappingException, IOException {
+		Map<String, Boolean> m = CollectionUtils.newHashMap(1);
+		m.put("success", false);
+		try {
+			this.service.deleteQueueByType(qtype);
+			m.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return json.writeValueAsString(m);
 	}
 }
