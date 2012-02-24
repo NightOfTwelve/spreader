@@ -18,7 +18,7 @@ public interface IAvatarFileManageService {
 	void initCreatePhotoFileDirectory(String webDav, Date date, Integer k);
 
 	/**
-	 * 根据上次执行的截止日期和指定日期 执行该日期集合内的所有同步任务 指定日期默认位当天日期
+	 * 根据上次执行的截止日期和指定日期 执行该日期集合内的所有同步任务 指定日期默认为当天日期
 	 * 
 	 * @param serviceUrl
 	 * @param lastTime
