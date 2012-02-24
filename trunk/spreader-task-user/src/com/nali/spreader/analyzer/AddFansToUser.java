@@ -54,8 +54,14 @@ public class AddFansToUser implements RegularAnalyzer,Configable<CategoryUserMat
 			return;
 		}
 		double robotRate = dto.getRobotRate();
+		//关注上限
+		Long maxUserCount = dto.getMaxUserValue();
 		for (User user : users) {
 			long needRobotCount = (long)Math.ceil(nvl(user.getFans()).doubleValue() * robotRate) - nvl(user.getRobotFans()).longValue();
+			//如果关注上限不为null,则取needRobotCount，maxUserCount中较小的值
+			if(maxUserCount != null) {
+				needRobotCount = Math.min(needRobotCount, maxUserCount);
+			}
 			Long toUid = user.getId();
 			List<Long> existsIdList = globalUserService.findRelationUserId(toUid, UserRelation.TYPE_ATTENTION, true);
 			Set<Long> existsIds = new HashSet<Long>(existsIdList);
