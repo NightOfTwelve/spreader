@@ -164,7 +164,7 @@ Ext.onReady(function() {
 				region : 'north',
 				title : "组合查询",
 				autoWidth : true,
-				height : 200,
+				height : 220,
 				split : true,
 				frame : true,
 				layout : "form", // 整个大的表单是form布局
