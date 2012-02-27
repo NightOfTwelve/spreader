@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.nali.log.MessageLogger;
+import com.nali.log.impl.LoggerFactory;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
@@ -24,12 +26,14 @@ import com.nali.spreader.util.SpecialDateUtil;
 @Component
 public class UploadUserAvatar extends SingleTaskMachineImpl implements
 		PassiveWorkshop<Long, KeyValue<Long, KeyValue<Long, Boolean>>> {
-	private static final Logger logger = Logger
+	private static final MessageLogger logger = LoggerFactory
 			.getLogger(UploadUserAvatar.class);
 	@Autowired
 	private IUploadAvatarService uploadService;
 	@Autowired
 	private IGlobalUserService globalUserService;
+	// 默认分类为通用
+	private static Integer GENERA = 3;
 
 	public UploadUserAvatar() {
 		super(SimpleActionConfig.uploadAvatar, Website.weibo, Channel.normal);
@@ -38,7 +42,7 @@ public class UploadUserAvatar extends SingleTaskMachineImpl implements
 	@Override
 	public void work(Long uid, SingleTaskExporter exporter) {
 		User user = globalUserService.getUserById(uid);
-		Integer gender = 3;
+		Integer gender = GENERA;
 		if (user != null) {
 			gender = user.getGender();
 		}
@@ -52,11 +56,15 @@ public class UploadUserAvatar extends SingleTaskMachineImpl implements
 			pid = avatar.getId();
 			purl = avatar.getPicUrl();
 		}
-		exporter.setProperty("uid", uid);
-		exporter.setProperty("purl", purl);
-		exporter.setProperty("pid", pid);
-		exporter.send(uid, SpecialDateUtil.afterToday(1));
-		logger.info("URL:" + purl);
+		if (StringUtils.isNotEmpty(purl)) {
+			exporter.setProperty("uid", uid);
+			exporter.setProperty("purl", purl);
+			exporter.setProperty("pid", pid);
+			exporter.send(uid, SpecialDateUtil.afterToday(1));
+		} else {
+			logger.warn("URL为空，不执行任务", new Exception());
+			return;
+		}
 	}
 
 	@Override
