@@ -16,7 +16,7 @@ public class CategoryUserMatchDto implements Serializable {
 	private Integer websiteId;
 	@PropertyDescription("机器人比率")
 	private Double robotRate;
-	@PropertyDescription("转发人数上限")
+	@PropertyDescription("关注人数上限")
 	private Long maxUserValue;
 
 	public BaseUserDto getRobot() {
