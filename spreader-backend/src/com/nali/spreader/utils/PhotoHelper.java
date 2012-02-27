@@ -27,6 +27,7 @@ public class PhotoHelper {
 	public static final String FEMALE_FILE = "/avatarconfig/femalePhotoType.properties";
 	public static final String GENERAL_FILE = "/avatarconfig/generalPhotoType.properties";
 	public static final String TYPEWEIGHT_FILE = "/avatarconfig/AvatarTypeWeight.properties";
+	private static Random rd = new Random();
 
 	/**
 	 * 获取某个配置文件的键值对
@@ -69,7 +70,6 @@ public class PhotoHelper {
 	 * @return
 	 */
 	public static int getRandomNum(int size) {
-		Random rd = new Random();
 		int t = rd.nextInt(size);
 		return t;
 	}

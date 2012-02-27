@@ -352,7 +352,6 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 	@Override
 	public void createLastTimeToCurrTimeDir(String serviceUri, Date last,
 			Date curr) {
-		// TODO Auto-generated method stub
 		List<String> dateList = TimeHelper.findStart2EndDateList(last, curr);
 		if (dateList.size() > 0) {
 			for (String date : dateList) {

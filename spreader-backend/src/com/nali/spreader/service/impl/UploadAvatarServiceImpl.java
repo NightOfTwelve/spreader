@@ -40,6 +40,8 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 	private IPhotoDao photoDao;
 	@Autowired
 	private ICrudUserDao crudUserDao;
+	// 默认分类为通用
+	private static Integer GENERA = 3;
 
 	@Override
 	public List<Photo> findPhotoListByWeight(Map<List<Photo>, Integer> m) {
@@ -115,15 +117,6 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 		return map;
 	}
 
-	@SuppressWarnings("unused")
-	public static void main(String argep[]) {
-		@SuppressWarnings("rawtypes")
-		Map m = PhotoHelper
-				.getPropertiesMap("/avatarconfig/webDavService.properties");
-		String s = m.get("url").toString();
-		System.out.println(m);
-	}
-
 	@Override
 	public List<Photo> findPhotoListByGender(Integer gender) {
 		PhotoExample pe = new PhotoExample();
@@ -131,6 +124,7 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 		if (gender != null) {
 			cr.andGenderEqualTo(gender);
 		}
+		// TODO 此处查询条件可以去掉，暂时不动
 		cr.andAvatarflgEqualTo(true);
 		List<Photo> list = crudPhotoDao.selectByExampleWithoutBLOBs(pe);
 		return list;
@@ -138,7 +132,7 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 
 	public Map<List<Photo>, Integer> createWeightMap(Integer gender) {
 		List<Photo> genderList = findPhotoListByGender(gender);
-		List<Photo> generalList = findPhotoListByGender(3);
+		List<Photo> generalList = findPhotoListByGender(GENERA);
 		// 默认权重配置
 		Integer genderWeight = 60;
 		Integer generalWeight = 40;
@@ -173,4 +167,13 @@ public class UploadAvatarServiceImpl implements IUploadAvatarService {
 		}
 		return cnt;
 	}
+
+	// @SuppressWarnings("unused")
+	// public static void main(String argep[]) {
+	// @SuppressWarnings("rawtypes")
+	// Map m = PhotoHelper
+	// .getPropertiesMap("/avatarconfig/webDavService.properties");
+	// String s = m.get("url").toString();
+	// System.out.println(m);
+	// }
 }
