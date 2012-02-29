@@ -1,6 +1,8 @@
 package com.nali.spreader.group.config;
 
-public interface UserGroupSupported {
+import com.nali.spreader.factory.config.extend.ExtendedBean;
+
+public interface UserGroupExtendedBean extends ExtendedBean {
 
 	void setFromUserGroup(Long fromUserGroup);
 

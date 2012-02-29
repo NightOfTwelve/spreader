@@ -5,12 +5,12 @@ import org.springframework.stereotype.Component;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
-import com.nali.spreader.group.config.UserGroupSupportedImpl;
+import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
 import com.nali.spreader.group.service.IUserGroupService;
 
 @Component
 @ClassDescription("测试用户分组")
-public class TestUserGroup extends UserGroupSupportedImpl implements RegularAnalyzer, Configable<String> {
+public class TestUserGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer, Configable<String> {
 	private String config;
 	private IUserGroupService userGroupService;
 

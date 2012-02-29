@@ -1,7 +1,7 @@
 package com.nali.spreader.group.config;
 
 
-public class UserGroupSupportedImpl implements UserGroupSupported {
+public abstract class UserGroupExtendedBeanImpl implements UserGroupExtendedBean {
 	private Long fromUserGroup;
 	private Long toUserGroup;
 
@@ -21,6 +21,11 @@ public class UserGroupSupportedImpl implements UserGroupSupported {
 
 	public Long getToUserGroup() {
 		return toUserGroup;
+	}
+
+	@Override
+	public String getExtenderName() {
+		return UserGroupExender.NAME;
 	}
 	
 }

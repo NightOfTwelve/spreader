@@ -10,12 +10,13 @@ import com.nali.spreader.service.IStrategyUserGroupService;
 
 @Component
 public class UserGroupExender implements Exender {
+	public static final String NAME = "userGroup";
 	@Autowired
 	private IStrategyUserGroupService strategyUserGroupService;
 
 	@Override
 	public String name() {
-		return "userGroup";
+		return NAME;
 	}
 
 	@Override
@@ -25,7 +26,7 @@ public class UserGroupExender implements Exender {
 		if(strategyUserGroup!=null) {
 			Long fromUserGroup = strategyUserGroup.getFromUserGroup();
 			Long toUserGroup = strategyUserGroup.getToUserGroup();
-			UserGroupSupported ugs = (UserGroupSupported) obj;
+			UserGroupExtendedBean ugs = (UserGroupExtendedBean) obj;
 			ugs.setFromUserGroup(fromUserGroup);
 			ugs.setToUserGroup(toUserGroup);
 		} else {
