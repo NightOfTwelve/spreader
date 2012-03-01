@@ -250,6 +250,8 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 						pt.setPicType(stype);
 						pt.setPicUrl(suri);
 						pt.setCreatetime(stime);
+						pt.setAvatarflg(true);
+						pt.setPhotolibflg(false);
 						crudPhotoDao.insert(pt);
 					}
 				} else {
@@ -258,6 +260,8 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 					pt.setPicType(stype);
 					pt.setPicUrl(suri);
 					pt.setCreatetime(stime);
+					pt.setAvatarflg(true);
+					pt.setPhotolibflg(false);
 					crudPhotoDao.insert(pt);
 				}
 			}
