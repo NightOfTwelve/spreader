@@ -132,11 +132,11 @@ public class GlobalUserService implements IGlobalUserService {
 			// 可能被其他爬取任务爬到了
 			uid = existUsers.get(0).getId();
 			user.setId(uid);
-			crudUserDao.updateByPrimaryKeySelective(user);
 		} else {
 			uid = userDao.assignUser(user);
 			user.setId(uid);
 		}
+		crudUserDao.updateByPrimaryKeySelective(user);
 
 		robotUser.setUid(uid);
 		crudRobotUserDao.insert(robotUser);
