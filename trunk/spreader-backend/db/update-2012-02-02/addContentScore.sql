@@ -1,0 +1,1 @@
+alter table spreader.tb_content add column score decimal(2,2) not null default 0;

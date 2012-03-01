@@ -2,7 +2,7 @@ drop table if exists spreader.tb_user_group;
 /*==============================================================*/
 /* Table: tb_user_group                                         */
 /*==============================================================*/
-create table tb_user_group
+create table spreader.tb_user_group
 (
    gid                  bigint not null auto_increment comment '分组id',
    gname                varchar(60) not null comment '分组的名字',
@@ -38,8 +38,6 @@ create index idx_ctime_gtype on spreader.tb_user_group
    gtype
 );
 
-
-alter table spreader.tb_user add column score decimal(2,2) not null default 0;
-alter table spreader.tb_user add column ctrl_gid bigint not null default -1;
+alter table spreader.tb_user add column (score decimal(2,2) not null default 0, ctrl_gid bigint not null default -1);
 
 insert into spreader.tb_identity (app_name,id,last_modify_time) VALUES ('spreader.user.group',0,{ts '2012-01-16 09:53:47.000'});
