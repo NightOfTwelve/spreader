@@ -40,10 +40,11 @@ public class FindAppointUserInfo implements RegularAnalyzer, Configable<Long> {
 
 	@Override
 	public void work() {
-		User u = this.userService.getUserByWebsiteUid(websiteUid);
-		if (u != null) {
-			Long uid = u.getId();
-			fetchWeiboUserMainPage.send(uid);
+		Long uid = userService.assignUser(websiteUid);
+		if (uid == null) {
+			User u = this.userService.getUserByWebsiteUid(websiteUid);
+			uid = u.getId();
 		}
+		fetchWeiboUserMainPage.send(uid);
 	}
 }
