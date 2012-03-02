@@ -21,4 +21,8 @@ public interface IConfigableCenter {
 	void applyConfigToPrototype(String name, Object config);
 	
 	ConfigDefinition getConfigDefinition(String name);
+
+	ExtendBinder getExtendBinder(String name);
+
+	void saveExtendConfig(String name, Object extendConfig);
 }

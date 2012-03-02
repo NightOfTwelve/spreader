@@ -26,7 +26,7 @@ public class WeiboRobotUserHolder {
 	}
 	
 	public synchronized Long getRobotUid() {
-		if(robotLeftTime<=0) {
+		if(--robotLeftTime<=0) {
 			currentUid = allRobotUsers.next().getUid();
 			robotLeftTime = robotUsedTime;
 		}

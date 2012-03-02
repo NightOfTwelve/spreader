@@ -5,6 +5,8 @@ public class ConfigableInfo {
 	String description;
 	String name;
 	Class<?> dataClass;
+	String extendType;
+	Object extendMeta;
 	public Class<?> getDataClass() {
 		return dataClass;
 	}
@@ -28,5 +30,17 @@ public class ConfigableInfo {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getExtendType() {
+		return extendType;
+	}
+	public void setExtendType(String extendType) {
+		this.extendType = extendType;
+	}
+	public Object getExtendMeta() {
+		return extendMeta;
+	}
+	public void setExtendMeta(Object extendMeta) {
+		this.extendMeta = extendMeta;
 	}
 }

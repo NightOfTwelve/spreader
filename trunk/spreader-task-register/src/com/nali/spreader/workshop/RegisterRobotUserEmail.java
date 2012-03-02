@@ -16,13 +16,13 @@ import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.RobotRegister;
+import com.nali.spreader.data.User;
 import com.nali.spreader.factory.MultiActionConfig;
 import com.nali.spreader.factory.MultiTypeTaskPassiveWorkshop;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.base.MultiTaskMachineImpl;
 import com.nali.spreader.factory.exporter.MultiTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
-import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.util.TxtFileUtil;
@@ -88,7 +88,7 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Mult
 		exporter.setProperty("pwd", robot.getPwd());
 		
 		exporter.setActionId(actionIds.get());
-		exporter.setUid(RobotUser.UID_NOT_LOGIN);
+		exporter.setUid(User.UID_NOT_LOGIN);
 		exporter.setExpiredTime(SpecialDateUtil.afterToday(2));
 		exporter.send();
 	}

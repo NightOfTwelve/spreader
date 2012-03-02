@@ -8,9 +8,6 @@ public class RobotUser extends BaseModel implements Serializable {
     public static final Integer ACCOUNT_STATE_NORMAL=1;
     public static final Integer ACCOUNT_STATE_DISABLE=2;
     
-    public static final Long UID_ANYONE = 0L;
-    public static final Long UID_NOT_LOGIN = -1L;
-    
     private Integer gender;
     
     public Integer getGender() {

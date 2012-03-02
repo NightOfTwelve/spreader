@@ -7,7 +7,6 @@ import java.util.Map;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import com.nali.spreader.dao.ICrudRegularJobDao;
@@ -113,9 +112,13 @@ public class RegularConfigService extends AbstractConfigService<Long> {
 		configableCenter = new ConfigableCenter(context);
 	}
 	
-	@Bean
-	public IConfigableCenter regularConfigableCenter() {
-		return configableCenter;
+	public void saveExtendConfig(String name, Object extendConfig) {
+		configableCenter.saveExtendConfig(name, extendConfig);
 	}
+//	
+//	@Bean
+//	public IConfigableCenter regularConfigableCenter() {
+//		return configableCenter;
+//	}
 
 }

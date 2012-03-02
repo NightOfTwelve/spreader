@@ -6,7 +6,6 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import com.nali.common.model.BaseModel;
-import com.nali.spreader.factory.config.extend.ExtendInfo;
 
 public class RegularJob extends BaseModel implements Serializable {
 
@@ -108,10 +107,6 @@ public class RegularJob extends BaseModel implements Serializable {
         public void setName(String name) {
             this.name = name;
         }
-    }
-    
-    public ExtendInfo generateExtendInfo() {
-    	return new ExtendInfo(id, extendType, extendConfig);
     }
 
     /**

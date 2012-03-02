@@ -17,4 +17,9 @@ public class StrategyUserGroupService implements IStrategyUserGroupService {
 		return crudStrategyUserGroupDao.selectByPrimaryKey(sid);
 	}
 
+	@Override
+	public void save(StrategyUserGroup extendConfig) {
+		crudStrategyUserGroupDao.insertSelective(extendConfig);		
+	}
+
 }

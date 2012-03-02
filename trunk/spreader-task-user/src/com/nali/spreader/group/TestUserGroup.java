@@ -14,6 +14,10 @@ public class TestUserGroup extends UserGroupExtendedBeanImpl implements RegularA
 	private String config;
 	private IUserGroupService userGroupService;
 
+	public TestUserGroup() {
+		super("${fromGroup}test${toGroup}");
+	}
+	
 	@Override
 	public void init(String config) {
 		this.config = config;

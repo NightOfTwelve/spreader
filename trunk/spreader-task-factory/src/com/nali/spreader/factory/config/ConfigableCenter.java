@@ -1,26 +1,71 @@
 package com.nali.spreader.factory.config;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.context.ApplicationContext;
 
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
+import com.nali.spreader.factory.config.extend.Exender;
+import com.nali.spreader.factory.config.extend.ExtendedBean;
 
+@SuppressWarnings("rawtypes")
 public class ConfigableCenter implements IConfigableCenter {
 	private Map<String, ConfigableUnit<?>> configables = new LinkedHashMap<String, ConfigableUnit<?>>();
 	private ApplicationContext context;
+	private Map<String, Exender> exenders;
+	private Map<String, ExtendBinder> extendBinders = new HashMap<String, ExtendBinder>();
 
 	public ConfigableCenter(ApplicationContext context) {
 		super();
 		this.context = context;
+		
+		Map<String, Exender> beans = context.getBeansOfType(Exender.class);
+		exenders = CollectionUtils.newHashMap(beans.size());
+		for (Entry<String, Exender> entry : beans.entrySet()) {
+			Exender exender = entry.getValue();
+			exenders.put(exender.name(), exender);
+		}
+	}
+	
+	@Override
+	public ExtendBinder getExtendBinder(String name) {
+		return extendBinders.get(name);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void saveExtendConfig(String name, Object extendConfig) {
+		if(extendConfig!=null) {
+			ExtendBinder extendBinder = extendBinders.get(name);
+			if(extendBinder==null) {
+				throw new IllegalArgumentException("hasn't been extended, beanName:" + name);
+			}
+			String extenderName = extendBinder.getExtenderName();
+			Exender exender = exenders.get(extenderName);
+			exender.saveExtendConfig(extendConfig);
+		}
 	}
 
 	@Override
 	public <T> boolean register(String name, Configable<T> configable) {
 		ConfigableUnit<?> existsConfigable = configables.get(name);
 		if(existsConfigable==null) {
-			configables.put(name, new ConfigableUnit<Configable<T>>(name, configable, context.getAutowireCapableBeanFactory()));
+			ConfigableUnit<Configable<T>> configableUnit = new ConfigableUnit<Configable<T>>(name, configable, context.getAutowireCapableBeanFactory());
+			configables.put(name, configableUnit);
+			if (configable instanceof ExtendedBean) {
+				ExtendedBean extendedBean = (ExtendedBean) configable;
+				String extenderName = extendedBean.getExtenderName();
+				Exender exender = exenders.get(extenderName);
+				if(exender==null) {
+					throw new IllegalArgumentException("not supported extend type:" + extenderName);
+				}
+				Object extendMeta = exender.getExtendMeta(extendedBean);
+				extendBinders.put(name, new ExtendBinder(extenderName, extendMeta));
+			}
 			return true;
 		} else {
 			if(existsConfigable.getConfigable()!=configable) {
