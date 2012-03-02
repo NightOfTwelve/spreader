@@ -15,6 +15,11 @@ public abstract class AbstractConfigService<K> implements IConfigService<K> {
 
 	protected void registerConfigableInfo(String name, Class<?> clazz) {
 		ConfigableInfo configableInfo = DescriptionResolve.getConfigableInfo(clazz, name);
+		ExtendBinder extendBinder = getConfigableCenter().getExtendBinder(name);
+		if(extendBinder!=null) {
+			configableInfo.setExtendType(extendBinder.getExtenderName());
+			configableInfo.setExtendMeta(extendBinder.getExtendMeta());
+		}
 		typeInfos.put(getConfigableType(clazz), configableInfo);
 		configableInfos.put(name, configableInfo);
 	}

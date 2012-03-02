@@ -4,6 +4,12 @@ package com.nali.spreader.group.config;
 public abstract class UserGroupExtendedBeanImpl implements UserGroupExtendedBean {
 	private Long fromUserGroup;
 	private Long toUserGroup;
+	private String strategyDesc;
+
+	public UserGroupExtendedBeanImpl(String strategyDesc) {
+		super();
+		this.strategyDesc = strategyDesc;
+	}
 
 	@Override
 	public void setFromUserGroup(Long fromUserGroup) {
@@ -26,6 +32,11 @@ public abstract class UserGroupExtendedBeanImpl implements UserGroupExtendedBean
 	@Override
 	public String getExtenderName() {
 		return UserGroupExender.NAME;
+	}
+
+	@Override
+	public String getStrategyDesc() {
+		return strategyDesc;
 	}
 	
 }

@@ -3,7 +3,6 @@ package com.nali.spreader.factory.passive;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import com.nali.spreader.dao.IPassiveConfigDao;
@@ -60,9 +59,9 @@ public class PassiveConfigService extends AbstractConfigService<String> {
 		configableCenter = new ConfigableCenter(context);
 	}
 	
-	@Bean
-	public IConfigableCenter passiveConfigableCenter() {
-		return configableCenter;
-	}
+//	@Bean
+//	public IConfigableCenter passiveConfigableCenter() {
+//		return configableCenter;
+//	}
 
 }

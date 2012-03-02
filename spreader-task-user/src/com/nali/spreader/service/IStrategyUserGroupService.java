@@ -4,4 +4,6 @@ import com.nali.spreader.model.StrategyUserGroup;
 
 public interface IStrategyUserGroupService {
 	StrategyUserGroup get(Long sid);
+
+	void save(StrategyUserGroup extendConfig);
 }

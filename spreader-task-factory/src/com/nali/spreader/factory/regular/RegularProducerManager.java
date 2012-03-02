@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.nali.spreader.factory.config.extend.ExtendExecuter;
-import com.nali.spreader.factory.config.extend.ExtendInfo;
+import com.nali.spreader.factory.config.extend.ExtendedBean;
 import com.nali.spreader.factory.exporter.ClientTaskExporterFactory;
 import com.nali.spreader.factory.exporter.Exporter;
 import com.nali.spreader.factory.exporter.ExporterProvider;
@@ -44,10 +44,10 @@ public class RegularProducerManager {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public<T> void invokeRegularObject(String name, T params, ExtendInfo extendInfo) {
+	public<T> void invokeRegularObject(String name, T params, Long sid) {
 		RegularObject regularObject = regularConfigService.getRegularObject(name, params);
-		if(extendInfo.isExtend()) {
-			extendExecuter.extend(regularObject, extendInfo);
+		if(regularObject instanceof ExtendedBean) {
+			extendExecuter.extend((ExtendedBean) regularObject, sid);
 		}
 		if (regularObject instanceof RegularAnalyzer) {
 			((RegularAnalyzer) regularObject).work();
@@ -74,6 +74,10 @@ public class RegularProducerManager {
 		} else {
 			throw new IllegalArgumentException("illegal bean type:" + regularObject.getClass());
 		}
+	}
+	
+	public void saveExtendConfig(String name, Object extendConfig) {
+		regularConfigService.saveExtendConfig(name, extendConfig);
 	}
 
 	public String serializeConfigData(Object obj) {

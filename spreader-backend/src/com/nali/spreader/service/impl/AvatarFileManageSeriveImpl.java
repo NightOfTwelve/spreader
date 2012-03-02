@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,7 +106,11 @@ public class AvatarFileManageSeriveImpl implements IAvatarFileManageService {
 				createPhotoTypeDir(sardine, generalTypeMap, generalBuff);
 			}
 		} catch (Exception e) {
-			LOGGER.info("创建失败", e);
+			if(e.getCause()!=null && e.getCause() instanceof HttpHostConnectException) {
+				LOGGER.error("无法连接webdav服务器");
+			} else {
+				LOGGER.error("创建失败", e);
+			}
 		}
 	}
 

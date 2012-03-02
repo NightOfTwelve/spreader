@@ -7,6 +7,10 @@ import com.nali.common.model.BaseModel;
 import java.math.BigDecimal;
 
 public class User extends BaseModel implements Serializable {
+	
+    public static final Long UID_ANYONE = 0L;
+    
+    public static final Long UID_NOT_LOGIN = -1L;
 
     public static final Integer GENDER_MALE = 1;
 

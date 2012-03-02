@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.nali.common.util.CollectionUtils;
 
 @Component
+@SuppressWarnings({"rawtypes",})
 public class ExtendExecuter {
 	private Map<String, Exender> exenders;
 
@@ -23,11 +24,12 @@ public class ExtendExecuter {
 		}
 	}
 	
-	public void extend(Object obj, ExtendInfo extendInfo) {
-		Exender exender = exenders.get(extendInfo.getExtendType());
+	public void extend(ExtendedBean obj, Long sid) {
+		String extenderName = obj.getExtenderName();
+		Exender exender = exenders.get(extenderName);
 		if(exender==null) {
-			throw new IllegalArgumentException("not supported type:" + extendInfo.getExtendType());
+			throw new IllegalArgumentException("not supported type:" + extenderName);
 		}
-		exender.extend(obj, extendInfo);
+		exender.extend(obj, sid);
 	}
 }

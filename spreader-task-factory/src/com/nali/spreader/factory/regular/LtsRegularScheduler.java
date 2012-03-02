@@ -53,7 +53,7 @@ public class LtsRegularScheduler extends AbstractTask implements
 		try {
 			Object config = regularProducerManager.unSerializeConfigData(
 					regularJob.getConfig(), name);
-			regularProducerManager.invokeRegularObject(name, config, regularJob.generateExtendInfo());
+			regularProducerManager.invokeRegularObject(name, config, regularJob.getId());
 		} catch (Exception e) {
 			throw new TaskExecuteException("invoke task fail, triggerName:"
 					+ triggerName, e);

@@ -7,5 +7,7 @@ public interface UserGroupExtendedBean extends ExtendedBean {
 	void setFromUserGroup(Long fromUserGroup);
 
 	void setToUserGroup(Long toUserGroup);
+	
+	String getStrategyDesc();
 
 }
