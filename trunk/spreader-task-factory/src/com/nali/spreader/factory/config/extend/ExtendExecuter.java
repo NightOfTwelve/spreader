@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import com.nali.common.util.CollectionUtils;
 
 @Component
-@SuppressWarnings({"rawtypes",})
+@SuppressWarnings("rawtypes")
 public class ExtendExecuter {
 	private Map<String, Exender> exenders;
 
