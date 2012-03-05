@@ -8,6 +8,24 @@ public class UserTaskCount implements Serializable {
 	private Long actionId;
 	private Integer count;
 	private Integer taskType;
+	
+	public static class QueryDto {
+		private Integer taskType;
+		private Long lowestPriority;
+		public Integer getTaskType() {
+			return taskType;
+		}
+		public void setTaskType(Integer taskType) {
+			this.taskType = taskType;
+		}
+		public Long getLowestPriority() {
+			return lowestPriority;
+		}
+		public void setLowestPriority(Long lowestPriority) {
+			this.lowestPriority = lowestPriority;
+		}
+	}
+	
 	public Long getUid() {
 		return uid;
 	}

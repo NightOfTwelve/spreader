@@ -12,6 +12,13 @@ public class TaskError implements Serializable {
 	private String errorDesc;
 	private Object errrorData;
 	private Date errorTime;
+	
+	private Long websiteId;
+	private String websiteErrorCode;
+	private String websiteErrorDesc;
+	private Long uid;
+	private String refererId;
+	
 	public Long getTaskId() {
 		return taskId;
 	}
@@ -53,5 +60,35 @@ public class TaskError implements Serializable {
 	}
 	public void setErrorDesc(String errorDesc) {
 		this.errorDesc = errorDesc;
+	}
+	public Long getWebsiteId() {
+		return websiteId;
+	}
+	public void setWebsiteId(Long websiteId) {
+		this.websiteId = websiteId;
+	}
+	public String getWebsiteErrorCode() {
+		return websiteErrorCode;
+	}
+	public void setWebsiteErrorCode(String websiteErrorCode) {
+		this.websiteErrorCode = websiteErrorCode;
+	}
+	public String getWebsiteErrorDesc() {
+		return websiteErrorDesc;
+	}
+	public void setWebsiteErrorDesc(String websiteErrorDesc) {
+		this.websiteErrorDesc = websiteErrorDesc;
+	}
+	public Long getUid() {
+		return uid;
+	}
+	public void setUid(Long uid) {
+		this.uid = uid;
+	}
+	public String getRefererId() {
+		return refererId;
+	}
+	public void setRefererId(String refererId) {
+		this.refererId = refererId;
 	}
 }

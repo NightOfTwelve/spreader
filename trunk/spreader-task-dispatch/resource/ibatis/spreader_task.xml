@@ -4,11 +4,44 @@
 	<select id="countUserTask" resultClass="com.nali.spreader.model.UserTaskCount">
 		select task_type as taskType, uid, action_id as actionId, count(*) as count
 		from spreader.tb_client_task
-		where batch_id=0
+		where status=0
 		group by task_type, uid, action_id
 	</select>
+	<select id="countTaskByTaskTypeAndPriority" parameterClass="com.nali.spreader.model.UserTaskCount$QueryDto" resultClass="com.nali.spreader.model.UserTaskCount">
+		select uid, action_id as actionId, count(*) as count
+		from spreader.tb_client_task
+		where status=0 and task_type=#taskType#
+		<isNotNull prepend="and" property="lowestPriority">
+			priority &gt;= #lowestPriority#
+		</isNotNull>
+		group by uid, action_id
+	</select>
+	<select id="assignTasksSelect" parameterClass="com.nali.spreader.model.UserTaskCount"
+						resultMap="spreader_tb_client_task.ibatorgenerated_ResultMapWithBLOBs">
+		select *
+		from spreader.tb_client_task
+		where status=0
+			and task_type=#taskType# and uid=#uid# and action_id=#actionId#
+		order by priority desc
+		limit 0, $count$
+	</select>
+	<update id="expireTasks" parameterClass="java.util.Date">
+		update spreader.tb_client_task
+		set status=null
+		where expire_time &lt; #now# and status is not null
+	</update>
+	<update id="activeTasks" parameterClass="com.nali.spreader.model.ActiveTaskDto">
+		update spreader.tb_client_task
+		set status=0, priority=$priorityExpression$
+		where start_time &lt;= #now# and expire_time &gt; #now# and status is null
+	</update>
+	<update id="refreshPriority" parameterClass="string">
+		update spreader.tb_client_task
+		set priority=$priorityExpression$
+		where status=0
+	</update>
 	<insert id="insertTaskBatch" parameterClass="com.nali.spreader.model.TaskBatch">
-    insert into spreader$shard.databaseSuffix$.tb_task_batch$shard.tableSuffix$
+    	insert into spreader$shard.databaseSuffix$.tb_task_batch$shard.tableSuffix$
 	    <dynamic prepend="(">
 	      <isNotNull prepend="," property="clientId">
 	        client_id

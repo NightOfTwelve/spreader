@@ -12,11 +12,15 @@ import java.util.NoSuchElementException;
  * 平均分配，零头将进行轮询，不保证按照顺序返回
  * @author sam Created on 2011-7-22
  */
-public class Average<T> implements Iterator<List<ItemCount<T>>> {
+public class Average<T> implements Iterator<List<ItemCount<T>>> {//TOOD batchsize支持小数
 	private int leftBatch;
 	private SortedItems<CountDetail<T>> sortedItemCounts;
 	private int batchUnAverage;
 	private int bigs;
+	
+	public static <T> Average<T> empty() {
+		return new Average<T>(null, 0);
+	}
 	
 	public static <T> Average<T> startFromBatchCount(List<ItemCount<T>> items, int batchCount) {
 		return new Average<T>(items, batchCount);

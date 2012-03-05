@@ -44,7 +44,6 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 
 	@Override
 	public void save(ClientTask task) {
-		task.setId(null);
 		try {
 			crudClientTaskDao.insertSelective(task);
 		} catch (Exception e) {
