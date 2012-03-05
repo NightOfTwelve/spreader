@@ -93,14 +93,6 @@
 		<property name="manager" ref="manager"></property>
 	</bean>
 	
-	<bean id="listenerContainer" class="com.nali.lwtmq.receiver.container.PollingMessageListenerContainer">
-		<property name="concurrentListeners" value="#{lwtmq['lwtmq.taskQueue.concurrentListeners']}"></property>
-		<property name="timeout" value="#{lwtmq['lwtmq.taskQueue.blockedTimeout']}"></property>
-		<property name="receiver" ref="taskReceiver"></property>
-		<property name="concurrentTaskExecutors" value="#{lwtmq['lwtmq.taskQueue.concurrentTaskExecutors']}"></property>
-		<property name="listener" ref="taskListener"></property>
-	</bean>
-	
 	<bean id="weiboNormalPassiveTaskQueue" class="com.nali.lwtmq.core.queue.redis.RedisQueue">
 		<property name="valueSerializer" ref="clientTaskProtoStuffRedisSerializer"></property>
 		<property name="connectionFactory" ref="redisConnectionFactory"></property>
@@ -143,4 +135,35 @@
 	</bean>
 	-->
 	
+	<bean id="listenerContainer" class="com.nali.lwtmq.receiver.container.PollingMessageListenerContainer">
+		<property name="concurrentListeners" value="#{lwtmq['lwtmq.taskQueue.concurrentListeners']}"></property>
+		<property name="timeout" value="#{lwtmq['lwtmq.taskQueue.blockedTimeout']}"></property>
+		<property name="receiver" ref="taskReceiver"></property>
+		<property name="concurrentTaskExecutors" value="#{lwtmq['lwtmq.taskQueue.concurrentTaskExecutors']}"></property>
+		<property name="listener" ref="taskListener"></property>
+	</bean>
+	
+	<bean id="weiboNormalPassiveTaskListenerContainer" class="com.nali.lwtmq.receiver.container.PollingMessageListenerContainer">
+		<property name="concurrentListeners" value="#{lwtmq['lwtmq.taskQueue.concurrentListeners']}"></property>
+		<property name="timeout" value="#{lwtmq['lwtmq.taskQueue.blockedTimeout']}"></property>
+		<property name="receiver" ref="weiboNormalPassiveTaskReceiver"></property>
+		<property name="concurrentTaskExecutors" value="#{lwtmq['lwtmq.taskQueue.concurrentTaskExecutors']}"></property>
+		<property name="listener" ref="taskListener"></property>
+	</bean>
+	
+	<bean id="weiboRegisterPassiveTaskListenerContainer" class="com.nali.lwtmq.receiver.container.PollingMessageListenerContainer">
+		<property name="concurrentListeners" value="#{lwtmq['lwtmq.taskQueue.concurrentListeners']}"></property>
+		<property name="timeout" value="#{lwtmq['lwtmq.taskQueue.blockedTimeout']}"></property>
+		<property name="receiver" ref="weiboRegisterPassiveTaskReceiver"></property>
+		<property name="concurrentTaskExecutors" value="#{lwtmq['lwtmq.taskQueue.concurrentTaskExecutors']}"></property>
+		<property name="listener" ref="taskListener"></property>
+	</bean>
+	
+	<bean id="weiboInstantPassiveTaskListenerContainer" class="com.nali.lwtmq.receiver.container.PollingMessageListenerContainer">
+		<property name="concurrentListeners" value="#{lwtmq['lwtmq.taskQueue.concurrentListeners']}"></property>
+		<property name="timeout" value="#{lwtmq['lwtmq.taskQueue.blockedTimeout']}"></property>
+		<property name="receiver" ref="weiboInstantPassiveTaskReceiver"></property>
+		<property name="concurrentTaskExecutors" value="#{lwtmq['lwtmq.taskQueue.concurrentTaskExecutors']}"></property>
+		<property name="listener" ref="taskListener"></property>
+	</bean>
 </beans>

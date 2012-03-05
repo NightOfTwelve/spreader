@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.nali.spreader.dao.ICrudRobotUserDao;
 import com.nali.spreader.dao.ICrudUserDao;
@@ -94,6 +95,7 @@ public class GlobalUserService implements IGlobalUserService {
 	}
 
 	@Override
+	@Transactional
 	public void updateUserTags(Long uid, List<UserTag> tags) {
 		UserTagExample example = new UserTagExample();
 		example.createCriteria().andUidEqualTo(uid);

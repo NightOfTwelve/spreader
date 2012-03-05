@@ -16,6 +16,9 @@ public enum TaskType {//TODO
 		this.passiveFetchPercent = passiveFetchPercent;
 		this.passiveFetchSize = passiveFetchSize;
 	}
+	public int getFetchSize() {//TODO
+		return passiveFetchSize;
+	}
 	public Integer getId() {
 		return id;
 	}

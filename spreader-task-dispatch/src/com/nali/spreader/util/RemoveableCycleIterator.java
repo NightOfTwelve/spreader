@@ -5,12 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class CycleIterator<T> implements Iterator<T> {
+public class RemoveableCycleIterator<T> implements Iterator<T> {
 	private int markIdx = -1;
 	private int idx;
 	private List<T> list;
 
-	public CycleIterator(List<T> list, boolean copyList) {
+	public RemoveableCycleIterator(List<T> list, boolean copyList) {
 		this.idx = list.size() - 1;
 		if (copyList) {
 			this.list = new ArrayList<T>(list);
@@ -18,11 +18,11 @@ public class CycleIterator<T> implements Iterator<T> {
 			this.list = list;
 		}
 	}
-
+	
 	/**
 	 * 循环迭代一个list,不拷贝list，建议用randomAccess的list
 	 */
-	public CycleIterator(List<T> list) {
+	public RemoveableCycleIterator(List<T> list) {
 		this(list, false);
 	}
 
