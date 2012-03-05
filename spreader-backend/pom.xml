@@ -168,6 +168,14 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>dev-test</id>
+			<properties>
+				<envcfg.dir>dev-test</envcfg.dir>
+				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+				<spring.version>3.0.5.RELEASE</spring.version>
+			</properties>
+		</profile>
+		<profile>
 			<id>product</id>
 			<properties>
 				<envcfg.dir>product</envcfg.dir>
