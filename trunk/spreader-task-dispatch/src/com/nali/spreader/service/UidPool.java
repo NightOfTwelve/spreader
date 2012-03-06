@@ -243,7 +243,9 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 			if(this.uids!=null) {
 				backupUids = getMergedUids();
 				if(backupUids.size()>clientUidSize) {
-					linkedPool.removeReserve(backupUids.subList(clientUidSize, backupUids.size()));
+					if(linkedPool!=null) {
+						linkedPool.removeReserve(backupUids.subList(clientUidSize, backupUids.size()));
+					}
 					backupUids = backupUids.subList(0, clientUidSize);
 				}
 			}
