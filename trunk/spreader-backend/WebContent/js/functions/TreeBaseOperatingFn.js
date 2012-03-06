@@ -283,6 +283,9 @@ function strategyGroupSubmitTreeData(stgdisptree, triggerDispForm, radioForm,
 						groupStore.reload();
 					} else {
 						Ext.Msg.alert("提示", result.message);
+						editstgWindow.hide();
+						store.reload();
+						groupStore.reload();
 					}
 				},
 				failure : function() {

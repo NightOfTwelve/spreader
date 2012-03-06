@@ -21,8 +21,8 @@ public interface IStrategyGroupService {
 	 * @param pageSize
 	 * @return
 	 */
-	PageResult<StrategyGroup> findStrategyGroupPageResult(StrategyGroup params,
-			Integer pageNum, Integer pageSize);
+	PageResult<StrategyGroup> findStrategyGroupPageResult(StrategyGroup params, Integer pageNum,
+			Integer pageSize);
 
 	/**
 	 * 保存StrategyGroup 并返回主键
@@ -65,4 +65,11 @@ public interface IStrategyGroupService {
 	 * @return
 	 */
 	List<RegularJob> findRegularJobListByStrategyGroupId(Long gid);
+
+	/**
+	 * 回滚用户分组，用于策略保存异常时回滚分组数据
+	 * 
+	 * @param gid
+	 */
+	void rollBackStrategyGroupByGid(Long gid);
 }

@@ -405,7 +405,7 @@ var rightMenu = new Ext.menu.Menu({
 sinaUserGrid.on("cellcontextmenu", function(grid, rowIndex, cellIndex, e) {
 			e.preventDefault();
 			var cell = sinaUserGrid.getSelectionModel().getSelected();
-			alert(cell);
+//			alert(cell);
 			rightMenu.showAt(e.getXY());
 		});
 // 注册事件

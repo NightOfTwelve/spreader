@@ -27,8 +27,7 @@ import com.nali.spreader.service.IStrategyGroupService;
  */
 @Service
 public class StrategyGroupServiceImpl implements IStrategyGroupService {
-	private static final Logger logger = Logger
-			.getLogger(StrategyGroupServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(StrategyGroupServiceImpl.class);
 	@Autowired
 	private ICrudStrategyGroupDao gcrudDao;
 	@Autowired
@@ -39,8 +38,8 @@ public class StrategyGroupServiceImpl implements IStrategyGroupService {
 	private ICrudRegularJobDao crudRegularJobDao;
 
 	@Override
-	public PageResult<StrategyGroup> findStrategyGroupPageResult(
-			StrategyGroup params, Integer pageNum, Integer pageSize) {
+	public PageResult<StrategyGroup> findStrategyGroupPageResult(StrategyGroup params, Integer pageNum,
+			Integer pageSize) {
 		if (params == null) {
 			params = new StrategyGroup();
 		}
@@ -103,8 +102,7 @@ public class StrategyGroupServiceImpl implements IStrategyGroupService {
 		for (Long gid : gids) {
 			if (gid != null) {
 				// 首先根据分组ID获取策略实例
-				List<RegularJob> jobList = this
-						.findRegularJobListByStrategyGroupId(gid);
+				List<RegularJob> jobList = this.findRegularJobListByStrategyGroupId(gid);
 				if (jobList.size() > 0) {
 					for (RegularJob job : jobList) {
 						if (job != null) {
@@ -132,18 +130,15 @@ public class StrategyGroupServiceImpl implements IStrategyGroupService {
 	@Override
 	public List<RegularJob> findRegularJobListByStrategyGroupId(Long gid) {
 		RegularJobExample example = new RegularJobExample();
-		com.nali.spreader.model.RegularJobExample.Criteria c = example
-				.createCriteria();
+		com.nali.spreader.model.RegularJobExample.Criteria c = example.createCriteria();
 		c.andGidEqualTo(gid);
-		List<RegularJob> list = crudRegularJobDao
-				.selectByExampleWithBLOBs(example);
+		List<RegularJob> list = crudRegularJobDao.selectByExampleWithBLOBs(example);
 		return list;
 	}
 
 	private void unSchedule(String name, Long id) {
 		try {
-			SchedulerFactory.getInstance().getScheduler()
-					.unscheduleTask(getTriggerName(name, id), name);
+			SchedulerFactory.getInstance().getScheduler().unscheduleTask(getTriggerName(name, id), name);
 		} catch (SchedulerException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -151,5 +146,16 @@ public class StrategyGroupServiceImpl implements IStrategyGroupService {
 
 	private String getTriggerName(String name, Long id) {
 		return name + "_" + id;
+	}
+
+	@Override
+	public void rollBackStrategyGroupByGid(Long gid) {
+		if (gid != null) {
+			try {
+				this.gcrudDao.deleteByPrimaryKey(gid);
+			} catch (Exception e) {
+				logger.error("删除策略分组失败,分组编号:" + gid, e);
+			}
+		}
 	}
 }
