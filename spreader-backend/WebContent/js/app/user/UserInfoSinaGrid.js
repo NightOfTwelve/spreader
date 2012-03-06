@@ -393,6 +393,21 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 
 		});
 
+// 定义右键菜单
+var rightMenu = new Ext.menu.Menu({
+			id : 'rightMenu',
+			items : [{
+						text : '复制',
+						handler : function() {
+						}
+					}]
+		});
+sinaUserGrid.on("cellcontextmenu", function(grid, rowIndex, cellIndex, e) {
+			e.preventDefault();
+			var cell = sinaUserGrid.getSelectionModel().getSelected();
+			alert(cell);
+			rightMenu.showAt(e.getXY());
+		});
 // 注册事件
 sinaUserGrid.on('cellclick', sinaUserGrid.onCellClick, sinaUserGrid);
 

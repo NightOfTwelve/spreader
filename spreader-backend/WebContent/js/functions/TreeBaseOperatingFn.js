@@ -226,7 +226,7 @@ function strategyDispatchSubmitTreeData(stgdisptree, triggerDispForm,
  * 策略分组树提交数据的函数
  */
 function strategyGroupSubmitTreeData(stgdisptree, triggerDispForm, radioForm,
-		simpleDispForm, editstgWindow, store, groupStore) {
+		simpleDispForm, editstgWindow, store, groupStore, fromId, toId) {
 	// 获取ROOT数组
 	var treearray = stgdisptree.root.childNodes;
 	var tparam = {};
@@ -241,6 +241,9 @@ function strategyGroupSubmitTreeData(stgdisptree, triggerDispForm, radioForm,
 	tparam['_time'] = new Date().getTime();
 	tparam['id'] = GDISPID;
 	tparam['groupId'] = GGROUPID;
+	// 分组ID
+	tparam['fromGroupId'] = fromId;
+	tparam['toGroupId'] = toId;
 	if (treearray.length > 0) {
 		var arrayobj = treearray[0].attributes;
 		var submitStr = treejson2str(arrayobj);

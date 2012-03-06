@@ -15,7 +15,7 @@ public class RegularJob extends BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1340715782719822254L;
 
-    @JsonIgnoreProperties({ "config", "name", "triggerType" })
+    @JsonIgnoreProperties({ "config", "name" })
     public static class JobDto {
 
         private String name;

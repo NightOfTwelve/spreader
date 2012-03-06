@@ -24,5 +24,6 @@ public interface IConfigableCenter {
 
 	ExtendBinder getExtendBinder(String name);
 
-	void saveExtendConfig(String name, Object extendConfig);
+	void saveExtendConfig(String name, Long sid, Object extendConfig);
+	Object getExtendConfig(String name, Long sid);
 }

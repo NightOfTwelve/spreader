@@ -204,7 +204,7 @@ public class StrategySystemDispatchController {
 			try {
 				cfgService.scheduleSimpleTrigger(name, configObj, description,
 						null, null, start, repeatTimes, repeatInternal,
-						SYSTEM_JOB_TYPE);
+						SYSTEM_JOB_TYPE, null);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存SimpleTrigger失败", e);
@@ -212,7 +212,7 @@ public class StrategySystemDispatchController {
 		} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
 			try {
 				cfgService.scheduleCronTrigger(name, configObj, description,
-						null, null, cron, SYSTEM_JOB_TYPE);
+						null, null, cron, SYSTEM_JOB_TYPE, null);
 				message.put("success", true);
 			} catch (Exception e) {
 				LOGGER.error("保存CronTrigger失败", e);

@@ -76,8 +76,12 @@ public class RegularProducerManager {
 		}
 	}
 	
-	public void saveExtendConfig(String name, Object extendConfig) {
-		regularConfigService.saveExtendConfig(name, extendConfig);
+	public void saveExtendConfig(String name, Long sid, Object extendConfig) {
+		regularConfigService.saveExtendConfig(name, sid, extendConfig);
+	}
+	
+	public Object getExtendConfig(String name, Long sid) {
+		return regularConfigService.getExtendConfig(name, sid);
 	}
 
 	public String serializeConfigData(Object obj) {

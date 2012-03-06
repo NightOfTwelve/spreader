@@ -30,13 +30,13 @@ import com.nali.spreader.factory.regular.RegularScheduler;
 import com.nali.spreader.model.RegularJob;
 import com.nali.spreader.model.RegularJob.JobDto;
 import com.nali.spreader.model.StrategyGroup;
+import com.nali.spreader.model.StrategyUserGroup;
 import com.nali.spreader.service.IStrategyGroupService;
 import com.nali.spreader.utils.TimeHelper;
 
 @Controller
 public class StrategyDispatchController {
-	private static final Logger LOGGER = Logger
-			.getLogger(StrategyDispatchController.class);
+	private static final Logger LOGGER = Logger.getLogger(StrategyDispatchController.class);
 	private static ObjectMapper jacksonMapper = new ObjectMapper();
 	@Autowired
 	private RegularScheduler cfgService;
@@ -49,7 +49,7 @@ public class StrategyDispatchController {
 	// 简单分组
 	private final Integer SIMPLE_GROUP_TYPE = 1;
 	// 复杂分组
-//	private final Integer COMPLEX_GROUP_TYPE = 2;
+	// private final Integer COMPLEX_GROUP_TYPE = 2;
 	// 复杂分组下的调度配置
 	private final Integer COMPLEX_GROUP_DISP_TYPE = 21;
 
@@ -73,9 +73,8 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/stgdispgridstore")
-	public String stgGridStore(String dispname, Integer triggerType,
-			Long groupId, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String stgGridStore(String dispname, Integer triggerType, Long groupId, Integer start,
+			Integer limit) throws JsonGenerationException, JsonMappingException, IOException {
 		if (limit == null) {
 			limit = 20;
 		}
@@ -84,11 +83,10 @@ public class StrategyDispatchController {
 		} else {
 			start = start / limit + 1;
 		}
-		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname,
-				triggerType, groupId, ConfigableType.normal, start, limit);
+		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname, triggerType, groupId,
+				ConfigableType.normal, start, limit);
 		List<RegularJob> list = pr.getList();
-		List<ConfigableInfo> dispnamelist = regularConfigService
-				.listConfigableInfo(ConfigableType.normal);
+		List<ConfigableInfo> dispnamelist = regularConfigService.listConfigableInfo(ConfigableType.normal);
 		int rowcount = pr.getTotalCount();
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("cnt", rowcount);
@@ -110,17 +108,23 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/createdisptree")
-	public String createStgTreeData(String name, Long id, Boolean isGroup)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String createStgTreeData(String name, Long id, Boolean isGroup) throws JsonGenerationException,
+			JsonMappingException, IOException {
 		if (Boolean.TRUE.equals(isGroup)) {
 			id = getRegularIdByGid(id);
 		}
-		return jacksonMapper
-				.writeValueAsString(new DispatchData(null, regularConfigService
-						.getConfigableInfo(name).getDisplayName(),
-						regularConfigService.getConfigDefinition(name),
-						id != null && id > 0 ? cfgService.getConfig(id)
-								.getConfig() : null));
+		ConfigableInfo cfg = regularConfigService.getConfigableInfo(name);
+		String dispname = cfg.getDisplayName();
+		String extendType = cfg.getExtendType();
+		Object meta = cfg.getExtendMeta();
+		ConfigDefinition def = regularConfigService.getConfigDefinition(name);
+		Object data = id != null ? cfgService.getConfig(id).getConfig() : null;
+		Object sug = null;
+		if (!StringUtils.isEmpty(extendType)) {
+			sug = cfgService.getExtendConfig(name, id);
+		}
+		DispatchData dispatch = new DispatchData(null, dispname, extendType, meta, def, data, sug);
+		return jacksonMapper.writeValueAsString(dispatch);
 	}
 
 	/**
@@ -135,25 +139,28 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/settgrparam")
-	public String settingTriggerParam(Long id, Boolean isGroup)
-			throws JsonGenerationException, JsonMappingException, IOException,
-			SchedulerException {
+	public String settingTriggerParam(Long id, Boolean isGroup) throws JsonGenerationException,
+			JsonMappingException, IOException, SchedulerException {
 		if (isGroup != null && isGroup) {
 			id = getRegularIdByGid(id);
+		}
+		// 如果ID为空直接返回报错信息
+		if (id == null) {
+			Map<String, Boolean> err = CollectionUtils.newHashMap(1);
+			err.put("error", true);
+			LOGGER.error("不能获取任务ID，设置参数错误");
+			return jacksonMapper.writeValueAsString(err);
 		}
 		JobDto job = cfgService.getConfig(id);
 		String remind = "";
 		if (job != null) {
 			String name = job.getName();
-			String triggerName = new StringBuffer(name).append("_").append(id)
-					.toString();
+			String triggerName = new StringBuffer(name).append("_").append(id).toString();
 			// TriggerMetaInfo tm = new TriggerMetaInfo(triggerName, name, name
 			// + "Task", null, TriggerType.INDEPENDENT_TRIGGER);
-			Trigger trigger = SchedulerFactory.getInstance().getScheduler()
-					.getTrigger(triggerName, name);
+			Trigger trigger = SchedulerFactory.getInstance().getScheduler().getTrigger(triggerName, name);
 			if (trigger != null) {
-				TriggerScheduleInfo scheduleInfo = trigger
-						.getTriggerScheduleInfo();
+				TriggerScheduleInfo scheduleInfo = trigger.getTriggerScheduleInfo();
 				StringBuffer buff = new StringBuffer();
 				String cronExpression = scheduleInfo.getCronExpression();
 				if (StringUtils.isEmptyNoOffset(cronExpression)) {
@@ -205,11 +212,10 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/dispsave")
-	public String saveStrategyConfig(String name, String groupName,
-			String config, Integer triggerType, String description,
-			String groupNote, Long groupId, Integer groupType, Date start,
-			Integer repeatTimes, Integer repeatInternal, String cron, Long id)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String saveStrategyConfig(String name, String groupName, String config, Integer triggerType,
+			String description, String groupNote, Long groupId, Integer groupType, Date start,
+			Integer repeatTimes, Integer repeatInternal, String cron, Long id, Long fromGroupId,
+			Long toGroupId) throws JsonGenerationException, JsonMappingException, IOException {
 		Map<String, Object> message = new HashMap<String, Object>();
 		message.put("success", false);
 		if (groupType != null && groupType > 0) {
@@ -222,18 +228,15 @@ public class StrategyDispatchController {
 					Long regId = this.getRegularIdByGid(groupId);
 					if (regId != null && regId > 0) {
 						// 如果分组ID不为null,首先检查并同步策略表
-						groupService.syncRegularJob(groupId, tmpGroupName,
-								regId);
+						groupService.syncRegularJob(groupId, tmpGroupName, regId);
 					} else {
 						LOGGER.warn("通过组ID:" + groupId + ",获取regularJob失败");
-						message.put("message", "通过组ID:" + groupId
-								+ ",获取regularJob失败");
+						message.put("message", "通过组ID:" + groupId + ",获取regularJob失败");
 						return jacksonMapper.writeValueAsString(message);
 					}
 				} else {
 					// 否则先保存分组获取分组ID
-					groupId = getNewGroupId(groupType, tmpGroupName,
-							description);
+					groupId = getNewGroupId(groupType, tmpGroupName, description);
 				}
 			} else {
 				tmpGroupName = groupName;
@@ -263,17 +266,22 @@ public class StrategyDispatchController {
 			if (repeatInternal == null) {
 				repeatInternal = 1;
 			}
-			Class<?> dataClass = regularConfigService.getConfigableInfo(name)
-					.getDataClass();
+			Class<?> dataClass = regularConfigService.getConfigableInfo(name).getDataClass();
 			Object configObj = null;
 			if (StringUtils.isNotEmptyNoOffset(config)) {
 				configObj = jacksonMapper.readValue(config, dataClass);
 			}
+			StrategyUserGroup sug = null;
+			// fromGroupId，toGroupId至少有一个不为空才设置StrategyUserGroup
+			if (fromGroupId != null || toGroupId != null) {
+				sug = new StrategyUserGroup();
+				sug.setFromUserGroup(fromGroupId);
+				sug.setToUserGroup(toGroupId);
+			}
 			if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
 				try {
-					cfgService.scheduleSimpleTrigger(name, configObj,
-							description, groupId, tmpGroupName, start,
-							repeatTimes, repeatInternal, NORMAL_JOB_TYPE);
+					cfgService.scheduleSimpleTrigger(name, configObj, description, groupId, tmpGroupName,
+							start, repeatTimes, repeatInternal, NORMAL_JOB_TYPE, sug);
 					message.put("success", true);
 				} catch (Exception e) {
 					LOGGER.error("保存SimpleTrigger失败", e);
@@ -281,9 +289,8 @@ public class StrategyDispatchController {
 				}
 			} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
 				try {
-					cfgService.scheduleCronTrigger(name, configObj,
-							description, groupId, tmpGroupName, cron,
-							NORMAL_JOB_TYPE);
+					cfgService.scheduleCronTrigger(name, configObj, description, groupId, tmpGroupName, cron,
+							NORMAL_JOB_TYPE, sug);
 					message.put("success", true);
 				} catch (Exception e) {
 					LOGGER.error("保存CronTrigger失败", e);
@@ -311,8 +318,8 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/deletetrg")
-	public String deleteTrigger(String idstr) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String deleteTrigger(String idstr) throws JsonGenerationException, JsonMappingException,
+			IOException {
 		// 操作记录数
 		int count = 0;
 		// 返回消息
@@ -346,10 +353,8 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/combstore")
-	public String createStgCombStore() throws JsonGenerationException,
-			JsonMappingException, IOException {
-		List<ConfigableInfo> list = regularConfigService
-				.listConfigableInfo(ConfigableType.normal);
+	public String createStgCombStore() throws JsonGenerationException, JsonMappingException, IOException {
+		List<ConfigableInfo> list = regularConfigService.listConfigableInfo(ConfigableType.normal);
 		return jacksonMapper.writeValueAsString(list);
 	}
 
@@ -366,9 +371,8 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/newgroupid")
-	public String createNewGroupId(Integer groupType, String groupName,
-			String groupNote) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String createNewGroupId(Integer groupType, String groupName, String groupNote)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		Long gid = this.getNewGroupId(groupType, groupName, groupNote);
 		Map<String, Long> m = CollectionUtils.newHashMap(1);
 		m.put("groupId", gid);
@@ -400,8 +404,7 @@ public class StrategyDispatchController {
 	 * @param note
 	 * @return
 	 */
-	private Long getNewGroupId(Integer groupType, String groupName,
-			String groupNote) {
+	private Long getNewGroupId(Integer groupType, String groupName, String groupNote) {
 		// 否则先保存分组获取分组ID
 		StrategyGroup sg = new StrategyGroup();
 		sg.setGroupType(groupType);
@@ -426,13 +429,43 @@ public class StrategyDispatchController {
 		// 节点数据
 		private Object data;
 		private JobDto jobdto;
+		private String extendType;
+		private Object extendMeta;
+		private Object sug;
 
-		public DispatchData(String treeid, String treename,
-				ConfigDefinition def, Object data) {
+		public DispatchData(String treeid, String treename, String extendType, Object extendMeta,
+				ConfigDefinition def, Object data, Object sug) {
 			this.treeid = treeid;
 			this.treename = treename;
 			this.def = def;
 			this.data = data;
+			this.extendType = extendType;
+			this.extendMeta = extendMeta;
+			this.sug = sug;
+		}
+
+		public String getExtendType() {
+			return extendType;
+		}
+
+		public Object getSug() {
+			return sug;
+		}
+
+		public void setSug(Object sug) {
+			this.sug = sug;
+		}
+
+		public void setExtendType(String extendType) {
+			this.extendType = extendType;
+		}
+
+		public Object getExtendMeta() {
+			return extendMeta;
+		}
+
+		public void setExtendMeta(Object extendMeta) {
+			this.extendMeta = extendMeta;
 		}
 
 		public DispatchData(JobDto jobdto) {

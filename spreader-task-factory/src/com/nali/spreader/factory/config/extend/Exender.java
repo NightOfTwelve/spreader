@@ -4,5 +4,6 @@ public interface Exender<ExtendMeta, ExtendConfig> {
 	String name();
 	void extend(ExtendedBean obj, Long sid);
 	ExtendMeta getExtendMeta(ExtendedBean obj);
-	void saveExtendConfig(ExtendConfig extendConfig);
+	void saveExtendConfig(Long sid, ExtendConfig extendConfig);
+	ExtendConfig getExtendConfig(Long sid);
 }

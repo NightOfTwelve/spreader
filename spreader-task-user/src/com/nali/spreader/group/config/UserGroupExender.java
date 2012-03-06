@@ -21,7 +21,7 @@ public class UserGroupExender implements Exender<UserGroupMetaInfo, StrategyUser
 
 	@Override
 	public void extend(ExtendedBean obj, Long sid) {
-		StrategyUserGroup strategyUserGroup = strategyUserGroupService.get(sid);
+		StrategyUserGroup strategyUserGroup = getExtendConfig(sid);
 		if(strategyUserGroup!=null) {
 			Long fromUserGroup = strategyUserGroup.getFromUserGroup();
 			Long toUserGroup = strategyUserGroup.getToUserGroup();
@@ -39,8 +39,14 @@ public class UserGroupExender implements Exender<UserGroupMetaInfo, StrategyUser
 	}
 
 	@Override
-	public void saveExtendConfig(StrategyUserGroup extendConfig) {
+	public void saveExtendConfig(Long sid, StrategyUserGroup extendConfig) {
+		extendConfig.setSid(sid);
 		strategyUserGroupService.save(extendConfig);
+	}
+
+	@Override
+	public StrategyUserGroup getExtendConfig(Long sid) {
+		return strategyUserGroupService.get(sid);
 	}
 
 }

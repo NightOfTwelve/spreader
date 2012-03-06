@@ -381,9 +381,8 @@ Ext.onReady(function() {
 	 */
 	// 创建简单调度的FORM
 	var simpleDispForm = new Ext.form.FormPanel({
-				// autoWidth : true,
 				id : 'simpcard',
-				height : 100,
+				height : 80,
 				frame : true,
 				layout : "form", // 整个大的表单是form布局
 				labelWidth : 100,
@@ -422,21 +421,22 @@ Ext.onReady(function() {
 				}],
 				buttonAlign : "center",
 				buttons : [{
-							text : '保存',
-							handler : function() {
-								strategyDispatchSubmitTreeData(stgdisptree,triggerDispForm,radioForm,simpleDispForm,editstgWindow,store);
-							}
-						}, {
-							text : "重置",
-							handler : function() { // 按钮响应函数
-								simpleDispForm.form.reset();
-							}
-						}]
+					text : '保存',
+					handler : function() {
+						strategyDispatchSubmitTreeData(stgdisptree,
+								triggerDispForm, radioForm, simpleDispForm,
+								editstgWindow, store);
+					}
+				}, {
+					text : "重置",
+					handler : function() { // 按钮响应函数
+						simpleDispForm.form.reset();
+					}
+				}]
 			});
 	// 表达式配置FORM
 	var triggerDispForm = new Ext.form.FormPanel({
-				autoWidth : true,
-				height : 100,
+				height : 80,
 				id : 'trgcard',
 				frame : true,
 				layout : "form", // 整个大的表单是form布局
@@ -470,7 +470,7 @@ Ext.onReady(function() {
 			});
 	// 首先创建一个card布局的Panel
 	var cardPanel = new Ext.Panel({
-				autoWidth : true,
+				region : 'center',
 				id : 'cardPanel',
 				height : 100,
 				layout : 'card',
@@ -490,7 +490,7 @@ Ext.onReady(function() {
 			})
 	// RADIO组件
 	var radioForm = new Ext.form.FormPanel({
-				// width : 200,
+				region : 'north',
 				frame : true,
 				height : 80,
 				labelWidth : 65,
@@ -607,9 +607,9 @@ Ext.onReady(function() {
 						}, {
 							region : 'south',
 							title : '调度配置',
+							layout : 'border',
 							split : true,
-							// height : 300,
-							autoHeight : true,
+							height : 200,
 							items : [radioForm, cardPanel]
 						}],
 				buttons : [{

@@ -15,6 +15,7 @@ import com.nali.common.pagination.PageResult;
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
 import com.nali.spreader.data.User;
+import com.nali.spreader.data.UserGroup;
 import com.nali.spreader.model.StrategyGroup;
 import com.nali.spreader.service.IExtjsComponentsUtilService;
 import com.nali.spreader.service.IStrategyGroupService;
@@ -78,6 +79,30 @@ public class ExtjsComponentsUtilController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/usercombo")
+	public String userComboxStore(String query, Integer start, Integer limit)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		if (start == null)
+			start = 0;
+		if (limit == null)
+			limit = 20;
+		Limit lit = Limit.newInstanceForLimit(start, limit);
+		PageResult<User> pr = this.extjsService.findUserByName(query, lit);
+		return json.writeValueAsString(pr);
+	}
+
+	/**
+	 * 筛选USERGROUP的数据源
+	 * 
+	 * @param query
+	 * @param start
+	 * @param limit
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/usergroupcombo")
 	public String userGroupComboxStore(String query, Integer start,
 			Integer limit) throws JsonGenerationException,
 			JsonMappingException, IOException {
@@ -86,7 +111,8 @@ public class ExtjsComponentsUtilController {
 		if (limit == null)
 			limit = 20;
 		Limit lit = Limit.newInstanceForLimit(start, limit);
-		PageResult<User> pr = this.extjsService.findUserByName(query, lit);
+		PageResult<UserGroup> pr = this.extjsService.findUserGroupByName(query,
+				lit);
 		return json.writeValueAsString(pr);
 	}
 }
