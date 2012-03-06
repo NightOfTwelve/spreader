@@ -269,7 +269,15 @@ public class StrategyDispatchController {
 			Class<?> dataClass = regularConfigService.getConfigableInfo(name).getDataClass();
 			Object configObj = null;
 			if (StringUtils.isNotEmptyNoOffset(config)) {
-				configObj = jacksonMapper.readValue(config, dataClass);
+				// 异常区域做回滚处理
+				try {
+					configObj = jacksonMapper.readValue(config, dataClass);
+				} catch (Exception e) {
+					groupService.rollBackStrategyGroupByGid(groupId);
+					LOGGER.error("获取configObj异常,回滚分组：" + groupId, e);
+					message.put("message", "获取configObj异常,回滚分组：" + groupId);
+					return jacksonMapper.writeValueAsString(message);
+				}
 			}
 			StrategyUserGroup sug = null;
 			// fromGroupId，toGroupId至少有一个不为空才设置StrategyUserGroup
@@ -284,8 +292,9 @@ public class StrategyDispatchController {
 							start, repeatTimes, repeatInternal, NORMAL_JOB_TYPE, sug);
 					message.put("success", true);
 				} catch (Exception e) {
+					groupService.rollBackStrategyGroupByGid(groupId);
 					LOGGER.error("保存SimpleTrigger失败", e);
-					message.put("message", "保存SimpleTrigger失败");
+					message.put("message", "保存SimpleTrigger失败,请检查数据重新填写,数据已回滚");
 				}
 			} else if (RegularJob.TRIGGER_TYPE_CRON.equals(triggerType)) {
 				try {
@@ -293,8 +302,9 @@ public class StrategyDispatchController {
 							NORMAL_JOB_TYPE, sug);
 					message.put("success", true);
 				} catch (Exception e) {
+					groupService.rollBackStrategyGroupByGid(groupId);
 					LOGGER.error("保存CronTrigger失败", e);
-					message.put("message", "保存CronTrigger失败");
+					message.put("message", "保存CronTrigger失败,请检查数据重新填写,数据已回滚");
 				}
 			} else {
 				LOGGER.warn("调度类型获取错误,保存失败");
