@@ -222,7 +222,7 @@ public class StrategyDispatchController {
 			// 分组名临时变量
 			String tmpGroupName = null;
 			// 处理简单分组
-			if (groupType == SIMPLE_GROUP_TYPE) {
+			if (SIMPLE_GROUP_TYPE.equals(groupType)) {
 				tmpGroupName = name;
 				if (groupId != null && groupId > 0) {
 					Long regId = this.getRegularIdByGid(groupId);
@@ -250,12 +250,12 @@ public class StrategyDispatchController {
 			// 如果是编辑则先删除
 			// 取消调度要考虑简单分组
 			if (id != null && id > 0) {
-				if (groupType == SIMPLE_GROUP_TYPE) {
+				if (SIMPLE_GROUP_TYPE.equals(groupType)) {
 					Long regId = this.getRegularIdByGid(id);
 					if (regId != null && regId > 0) {
 						cfgService.unSchedule(regId);
 					}
-				} else if (groupType == COMPLEX_GROUP_DISP_TYPE) {
+				} else if (COMPLEX_GROUP_DISP_TYPE.equals(groupType)) {
 					cfgService.unSchedule(id);
 				}
 			}
@@ -278,7 +278,7 @@ public class StrategyDispatchController {
 				sug.setFromUserGroup(fromGroupId);
 				sug.setToUserGroup(toGroupId);
 			}
-			if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
+			if (RegularJob.TRIGGER_TYPE_SIMPLE.equals(triggerType)) {
 				try {
 					cfgService.scheduleSimpleTrigger(name, configObj, description, groupId, tmpGroupName,
 							start, repeatTimes, repeatInternal, NORMAL_JOB_TYPE, sug);
@@ -287,7 +287,7 @@ public class StrategyDispatchController {
 					LOGGER.error("保存SimpleTrigger失败", e);
 					message.put("message", "保存SimpleTrigger失败");
 				}
-			} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
+			} else if (RegularJob.TRIGGER_TYPE_CRON.equals(triggerType)) {
 				try {
 					cfgService.scheduleCronTrigger(name, configObj, description, groupId, tmpGroupName, cron,
 							NORMAL_JOB_TYPE, sug);

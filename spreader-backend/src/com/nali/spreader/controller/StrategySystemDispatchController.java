@@ -200,7 +200,7 @@ public class StrategySystemDispatchController {
 		if (StringUtils.isNotEmptyNoOffset(config)) {
 			configObj = jacksonMapper.readValue(config, dataClass);
 		}
-		if (triggerType == RegularJob.TRIGGER_TYPE_SIMPLE) {
+		if (RegularJob.TRIGGER_TYPE_SIMPLE.equals(triggerType)) {
 			try {
 				cfgService.scheduleSimpleTrigger(name, configObj, description,
 						null, null, start, repeatTimes, repeatInternal,
@@ -209,7 +209,7 @@ public class StrategySystemDispatchController {
 			} catch (Exception e) {
 				LOGGER.error("保存SimpleTrigger失败", e);
 			}
-		} else if (triggerType == RegularJob.TRIGGER_TYPE_CRON) {
+		} else if (RegularJob.TRIGGER_TYPE_CRON.equals(triggerType)) {
 			try {
 				cfgService.scheduleCronTrigger(name, configObj, description,
 						null, null, cron, SYSTEM_JOB_TYPE, null);
