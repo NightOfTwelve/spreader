@@ -86,12 +86,13 @@ public class LtsRegularScheduler extends AbstractTask implements
 
 	@Override
 	public Long scheduleCronTrigger(String name, Object config, String desc,
-			Long gid, String groupName, String cron, Integer jobType) {
+			Long gid, String groupName, String cron, Integer jobType, Object extendConfig) {
 		JobDto triggerInfo = new JobDto();
 		triggerInfo.setCron(cron);
 
 		Long id = registerRegularJob(name, desc, gid, groupName, config,
 				RegularJob.TRIGGER_TYPE_CRON, triggerInfo, jobType);
+		regularProducerManager.saveExtendConfig(name, id, extendConfig);
 		TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(cron);
 		ltsSchedule(name, id, scheInfo);
 		return id;
@@ -100,14 +101,14 @@ public class LtsRegularScheduler extends AbstractTask implements
 	@Override
 	public Long scheduleSimpleTrigger(String name, Object config, String desc,
 			Long gid, String groupName, Date start, int repeatTimes,
-			int repeatInternal, Integer jobType) {
+			int repeatInternal, Integer jobType, Object extendConfig) {
 		JobDto triggerInfo = new JobDto();
 		triggerInfo.setStart(start);
 		triggerInfo.setRepeatInternal(repeatInternal);
 		triggerInfo.setRepeatTimes(repeatTimes);
-
 		Long id = registerRegularJob(name, desc, gid, groupName, config,
 				RegularJob.TRIGGER_TYPE_SIMPLE, triggerInfo, jobType);
+		regularProducerManager.saveExtendConfig(name, id, extendConfig);
 		TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(start, null,
 				repeatTimes, repeatInternal);
 		ltsSchedule(name, id, scheInfo);
@@ -245,5 +246,10 @@ public class LtsRegularScheduler extends AbstractTask implements
 			logger.warn("简单分组ID为空，不能获取调度对象");
 			return null;
 		}
+	}
+
+	@Override
+	public Object getExtendConfig(String name, Long sid) {
+		return regularProducerManager.getExtendConfig(name, sid);
 	}
 }

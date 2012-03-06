@@ -35,20 +35,6 @@ public class ConfigableCenter implements IConfigableCenter {
 	public ExtendBinder getExtendBinder(String name) {
 		return extendBinders.get(name);
 	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void saveExtendConfig(String name, Object extendConfig) {
-		if(extendConfig!=null) {
-			ExtendBinder extendBinder = extendBinders.get(name);
-			if(extendBinder==null) {
-				throw new IllegalArgumentException("hasn't been extended, beanName:" + name);
-			}
-			String extenderName = extendBinder.getExtenderName();
-			Exender exender = exenders.get(extenderName);
-			exender.saveExtendConfig(extendConfig);
-		}
-	}
 
 	@Override
 	public <T> boolean register(String name, Configable<T> configable) {
@@ -108,5 +94,33 @@ public class ConfigableCenter implements IConfigableCenter {
 	public ConfigDefinition getConfigDefinition(String name) {
 		ConfigableUnit<?> configableUnit = getConfigableUnit(name);
 		return configableUnit.getConfigDefinition();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void saveExtendConfig(String name, Long sid, Object extendConfig) {
+		if(extendConfig!=null) {
+			Exender exender = getExtender(name);
+			exender.saveExtendConfig(sid, extendConfig);
+		}
+	}
+
+	private Exender getExtender(String name) {
+		ExtendBinder extendBinder = extendBinders.get(name);
+		if(extendBinder==null) {
+			throw new IllegalArgumentException("hasn't been extended, beanName:" + name);
+		}
+		String extenderName = extendBinder.getExtenderName();
+		Exender exender = exenders.get(extenderName);
+		return exender;
+	}
+
+	@Override
+	public Object getExtendConfig(String name, Long sid) {
+		Exender exender = getExtender(name);
+		if(exender==null) {
+			return null;
+		}
+		return exender.getExtendConfig(sid);
 	}
 }

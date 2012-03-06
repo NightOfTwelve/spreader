@@ -1,4 +1,6 @@
 Ext.onReady(function() {
+	var fromGroupId = null;
+	var toGroupId = null;
 	// 构造树的根节点ROOT
 	var stgroot = new Ext.tree.AsyncTreeNode({
 				id : '-1',
@@ -7,8 +9,9 @@ Ext.onReady(function() {
 	// 策略列表树
 	var stgdisptree = new Ext.tree.TreePanel({
 		id : 'stgtree',
+		region : 'center',
 		autoScroll : false,
-		autoHeight : true,
+		// autoHeight : true,
 		expanded : true,
 		singleExpand : true,
 		useArrows : true,
@@ -17,8 +20,34 @@ Ext.onReady(function() {
 		loader : new Ext.tree.TreeLoader({
 			dataUrl : '../strategy/createdisptree?time=' + new Date().getTime(),
 			processResponse : function(response, node, callback, scope) {
+				toSelectUserGroupCombo.hide();
 				var json = response.responseText;
 				var respObj = Ext.util.JSON.decode(json);
+				// 展示类型
+				var extendType = respObj.extendType;
+				var meta = respObj.extendMeta;
+				// 是否显示分组A
+				var hasFromGroup = false;
+				// 是否显示分组B
+				var hasToGroup = false;
+				// 获取StrategyUserGroup
+				var sug = respObj.sug;
+				// 如果存在则设置comboBox的初始值
+				if (!Ext.isEmpty(sug)) {
+					var fromId = sug.fromUserGroup;
+					var toId = sug.toUserGroup;
+					fromSelectUserGroupCombo.setValue(fromId);
+					toSelectUserGroupCombo.setValue(toId);
+				}
+				// 策略信息
+				var desc = '';
+				if (extendType != null && meta != null) {
+					hasFromGroup = meta.hasFromGroup;
+					hasToGroup = meta.hasToGroup;
+					desc = meta.strategyDesc;
+				}
+				descField.setValue(desc);
+				userGroupCompIsShow(extendType, hasFromGroup, hasToGroup);
 				try {
 					submitid = respObj.id;
 					var o = [tranNodeConfig('data', respObj.treename,
@@ -92,9 +121,8 @@ Ext.onReady(function() {
 
 	// 创建简单调度的FORM
 	var simpleDispForm = new Ext.form.FormPanel({
-				// autoWidth : true,
 				id : 'simpcard',
-				height : 100,
+				height : 80,
 				frame : true,
 				layout : "form", // 整个大的表单是form布局
 				labelWidth : 100,
@@ -135,9 +163,11 @@ Ext.onReady(function() {
 				buttons : [{
 					text : '保存',
 					handler : function() {
+						var fromId = fromSelectUserGroupCombo.getValue();
+						var toId = toSelectUserGroupCombo.getValue();
 						strategyGroupSubmitTreeData(stgdisptree,
 								triggerDispForm, radioForm, simpleDispForm,
-								editstgWindow, store, groupStore);
+								editstgWindow, store, groupStore, fromId, toId);
 					}
 				}, {
 					text : "重置",
@@ -146,11 +176,10 @@ Ext.onReady(function() {
 					}
 				}]
 			});
-
 	// 表达式配置FORM
 	var triggerDispForm = new Ext.form.FormPanel({
 				autoWidth : true,
-				height : 100,
+				height : 80,
 				id : 'trgcard',
 				frame : true,
 				layout : "form", // 整个大的表单是form布局
@@ -173,9 +202,11 @@ Ext.onReady(function() {
 				buttons : [{
 					text : '保存',
 					handler : function() {
+						var fromId = fromSelectUserGroupCombo.getValue();
+						var toId = toSelectUserGroupCombo.getValue();
 						strategyGroupSubmitTreeData(stgdisptree,
 								triggerDispForm, radioForm, simpleDispForm,
-								editstgWindow, store, groupStore);
+								editstgWindow, store, groupStore, fromId, toId);
 					}
 				}, {
 					text : "重置",
@@ -186,10 +217,10 @@ Ext.onReady(function() {
 			});
 	// 首先创建一个card布局的Panel
 	var cardPanel = new Ext.Panel({
-				autoWidth : true,
+				region : 'center',
 				id : 'cardPanel',
-				height : 100,
 				layout : 'card',
+				split : true,
 				activeItem : 0,
 				// bodyStyle : 'padding:15px',
 				defaults : {
@@ -206,8 +237,8 @@ Ext.onReady(function() {
 			})
 	// RADIO组件
 	var radioForm = new Ext.form.FormPanel({
-				// width : 200,
 				frame : true,
+				region : 'north',
 				height : 80,
 				labelWidth : 65,
 				labelAlign : "left",
@@ -250,6 +281,48 @@ Ext.onReady(function() {
 						}],
 				tbar : radioTbar
 			});
+
+	// 嵌入的FORM
+	var infoViewForm = new Ext.form.FormPanel({
+				autoScroll : true,
+				id : 'infoViewForm',
+				split : true,
+				region : 'north',
+				height : 80,
+				border : true,
+				// labelWidth : 100, // 标签宽度
+				frame : true, // 是否渲染表单面板背景色
+				defaultType : 'textfield', // 表单元素默认类型
+				labelAlign : 'left', // 标签对齐方式
+				bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
+				items : [{
+							xtype : 'label',
+							fieldLabel : '策略信息',
+							id : 'stginfo',
+							labelStyle : 'padding:0px',
+							text : ''
+						}]
+			});
+	// 策略说明的隐藏域
+	var descField = new Ext.form.Hidden({
+				name : 'descField'
+			});
+	// 嵌入的FORM
+	var addUserGroupSelectCmbForm = new Ext.form.FormPanel({
+				autoScroll : true,
+				title : '选择用户分组',
+				id : 'addUserGroupSelectCmbForm',
+				split : true,
+				region : 'south',
+				height : 100,
+				border : true,
+				// labelWidth : 100, // 标签宽度
+				frame : true, // 是否渲染表单面板背景色
+				defaultType : 'textfield', // 表单元素默认类型
+				labelAlign : 'left', // 标签对齐方式
+				bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
+				items : [fromSelectUserGroupCombo, toSelectUserGroupCombo]
+			});
 	// 创建策略维护的窗口组件
 	var editstgWindow = new Ext.Window({
 				layout : 'border',
@@ -276,17 +349,18 @@ Ext.onReady(function() {
 							split : true
 						}, {
 							region : 'west',
+							layout : 'border',
+							id : 'editview',
 							split : true,
-							width : 200,
-							minWidth : 175,
-							maxWidth : 400,
-							items : [stgdisptree]
+							width : 500,
+							items : [infoViewForm, stgdisptree,
+									addUserGroupSelectCmbForm]
 						}, {
 							region : 'south',
 							title : '调度配置',
+							layout : 'border',
 							split : true,
-							// height : 300,
-							autoHeight : true,
+							height : 200,
 							items : [radioForm, cardPanel]
 						}],
 				buttons : [{
@@ -297,10 +371,30 @@ Ext.onReady(function() {
 							}
 						}]
 			});
+	// 为Combo加入选择事件 TODO
+	fromSelectUserGroupCombo.on('select', function(combo, record, index) {
+				var agroup = fromSelectUserGroupCombo.getRawValue();
+				var btag = toSelectUserGroupCombo.hidden;
+				if (btag) {
+					var text = createStrategyExplain(agroup, null);
+					settingDescInfo(text);
+				} else {
+					return;
+				}
+			});
+	// 为Combo加入选择事件
+	toSelectUserGroupCombo.on('select', function(combo, record, index) {
+				var agroup = fromSelectUserGroupCombo.getRawValue();
+				var bgroup = toSelectUserGroupCombo.getRawValue();
+				var text = createStrategyExplain(agroup, bgroup);
+				settingDescInfo(text);
+			});
 	// show事件，需先删除组件，再重新创建PPTGRID
 	editstgWindow.on('show', function() {
 				stgdisptree.getRootNode().reload();
 				stgdisptree.root.select();
+				// 初始化清理相关信息
+				cleanStrategyExplain();
 				var pptGrid = Ext.getCmp("pptGrid");
 				var pptMgr = Ext.getCmp("pptgridmanage");
 				if (pptGrid != null) {
@@ -581,6 +675,9 @@ Ext.onReady(function() {
 				// 获取分组类型分别做判断
 				var gType = data.groupType;
 				cleanGlobalVar();
+				var descText = descField.getValue();
+				settingDescInfo(descText);
+				// TODO
 				// 简单分组
 				if (gType == 1) {
 					GDISNAME = data.groupName;
@@ -592,7 +689,8 @@ Ext.onReady(function() {
 					var gid = data.id;
 					settingCreateTrigger(gid, GISGROUP);
 					editstgWindow.title = data.transformName;
-					editstgWindow.show();
+					// TODO
+					// editstgWindow.show();
 				} else {
 					// 复杂分组
 					GGROUPID = data.id;
@@ -777,9 +875,8 @@ Ext.onReady(function() {
 							}
 						}]
 			});
-	stgCmbWindow.on('show', function() {
-				// stgCmbForm.form.reset();
-			});
+	// stgCmbWindow.on('show', function() {
+	// });
 	/**
 	 * 调度类型的COMB的数据源
 	 */
@@ -967,13 +1064,13 @@ Ext.onReady(function() {
 							text : '新增',
 							iconCls : 'page_addIcon',
 							handler : function() {
+								newtag = true;
 								stgCmbWindow.show();
 							}
 						}, '-', {
 							text : '删除',
 							iconCls : 'page_delIcon',
 							handler : function() {
-								// TODO
 								deleteData();
 							}
 						}, {
@@ -1107,6 +1204,8 @@ Ext.onReady(function() {
 			});
 	// 弹出前事件
 	groupAddWindow.on('show', function() {
+				// 新增 先清空GDISPID
+				GDISPID = null;
 				addGroupForm.form.reset();
 			});
 
@@ -1118,46 +1217,50 @@ Ext.onReady(function() {
 	 */
 	function settingCreateTrigger(trgid, isGroup) {
 		Ext.Ajax.request({
-					url : '../strategy/settgrparam',
-					params : {
-						'id' : trgid,
-						'isGroup' : isGroup
-					},
-					success : function(response) {
-						var result = Ext.decode(response.responseText);
-						var description = result.description;
-						var triggerType = result.triggerType;
-						var cron = result.cron;
-						var start = result.start;
-						var sdate = new Date(start);
-						var repeatTimes = result.repeatTimes;
-						var repeatInternal = result.repeatInternal;
-						var remind = result.remind;
-						// 获取FORM
-						var tradioForm = radioForm.getForm();
-						var ttriggerDispForm = triggerDispForm.getForm();
-						var tsimpleDispForm = simpleDispForm.getForm();
-						// 设置参数
-						tradioForm.findField("triggerType")
-								.setValue(triggerType);
-						tradioForm.findField("description")
-								.setValue(description);
-						tsimpleDispForm.findField("start").setValue(sdate);
-						tsimpleDispForm.findField("repeatTimes")
-								.setValue(repeatTimes);
-						tsimpleDispForm.findField("repeatInternal")
-								.setValue(repeatInternal);
-						ttriggerDispForm.findField("cron").setValue(cron);
-						var remindcmp = Ext.getCmp("jobremind");
-						var tstr = '任务:' + rendDispName(GDISNAME) + ',编号:'
-								+ GDISPID + ',目前运行信息:' + remind;
-						remindcmp.setText('<font color = "red">' + tstr
-								+ '</font>');
-					},
-					failure : function() {
-						// Ext.Msg.alert("提示", "数据获取异常");
-					}
-				});
+			url : '../strategy/settgrparam',
+			params : {
+				'id' : trgid,
+				'isGroup' : isGroup
+			},
+			success : function(response) {
+				var result = Ext.decode(response.responseText);
+				if (result.error) {
+					Ext.MessageBox.alert('错误', '任务获取失败，不能设置参数');
+					return;
+				} else {
+					editstgWindow.show();
+					var description = result.description;
+					var triggerType = result.triggerType;
+					var cron = result.cron;
+					var start = result.start;
+					var sdate = new Date(start);
+					var repeatTimes = result.repeatTimes;
+					var repeatInternal = result.repeatInternal;
+					var remind = result.remind;
+					// 获取FORM
+					var tradioForm = radioForm.getForm();
+					var ttriggerDispForm = triggerDispForm.getForm();
+					var tsimpleDispForm = simpleDispForm.getForm();
+					// 设置参数
+					tradioForm.findField("triggerType").setValue(triggerType);
+					tradioForm.findField("description").setValue(description);
+					tsimpleDispForm.findField("start").setValue(sdate);
+					tsimpleDispForm.findField("repeatTimes")
+							.setValue(repeatTimes);
+					tsimpleDispForm.findField("repeatInternal")
+							.setValue(repeatInternal);
+					ttriggerDispForm.findField("cron").setValue(cron);
+					var remindcmp = Ext.getCmp("jobremind");
+					var tstr = '任务:' + rendDispName(GDISNAME) + ',编号:'
+							+ GDISPID + ',目前运行信息:' + remind;
+					remindcmp
+							.setText('<font color = "red">' + tstr + '</font>');
+				}
+			},
+			failure : function() {
+				// Ext.Msg.alert("提示", "数据获取异常");
+			}
+		});
 	}
 
 	/**
@@ -1284,10 +1387,10 @@ Ext.onReady(function() {
 	 * @return {}
 	 */
 	function rendDispName(value) {
-		var list = groupStore.reader.jsonData.dispname;
+		var list = groupStore.reader.jsonData.list;
 		for (var idx in list) {
-			var tmp = list[idx].name;
-			var dname = list[idx].displayName;
+			var tmp = list[idx].groupName;
+			var dname = list[idx].transformName;
 			if (value == tmp) {
 				return dname;
 			}
@@ -1323,7 +1426,6 @@ Ext.onReady(function() {
 								.decode(response.responseText);
 						GGROUPID = result.groupId;
 						store.setBaseParam('groupId', GGROUPID);
-						// TODO
 						store.reload();
 					},
 					failure : function(response, opts) {
@@ -1351,6 +1453,69 @@ Ext.onReady(function() {
 		GGROUPNOTE = null;
 		// 是否是分组
 		GISGROUP = null;
+	}
+	/**
+	 * 设置策略说明面板
+	 */
+	function settingDescInfo(text) {
+		var selectstr = Ext.getCmp('stginfo');
+		selectstr.setText(text);
+	}
+
+	/**
+	 * 通过策略类型转换说明信息 note = ateam 关注 bteam
+	 */
+	function createStrategyExplain(ateam, bteam) {
+		var desc = descField.getValue();
+		var text = '';
+		if (!Ext.isEmpty(desc)) {
+			if (desc.indexOf('${fromGroup}') != -1) {
+				text = desc.replace('${fromGroup}', ' 分组A:【' + ateam + '】');
+			}
+			if (text.indexOf('${toGroup}') != -1) {
+				text = text.replace('${toGroup}', ' 分组B:【' + bteam + '】');
+			}
+		}
+		return text;
+	}
+	/**
+	 * 设置字体颜色
+	 */
+	function redenInfoColor(text) {
+		return '<font color="red">text</font>';
+	}
+
+	/**
+	 * 判断是否显示用户分组的组件
+	 */
+	function userGroupCompIsShow(isUserGroup, hasFromGroup, hasToGroup) {
+		if (!Ext.isEmpty(isUserGroup) && isUserGroup == 'userGroup') {
+			if (hasFromGroup) {
+				fromSelectUserGroupCombo.show();
+			} else {
+				fromSelectUserGroupCombo.hide();
+			}
+			if (hasToGroup) {
+				toSelectUserGroupCombo.show();
+			} else {
+				toSelectUserGroupCombo.hide();
+			}
+		} else {
+			fromSelectUserGroupCombo.hide();
+			toSelectUserGroupCombo.hide();
+		}
+	}
+
+	/**
+	 * 初始化清空策略描述
+	 */
+	function cleanStrategyExplain() {
+		var exp = Ext.getCmp('stginfo');
+		exp.setText('');
+		var fcombo = Ext.getCmp('fromSelectUserGroupCombo');
+		var tcombo = Ext.getCmp('toSelectUserGroupCombo');
+		fcombo.setValue('');
+		tcombo.setValue('');
 	}
 
 	var viewport = new Ext.Viewport({

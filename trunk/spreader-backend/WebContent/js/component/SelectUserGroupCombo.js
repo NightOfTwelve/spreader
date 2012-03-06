@@ -14,6 +14,7 @@ var selectUserGroupStore = new Ext.data.Store({
 								name : 'gname'
 							}])
 		});
+selectUserGroupStore.load();
 // 用户分组筛选模版
 var selectUserGroupTpl = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{gid}({gname})</span></div></tpl>');
 
@@ -27,7 +28,7 @@ var fromSelectUserGroupCombo = new Ext.form.ComboBox({
 			displayField : 'gname',
 			valueField : 'gid',
 			loadingText : '正在加载数据...',
-			mode : 'remote', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取
+			mode : 'local', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取
 			forceSelection : true,
 			typeAhead : true,
 			resizable : true,
@@ -50,7 +51,7 @@ var toSelectUserGroupCombo = new Ext.form.ComboBox({
 			displayField : 'gname',
 			valueField : 'gid',
 			loadingText : '正在加载数据...',
-			mode : 'remote', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取
+			mode : 'local', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取
 			forceSelection : true,
 			typeAhead : true,
 			resizable : true,

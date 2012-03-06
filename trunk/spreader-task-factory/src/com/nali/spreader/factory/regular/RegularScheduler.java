@@ -13,7 +13,7 @@ public interface RegularScheduler {
 	 * 生成cron调度
 	 */
 	Long scheduleCronTrigger(String name, Object config, String desc, Long gid,
-			String groupName, String cron, Integer jobType);
+			String groupName, String cron, Integer jobType, Object extendConfig);
 
 	/**
 	 * 生成simple调度
@@ -23,7 +23,7 @@ public interface RegularScheduler {
 	 */
 	Long scheduleSimpleTrigger(String name, Object config, String desc,
 			Long gid, String groupName, Date start, int repeatTimes,
-			int repeatInternal, Integer jobType);
+			int repeatInternal, Integer jobType, Object extendConfig);
 
 	/**
 	 * 查看已有调度
@@ -48,4 +48,6 @@ public interface RegularScheduler {
 	 * @return
 	 */
 	RegularJob findRegularJobBySimpleGroupId(Long gid);
+
+	Object getExtendConfig(String name, Long sid);
 }

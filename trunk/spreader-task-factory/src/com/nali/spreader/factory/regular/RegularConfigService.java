@@ -112,8 +112,12 @@ public class RegularConfigService extends AbstractConfigService<Long> {
 		configableCenter = new ConfigableCenter(context);
 	}
 	
-	public void saveExtendConfig(String name, Object extendConfig) {
-		configableCenter.saveExtendConfig(name, extendConfig);
+	public void saveExtendConfig(String name, Long sid, Object extendConfig) {
+		configableCenter.saveExtendConfig(name, sid, extendConfig);
+	}
+	
+	public Object getExtendConfig(String name, Long sid) {
+		return configableCenter.getExtendConfig(name, sid);
 	}
 //	
 //	@Bean

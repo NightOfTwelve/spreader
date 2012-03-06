@@ -37,6 +37,7 @@ public class TaskQueueMonitorServiceImpl implements ITaskQueueMonitorService {
 		return list;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void deleteQueueByType(String type) {
 		if (this.NORMAL_QUEUE.equals(type)) {
