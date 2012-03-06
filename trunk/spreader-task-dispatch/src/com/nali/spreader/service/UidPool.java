@@ -144,7 +144,7 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 //			bindUidToClient(clientUid);
 		} else {
 			//TODO to the end
-			logger.info("normal task pools are empty now!");
+			logger.info("normal task pools are empty now:"+taskType.getId());
 		}
 	}
 	
