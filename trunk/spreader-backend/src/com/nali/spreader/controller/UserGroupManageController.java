@@ -42,14 +42,15 @@ import com.nali.spreader.model.GrouppedUser;
 @RequestMapping(value = "/usergroup")
 public class UserGroupManageController {
 	private static ObjectMapper json = new ObjectMapper();
-	private static final MessageLogger logger = LoggerFactory
-			.getLogger(UserGroupManageController.class);
+	private static final MessageLogger logger = LoggerFactory.getLogger(UserGroupManageController.class);
 	@Autowired
 	private IUserGroupService userGroupService;
 	@Autowired
 	private UserGroupAssembler userGroupAssembler;
 	@Autowired
 	private PropertyExpParser expParser;
+	// 手动分组类型
+	private static final Integer GROUPTYPE_MANUAL = 2;
 
 	/**
 	 * 初始化页面
@@ -76,9 +77,8 @@ public class UserGroupManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/grouplist")
-	public String queryAllUserGroup(Integer websiteid, String gname,
-			Integer gtype, Integer propVal, Date fromModifiedTime,
-			Date toModifiedTime, Integer start, Integer limit)
+	public String queryAllUserGroup(Integer websiteid, String gname, Integer gtype, Integer propVal,
+			Date fromModifiedTime, Date toModifiedTime, Integer start, Integer limit)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		if (limit == null) {
 			limit = 20;
@@ -86,20 +86,20 @@ public class UserGroupManageController {
 		if (start == null) {
 			start = 0;
 		}
-		if (websiteid == null) {
-			websiteid = 1;
+		Website website = null;
+		if (websiteid != null) {
+			website = Website.valueOf(websiteid);
 		}
-		if (gtype == null) {
-			gtype = 1;
+		UserGroupType userGroupType = null;
+		if (gtype != null) {
+			userGroupType = UserGroupType.valueOf(gtype);
 		}
 		if (propVal == null) {
 			propVal = 0;
 		}
 		Limit lit = Limit.newInstanceForLimit(start, limit);
-		PageResult<UserGroup> result = userGroupService.queryUserGroups(
-				Website.valueOf(websiteid), gname,
-				UserGroupType.valueOf(gtype), propVal, fromModifiedTime,
-				toModifiedTime, lit);
+		PageResult<UserGroup> result = userGroupService.queryUserGroups(website, gname, userGroupType,
+				propVal, fromModifiedTime, toModifiedTime, lit);
 		return json.writeValueAsString(result);
 	}
 
@@ -118,17 +118,19 @@ public class UserGroupManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/createusergroup")
-	public String addNewUserGroup(String gname, Integer gtype,
-			Integer websiteid, String description) throws AssembleException,
-			JsonGenerationException, JsonMappingException, IOException {
+	public String addNewUserGroup(String gname, Integer gtype, Integer websiteid, String description)
+			throws AssembleException, JsonGenerationException, JsonMappingException, IOException {
 		Map<String, Object> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
 		result.put("gid", null);
 		if (gtype != null && websiteid != null) {
 			PropertyExpressionDTO dto = new PropertyExpressionDTO();
-			UserGroup group = userGroupAssembler.assembleUserGroup(
-					Website.valueOf(websiteid), gname, description,
-					UserGroupType.valueOf(gtype), dto);
+			UserGroup group = userGroupAssembler.assembleUserGroup(Website.valueOf(websiteid), gname,
+					description, UserGroupType.valueOf(gtype), dto);
+			// 如果是手动分组propVale=-1
+			if (group != null && GROUPTYPE_MANUAL.equals(gtype)) {
+				group.setPropVal(-1);
+			}
 			try {
 				long gid = this.userGroupService.createGroup(group);
 				if (gid > 0) {
@@ -156,8 +158,8 @@ public class UserGroupManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/checkname")
-	public String checkGroupName(String gname) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String checkGroupName(String gname) throws JsonGenerationException, JsonMappingException,
+			IOException {
 		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
 		Boolean flg = userGroupService.checkUserGroupUniqueByName(gname);
 		result.put("success", flg);
@@ -176,8 +178,8 @@ public class UserGroupManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/genpropexp")
-	public String generatePropExp(Long gid) throws AssembleException,
-			JsonGenerationException, JsonMappingException, IOException {
+	public String generatePropExp(Long gid) throws AssembleException, JsonGenerationException,
+			JsonMappingException, IOException {
 		ConfigDefinition def = null;
 		ConfigableInfo configableInfo = null;
 		Object data = null;
@@ -185,16 +187,14 @@ public class UserGroupManageController {
 			UserGroup usergroup = this.userGroupService.queryUserGroup(gid);
 			if (usergroup != null) {
 				String propexp = usergroup.getPropExp();
-				PropertyExpression pexp = this.userGroupAssembler
-						.toExpression(propexp);
+				PropertyExpression pexp = this.userGroupAssembler.toExpression(propexp);
 				data = new PropertyExpressionDTO(pexp);
 				def = DescriptionResolve.get(PropertyExpressionDTO.class);
-				configableInfo = DescriptionResolve.getConfigableInfo(
-						PropertyExpressionDTO.class, usergroup.getGname());
+				configableInfo = DescriptionResolve.getConfigableInfo(PropertyExpressionDTO.class,
+						usergroup.getGname());
 			}
 		}
-		return json.writeValueAsString(new UserGroupExpTreeDto(configableInfo,
-				def, data));
+		return json.writeValueAsString(new UserGroupExpTreeDto(configableInfo, def, data));
 	}
 
 	/**
@@ -210,15 +210,13 @@ public class UserGroupManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/updategroup")
-	public String updateGroupData(Long gid, String propexp)
-			throws JsonGenerationException, JsonMappingException, IOException,
-			AssembleException {
+	public String updateGroupData(Long gid, String propexp) throws JsonGenerationException,
+			JsonMappingException, IOException, AssembleException {
 		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
 		if (gid != null && gid > 0) {
 			UserGroup group = userGroupService.queryUserGroup(gid);
-			PropertyExpressionDTO dto = json.readValue(propexp,
-					PropertyExpressionDTO.class);
+			PropertyExpressionDTO dto = json.readValue(propexp, PropertyExpressionDTO.class);
 			PropertyExpression pexp = new PropertyExpression(dto);
 			String jsonPexp = this.userGroupAssembler.toJson(pexp);
 			group.setPropExp(jsonPexp);
@@ -272,8 +270,8 @@ public class UserGroupManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/deleteuserlist")
-	public String queryDeleteUserList(Long gid, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String queryDeleteUserList(Long gid, Integer start, Integer limit) throws JsonGenerationException,
+			JsonMappingException, IOException {
 		PageResult<GrouppedUser> pr = null;
 		if (limit == null) {
 			limit = 20;
@@ -300,8 +298,8 @@ public class UserGroupManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/adduser")
-	public String addGrouppedUser(Long gid, long[] uids)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String addGrouppedUser(Long gid, long[] uids) throws JsonGenerationException,
+			JsonMappingException, IOException {
 		Map<String, Object> result = CollectionUtils.newHashMap(2);
 		result.put("success", false);
 		if (gid != null && uids.length > 0) {
@@ -331,8 +329,8 @@ public class UserGroupManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/deleteuser")
-	public String deleteGrouppedUser(Long gid, long[] uids)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String deleteGrouppedUser(Long gid, long[] uids) throws JsonGenerationException,
+			JsonMappingException, IOException {
 		Map<String, Object> result = CollectionUtils.newHashMap(2);
 		result.put("success", false);
 		if (gid != null && uids.length > 0) {
@@ -362,8 +360,8 @@ public class UserGroupManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/rollbackuser")
-	public String rollbackDeleteUser(Long gid, long[] uids)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String rollbackDeleteUser(Long gid, long[] uids) throws JsonGenerationException,
+			JsonMappingException, IOException {
 		Map<String, Object> result = CollectionUtils.newHashMap(2);
 		result.put("success", false);
 		if (gid != null && uids.length > 0) {
@@ -392,8 +390,8 @@ public class UserGroupManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/removegroup")
-	public String deleteUserGroup(long[] gids) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String deleteUserGroup(long[] gids) throws JsonGenerationException, JsonMappingException,
+			IOException {
 		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
 		if (gids != null && gids.length > 0) {
@@ -417,14 +415,11 @@ public class UserGroupManageController {
 		private ConfigDefinition def;
 		private Object data;
 
-		public UserGroupExpTreeDto(ConfigableInfo configableInfo,
-				ConfigDefinition def, Object data) {
-			this(configableInfo.getName(), configableInfo.getDisplayName(),
-					def, data);
+		public UserGroupExpTreeDto(ConfigableInfo configableInfo, ConfigDefinition def, Object data) {
+			this(configableInfo.getName(), configableInfo.getDisplayName(), def, data);
 		}
 
-		public UserGroupExpTreeDto(String id, String name,
-				ConfigDefinition def, Object data) {
+		public UserGroupExpTreeDto(String id, String name, ConfigDefinition def, Object data) {
 			this.id = id;
 			this.name = name;
 			this.def = def;
