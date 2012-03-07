@@ -175,17 +175,27 @@ public class UserGroupService implements IUserGroupService {
 	@Override
 	public PageResult<GrouppedUser> queryGrouppedUsers(long gid, Limit limit)
 			throws GroupUserQueryException {
+		UserGroup userGroup = this.queryUserGroup(gid);
 		long manualCount = this.dynamicUserGroupService.getUserCount(gid);
-		long propertyCount = this.propertiesGrouppedUserService
-				.getUserCount(gid);
-		long excludeCount = this.dynamicUserGroupService
-				.getExcludeUserCount(gid);
-		propertyCount = propertyCount - excludeCount;
+		List<GrouppedUser> grouppedUserList = Collections.emptyList();
+		long count = 0;
+		if (userGroup.getGtype().intValue() != UserGroupType.manual
+				.getTypeVal()) {
+			long propertyCount = this.propertiesGrouppedUserService
+					.getUserCount(gid);
+			long excludeCount = this.dynamicUserGroupService
+					.getExcludeUserCount(gid);
+			propertyCount = propertyCount - excludeCount;
+			
+			 count = manualCount + propertyCount;
+			 grouppedUserList = this.queryGrouppedUsers(gid,
+					manualCount, propertyCount, limit.offset, limit.maxRows);
+		}else{
+			List<Long> manualUids = this.dynamicUserGroupService.queryGrouppedUids(gid, limit.offset, limit.maxRows);
+			grouppedUserList = this.convertUidToGrouppedUser(manualUids, true);
+		}
 
-		long count = manualCount + propertyCount;
-		List<GrouppedUser> grouppedUserList = this.queryGrouppedUsers(gid,
-				manualCount, propertyCount, limit.offset, limit.maxRows);
-
+		
 		this.assembleUserToGrouppedUser(grouppedUserList);
 
 		PageResult<GrouppedUser> result = new PageResult<GrouppedUser>(
@@ -252,19 +262,21 @@ public class UserGroupService implements IUserGroupService {
 			long propertyEndIndex = propertyCount - 1;
 			queryEndIndex = leftOffset + leftLimit - 1;
 			endIndex = Math.min(queryEndIndex, propertyEndIndex);
-			if(endIndex >= 0) {
+			if (endIndex >= 0) {
 				List<Long> propertyUids = this.propertiesGrouppedUserService
 						.queryGrouppedUids(gid, leftOffset, (int) (endIndex
 								- leftOffset + 1));
-				propertyList = this.convertUidToGrouppedUser(propertyUids, false);
+				propertyList = this.convertUidToGrouppedUser(propertyUids,
+						false);
 			}
 		}
 
 		propertyList = this.grouppedUserFilter
 				.propertyFilter(gid, propertyList);
 
-		List<GrouppedUser> rtnList = new ArrayList<GrouppedUser>(
-				manualList.size() + propertyList.size());
+		List<GrouppedUser> rtnList = new ArrayList<GrouppedUser>(manualList
+				.size()
+				+ propertyList.size());
 		rtnList.addAll(manualList);
 		rtnList.addAll(propertyList);
 
