@@ -147,7 +147,7 @@ Ext.onReady(function() {
 	 */
 	var groupTypeStore = new Ext.data.ArrayStore({
 				fields : ['ID', 'NAME'],
-				data : [['0', 'fixed'], ['1', 'dynamic']]
+				data : [['0', '静态分组'], ['1', '动态分组'], ['2', '手动分组']]
 			});
 	/**
 	 * 网站类型的COMB的数据源
@@ -416,7 +416,8 @@ Ext.onReady(function() {
 						rowIndex, columnIndex, store) {
 					var gtype = record.data['gtype'];
 					var returnStr = "";
-					if (gtype != 3) {
+					// 手动分组不显示配置按钮
+					if (gtype != 2) {
 						returnStr = "<input type='button' value='配置'/>";
 					}
 					return returnStr;
@@ -625,16 +626,14 @@ Ext.onReady(function() {
 				anchor : '100%'
 			});
 	// 选择事件，用于联动
-	// stgSelectCombo.on('select', function() {
-	// cityCombo.reset();
-	// countyCombo.reset();
-	// var value = provinceCombo.getValue();
-	// cityStore.load({
-	// params : {
-	// areacode : value
-	// }
-	// });
-	// });
+	gtypeCombo.on('select', function() {
+				var value = gtypeCombo.getValue();
+				if (value == 0) {
+					Ext.MessageBox.alert('提示', '静态分组暂不支持,请选择其它类型');
+					gtypeCombo.setValue('');
+					return;
+				}
+			});
 	// 嵌入的FORM
 	var addGroupCmbForm = new Ext.form.FormPanel({
 				id : 'addGroupCmbForm',
@@ -730,7 +729,14 @@ Ext.onReady(function() {
 												.decode(response.responseText);
 										if (result.success) {
 											GUSERGROUPID = result.gid;
-											editstgWindow.show();
+											// 如果是手工分组不弹出属性编辑
+											if (gtype != 2) {
+												editstgWindow.show();
+											} else {
+												Ext.MessageBox.alert("提示",
+														"创建成功");
+												store.reload();
+											}
 										} else {
 											Ext.Msg.alert("提示", "用户分组创建失败");
 											return;

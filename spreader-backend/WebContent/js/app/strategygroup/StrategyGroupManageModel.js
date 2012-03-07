@@ -695,6 +695,7 @@ Ext.onReady(function() {
 					// 复杂分组
 					GGROUPID = data.id;
 					GGROUPNAME = data.groupName;
+					GGROUPTYPE = gType;
 					var wtext = '当前分组:' + data.groupName + ',编号:' + data.id;
 					Ext.getCmp('groupinfo').setText(wtext);
 					compGroupWindow.show();
@@ -853,6 +854,7 @@ Ext.onReady(function() {
 					text : '确定', // 按钮文本
 					iconCls : 'tbar_synchronizeIcon', // 按钮图标
 					handler : function() { // 按钮响应函数
+						//TODO
 						GDISPID = null;
 						cleanCreateTrigger();
 						GOBJID = stgSelectCombo2.getValue();
@@ -875,8 +877,9 @@ Ext.onReady(function() {
 							}
 						}]
 			});
-	// stgCmbWindow.on('show', function() {
-	// });
+	stgCmbWindow.on('show', function() {
+				stgCmbForm.getForm().reset();
+			});
 	/**
 	 * 调度类型的COMB的数据源
 	 */
