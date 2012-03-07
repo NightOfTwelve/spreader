@@ -8,7 +8,7 @@ import com.nali.spreader.util.random.NumberRandomer;
 import com.nali.spreader.words.naming.Modes;
 
 public class RandomNumberModes implements Modes {
-	private final NumberRandomer smallNumberRandomer = new NumberRandomer(1300, 9999);
+	private final NumberRandomer smallNumberRandomer = new NumberRandomer(1300, 10000);
 	private final NumberRandomer qqNumberRandomer = new NumberRandomer(1000000, 100000000);
 
 	@Override

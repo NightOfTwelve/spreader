@@ -15,7 +15,7 @@ public class WeightRandomer<T> implements Randomer<T>,Cloneable {
 	private static final int THRESHOLD = 10;
 	private int totalWeight;
 	private int size;
-	private Random random = new Random();
+	private Random random = RandomUtil.random;
 	private RangeChoice<Integer, T> ranges = new RangeChoice<Integer, T>();
 	
 	public WeightRandomer() {

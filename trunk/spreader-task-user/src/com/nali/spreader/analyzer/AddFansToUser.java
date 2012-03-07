@@ -3,7 +3,6 @@ package com.nali.spreader.analyzer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +25,7 @@ import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
+import com.nali.spreader.util.random.RandomUtil;
 
 @Component
 @ClassDescription("关注用户")
@@ -66,17 +66,13 @@ public class AddFansToUser implements RegularAnalyzer,Configable<CategoryUserMat
 			List<Long> existsIdList = globalUserService.findRelationUserId(toUid, UserRelation.TYPE_ATTENTION, true);
 			Set<Long> existsIds = new HashSet<Long>(existsIdList);
 			
-			Iterator<Long> idIter = robotIds.iterator();
-			long i = 0;
-			while (i < needRobotCount && idIter.hasNext()) {
-				Long id = idIter.next();
-				if (!existsIds.contains(id)) {
-					addUserFans.send(new KeyValue<Long, Long>(id, toUid));
-					i++;
-				}
+			List<Long> matchRobotIds = RandomUtil.randomItems(robotIds, existsIds, (int)needRobotCount);
+			
+			for (Long robotId : matchRobotIds) {
+				addUserFans.send(new KeyValue<Long, Long>(robotId, toUid));
 			}
 			if(logger.isInfoEnabled()) {
-				logger.info(i + " robots are going to follow user:" + toUid);
+				logger.info(matchRobotIds.size() + " robots are going to follow user:" + toUid);
 			}
 		}
 	}

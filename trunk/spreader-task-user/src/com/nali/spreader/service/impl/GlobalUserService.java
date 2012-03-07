@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nali.common.model.Shard;
 import com.nali.spreader.dao.ICrudRobotUserDao;
 import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.ICrudUserRelationDao;
@@ -92,6 +93,19 @@ public class GlobalUserService implements IGlobalUserService {
 	@Override
 	public User getUserById(Long id) {
 		return crudUserDao.selectByPrimaryKey(id);
+	}
+	
+	@Override
+	@Transactional
+	public void removeUser(Long id) {
+		User user = crudUserDao.selectByPrimaryKey(id);
+		if(user!=null) {
+			Shard shard = new Shard();
+			shard.setTableSuffix("_delete");
+			user.setShard(shard);
+			crudUserDao.insertSelective(user);
+			crudUserDao.deleteByPrimaryKey(id);
+		}
 	}
 
 	@Override
