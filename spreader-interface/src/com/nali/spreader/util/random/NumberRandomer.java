@@ -9,16 +9,16 @@ import java.util.Random;
 
 public class NumberRandomer implements Randomer<Integer>,Cloneable {
 	private static final int THRESHOLD = 10;
-	private Random random = new Random();
+	private Random random = RandomUtil.random;
 	private int base;
 	private int range;
 
 	/**
-	 * 起始两个值都包括在内
+	 * start包括，end不包括
 	 */
 	public NumberRandomer(int start, int end) {
 		this.base = start;
-		this.range = end- start;
+		this.range = end - start;
 	}
 
 	@Override

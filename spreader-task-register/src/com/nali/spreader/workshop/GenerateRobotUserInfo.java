@@ -25,6 +25,7 @@ import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.RangeChoice;
 import com.nali.spreader.util.TxtFileUtil;
 import com.nali.spreader.util.random.AvgRandomer;
+import com.nali.spreader.util.random.RandomUtil;
 import com.nali.spreader.util.random.Randomer;
 import com.nali.spreader.util.random.WeightRandomer;
 import com.nali.spreader.words.Area;
@@ -183,7 +184,7 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 
 	public RobotRegister createRobot() {
 		RobotRegister robot = new RobotRegister();
-		robot.setFirstName(AvgRandomer.randomItem(firstNameRandomer.get(), random));
+		robot.setFirstName(RandomUtil.randomItem(firstNameRandomer.get(), random));
 
 		Integer gender = genderRandomer.get();
 		robot.setGender(gender);
@@ -229,11 +230,11 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 		} else {
 			Area area = provinceAreas.get();
 			province = area.getName();
-			city = AvgRandomer.randomItem(area.getSubAreas(), random);
+			city = RandomUtil.randomItem(area.getSubAreas(), random);
 		}
 		robot.setProvince(province);
 		robot.setCity(city.getName());
-		Area county = city.getSubAreas()==null? city : AvgRandomer.randomItem(city.getSubAreas(), random);
+		Area county = city.getSubAreas()==null? city : RandomUtil.randomItem(city.getSubAreas(), random);
 		robot.setCounty(county.getName());
 		String personId;
 		if (User.GENDER_MALE.equals(robot.getGender())) {
@@ -303,7 +304,7 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < lastName.length(); i++) {
 			char ch = lastName.charAt(i);
-			String py = AvgRandomer.randomItem(commonPinyinMap.get(ch), random);
+			String py = RandomUtil.randomItem(commonPinyinMap.get(ch), random);
 			if (py == null) {
 				logger.error("not found pinyin:" + ch);
 				continue;

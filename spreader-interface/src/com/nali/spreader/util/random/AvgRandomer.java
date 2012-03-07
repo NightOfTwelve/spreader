@@ -3,7 +3,6 @@ package com.nali.spreader.util.random;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 import java.util.RandomAccess;
 
 public class AvgRandomer<T> implements Randomer<T> {
@@ -22,11 +21,6 @@ public class AvgRandomer<T> implements Randomer<T> {
 
 	public T get() {
 		return datas.get(idxRandomer.get());
-	}
-	
-	public static<T> T randomItem(List<T> datas, Random random) {
-		int idx = random.nextInt(datas.size());
-		return datas.get(idx);
 	}
 
 	@Override

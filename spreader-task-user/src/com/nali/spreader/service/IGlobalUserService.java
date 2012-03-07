@@ -18,4 +18,6 @@ public interface IGlobalUserService {
 	Long getWebsiteUid(Long uid);
 	//add by xiefei
 	Long registerRobotUser(RobotUser robotUser,User user);
+
+	void removeUser(Long id);
 }
