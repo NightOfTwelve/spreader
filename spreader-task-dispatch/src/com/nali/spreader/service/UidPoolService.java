@@ -26,6 +26,9 @@ public class UidPoolService implements IUidPoolService {
 	private ICrudClientTaskDao crudClientTaskDao;
 	@Autowired
 	private ITaskDao taskDao;
+	/**
+	 * @see ClientTask#BASE_PRIORITY_MAX
+	 */
 	private String priorityExpression="pow(greatest(floor($T-$end/$n),0),2)+pow($priority, 2)";
 	private String finalPriorityExpression;
 	

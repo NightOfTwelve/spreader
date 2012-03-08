@@ -16,6 +16,10 @@ public class ClientTask extends BaseModel implements Serializable {
     public static final Long DEFAULT_BATCH_ID = 0L;
     public static final Integer STATUS_READY = 0;
     public static final Integer STATUS_ASSIGNED = 1;
+    /**
+     * 根据时间差额参加的最大优先级，如果base_priority设为超过该值，则任务会优先于任何base_priority=0并且expire_time快到的任务
+     */
+    public static final int BASE_PRIORITY_MAX=24*60*2;
 
     private Map<String, Object> contentObjects;
 
