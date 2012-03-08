@@ -13,6 +13,7 @@ public enum TaskErrorCode {
 	unknownPage(10002),//无法解析的页面
 	ipForbidden(10003),//ip被封
 	taskCancel(10004),//任务被取消了，一般由于用户关闭客户端导致
+	accountWarning(10005),//帐号需要输入验证码
 	;
 	private final String code;
 	private TaskErrorCode(int code) {

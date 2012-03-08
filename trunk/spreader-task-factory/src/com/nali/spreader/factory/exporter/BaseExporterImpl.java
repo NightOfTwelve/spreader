@@ -13,7 +13,7 @@ import com.nali.spreader.model.Task;
 import com.nali.spreader.model.TaskContext;
 
 public abstract class BaseExporterImpl<TM extends TaskMeta> implements Exporter<TM> {
-	private static final int DEFAULT_PRIORITY = 1;
+	private static final int DEFAULT_PRIORITY = 0;
 	private static Logger logger = Logger.getLogger(BaseExporterImpl.class);
 	private static final ContentSerializer DEFAULT_CONTENT_SERIALIZER=new JacksonSerializer();
 	private ContentSerializer contentSerializer = DEFAULT_CONTENT_SERIALIZER;

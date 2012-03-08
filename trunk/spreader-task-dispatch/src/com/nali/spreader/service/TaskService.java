@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nali.common.model.Limit;
+import com.nali.spreader.dao.ICrudClientErrorDao;
 import com.nali.spreader.dao.ICrudClientTaskDao;
 import com.nali.spreader.dao.ICrudClientTaskLogDao;
 import com.nali.spreader.dao.ICrudTaskBatchDao;
 import com.nali.spreader.dao.ITaskDao;
+import com.nali.spreader.model.ClientError;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.model.ClientTaskExample;
 import com.nali.spreader.model.ClientTaskLog;
@@ -29,6 +31,8 @@ import com.nali.spreader.util.avg.ItemCount;
 @Service
 public class TaskService implements ITaskRepository, ITaskService {//TODO cleanExpireTask
 	private static Logger logger = Logger.getLogger(TaskService.class);
+	@Autowired
+	private ICrudClientErrorDao crudClientErrorDao;
 	@Autowired
 	private ICrudTaskBatchDao crudTaskBatchDao;
 	@Autowired
@@ -203,6 +207,20 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 		log.setTaskCode(error.getTaskCode());
 		log.setTaskId(error.getTaskId());
 		crudClientTaskLogDao.insert(log);
+		
+		ClientError clientError = new ClientError();
+		clientError.setClientId(error.getClientId());
+		clientError.setErrorCode(error.getErrorCode());
+		clientError.setErrorDesc(error.getErrorDesc());
+		clientError.setErrorTime(error.getErrorTime());
+		clientError.setTaskCode(error.getTaskCode());
+		clientError.setTaskId(error.getTaskId());
+		clientError.setWebsiteErrorCode(error.getWebsiteErrorCode());
+		clientError.setWebsiteErrorDesc(error.getWebsiteErrorDesc());
+		clientError.setWebsiteId(error.getWebsiteId());
+		clientError.setUid(error.getUid());
+		
+		crudClientErrorDao.insert(clientError);
 	}
 
 }

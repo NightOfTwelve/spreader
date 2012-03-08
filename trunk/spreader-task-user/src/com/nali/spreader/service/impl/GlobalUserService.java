@@ -27,6 +27,7 @@ import com.nali.spreader.service.IGlobalUserService;
 
 @Service
 public class GlobalUserService implements IGlobalUserService {
+	private static final Shard BAK_USER_SHARD;
 	@Autowired
 	private ICrudRobotUserDao crudRobotUserDao;
 	@Autowired
@@ -39,6 +40,12 @@ public class GlobalUserService implements IGlobalUserService {
 	private ICrudUserTagDao crudUserTagDao;
 	@Autowired
 	private ICategoryService categoryService;
+	
+	static {
+		BAK_USER_SHARD = new Shard();
+		BAK_USER_SHARD.setTableSuffix("_delete");
+		BAK_USER_SHARD.setDatabaseSuffix("");
+	}
 
 	@Override
 	public Long registerRobotUser(RobotUser robotUser, String nickname) {
@@ -100,9 +107,7 @@ public class GlobalUserService implements IGlobalUserService {
 	public void removeUser(Long id) {
 		User user = crudUserDao.selectByPrimaryKey(id);
 		if(user!=null) {
-			Shard shard = new Shard();
-			shard.setTableSuffix("_delete");
-			user.setShard(shard);
+			user.setShard(BAK_USER_SHARD);
 			crudUserDao.insertSelective(user);
 			crudUserDao.deleteByPrimaryKey(id);
 		}
