@@ -12,6 +12,7 @@ import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.util.DataIterator;
+import com.nali.spreader.util.RandomDataIterator;
 
 /**
  * <code>IUserGroupService</code> contains all the service about user group. A
@@ -125,8 +126,29 @@ public interface IUserGroupService {
 	 * @return 分组迭代器
 	 * @throws GroupUserQueryException
 	 */
-	DataIterator<Long> queryGrouppedUids(long gid, int batchSize)
+	DataIterator<GrouppedUser> queryGrouppedUserIterator(long gid, int batchSize)
 			throws GroupUserQueryException;
+	
+	/**
+	 * 查询某个分组的用户的uids。
+	 * 
+	 * @param gid
+	 * @param batchSize
+	 * @return 分组迭代器
+	 * @throws GroupUserQueryException
+	 */
+	DataIterator<GrouppedUser> queryGrouppedUserIterator(long gid, int batchSize, long upCount) throws GroupUserQueryException;
+	
+	
+	/**
+	 * 随机查找upperCount个
+	 * @param gid
+	 * @param batchSize
+	 * @param upperCount
+	 * @return
+	 * @throws GroupUserQueryException
+	 */
+	RandomDataIterator<GrouppedUser> queryRandomGrouppedUserIterator(long gid, int batchSize, int upCount) throws GroupUserQueryException;
 
 	/**
 	 * 分页查询某个分组的用户
