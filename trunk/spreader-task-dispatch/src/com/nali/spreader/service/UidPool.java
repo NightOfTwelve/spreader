@@ -93,10 +93,10 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 
 	private void assignTasks(Long batchId, List<ClientTask> tasks, Long uid, List<ItemCount<Long>> itemCounts, ClientUid clientUid) {
 		CycleIterator<Long> uidIter = null;
-		if(clientUid!=null) {
+		if(clientUid!=null) {//it's anyone task
 			List<Long> uids = clientUid.getUids();
 			if(uids==null || uids.size()==0) {
-//				logger.error("not bind uids");
+//				logger.error("not bind uids");//TODO fetch some uid?
 				return;
 			}
 			uidIter = new CycleIterator<Long>(uids);
@@ -132,6 +132,9 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 				if(System.currentTimeMillis()-old.getLastTime()>clientExpiredTime) {
 					clients.remove(entry.getKey());
 					clientUid.receiveFrom(old);
+					if(logger.isInfoEnabled()) {
+						logger.info("receive uid to client:" + old.clientId + old.getUids() + "-->" + clientUid.clientId);
+					}
 					return;
 				}
 			}
@@ -420,6 +423,9 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 					}
 					Average<KeyValuePair<Long, Long>> uidActionAverage=Average.startFromBatchSize(uidActions, batchSize);
 					clientUid.bind(uids, uidActionAverage);
+					if(logger.isInfoEnabled()) {
+						logger.info("bind uid to client:" + uids + "-->" + clientUid.clientId);
+					}
 					return true;
 				}
 				return false;
