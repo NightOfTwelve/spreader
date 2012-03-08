@@ -13,7 +13,7 @@ public class TaskError implements Serializable {
 	private Object errrorData;
 	private Date errorTime;
 	
-	private Long websiteId;
+	private Integer websiteId;
 	private String websiteErrorCode;
 	private String websiteErrorDesc;
 	private Long uid;
@@ -61,10 +61,10 @@ public class TaskError implements Serializable {
 	public void setErrorDesc(String errorDesc) {
 		this.errorDesc = errorDesc;
 	}
-	public Long getWebsiteId() {
+	public Integer getWebsiteId() {
 		return websiteId;
 	}
-	public void setWebsiteId(Long websiteId) {
+	public void setWebsiteId(Integer websiteId) {
 		this.websiteId = websiteId;
 	}
 	public String getWebsiteErrorCode() {
