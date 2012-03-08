@@ -37,9 +37,11 @@ import com.nali.spreader.group.service.IDynamicUserGroupService;
 import com.nali.spreader.group.service.IPropertiesGrouppedUserService;
 import com.nali.spreader.group.service.IUserGroupService;
 import com.nali.spreader.group.service.UserGroupBatchIterator;
+import com.nali.spreader.group.service.UserGroupRandomIterator;
 import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.util.DataIterator;
+import com.nali.spreader.util.RandomDataIterator;
 
 @Service
 public class UserGroupService implements IUserGroupService {
@@ -160,7 +162,7 @@ public class UserGroupService implements IUserGroupService {
 	}
 
 	@Override
-	public DataIterator<Long> queryGrouppedUids(long gid, int limit)
+	public DataIterator<GrouppedUser> queryGrouppedUserIterator(long gid, int limit)
 			throws GroupUserQueryException {
 		long manualCount = this.dynamicUserGroupService.getUserCount(gid);
 		long propertyCount = this.propertiesGrouppedUserService
@@ -169,7 +171,27 @@ public class UserGroupService implements IUserGroupService {
 				.getExcludeUserCount(gid);
 		propertyCount = propertyCount - excludeCount;
 		return new UserGroupBatchIterator(this, gid, manualCount,
-				propertyCount, limit);
+				propertyCount, limit, -1L);
+	}
+	
+	@Override
+	public DataIterator<GrouppedUser> queryGrouppedUserIterator(long gid, int limit,
+			long upCount) throws GroupUserQueryException {
+		long manualCount = this.dynamicUserGroupService.getUserCount(gid);
+		long propertyCount = this.propertiesGrouppedUserService
+				.getUserCount(gid);
+		long excludeCount = this.dynamicUserGroupService
+				.getExcludeUserCount(gid);
+		propertyCount = propertyCount - excludeCount;
+		return new UserGroupBatchIterator(this, gid, manualCount,
+				propertyCount, limit, upCount);
+	}
+
+	@Override
+	public RandomDataIterator<GrouppedUser> queryRandomGrouppedUserIterator(long gid, int limit,
+			int upperCount) throws GroupUserQueryException {
+		UserGroupBatchIterator userGroupBatchIterator = (UserGroupBatchIterator) this.queryGrouppedUserIterator(gid, limit);
+		return new UserGroupRandomIterator(upperCount, limit, userGroupBatchIterator);
 	}
 
 	@Override
@@ -194,7 +216,6 @@ public class UserGroupService implements IUserGroupService {
 			List<Long> manualUids = this.dynamicUserGroupService.queryGrouppedUids(gid, limit.offset, limit.maxRows);
 			grouppedUserList = this.convertUidToGrouppedUser(manualUids, true);
 		}
-
 		
 		this.assembleUserToGrouppedUser(grouppedUserList);
 
