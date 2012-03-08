@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public abstract class DataIterator<E> implements Iterator<List<E>> {
-	private long count;
-	private long offset;
-	private int batchSize;
+	protected long count;
+	protected long offset;
+	protected int batchSize;
 
 	public DataIterator(long count, long offset, int batchSize) {
 		if(offset < 0) {
