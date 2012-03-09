@@ -164,14 +164,7 @@ public class UserGroupService implements IUserGroupService {
 	@Override
 	public DataIterator<GrouppedUser> queryGrouppedUserIterator(long gid, int limit)
 			throws GroupUserQueryException {
-		long manualCount = this.dynamicUserGroupService.getUserCount(gid);
-		long propertyCount = this.propertiesGrouppedUserService
-				.getUserCount(gid);
-		long excludeCount = this.dynamicUserGroupService
-				.getExcludeUserCount(gid);
-		propertyCount = propertyCount - excludeCount;
-		return new UserGroupBatchIterator(this, gid, manualCount,
-				propertyCount, limit, -1L);
+		return this.queryGrouppedUserIterator(gid, limit, -1L);
 	}
 	
 	@Override
