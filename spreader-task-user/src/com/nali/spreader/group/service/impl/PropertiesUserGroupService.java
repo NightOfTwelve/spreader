@@ -17,6 +17,7 @@ import com.nali.spreader.group.exception.AssembleException;
 import com.nali.spreader.group.exception.GroupUserQueryException;
 import com.nali.spreader.group.exp.PropertyExpParser;
 import com.nali.spreader.group.exp.PropertyExpression;
+import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.group.service.IPropertiesGrouppedUserService;
 
 @Service
@@ -48,6 +49,9 @@ public class PropertiesUserGroupService implements
 	@Override
 	public long getUserCount(long gid) throws GroupUserQueryException {
 		UserGroup userGroup = this.crudUserGroupDao.selectByPrimaryKey(gid);
+		if(userGroup.getGtype().intValue() == UserGroupType.manual.getTypeVal()) {
+			return 0L;
+		}
 		return this.getUserCount(userGroup);
 	}
 

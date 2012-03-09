@@ -29,6 +29,9 @@ public class UserGroupBatchIterator extends DataIterator<GrouppedUser> {
 	
 	private static long getCount(long manualCount, long propertyCount, long upCount) {
 		long count = manualCount + propertyCount;
+		if(propertyCount < 0) {
+			throw new IllegalArgumentException("property count is less than 0");
+		}
 		if(upCount < 0) {
 			return count;
 		}
