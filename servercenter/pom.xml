@@ -151,7 +151,6 @@
 								<directory>WebContent</directory>
 							</resource>
 						</webResources>
-						<finalName>servercenter</finalName>
 					</configuration>
 			</plugin>
 			</plugins>
@@ -186,6 +185,8 @@
 				<version>1.0-beta-2</version>
 			</extension>
 		</extensions>
+		
+		<finalName>servercenter</finalName>
 	</build>
 	<reporting>
 		<plugins>
