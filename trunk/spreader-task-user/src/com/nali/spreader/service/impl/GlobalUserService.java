@@ -114,7 +114,6 @@ public class GlobalUserService implements IGlobalUserService {
 	}
 
 	@Override
-	@Transactional
 	public void updateUserTags(Long uid, List<UserTag> tags) {
 		UserTagExample example = new UserTagExample();
 		example.createCriteria().andUidEqualTo(uid);
