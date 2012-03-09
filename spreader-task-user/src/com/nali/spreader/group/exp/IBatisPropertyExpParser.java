@@ -223,6 +223,11 @@ public class IBatisPropertyExpParser implements PropertyExpParser{
 			propVal += Properties.vType.getPropVal();
 		}
 		
+		String category = expression.getCategory();
+		if(!StringUtils.isEmpty(category)) {
+			propVal += Properties.category.getPropVal();
+		}
+		
 //		String webSite = expression.getWebsite();
 //		if(StringUtils.isNotEmptyNoOffset(webSite)) {
 //			propVal += Properties.website.getPropVal();
