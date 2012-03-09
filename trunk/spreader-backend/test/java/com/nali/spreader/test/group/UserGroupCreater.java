@@ -17,7 +17,7 @@ import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.test.util.RandomUtils;
 
-//@Component
+@Component
 public class UserGroupCreater {
 	
 	@Autowired
@@ -42,6 +42,13 @@ public class UserGroupCreater {
 		fans.setLte(1000l);
 		propertyExpressionDTO.setFans(fans);
 		UserGroup userGroup = this.userGroupAssembler.assembleUserGroup(Website.weibo, "粉丝分组", "粉丝数用户分组", UserGroupType.dynamic, propertyExpressionDTO);
+		return userGroup;
+	}
+	
+	public UserGroup createCategoryUserGroup() throws AssembleException {
+		PropertyExpressionDTO propertyExpressionDTO = new PropertyExpressionDTO();
+		propertyExpressionDTO.setCategory("音乐");
+		UserGroup userGroup = this.userGroupAssembler.assembleUserGroup(Website.weibo, "音乐分的类分组", "音乐分类分组", UserGroupType.dynamic, propertyExpressionDTO);
 		return userGroup;
 	}
 	

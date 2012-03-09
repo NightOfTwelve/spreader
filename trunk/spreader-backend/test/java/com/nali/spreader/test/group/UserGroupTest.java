@@ -31,9 +31,13 @@ public class UserGroupTest {
 	
 	@Test
 	public void testCreateUserGroup() throws AssembleException {
-		UserGroup userGroup = this.userGroupCreater.createArticlesUserGroup();
-//		userGroup.setGid(10001L);
-	    this.userGroupService.createGroup(userGroup);
+		try{
+			UserGroup userGroup = this.userGroupCreater.createCategoryUserGroup();
+//			userGroup.setGid(10001L);
+		    this.userGroupService.createGroup(userGroup);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
