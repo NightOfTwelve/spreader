@@ -78,7 +78,7 @@ public class GrouppedUserTest {
 	@Test
 	public void testQueryGrouppedUsers() {
 		Limit limit = Limit.newInstanceForLimit(15,30);
-		PageResult<GrouppedUser> grouppedUsers=  this.userGroupService.queryGrouppedUsers(10001L, limit);
+		PageResult<GrouppedUser> grouppedUsers=  this.userGroupService.queryGrouppedUsers(158L, limit);
 		System.out.println("Total count: " + grouppedUsers.getTotalCount());
 		System.out.println(ToStringBuilder.toString(grouppedUsers.getList()));
 	}
