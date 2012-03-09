@@ -242,7 +242,7 @@
   		
   		<!-- 用户分类 -->
   		<isNotNull prepend="and" property="categoryId">
-  	   		u.id = c.uid and c.category_id = categoryId
+  	   		u.id = c.uid and c.category_id = #categoryId#
   	   </isNotNull>
   	   
   	   <!-- 城市 -->
