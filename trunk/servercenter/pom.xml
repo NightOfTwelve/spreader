@@ -141,7 +141,18 @@
 						</additionalBuildcommands>
 					</configuration>
 				</plugin>
-				
+			   <plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.1.1</version>
+					<configuration>
+						<webResources>
+							<resource>
+								<directory>WebContent</directory>
+							</resource>
+						</webResources>
+					</configuration>
+			</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -162,6 +173,9 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
 			</plugin>
 		</plugins>
 		<extensions>
