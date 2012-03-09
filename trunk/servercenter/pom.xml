@@ -5,7 +5,7 @@
 	<artifactId>servercenter</artifactId>
 	<packaging>war</packaging>
 	<name>servercenter</name>
-	<version>1.0</version>
+	<version>0.9</version>
 	<url>http://www.9nali.com</url>
 	<developers>
 		<developer>
@@ -306,6 +306,17 @@
 			<artifactId>spring-orm</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.nali</groupId>
+			<artifactId>servercenter-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.nali</groupId>
+			<artifactId>log</artifactId>
+			<version>0.9</version>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>
@@ -315,12 +326,6 @@
 			</activation>
 			<properties>
 				<envcfg.dir>base</envcfg.dir>
-			</properties>
-		</profile>
-		<profile>
-			<id>dev-test</id>
-			<properties>
-				<envcfg.dir>dev-test</envcfg.dir>
 			</properties>
 		</profile>
 		<profile>
