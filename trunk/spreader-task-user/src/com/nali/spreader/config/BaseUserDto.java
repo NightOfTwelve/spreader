@@ -22,16 +22,6 @@ public class BaseUserDto implements Serializable {
 	private Range<Long> fans;
 	@PropertyDescription("文章数")
 	private Range<Long> articles;
-	@PropertyDescription("用户网站ID")
-	private Long websiteUid;
-
-	public Long getWebsiteUid() {
-		return websiteUid;
-	}
-
-	public void setWebsiteUid(Long websiteUid) {
-		this.websiteUid = websiteUid;
-	}
 
 	public Integer getGender() {
 		return gender;

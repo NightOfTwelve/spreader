@@ -10,9 +10,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.spreader.config.BaseUserDto;
 import com.nali.spreader.config.CategoryUserMatchDto;
 import com.nali.spreader.config.UserDto;
+import com.nali.spreader.config.WebsiteUserDto;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
@@ -89,7 +89,7 @@ public class AddFansToUser implements RegularAnalyzer,Configable<CategoryUserMat
 		return ids;
 	}
 
-	private List<User> findUserFansInfoByDto(BaseUserDto dto, String category, Integer websiteId, Boolean isRobot) {
+	private List<User> findUserFansInfoByDto(WebsiteUserDto dto, String category, Integer websiteId, Boolean isRobot) {
 		UserDto userDto = UserDto.genUserDtoFrom(dto);
 		userDto.setCategories(Arrays.asList(category));
 		userDto.setIsRobot(isRobot);

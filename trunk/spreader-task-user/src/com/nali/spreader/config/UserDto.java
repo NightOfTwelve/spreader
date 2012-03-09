@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.nali.spreader.factory.config.desc.PropertyDescription;
 
-public class UserDto extends BaseUserDto {
+public class UserDto extends WebsiteUserDto {
 	private static final long serialVersionUID = -3118856576195136494L;
 	@PropertyDescription("分类")
 	private List<String> categories;
@@ -15,7 +15,7 @@ public class UserDto extends BaseUserDto {
 	@PropertyDescription("数量上限")
 	private Integer limit;
 
-	public static UserDto genUserDtoFrom(BaseUserDto baseUserDto) {
+	public static UserDto genUserDtoFrom(WebsiteUserDto baseUserDto) {
 		UserDto userDto = new UserDto();
 		userDto.setArticles(baseUserDto.getArticles());
 		userDto.setAttentions(baseUserDto.getAttentions());

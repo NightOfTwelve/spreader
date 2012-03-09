@@ -7,9 +7,9 @@ import com.nali.spreader.factory.config.desc.PropertyDescription;
 public class CategoryUserMatchDto implements Serializable {
 	private static final long serialVersionUID = -8064717832508346311L;
 	@PropertyDescription("机器人")
-	private BaseUserDto robot;
+	private WebsiteUserDto robot;
 	@PropertyDescription("用户")
-	private BaseUserDto user;
+	private WebsiteUserDto user;
 	@PropertyDescription("分类")
 	private String category;
 	@PropertyDescription("网站Id")
@@ -18,22 +18,6 @@ public class CategoryUserMatchDto implements Serializable {
 	private Double robotRate;
 	@PropertyDescription("关注人数上限")
 	private Long maxUserValue;
-
-	public BaseUserDto getRobot() {
-		return robot;
-	}
-
-	public void setRobot(BaseUserDto robot) {
-		this.robot = robot;
-	}
-
-	public BaseUserDto getUser() {
-		return user;
-	}
-
-	public void setUser(BaseUserDto user) {
-		this.user = user;
-	}
 
 	public String getCategory() {
 		return category;
@@ -65,5 +49,21 @@ public class CategoryUserMatchDto implements Serializable {
 
 	public void setMaxUserValue(Long maxUserValue) {
 		this.maxUserValue = maxUserValue;
+	}
+
+	public WebsiteUserDto getRobot() {
+		return robot;
+	}
+
+	public void setRobot(WebsiteUserDto robot) {
+		this.robot = robot;
+	}
+
+	public WebsiteUserDto getUser() {
+		return user;
+	}
+
+	public void setUser(WebsiteUserDto user) {
+		this.user = user;
 	}
 }
