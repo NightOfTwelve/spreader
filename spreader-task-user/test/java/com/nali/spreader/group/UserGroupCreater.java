@@ -1,7 +1,6 @@
 package com.nali.spreader.group;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.nali.spreader.config.Range;
 import com.nali.spreader.constants.Website;
@@ -11,7 +10,6 @@ import com.nali.spreader.group.exception.AssembleException;
 import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
 
-@Component
 public class UserGroupCreater {
 	
 	@Autowired
