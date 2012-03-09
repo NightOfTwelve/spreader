@@ -180,9 +180,11 @@ public class UserGroupService implements IUserGroupService {
 		long manualCount = this.dynamicUserGroupService.getUserCount(gid);
 		long propertyCount = this.propertiesGrouppedUserService
 				.getUserCount(gid);
-		long excludeCount = this.dynamicUserGroupService
-				.getExcludeUserCount(gid);
-		propertyCount = propertyCount - excludeCount;
+		if(propertyCount > 0) {
+			long excludeCount = this.dynamicUserGroupService
+			.getExcludeUserCount(gid);
+			propertyCount = propertyCount - excludeCount;
+		}
 		return new UserGroupBatchIterator(this, gid, manualCount,
 				propertyCount, limit, upCount);
 	}
