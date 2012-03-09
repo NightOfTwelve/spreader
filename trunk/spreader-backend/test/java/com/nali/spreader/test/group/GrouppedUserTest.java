@@ -14,6 +14,7 @@ import com.nali.lang.ToStringBuilder;
 import com.nali.spreader.group.service.IUserGroupService;
 import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.test.util.RandomUtils;
+import com.nali.spreader.util.DataIterator;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -77,10 +78,14 @@ public class GrouppedUserTest {
 	
 	@Test
 	public void testQueryGrouppedUsers() {
-		Limit limit = Limit.newInstanceForLimit(15,30);
-		PageResult<GrouppedUser> grouppedUsers=  this.userGroupService.queryGrouppedUsers(158L, limit);
-		System.out.println("Total count: " + grouppedUsers.getTotalCount());
-		System.out.println(ToStringBuilder.toString(grouppedUsers.getList()));
+//		Limit limit = Limit.newInstanceForLimit(15,30);
+		DataIterator<GrouppedUser> iterator =  this.userGroupService.queryGrouppedUserIterator(161L, 20);
+		System.out.println("Total count: " + iterator.getCount());
+		
+		while(iterator.hasNext()) {
+			List<GrouppedUser> users = iterator.next();
+			System.out.println(ToStringBuilder.toString(users));
+		}
 	}
 	
 	@Test
