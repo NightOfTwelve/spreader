@@ -204,9 +204,11 @@ function renderGroupType(value) {
  */
 function renderUserGroupType(value) {
 	if (value == 0) {
-		return 'fixed';
+		return '静态分组';
+	} else if (value == 1) {
+		return '动态分组';
 	} else {
-		return 'dynamic';
+		return '手动分组';
 	}
 }
 /**

@@ -1,5 +1,6 @@
 package com.nali.spreader.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -8,6 +9,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.nali.common.model.Limit;
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.UserDto;
 import com.nali.spreader.dao.ICrudCareerDao;
 import com.nali.spreader.dao.ICrudEducationDao;
@@ -227,6 +229,9 @@ public class UserService extends WebsiteBaseService implements IUserService {
 
 	@Override
 	public List<User> getUsersByIds(List<Long> ids) {
+		if(CollectionUtils.isEmpty(ids)) {
+			return Collections.emptyList();
+		}
 		UserExample example = new UserExample();
 		example.createCriteria().andIdIn(ids);
 		return this.crudUserDao.selectByExample(example);
