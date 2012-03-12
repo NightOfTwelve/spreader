@@ -105,7 +105,6 @@ public abstract class RandomDataIterator<E> extends DataIterator<E> {
 					 int tempSize = this.randomLimits.get(blockOffset);
 					 int more = intervalSize + tempSize - leftBatchSize;
 					 if(more > 0) {
-						 leftSize = more;
 						 tempSize = leftBatchSize - intervalSize;
 					 }
 					 
@@ -116,6 +115,7 @@ public abstract class RandomDataIterator<E> extends DataIterator<E> {
 					 
 					 List<E> tempList = query(offset, limit);
 					 if(more > 0) {
+						leftSize = more;
 						this.offset += tempList.size(); 
 					 }else{
 						this.blockOffset = this.nextOffsets.get(this.offset);
