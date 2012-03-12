@@ -273,7 +273,7 @@
 						is_robot = #userRelated.isRobot#
 					</isNotNull>
 				</isNotNull>
-				<isEmpty prepend="union" property="userRelated.categories">
+				<isNotEmpty prepend="union" property="userRelated.categories">
 					select uid from spreader.tb_user_tag where category_id in (
 					select
 					id from spreader.tb_category where name in
@@ -282,7 +282,7 @@
 						#userRelated.categories[]#
 					</iterate>
 					)
-				</isEmpty>
+				</isNotEmpty>
 				<isNotNull prepend="union" property="userRelated.attentionToUid">
 					select uid
 					from
