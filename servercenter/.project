@@ -3,6 +3,7 @@
 	<name>servercenter</name>
 	<comment></comment>
 	<projects>
+		<project>servercenter-api</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
