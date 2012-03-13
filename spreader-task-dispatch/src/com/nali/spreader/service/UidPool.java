@@ -28,8 +28,8 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 	private Lock clientsLock = new ReentrantLock();
 	private Lock sharedTaskLock = new ReentrantLock();
 	private int fetchCount;
-	private int clientUidSize=5;
-	private long clientExpiredTime=1000*60*5;
+	private int clientUidSize=10;
+	private long clientExpiredTime=1000*60*20;
 	@Autowired
 	private IUidPoolService uidPoolService;
 
