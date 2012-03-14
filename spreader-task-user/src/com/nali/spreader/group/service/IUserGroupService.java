@@ -1,5 +1,6 @@
 package com.nali.spreader.group.service;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -162,7 +163,7 @@ public interface IUserGroupService {
 	 * @return
 	 * @throws GroupUserQueryException
 	 */
-	MemoryRandomDataIterator<Long, User> queryMemoryGrouppedUserIterator(long gid, int batchSize, int upCount, Set<Long> excludeUids) throws GroupUserQueryException;
+	MemoryRandomDataIterator<Long, User> queryMemoryGrouppedUserIterator(long gid, int batchSize, int upCount, Collection<Long> excludeUids) throws GroupUserQueryException;
 	
 	
 	/**
