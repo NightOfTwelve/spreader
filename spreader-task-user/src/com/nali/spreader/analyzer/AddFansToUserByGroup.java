@@ -1,6 +1,7 @@
 package com.nali.spreader.analyzer;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
 import com.nali.spreader.config.GroupUserAddFansDto;
 import com.nali.spreader.data.KeyValue;
+import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserRelation;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.Configable;
@@ -18,10 +20,9 @@ import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
-import com.nali.spreader.group.service.IUserGroupService;
 import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.service.IGlobalUserService;
-import com.nali.spreader.util.DataIterator;
+import com.nali.spreader.service.IUserGroupFacadeService;
 import com.nali.spreader.util.random.NumberRandomer;
 
 @Component
@@ -29,15 +30,12 @@ import com.nali.spreader.util.random.NumberRandomer;
 public class AddFansToUserByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
 		Configable<GroupUserAddFansDto> {
 	private static final MessageLogger logger = LoggerFactory.getLogger(AddFansToUserByGroup.class);
-	@SuppressWarnings("unused")
-	private GroupUserAddFansDto config;
 	@Autowired
-	private IUserGroupService userGroupService;
+	private IUserGroupFacadeService userGroupFacadeService;
 	@Autowired
 	private IGlobalUserService globalUserService;
 	@AutowireProductLine
 	private TaskProduceLine<KeyValue<Long, Long>> addUserFans;
-	private final int BATCHSIZE = 100;
 
 	private NumberRandomer random;
 
@@ -47,7 +45,6 @@ public class AddFansToUserByGroup extends UserGroupExtendedBeanImpl implements R
 
 	@Override
 	public void init(GroupUserAddFansDto config) {
-		this.config = config;
 		Integer minValue = config.getMinUserValue();
 		Integer maxValue = config.getMaxUserValue();
 		if (minValue != null && maxValue != null) {
@@ -60,36 +57,31 @@ public class AddFansToUserByGroup extends UserGroupExtendedBeanImpl implements R
 
 	@Override
 	public void work() {
+		// 粉丝组ID
 		Long fromGroup = this.getFromUserGroup();
+		// 关注用户组ID
 		Long toGroup = this.getToUserGroup();
-		// Double robotRate = config.getRobotRate();
-		DataIterator<GrouppedUser> toIterator = this.userGroupService.queryGrouppedUserIterator(toGroup,
-				BATCHSIZE);
+		// 获取所有关注用户
+		Iterator<GrouppedUser> toIterator = this.userGroupFacadeService.queryAllGrouppedUser(toGroup);
 		while (toIterator.hasNext()) {
-			List<GrouppedUser> toidList = toIterator.next();
-			for (GrouppedUser togu : toidList) {
-				int randomLimit = random.get();
-				DataIterator<GrouppedUser> fromIterator = this.userGroupService.queryGrouppedUserIterator(
-						fromGroup, BATCHSIZE, randomLimit);
-				Long toUid = togu.getUid();
-				List<Long> relationList = this.globalUserService.findRelationUserId(toUid,
-						UserRelation.TYPE_ATTENTION, true);
-				Set<Long> relationSet = new HashSet<Long>(relationList);
-				while (fromIterator.hasNext()) {
-					List<GrouppedUser> fromidList = fromIterator.next();
-					for (GrouppedUser fromgu : fromidList) {
-						Long fromUid = fromgu.getUid();
-						if (!relationSet.contains(fromUid)) {
-							addUserFans.send(new KeyValue<Long, Long>(fromUid, toUid));
-						}
-					}
+			GrouppedUser togu = toIterator.next();
+			int randomLimit = random.get();
+			Long toUid = togu.getUid();
+			// 获取所有的粉丝
+			List<Long> relationList = this.globalUserService.findRelationUserId(toUid,
+					UserRelation.TYPE_ATTENTION, true);
+			// 排重
+			Set<Long> relationSet = new HashSet<Long>(relationList);
+			// 随机获取粉丝组成员
+			Iterator<User> fromIterator = this.userGroupFacadeService.queryLimitedRandomGrouppedUser(
+					fromGroup, randomLimit, relationSet);
+			while (fromIterator.hasNext()) {
+				User fromUser = fromIterator.next();
+				Long fromUid = fromUser.getId();
+				if (!relationSet.contains(fromUid)) {
+					addUserFans.send(new KeyValue<Long, Long>(fromUid, toUid));
 				}
 			}
 		}
-	}
-
-	@SuppressWarnings("unused")
-	private Number nvl(Number n) {
-		return n == null ? 0 : n;
 	}
 }
