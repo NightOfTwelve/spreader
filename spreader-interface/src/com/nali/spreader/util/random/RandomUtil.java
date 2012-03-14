@@ -1,6 +1,7 @@
 package com.nali.spreader.util.random;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -54,9 +55,16 @@ public class RandomUtil {
 	}
 	
 	/**
+	 * 不修改exists并且判断null版
+	 */
+	public static<E> List<E> randomItemsUnmodify(List<E> allList, Collection<E> exists, int count) {
+		return randomItems(allList, exists==null?new HashSet<E>():new HashSet<E>(exists),count);
+	}
+	
+	/**
 	 * 随机取n个不重复元素
 	 * E 必须在set里可以排重
-	 * @param exists 会被修改
+	 * @param exists 必须不能为空，并且会被修改
 	 */
 	public static<E> List<E> randomItems(List<E> allList, Set<E> exists, int count) {
 		Random rand = random;
