@@ -51,7 +51,7 @@ public class AddFansToUserByGroup extends UserGroupExtendedBeanImpl implements R
 		Integer minValue = config.getMinUserValue();
 		Integer maxValue = config.getMaxUserValue();
 		if (minValue != null && maxValue != null) {
-			this.random = new NumberRandomer(config.getMinUserValue(), config.getMaxUserValue());
+			this.random = new NumberRandomer(minValue, maxValue + 1);
 		} else {
 			logger.error("关注数上限为null");
 			throw new NullPointerException();

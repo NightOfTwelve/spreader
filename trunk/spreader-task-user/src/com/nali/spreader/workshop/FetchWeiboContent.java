@@ -14,12 +14,14 @@ import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
+import com.nali.spreader.factory.passive.Input;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
-public class FetchWeiboContent extends SingleTaskMachineImpl implements PassiveWorkshop<KeyValue<Long, Long>,List<Content>> {
+public class FetchWeiboContent extends SingleTaskMachineImpl implements
+		PassiveWorkshop<KeyValue<Long, Long>, List<Content>> {
 	@Autowired
 	private IContentService contentService;
 	@Autowired
@@ -35,10 +37,25 @@ public class FetchWeiboContent extends SingleTaskMachineImpl implements PassiveW
 	public void work(KeyValue<Long, Long> data, SingleTaskExporter exporter) {
 		Long uid = data.getKey();
 		Long robotId = data.getValue();
-		if(robotId==null) {
-			robotId = robotUserHolder.getRobotUid();//TODO 不分配具体的人
+		work(uid, robotId, null, exporter);
+	}
+
+	@Input
+	public void work(SingleTaskExporter exporter, KeyValue<Long, Date> data) {
+		Long uid = data.getKey();
+		Date lastFetchTime = data.getValue();
+		work(uid, null, lastFetchTime, exporter);
+	}
+
+	private void work(Long uid, Long robotId, Date lastFetchTime, SingleTaskExporter exporter) {
+		if (robotId == null) {
+			robotId = robotUserHolder.getRobotUid();// TODO 不分配具体的人
 		}
-		Date lastFetchTime= contentService.getAndTouchLastFetchTime(uid);
+		if (lastFetchTime == null) {
+			lastFetchTime = contentService.getAndTouchLastFetchTime(uid);
+		} else {
+			contentService.getAndTouchLastFetchTime(uid);
+		}
 		exporter.setProperty("websiteUid", globalUserService.getWebsiteUid(uid));
 		exporter.setProperty("lastFetchTime", lastFetchTime);
 		exporter.send(robotId, SpecialDateUtil.afterToday(2));
@@ -50,13 +67,13 @@ public class FetchWeiboContent extends SingleTaskMachineImpl implements PassiveW
 			content.setSyncDate(updateTime);
 			content.setType(Content.TYPE_WEIBO);
 			content.setWebsiteId(Website.weibo.getId());
-//			Long uid = userService.assignUser(content.getWebsiteUid());
-//			if(uid!=null) {
-//				fetchWeiboUserMainPage.send(uid);
-//				content.setUid(uid);
-//			}
+			// Long uid = userService.assignUser(content.getWebsiteUid());
+			// if(uid!=null) {
+			// fetchWeiboUserMainPage.send(uid);
+			// content.setUid(uid);
+			// }
 			contentService.saveContent(content);
 		}
 	}
-	
+
 }

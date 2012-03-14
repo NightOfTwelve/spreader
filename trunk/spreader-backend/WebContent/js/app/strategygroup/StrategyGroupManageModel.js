@@ -688,7 +688,7 @@ Ext.onReady(function() {
 					GGROUPTYPE = gType;
 					var gid = data.id;
 					settingCreateTrigger(gid, GISGROUP);
-					editstgWindow.title = data.transformName;
+//					editstgWindow.title = data.transformName;
 					// TODO
 					// editstgWindow.show();
 				} else {
