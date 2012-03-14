@@ -14,9 +14,13 @@ public interface IDynamicUserGroupService extends IGrouppedUserService{
 	
 	List<Long> queryExcludedUids(long gid, int start, int limit);
 	
+	Set<Long> queryExcludedUids(long gid);
+	
 	boolean isExclude(long gid, long uid);
 	
 	List<Long> queryGrouppedUids(long gid, int start, int limit);
+	
+	Set<Long> queryGrouppedUids(long gid);
 	
 	long getUserCount(long gid);
 	

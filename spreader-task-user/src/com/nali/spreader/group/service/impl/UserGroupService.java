@@ -36,11 +36,13 @@ import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.group.service.IDynamicUserGroupService;
 import com.nali.spreader.group.service.IPropertiesGrouppedUserService;
 import com.nali.spreader.group.service.IUserGroupService;
+import com.nali.spreader.group.service.MemoryUserGroupRandomIterator;
 import com.nali.spreader.group.service.UserGroupBatchIterator;
 import com.nali.spreader.group.service.UserGroupRandomIterator;
 import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.util.DataIterator;
+import com.nali.spreader.util.MemoryRandomDataIterator;
 import com.nali.spreader.util.RandomDataIterator;
 
 @Service
@@ -367,5 +369,25 @@ public class UserGroupService implements IUserGroupService {
 			}
 		}
 		return tag;
+	}
+
+	@Override
+	public MemoryRandomDataIterator<Long, User> queryMemoryGrouppedUserIterator(
+			long gid, int batchSize, int upCount, Set<Long> excludeUids)
+			throws GroupUserQueryException {
+		UidCollection uidCollection = this.getAllUids(gid);
+		return new MemoryUserGroupRandomIterator(userService, gid, upCount, batchSize, excludeUids, uidCollection);
+	}
+
+	@Override
+	public UidCollection getAllUids(long gid) {
+		Set<Long> manualUids = this.dynamicUserGroupService.queryGrouppedUids(gid);
+		manualUids = manualUids == null ? Collections.<Long>emptySet() : manualUids;
+		
+		Set<Long> excludeUids = this.dynamicUserGroupService.queryExcludedUids(gid);
+		excludeUids = excludeUids == null ? Collections.<Long> emptySet() : excludeUids;
+		
+		List<Long> propertiesUids = this.propertiesGrouppedUserService.queryGrouppedUids(gid);
+		return new UidCollection(manualUids, propertiesUids, excludeUids);
 	}
 }

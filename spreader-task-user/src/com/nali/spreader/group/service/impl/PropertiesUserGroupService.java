@@ -96,4 +96,12 @@ public class PropertiesUserGroupService implements
 				limitObject);
 		return uids;
 	}
+
+	@Override
+	public List<Long> queryGrouppedUids(long gid)
+			throws GroupUserQueryException {
+		UserGroup userGroup = this.crudUserGroupDao.selectByPrimaryKey(gid);
+		Map<String, Object> propertyMap = this.assemblePropertyMap(userGroup);
+		return this.userDao.queryUidsByProperties(propertyMap);
+	}
 }
