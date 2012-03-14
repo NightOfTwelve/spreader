@@ -1,14 +1,14 @@
 package com.nali.spreader.dao.impl;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ibatis.SqlMapClientTemplate;
+import org.springframework.stereotype.Repository;
+
 import com.nali.spreader.dao.ICrudUserGroupDao;
 import com.nali.spreader.data.UserGroup;
 import com.nali.spreader.data.UserGroupExample;
-
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.ibatis.SqlMapClientTemplate;
-import org.springframework.orm.ibatis.support.SqlMapClientDaoSupport;
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class CrudUserGroupDao implements ICrudUserGroupDao {
