@@ -348,6 +348,19 @@
     </isNotNull>
   </select>
   
+    <select id="queryAllUidsByProperties" parameterClass="java.util.HashMap" resultClass="long">
+		  	select u.id from spreader.tb_user as u
+		  	<dynamic prepend=",">
+		  	   <!-- 用户分类  -->
+		  	   <isNotNull property="categoryId">
+		  	   		spreader.tb_user_tag as c
+		  	   </isNotNull>
+		  	</dynamic> 
+		  	<dynamic prepend="where">
+		  	    <include refid="propertiesWhere"/>
+		  	</dynamic>
+  </select>
+  
   <select id="queryNoAvatarRobotUser" resultMap="spreader_tb_user.ibatorgenerated_BaseResultMap">
   	select * from spreader.tb_user where pid is null and is_robot = true
   </select>
