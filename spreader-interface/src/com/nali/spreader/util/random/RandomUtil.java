@@ -30,13 +30,13 @@ public class RandomUtil {
 		if(allList.size()>count * 2) {//一般情况下，随机取count个不重复的元素返回
 			HashSet<Integer> idxs=new HashSet<Integer>((int) Math.ceil(count/0.75));
 			ArrayList<E> rlt=new ArrayList<E>(count);
-			for (int i = 0; i < count; i++) {
+			for (int i = 0; i < count;) {
 				int c = rand.nextInt(allList.size());
-				while(idxs.contains(c)) {
-					c = rand.nextInt(allList.size());
+				if(!idxs.contains(c)) {
+					i++;
+					idxs.add(c);
+					rlt.add(allList.get(c));
 				}
-				idxs.add(c);
-				rlt.add(allList.get(c));
 			}
 			return rlt;
 		} else if(allList.size()<=count) {//如果count大等于父集合的size则返回父集合本身
