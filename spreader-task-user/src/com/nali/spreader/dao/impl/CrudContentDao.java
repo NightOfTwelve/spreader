@@ -1,13 +1,14 @@
 package com.nali.spreader.dao.impl;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.stereotype.Repository;
+
 import com.nali.spreader.dao.ICrudContentDao;
 import com.nali.spreader.data.Content;
 import com.nali.spreader.data.ContentExample;
-import org.springframework.orm.ibatis.support.SqlMapClientDaoSupport;
 
 @Repository
 public class CrudContentDao implements ICrudContentDao {
