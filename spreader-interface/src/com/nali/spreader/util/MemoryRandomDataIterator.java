@@ -40,7 +40,7 @@ public abstract class MemoryRandomDataIterator<T, E> extends DataIterator<E>{
 	
 	@Override
 	protected List<E> query(long offset, int limit) {
-		T[] rtnIds =   (T[])java.lang.reflect.Array.newInstance(
+		T[] rtnIds =   (T[])Array.newInstance(
                this.randomIds.getClass().getComponentType(), limit);
 	    System.arraycopy(randomIds, (int)offset, rtnIds, 0, limit);
 	    
