@@ -22,7 +22,7 @@ public abstract class MemoryRandomDataIterator<T, E> extends DataIterator<E>{
 			this.count = tempCount;
 		}else{
 			this.count = upperCount;
-			ids = RandomUtil.randomItems(ids, (int)upperCount);
+			ids = RandomUtil.randomItems(ids, excludeIds, (int)upperCount);
 		}
 		
 		
