@@ -59,15 +59,20 @@ public class RandomUtil {
 	 * @param exists 会被修改
 	 */
 	public static<E> List<E> randomItems(List<E> allList, Set<E> exists, int count) {
-		int existCount=0;
-		for (E e : allList) {
-			if(exists.contains(e)) {
-				existCount++;
-			}
-		}
 		Random rand = random;
-		if (count > allList.size() - existCount) {
-			count = allList.size() - existCount;
+		if (count >= allList.size() - exists.size()) {
+			List<E> cp = new ArrayList<E>(allList.size());
+			for (E e : allList) {
+				if(!exists.contains(e)) {
+					cp.add(e);
+				}
+			}
+			if(cp.size()<=count) {
+				Collections.shuffle(cp, rand);
+				return cp;
+			} else {
+				allList = cp;
+			}
 		}
 		ArrayList<E> rlt=new ArrayList<E>(count);
 		for (int i = 0; i < count;) {
