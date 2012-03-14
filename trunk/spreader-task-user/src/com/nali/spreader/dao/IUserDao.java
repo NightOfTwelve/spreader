@@ -65,6 +65,8 @@ public interface IUserDao {
 
 	List<Long> queryUidsByProperties(Map<String, Object> properties, Limit limit);
 	
+	List<Long> queryUidsByProperties(Map<String, Object> properties);
+	
 	int countByProperties(Map<String, Object> properties);
 	
 	/**
