@@ -1,6 +1,7 @@
 package com.nali.spreader.group.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -373,7 +374,7 @@ public class UserGroupService implements IUserGroupService {
 
 	@Override
 	public MemoryRandomDataIterator<Long, User> queryMemoryGrouppedUserIterator(
-			long gid, int batchSize, int upCount, Set<Long> excludeUids)
+			long gid, int batchSize, int upCount, Collection<Long> excludeUids)
 			throws GroupUserQueryException {
 		UidCollection uidCollection = this.getAllUids(gid);
 		return new MemoryUserGroupRandomIterator(userService, gid, upCount, batchSize, excludeUids, uidCollection);
