@@ -1,5 +1,6 @@
 package com.nali.spreader.util;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -60,6 +61,48 @@ public abstract class DataIterator<E> implements Iterator<List<E>> {
 
 	public long getOverfollow() {
 		return offset - count;
+	}
+	
+	public Iterator<E> unpack() {
+		return new UnpackIterator<E>(this);
+	}
+	
+	public static class UnpackIterator<E> implements Iterator<E> {
+		private static final Iterator<?> emptyIterator = Collections.EMPTY_LIST.iterator();
+		@SuppressWarnings("unchecked")
+		private Iterator<E> subIterator = (Iterator<E>) emptyIterator;
+		private Iterator<List<E>> listIterator;
+
+		public UnpackIterator(Iterator<List<E>> listIterator) {
+			this.listIterator = listIterator;
+		}
+
+		@Override
+		public boolean hasNext() {
+			if(subIterator.hasNext()) {
+				return true;
+			}
+			if(listIterator.hasNext()) {
+				subIterator=listIterator.next().iterator();
+				return hasNext();
+			}
+			return false;
+		}
+
+		@Override
+		public E next() {
+			if(hasNext()) {
+				return subIterator.next();
+			} else {
+				throw new NoSuchElementException();
+			}
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+		
 	}
 
 }
