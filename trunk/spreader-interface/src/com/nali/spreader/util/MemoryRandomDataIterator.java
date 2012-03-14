@@ -1,49 +1,38 @@
 package com.nali.spreader.util;
 
-import java.lang.reflect.Array;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import com.nali.spreader.util.random.RandomUtil;
 
 public abstract class MemoryRandomDataIterator<T, E> extends DataIterator<E>{
-	private T[] randomIds;
+	private List<T> randomIds;
 	
-	public MemoryRandomDataIterator(long upperCount, int batchSize) {
+	public MemoryRandomDataIterator(long upperCount, int batchSize, List<T> ids, Set<T>  excludeIds) {
 		super(0, batchSize);
-		if(upperCount < 0) {
-			throw new IllegalArgumentException("Ilelgal rand count: " + upperCount);
-		}
 		
-		List<T> ids = this.queryAllIds();
-		Set<T> excludeIds = this.getExcludeIds();
-		int tempCount = ids.size() - excludeIds.size();
-		if(tempCount <= upperCount) {
+		int excludeSize = 0;
+		if(excludeIds != null) {
+			excludeSize = excludeIds.size();
+		}
+		int tempCount = ids.size() - excludeSize;
+		if(tempCount <= upperCount || upperCount <= 0) {
 			this.count = tempCount;
+			ids = CollectionUtils.exclude(ids, excludeIds);
+			Collections.shuffle(ids);
 		}else{
 			this.count = upperCount;
-			ids = RandomUtil.randomItems(ids, excludeIds, (int)upperCount);
+			ids = RandomUtil.randomItemsUnmodify(ids, excludeIds, (int)upperCount);
 		}
-		
-		
-		if(ids.size() > 0) {
-			T t = ids.get(0);
-			this.randomIds = (T[]) Array.newInstance(t.getClass(), ids.size());
-		}
+		this.randomIds = ids;
 	}
 	
-	protected abstract List<T> queryAllIds();
-	
-	protected abstract Set<T> getExcludeIds();
-	
-	protected abstract List<E> queryElements(T[] ids);
+	protected abstract List<E> queryElements(List<T> ids);
 	
 	@Override
 	protected List<E> query(long offset, int limit) {
-		T[] rtnIds =   (T[])Array.newInstance(
-               this.randomIds.getClass().getComponentType(), limit);
-	    System.arraycopy(randomIds, (int)offset, rtnIds, 0, limit);
-	    
+		List<T> rtnIds = this.randomIds.subList((int)offset, (int)(offset + limit));
 	    List<E> elements = this.queryElements(rtnIds);
 	    return elements;
 	}
