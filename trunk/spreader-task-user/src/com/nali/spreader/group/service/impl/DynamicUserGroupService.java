@@ -168,4 +168,18 @@ public class DynamicUserGroupService implements IDynamicUserGroupService, Initia
 		this.keySerializer = (RedisSerializer<String>) this.redisTemplate.getKeySerializer();
 		this.valueSerializer = (RedisSerializer<Object>) this.redisTemplate.getValueSerializer();
 	}
+
+
+	@Override
+	public Set<Long> queryExcludedUids(long gid) {
+		String key = getExcludeGroupKey(gid);
+		return zSetOperations.range(key, 0, -1);
+	}
+
+
+	@Override
+	public Set<Long> queryGrouppedUids(long gid) {
+		String key = getManualGroupKey(gid);
+		return zSetOperations.range(key, 0, -1);
+	}
 }

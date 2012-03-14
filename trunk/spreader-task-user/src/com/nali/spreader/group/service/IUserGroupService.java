@@ -2,16 +2,19 @@ package com.nali.spreader.group.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.constants.Website;
+import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserGroup;
 import com.nali.spreader.group.exception.GroupUserQueryException;
 import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.util.DataIterator;
+import com.nali.spreader.util.MemoryRandomDataIterator;
 import com.nali.spreader.util.RandomDataIterator;
 
 /**
@@ -140,6 +143,7 @@ public interface IUserGroupService {
 	DataIterator<GrouppedUser> queryGrouppedUserIterator(long gid, int batchSize, long upCount) throws GroupUserQueryException;
 	
 	
+	
 	/**
 	 * 随机查找upperCount个
 	 * @param gid
@@ -149,7 +153,18 @@ public interface IUserGroupService {
 	 * @throws GroupUserQueryException
 	 */
 	RandomDataIterator<GrouppedUser> queryRandomGrouppedUserIterator(long gid, int batchSize, int upCount) throws GroupUserQueryException;
-
+	
+	/**
+	 * 内存随机upperCount
+	 * @param gid
+	 * @param batchSize
+	 * @param upCount
+	 * @return
+	 * @throws GroupUserQueryException
+	 */
+	MemoryRandomDataIterator<Long, User> queryMemoryGrouppedUserIterator(long gid, int batchSize, int upCount, Set<Long> excludeUids) throws GroupUserQueryException;
+	
+	
 	/**
 	 * 分页查询某个分组的用户
 	 * 
@@ -179,7 +194,10 @@ public interface IUserGroupService {
 	List<GrouppedUser> queryGrouppedUsers(long gid, long manualCount,
 			long propertyCount, int offset, int limit)
 			throws GroupUserQueryException;
-
+	
+	
+	UidCollection getAllUids(long gid);
+	
 	/**
 	 * 验证是否重命名
 	 * 
@@ -187,4 +205,33 @@ public interface IUserGroupService {
 	 * @return
 	 */
 	boolean checkUserGroupUniqueByName(String gname);
+	
+	
+	public static class UidCollection {
+		private Set<Long> manualUids;
+		private Set<Long> excludeUids;
+		private List<Long> propertyUids;
+		
+		
+		public UidCollection(Set<Long> manualUids, List<Long> propertyUids, Set<Long> excludeUids) {
+			this.manualUids = manualUids;
+			this.propertyUids = propertyUids;
+			this.excludeUids = excludeUids;
+		}
+
+
+		public Set<Long> getManualUids() {
+			return manualUids;
+		}
+
+
+		public Set<Long> getExcludeUids() {
+			return excludeUids;
+		}
+
+
+		public List<Long> getPropertyUids() {
+			return propertyUids;
+		}
+	}
 }
