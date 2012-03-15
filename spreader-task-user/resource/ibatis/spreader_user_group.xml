@@ -6,7 +6,7 @@
 			website_id = #website#
 		</isNotNull>
 		<isNotEmpty prepend="and" property="gname">
-			gname like %#gname#%
+			gname like concat('%', #gname#, '%')
 		</isNotEmpty>
 		<isNotNull prepend="and" property="gtype">
 			gtype = #gtype#
