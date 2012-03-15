@@ -2,6 +2,8 @@ package com.nali.spreader.test.group;
 
 import java.util.List;
 
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -166,6 +168,8 @@ public class GrouppedUserTest {
 			System.out.println("uid list: "
 					+ ToStringBuilder.toString(userlist));
 		}
+		
 		Assert.assertTrue(CollectionUtils.notContainsAll(list.getAll(), excludeList));
+		Assert.assertThat(list.getAll(), (Matcher)(Matchers.not(Matchers.hasItems(excludeList))));
 	}
 }
