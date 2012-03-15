@@ -14,6 +14,8 @@ import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
+import com.nali.spreader.factory.passive.Input;
+import com.nali.spreader.model.PriorityData;
 import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
@@ -42,6 +44,12 @@ public class AddUserFans extends SingleTaskMachineImpl implements PassiveWorksho
 		userService = userServiceFactory.getUserService(websiteId);
 	}
 
+	@Input
+	public void work(PriorityData<KeyValue<Long, Long>> priorityData, SingleTaskExporter exporter) {
+		exporter.setBasePriority(priorityData.getBasePriority());
+		work(priorityData.getData(), exporter);
+	}
+	
 	@Override
 	public void work(KeyValue<Long, Long> data, SingleTaskExporter exporter) {
 		Long robotId = data.getKey();

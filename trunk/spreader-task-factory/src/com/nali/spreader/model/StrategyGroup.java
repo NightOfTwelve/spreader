@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class StrategyGroup extends BaseModel implements Serializable {
+	private static final long serialVersionUID = 7747290269093900408L;
+
 	/**
 	 * 转换后的分组名称
 	 */
