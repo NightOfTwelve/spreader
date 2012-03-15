@@ -1,3 +1,10 @@
+create index url_idx on tb_content
+(
+   website_id,
+   website_content_id,
+   entry
+);
+
 drop table if exists tb_robot_content;
 
 /*==============================================================*/
@@ -10,7 +17,6 @@ create table tb_robot_content
    content_id           bigint not null,
    author_id            bigint comment '原作者id',
    type                 int not null comment '1:发过，2：转过，3：回复过',
-   status               int not null comment '0:生成,1;成功',
    update_time          datetime,
    primary key (id)
 )
@@ -25,7 +31,6 @@ alter table tb_robot_content comment '机器人内容';
 /*==============================================================*/
 create index idx_robot_content on tb_robot_content
 (
-   status,
    uid,
    content_id,
    type
@@ -36,7 +41,6 @@ create index idx_robot_content on tb_robot_content
 /*==============================================================*/
 create index idx_robot_author on tb_robot_content
 (
-   status,
    uid,
    author_id,
    type

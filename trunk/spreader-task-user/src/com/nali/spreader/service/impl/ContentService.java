@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.nali.spreader.config.ContentDto;
@@ -23,6 +24,7 @@ import com.nali.spreader.data.UserExample;
 import com.nali.spreader.data.UserTag;
 import com.nali.spreader.data.UserTagExample;
 import com.nali.spreader.service.IContentService;
+import com.nali.spreader.service.IGlobalUserService;
 
 @Service
 public class ContentService implements IContentService {
@@ -40,6 +42,8 @@ public class ContentService implements IContentService {
 	private IUserDao userDao;
 	@Autowired
 	private ICrudUserDao crudUserDao;
+	@Autowired
+	private IGlobalUserService globalUserService;
 
 	@Override
 	public Content getMatchedContent(Long uid) {
@@ -139,6 +143,29 @@ public class ContentService implements IContentService {
 	@Override
 	public void addPostContentId(Long uid, Long contentId) {
 		postContent.addPostContentId(uid, contentId);		
+	}
+
+	@Override
+	public Content assignContent(Integer websiteId, Long websiteUid, String entry) {
+		ContentExample example = new ContentExample();
+		example.createCriteria().andWebsiteIdEqualTo(websiteId).andWebsiteUidEqualTo(websiteUid).andEntryEqualTo(entry);
+		List<Content> existContents = crudContentDao.selectByExampleWithoutBLOBs(example);
+		if (existContents.size() != 0) {
+			return existContents.get(0);
+		}
+		Content content = new Content();
+		content.setType(Content.TYPE_WEIBO);
+		content.setWebsiteId(websiteId);
+		content.setWebsiteUid(websiteUid);
+		content.setEntry(entry);
+		Long uid = globalUserService.getOrAssignUid(websiteId, websiteUid);
+		content.setUid(uid);
+		try {
+			crudContentDao.insertSelective(content);
+		} catch (DuplicateKeyException e) {
+			logger.info("double insert.");
+		}
+		return assignContent(websiteId, websiteUid, entry);
 	}
 
 }

@@ -12,10 +12,11 @@ import com.nali.spreader.model.RobotContent;
 public interface IRobotContentService {
 	/**
 	 * 生成或更新status，并且补全其他字段
-	 * @see RobotContent#STATUS_CREATE
-	 * @see RobotContent#STATUS_DONE
+	 * @see RobotContent#TYPE_POST
+	 * @see RobotContent#TYPE_FORWARD
+	 * @see RobotContent#TYPE_REPLY
 	 */
-	void save(Long robotId, Long contentId, Integer type, Integer status);
+	void save(Long robotId, Long contentId, Integer type);
 	
 	/**
 	 * 根据帖子id查找相关机器人id，type传空表示类型不限
