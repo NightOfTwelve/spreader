@@ -23,4 +23,6 @@ public interface IContentService {
 	void addPostContentId(Long uid, Long contentId);
 
 	Content assignContent(Integer websiteId, Long websiteUid, String entry);
+
+	Content parseUrl(String url);
 }

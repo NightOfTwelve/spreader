@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import com.nali.spreader.service.IGlobalUserService;
 
 @Service
 public class GlobalUserService implements IGlobalUserService {
+	private static Logger logger = Logger.getLogger(GlobalUserService.class);
 	private static final Shard BAK_USER_SHARD;
 	@Autowired
 	private ICrudRobotUserDao crudRobotUserDao;
@@ -98,7 +100,11 @@ public class GlobalUserService implements IGlobalUserService {
 		User user = crudUserDao.selectByPrimaryKey(id);
 		if(user!=null) {
 			user.setShard(BAK_USER_SHARD);
-			crudUserDao.insertSelective(user);
+			try {
+				crudUserDao.insertSelective(user);
+			} catch (DuplicateKeyException e) {
+				logger.debug("double insert");
+			}
 			crudUserDao.deleteByPrimaryKey(id);
 		}
 	}
