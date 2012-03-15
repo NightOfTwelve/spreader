@@ -2,8 +2,6 @@ package com.nali.spreader.analyzer;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.RobotForwardListDto;
-import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.Content;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
@@ -33,7 +30,6 @@ import com.nali.spreader.util.random.Randomer;
 @ClassDescription("分组·机器人转发")
 public class RobotForwardByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer, Configable<RobotForwardListDto> {
 	private static Logger logger = Logger.getLogger(RobotForwardByGroup.class);
-	private static final Pattern urlPattern=Pattern.compile("http://.*/(\\d*)/(\\w*)");
 	@Autowired
 	private IUserGroupFacadeService userGroupFacadeService;
 	@Autowired
@@ -66,7 +62,7 @@ public class RobotForwardByGroup extends UserGroupExtendedBeanImpl implements Re
 	public void work() {
 		Long fromGroup = this.getFromUserGroup();
 		for (String url : urlList) {
-			Content content = parse(url);
+			Content content = contentService.parseUrl(url);
 			if(content==null) {
 				logger.error("illegal url:" + url);
 				continue;
@@ -81,14 +77,4 @@ public class RobotForwardByGroup extends UserGroupExtendedBeanImpl implements Re
 		}
 	}
 
-	private Content parse(String url) {
-		Matcher matcher = urlPattern.matcher(url);
-		if(matcher.matches()) {
-			Long websiteUid = Long.valueOf(matcher.group(1));
-			String entry = matcher.group(2);
-			return contentService.assignContent(Website.weibo.getId(), websiteUid, entry);
-		} else {
-			return null;
-		}
-	}
 }

@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.nali.spreader.config.ContentDto;
+import com.nali.spreader.constants.Website;
 import com.nali.spreader.dao.ICrudContentDao;
 import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.ICrudUserTagDao;
@@ -28,6 +31,7 @@ import com.nali.spreader.service.IGlobalUserService;
 
 @Service
 public class ContentService implements IContentService {
+	private static final Pattern urlPattern=Pattern.compile("http://.*/(\\d*)/(\\w*)");
 	private static final Long DEFAULT_CATEGORY_ID = 0L;
 	private static Logger logger = Logger.getLogger(ContentService.class);
 	@Autowired
@@ -74,11 +78,19 @@ public class ContentService implements IContentService {
 
 	@Override
 	public void saveContent(Content content) {
-		checkNotNull(content.getWebsiteId());
-		checkNotNull(content.getWebsiteContentId());
 		checkNotNull(content.getType());
-		Long existId = findByUniqueKey(content.getType(), content.getWebsiteId(), content.getWebsiteContentId());
-		if(existId!=null) {
+		checkNotNull(content.getWebsiteId());
+		checkNotNull(content.getWebsiteUid());
+		checkNotNull(content.getEntry());
+		Content exist = findByUniqueKey(content.getType(), content.getWebsiteId(), content.getWebsiteUid(), content.getEntry());
+		if(exist!=null) {
+			if(exist.getWebsiteContentId()==null) {
+				Content record = new Content();
+				record.setId(exist.getId());
+				record.setWebsiteContentId(content.getWebsiteContentId());
+				crudContentDao.updateByPrimaryKeySelective(record);
+				registerRecommandContent(exist.getId(), exist.getUid());
+			}
 			return;
 		}
 		if(content.getUid()==null) {
@@ -93,9 +105,14 @@ public class ContentService implements IContentService {
 			}
 			content.setUid(users.get(0).getId());
 		}
+		Long contentId = userDao.insertContent(content);
+		registerRecommandContent(contentId, content.getUid());
+	}
+	
+	private void registerRecommandContent(Long contentId, Long contentUid) {
 		List<Long> categoryIds;
 		UserTagExample example = new UserTagExample();
-		example.createCriteria().andUidEqualTo(content.getUid());
+		example.createCriteria().andUidEqualTo(contentUid);
 		List<UserTag> userTags = crudUserTagDao.selectByExample(example);
 		if(userTags.size()==0) {
 			categoryIds = Arrays.asList(DEFAULT_CATEGORY_ID);
@@ -105,18 +122,18 @@ public class ContentService implements IContentService {
 				categoryIds.add(userTag.getCategoryId());
 			}
 		}
-		Long contentId = userDao.insertContent(content);
 		contentCategoryMatch.registerContentId(contentId, categoryIds);
 	}
 
-	private Long findByUniqueKey(Integer type, Integer websiteId, Long websiteContentId) {
+	private Content findByUniqueKey(Integer type, Integer websiteId, Long websiteUid, String entry) {
 		ContentExample example = new ContentExample();
-		example.createCriteria().andTypeEqualTo(type).andWebsiteIdEqualTo(websiteId).andWebsiteContentIdEqualTo(websiteContentId);
+		example.createCriteria().andTypeEqualTo(type).andWebsiteIdEqualTo(websiteId)
+			.andWebsiteUidEqualTo(websiteUid).andEntryEqualTo(entry);
 		List<Content> contents = crudContentDao.selectByExampleWithoutBLOBs(example);
 		if(contents.size()==0) {
 			return null;
 		}
-		return contents.get(0).getId();
+		return contents.get(0);
 	}
 
 	private void checkNotNull(Object param) {
@@ -147,11 +164,9 @@ public class ContentService implements IContentService {
 
 	@Override
 	public Content assignContent(Integer websiteId, Long websiteUid, String entry) {
-		ContentExample example = new ContentExample();
-		example.createCriteria().andWebsiteIdEqualTo(websiteId).andWebsiteUidEqualTo(websiteUid).andEntryEqualTo(entry);
-		List<Content> existContents = crudContentDao.selectByExampleWithoutBLOBs(example);
-		if (existContents.size() != 0) {
-			return existContents.get(0);
+		Content exist = findByUniqueKey(Content.TYPE_WEIBO, websiteId, websiteUid, entry);
+		if (exist!=null) {
+			return exist;
 		}
 		Content content = new Content();
 		content.setType(Content.TYPE_WEIBO);
@@ -168,4 +183,15 @@ public class ContentService implements IContentService {
 		return assignContent(websiteId, websiteUid, entry);
 	}
 
+	@Override
+	public Content parseUrl(String url) {
+		Matcher matcher = urlPattern.matcher(url);
+		if(matcher.matches()) {
+			Long websiteUid = Long.valueOf(matcher.group(1));
+			String entry = matcher.group(2);
+			return assignContent(Website.weibo.getId(), websiteUid, entry);
+		} else {
+			return null;
+		}
+	}
 }

@@ -1,7 +1,10 @@
-create index url_idx on tb_content
+alter table tb_content modify column entry varchar(200) comment '页面入口';
+alter table tb_content drop index url_idx;
+create unique index url_idx on tb_content
 (
+   type,
    website_id,
-   website_content_id,
+   website_uid,
    entry
 );
 

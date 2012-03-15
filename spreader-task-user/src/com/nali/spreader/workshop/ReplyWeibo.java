@@ -14,6 +14,7 @@ import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.Input;
+import com.nali.spreader.model.ReplyDto;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.util.SpecialDateUtil;
 
@@ -29,11 +30,16 @@ public class ReplyWeibo extends SingleTaskMachineImpl implements PassiveWorkshop
 	}
 
 	@Input
+	public void work(SingleTaskExporter exporter, ReplyDto dto) {
+		work(dto.getRobotId(), dto.getContentId(), dto.getText(), dto.isForward(), exporter);
+	}
+	
+	@Input
 	public void work(SingleTaskExporter exporter, KeyValue<Long, String> data) {
 		Long contentId = data.getKey();
 		String text = data.getValue();
 		Long robotUid = weiboRobotUserHolder.getRobotUid();
-		work(robotUid, contentId, text, exporter);
+		work(robotUid, contentId, text, false, exporter);
 	}
 
 	@Override
@@ -42,10 +48,10 @@ public class ReplyWeibo extends SingleTaskMachineImpl implements PassiveWorkshop
 		KeyValue<Long, String> contentReply = data.getValue();
 		Long contentId = contentReply.getKey();
 		String text = contentReply.getValue();
-		work(robotUid, contentId, text, exporter);
+		work(robotUid, contentId, text, false, exporter);
 	}
 	
-	private void work(Long robotUid, Long contentId, String text, SingleTaskExporter exporter) {
+	private void work(Long robotUid, Long contentId, String text, boolean needForward, SingleTaskExporter exporter) {
 		Content content = contentService.getContentById(contentId);
 
 		exporter.setProperty("id", robotUid);
@@ -54,6 +60,7 @@ public class ReplyWeibo extends SingleTaskMachineImpl implements PassiveWorkshop
 		exporter.setProperty("websiteUid", content.getWebsiteUid());
 		exporter.setProperty("entry", content.getEntry());
 		exporter.setProperty("text", text);
+		exporter.setProperty("needForward", needForward);
 		exporter.send(robotUid, SpecialDateUtil.afterToday(3));
 	}
 

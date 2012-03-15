@@ -21,7 +21,7 @@ import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.util.DataIterator;
 
 @Component
-@ClassDescription("分组用户内容爬取")
+@ClassDescription("分组·用户内容爬取")
 public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
 		Configable<UserGroupContentDto> {
 	private static final MessageLogger logger = LoggerFactory.getLogger(FetchUserContentByGroup.class);

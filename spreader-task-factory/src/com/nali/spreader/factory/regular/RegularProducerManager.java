@@ -49,6 +49,7 @@ public class RegularProducerManager {
 		if(regularObject instanceof ExtendedBean) {
 			extendExecuter.extend((ExtendedBean) regularObject, sid);
 		}
+		logger.info("start invoking task:"+name+"#"+sid);
 		if (regularObject instanceof RegularAnalyzer) {
 			((RegularAnalyzer) regularObject).work();
 		} else if (regularObject instanceof RegularTaskProducer) {
@@ -74,6 +75,7 @@ public class RegularProducerManager {
 		} else {
 			throw new IllegalArgumentException("illegal bean type:" + regularObject.getClass());
 		}
+		logger.info("end invoking task:"+name+"#"+sid);
 	}
 	
 	public void saveExtendConfig(String name, Long sid, Object extendConfig) {
