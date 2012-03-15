@@ -22,5 +22,7 @@ public class Range<T extends Comparable<?>> implements Serializable {
 	public void setLte(T lte) {
 		this.lte = lte;
 	}
-
+	public boolean checkNotNull() {
+		return gte!=null && lte!=null;
+	}
 }

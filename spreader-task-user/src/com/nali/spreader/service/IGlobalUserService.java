@@ -7,7 +7,6 @@ import com.nali.spreader.data.UserTag;
 import com.nali.spreader.model.RobotUser;
 
 public interface IGlobalUserService {
-	Long registerRobotUser(RobotUser robotUser, String nickname);
 
 	List<Long> findRelationUserId(Long toUid, Integer attentionType, Boolean isRobot);
 
@@ -20,4 +19,6 @@ public interface IGlobalUserService {
 	Long registerRobotUser(RobotUser robotUser,User user);
 
 	void removeUser(Long id);
+
+	Long getOrAssignUid(Integer websiteId, Long websiteUid);
 }

@@ -14,6 +14,7 @@ public enum TaskErrorCode {
 	ipForbidden(10003),//ip被封
 	taskCancel(10004),//任务被取消了，一般由于用户关闭客户端导致
 	accountWarning(10005),//帐号需要输入验证码
+	contentNotFound(10006),//内容找不到,Content(至少设置好websiteUid,entry)
 	;
 	private final String code;
 	private TaskErrorCode(int code) {

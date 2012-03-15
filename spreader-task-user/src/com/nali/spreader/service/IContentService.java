@@ -21,4 +21,6 @@ public interface IContentService {
 	Set<Long> getPostContentIds(Long uid);
 	
 	void addPostContentId(Long uid, Long contentId);
+
+	Content assignContent(Integer websiteId, Long websiteUid, String entry);
 }

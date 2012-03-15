@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,37 +49,26 @@ public class GlobalUserService implements IGlobalUserService {
 	}
 
 	@Override
-	public Long registerRobotUser(RobotUser robotUser, String nickname) {
-		Long websiteUid = robotUser.getWebsiteUid();
-		Integer websiteId = robotUser.getWebsiteId();
-
-		User user = new User();
-		user.setWebsiteId(websiteId);
-		user.setWebsiteUid(websiteUid);
-		user.setNickName(nickname);
-		user.setIsRobot(true);
-		user.setGender(robotUser.getGender());
-
+	public Long getOrAssignUid(Integer websiteId, Long websiteUid) {
 		UserExample example = new UserExample();
 		example.createCriteria().andWebsiteIdEqualTo(websiteId)
 				.andWebsiteUidEqualTo(websiteUid);
 		List<User> existUsers = crudUserDao.selectByExample(example);
-		Long uid;
 		if (existUsers.size() != 0) {
-			// 可能被其他爬取任务爬到了
-			uid = existUsers.get(0).getId();
-			user.setId(uid);
-			crudUserDao.updateByPrimaryKeySelective(user);
-		} else {
-			uid = userDao.assignUser(user);
-			user.setId(uid);
+			return existUsers.get(0).getId();
 		}
-
-		robotUser.setUid(uid);
-		crudRobotUserDao.insert(robotUser);
-		return uid;
+		User user = new User();
+		user.setWebsiteId(websiteId);
+		user.setWebsiteUid(websiteUid);
+		user.setIsRobot(false);
+		try {
+			return userDao.assignUser(user);
+		} catch (DuplicateKeyException e) {
+			return getOrAssignUid(websiteId, websiteUid);
+		}
+	
 	}
-
+	
 	@Override
 	public List<Long> findRelationUserId(Long toUid, Integer attentionType,
 			Boolean isRobot) {

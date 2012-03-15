@@ -26,7 +26,7 @@ import com.nali.spreader.service.IUserGroupFacadeService;
 import com.nali.spreader.util.random.NumberRandomer;
 
 @Component
-@ClassDescription("分组关注用户")
+@ClassDescription("分组·关注用户")
 public class AddFansToUserByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
 		Configable<GroupUserAddFansDto> {
 	private static final MessageLogger logger = LoggerFactory.getLogger(AddFansToUserByGroup.class);
