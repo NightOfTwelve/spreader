@@ -33,5 +33,6 @@
   <sqlMap resource="ibatis/spreader_task.xml" />
   <sqlMap resource="ibatis/spreader_user_group.xml" />
   <sqlMap resource="ibatis/spreader_strategy_group.xml" />
+  <sqlMap resource="ibatis/spreader_robot_content.xml"/>
 </sqlMapConfig>
 
