@@ -30,7 +30,6 @@ public class RegisterWeiboAccount extends SingleTaskMachineImpl implements Passi
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
 	private NamingMode[] namingModes=NamingMode.values();
-	private double useStudentCardRate=0.3;
 
 	public RegisterWeiboAccount() {
 		super(SimpleActionConfig.registerWeibo, Website.weibo, Channel.intervention);
@@ -57,23 +56,7 @@ public class RegisterWeiboAccount extends SingleTaskMachineImpl implements Passi
 		exporter.setProperty("city", robot.getCity());
 		
 		exporter.setProperty("realName", robot.getFullName());
-		boolean useStudentCard = false;
-		int age = SpecialDateUtil.getCachedThisYear()-robot.getBirthdayYear();
-		if(age>=16 && age < 22) {
-			if(Math.random()<useStudentCardRate) {
-				useStudentCard = true;
-			}
-		}
-		Integer idType;
-		Object idCode;
-		if(useStudentCard) {
-			idType = RobotRegister.ID_TYPE_STUDENT;
-			idCode = robot.getStudentId();
-		} else {
-			idType = RobotRegister.ID_TYPE_PERSON;
-			idCode = robot.getPersonId();
-		}
-		exporter.setProperty("idType", idType);
+		String idCode = robot.getPersonId();
 		exporter.setProperty("idCode", idCode);
 		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterToday(2));
 	}
