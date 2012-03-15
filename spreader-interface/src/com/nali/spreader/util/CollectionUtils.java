@@ -61,4 +61,24 @@ public class CollectionUtils {
 		}
 		return Collections.emptyList();
 	}
+	
+	public static <T> boolean notContainsAll(Collection<T> a, Collection<T> b) {
+		if(com.nali.common.util.CollectionUtils.isEmpty(b)) {
+			return true;
+		}
+		
+		Set<T> aset = null;
+		if(a instanceof Set) {
+			aset = (Set<T>) a;
+		}else{
+			aset = com.nali.common.util.CollectionUtils.newHashSet(a.size());
+		}
+		
+		for(T e : b) {
+			if(aset.contains(e)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
