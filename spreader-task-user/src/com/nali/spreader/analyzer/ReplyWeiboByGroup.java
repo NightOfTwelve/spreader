@@ -38,6 +38,7 @@ import com.nali.spreader.util.random.WeightRandomer;
 public class ReplyWeiboByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,Configable<RobotReplyListDto> {
 	private static final String FILE_REPLY_WORDS = "txt/reply.txt";
 	private static Logger logger = Logger.getLogger(ReplyWeiboByGroup.class);
+	private static Randomer<String> defaultReplyWords;
 	@Autowired
 	private IUserGroupFacadeService userGroupFacadeService;
 	@Autowired
@@ -47,9 +48,8 @@ public class ReplyWeiboByGroup extends UserGroupExtendedBeanImpl implements Regu
 	@AutowireProductLine
 	private TaskProduceLine<ReplyDto> replyWeibo;
 	
-	private int needForwardPercent=20;
-	private Randomer<Boolean> needForward;
 	private Randomer<String> replyWords;
+	private Randomer<Boolean> needForward;
 	private NumberRandomer random;
 	private List<String> urlList;
 	
@@ -57,16 +57,17 @@ public class ReplyWeiboByGroup extends UserGroupExtendedBeanImpl implements Regu
 		super(UserGroupMetaInfo.FROM_GROUP + "回复微博");
 	}
 	
+	static {
+		try {
+			Set<String> datas = TxtFileUtil.read(ReplyWeiboByGroup.class.getClassLoader().getResource(FILE_REPLY_WORDS));
+			defaultReplyWords = new AvgRandomer<String>(datas);
+		} catch (IOException e) {
+			logger.error(e, e);
+		}
+	}
+	
 	@PostConstruct
 	public void init() throws IOException {
-		Set<String> datas = TxtFileUtil.read(ReplyWeiboByGroup.class.getClassLoader().getResource(FILE_REPLY_WORDS));
-		replyWords = new AvgRandomer<String>(datas);
-		WeightRandomer<Boolean> needForward = new WeightRandomer<Boolean>();
-		needForwardPercent=Math.max(1, needForwardPercent);
-		needForwardPercent=Math.min(99, needForwardPercent);
-		needForward.add(true, needForwardPercent);
-		needForward.add(false, 100 - needForwardPercent);
-		this.needForward = needForward;
 	}
 	
 	@Override
@@ -103,6 +104,23 @@ public class ReplyWeiboByGroup extends UserGroupExtendedBeanImpl implements Regu
 		} else {
 			throw new IllegalArgumentException("输入值不完整");
 		}
+		Integer needForwardPercent = config.getNeedForwardPercent();
+		if(needForwardPercent==null) {
+			needForwardPercent=0;
+		} else {
+			needForwardPercent=Math.max(0, needForwardPercent);
+			needForwardPercent=Math.min(100, needForwardPercent);
+		}
+		if(config.getWords()==null) {
+			replyWords = defaultReplyWords;
+		} else {
+			List<String> words = config.getWords();
+			replyWords = new AvgRandomer<String>(words);
+		}
+		WeightRandomer<Boolean> needForward = new WeightRandomer<Boolean>();
+		needForward.add(true, needForwardPercent);
+		needForward.add(false, 100 - needForwardPercent);
+		this.needForward = needForward;
 	}
 
 }
