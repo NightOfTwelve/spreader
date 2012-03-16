@@ -11,6 +11,10 @@ public class RobotReplyListDto implements Serializable {
 	private Range<Integer> count;
 	@PropertyDescription("微博地址")
 	private List<String> urlList;
+	@PropertyDescription("语句（留空则使用默认语句回复）")
+	private List<String> words;
+	@PropertyDescription("回复并转发百分比")
+	private Integer needForwardPercent;
 	public Range<Integer> getCount() {
 		return count;
 	}
@@ -22,5 +26,17 @@ public class RobotReplyListDto implements Serializable {
 	}
 	public void setUrlList(List<String> urlList) {
 		this.urlList = urlList;
+	}
+	public List<String> getWords() {
+		return words;
+	}
+	public void setWords(List<String> words) {
+		this.words = words;
+	}
+	public Integer getNeedForwardPercent() {
+		return needForwardPercent;
+	}
+	public void setNeedForwardPercent(Integer needForwardPercent) {
+		this.needForwardPercent = needForwardPercent;
 	}
 }
