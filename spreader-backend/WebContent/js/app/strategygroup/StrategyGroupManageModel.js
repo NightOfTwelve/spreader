@@ -163,8 +163,18 @@ Ext.onReady(function() {
 				buttons : [{
 					text : '保存',
 					handler : function() {
+						var fhidden = fromSelectUserGroupCombo.hidden;
+						var thidden = toSelectUserGroupCombo.hidden;
 						var fromId = fromSelectUserGroupCombo.getValue();
 						var toId = toSelectUserGroupCombo.getValue();
+						if (!fhidden && Ext.isEmpty(fromId)) {
+							Ext.MessageBox.alert("提示", "用户分组不能为空");
+							return;
+						}
+						if (!thidden && Ext.isEmpty(toId)) {
+							Ext.MessageBox.alert("提示", "用户分组不能为空");
+							return;
+						}
 						strategyGroupSubmitTreeData(stgdisptree,
 								triggerDispForm, radioForm, simpleDispForm,
 								editstgWindow, store, groupStore, fromId, toId);
@@ -202,8 +212,18 @@ Ext.onReady(function() {
 				buttons : [{
 					text : '保存',
 					handler : function() {
+						var fhidden = fromSelectUserGroupCombo.hidden;
+						var thidden = toSelectUserGroupCombo.hidden;
 						var fromId = fromSelectUserGroupCombo.getValue();
 						var toId = toSelectUserGroupCombo.getValue();
+						if (!fhidden && Ext.isEmpty(fromId)) {
+							Ext.MessageBox.alert("提示", "用户分组不能为空");
+							return;
+						}
+						if (!thidden && Ext.isEmpty(toId)) {
+							Ext.MessageBox.alert("提示", "用户分组不能为空");
+							return;
+						}
 						strategyGroupSubmitTreeData(stgdisptree,
 								triggerDispForm, radioForm, simpleDispForm,
 								editstgWindow, store, groupStore, fromId, toId);
@@ -688,7 +708,7 @@ Ext.onReady(function() {
 					GGROUPTYPE = gType;
 					var gid = data.id;
 					settingCreateTrigger(gid, GISGROUP);
-//					editstgWindow.title = data.transformName;
+					// editstgWindow.title = data.transformName;
 					// TODO
 					// editstgWindow.show();
 				} else {
@@ -854,7 +874,7 @@ Ext.onReady(function() {
 					text : '确定', // 按钮文本
 					iconCls : 'tbar_synchronizeIcon', // 按钮图标
 					handler : function() { // 按钮响应函数
-						//TODO
+						// TODO
 						GDISPID = null;
 						cleanCreateTrigger();
 						GOBJID = stgSelectCombo2.getValue();
