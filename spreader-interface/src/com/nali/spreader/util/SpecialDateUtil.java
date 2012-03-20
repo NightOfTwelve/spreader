@@ -15,6 +15,10 @@ public class SpecialDateUtil {
 	public static Date afterToday(int count) {
 		return afterToday(count, true);
 	}
+	
+	public static Date afterNow(int count) {
+		return afterToday(count, false);
+	}
 
 	public static Date afterToday(int count, boolean truncate) {
 		Calendar calendar = Calendar.getInstance();

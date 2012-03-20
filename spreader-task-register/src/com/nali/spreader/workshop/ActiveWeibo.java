@@ -67,7 +67,7 @@ public class ActiveWeibo extends SingleTaskMachineImpl implements PassiveWorksho
 		exporter.setProperty("id", robotRegisterId);
 		exporter.setProperty("email", robotRegister.getEmail());
 		exporter.setProperty("pwd", robotRegister.getPwd());
-		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterToday(2));
+		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterNow(30));
 	}
 
 }

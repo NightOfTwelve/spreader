@@ -60,7 +60,7 @@ public class RegisterWeiboAccount extends SingleTaskMachineImpl implements Passi
 		exporter.setProperty("realName", robot.getFullName());
 		String idCode = robot.getPersonId();
 		exporter.setProperty("idCode", idCode);
-		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterToday(2));
+		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterNow(30));
 	}
 
 	public List<String> getModifiedNames(RobotRegister robot) {
