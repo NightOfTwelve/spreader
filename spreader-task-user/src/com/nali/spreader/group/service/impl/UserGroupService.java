@@ -88,7 +88,7 @@ public class UserGroupService implements IUserGroupService {
 			gid = this.identityService.getNextId("spreader.user.group");
 			userGroup.setGid(gid);
 		}
-
+		
 		Date now = new Date();
 
 		if (userGroup.getCreateTime() == null) {
@@ -124,7 +124,7 @@ public class UserGroupService implements IUserGroupService {
 					e);
 		}
 		userGroup.setPropExp(expJson);
-
+		
 		int propVal = this.propertyExpParser
 				.parsePropVal(propertyExpressionDTO);
 		userGroup.setPropVal(propVal);
@@ -198,7 +198,7 @@ public class UserGroupService implements IUserGroupService {
 		UserGroup userGroup = this.queryUserGroup(gid);
 		long manualCount = this.dynamicUserGroupService.getUserCount(gid);
 		List<GrouppedUser> grouppedUserList = Collections.emptyList();
-		long count = 0;
+		long count = manualCount;
 		if (userGroup.getGtype().intValue() != UserGroupType.manual
 				.getTypeVal()) {
 			long propertyCount = this.propertiesGrouppedUserService
@@ -207,7 +207,7 @@ public class UserGroupService implements IUserGroupService {
 					.getExcludeUserCount(gid);
 			propertyCount = propertyCount - excludeCount;
 			
-			 count = manualCount + propertyCount;
+			 count += propertyCount;
 			 grouppedUserList = this.queryGrouppedUsers(gid,
 					manualCount, propertyCount, limit.offset, limit.maxRows);
 		}else{
