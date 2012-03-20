@@ -19,6 +19,7 @@ import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
+import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.words.naming.NamingMode;
@@ -46,6 +47,7 @@ public class RegisterWeiboAccount extends SingleTaskMachineImpl implements Passi
 	@Override
 	public void work(Long id, SingleTaskExporter exporter) {
 		RobotRegister robot = robotRegisterService.get(id);
+		exporter.setBasePriority(ClientTask.BASE_PRIORITY_MAX/4);
 		exporter.setProperty("id", robot.getId());
 		exporter.setProperty("nicknames", getModifiedNames(robot));
 		exporter.setProperty("baseName", robot.getNickName());
