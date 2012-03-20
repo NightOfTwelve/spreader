@@ -89,7 +89,7 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Mult
 		
 		exporter.setActionId(actionIds.get());
 		exporter.setUid(User.UID_NOT_LOGIN);
-		exporter.setExpiredTime(SpecialDateUtil.afterToday(2));
+		exporter.setExpiredTime(SpecialDateUtil.afterNow(30));
 		exporter.send();
 	}
 
