@@ -47,7 +47,7 @@ public class RegisterWeiboAccount extends SingleTaskMachineImpl implements Passi
 	@Override
 	public void work(Long id, SingleTaskExporter exporter) {
 		RobotRegister robot = robotRegisterService.get(id);
-		exporter.setBasePriority(ClientTask.BASE_PRIORITY_MAX/4);
+		exporter.setBasePriority(ClientTask.BASE_PRIORITY_MAX);
 		exporter.setProperty("id", robot.getId());
 		exporter.setProperty("nicknames", getModifiedNames(robot));
 		exporter.setProperty("baseName", robot.getNickName());

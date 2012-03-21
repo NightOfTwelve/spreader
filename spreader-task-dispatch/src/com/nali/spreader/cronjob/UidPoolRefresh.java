@@ -35,7 +35,6 @@ import com.nali.spreader.util.PerformanceLogger;
 @Component
 public class UidPoolRefresh {
 	private static Logger logger = Logger.getLogger(UidPoolRefresh.class);
-	private int minPriorityTaskCount = 1000;
 	@Autowired
 	private IUidPoolService uidPoolService;
 	@Autowired
@@ -128,8 +127,8 @@ public class UidPoolRefresh {
 		private void run0() {
 			//assignPriorityTasks
 			int topN = uidPool.getFetchCount();
-			if (topN < minPriorityTaskCount) {
-				topN = minPriorityTaskCount;
+			if (topN < taskType.getMinPriorityTaskCount()) {
+				topN = taskType.getMinPriorityTaskCount();
 			}
 			//TODO copy uids
 			Long lowestPriority = getTopPriority(topN);
