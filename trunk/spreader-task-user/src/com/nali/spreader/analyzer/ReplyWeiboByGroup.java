@@ -38,7 +38,7 @@ import com.nali.spreader.util.random.WeightRandomer;
 public class ReplyWeiboByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,Configable<RobotReplyListDto> {
 	private static final String FILE_REPLY_WORDS = "txt/reply.txt";
 	private static Logger logger = Logger.getLogger(ReplyWeiboByGroup.class);
-	private static Randomer<String> defaultReplyWords;
+	static Randomer<String> defaultReplyWords;
 	@Autowired
 	private IUserGroupFacadeService userGroupFacadeService;
 	@Autowired
