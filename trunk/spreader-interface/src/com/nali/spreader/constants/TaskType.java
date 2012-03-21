@@ -2,19 +2,25 @@ package com.nali.spreader.constants;
 
 public enum TaskType {//TODO
 	weiboNormal(101, 80, 20),
-	weiboRegister(102, 80, 1),
+	weiboRegister(102, 80, 1, 200),
 	weiboInstant(103, 80, 1),
 	;
 	private Integer id;
 	//front
 	private int passiveFetchPercent;
 	private int passiveFetchSize;
+	private int minPriorityTaskCount;
 	//backend
 	
 	private TaskType(Integer id, int passiveFetchPercent, int passiveFetchSize) {
+		this(id, passiveFetchPercent, passiveFetchSize, 1000);
+	}
+
+	private TaskType(Integer id, int passiveFetchPercent, int passiveFetchSize, int minPriorityTaskCount) {
 		this.id = id;
 		this.passiveFetchPercent = passiveFetchPercent;
 		this.passiveFetchSize = passiveFetchSize;
+		this.minPriorityTaskCount = minPriorityTaskCount;
 	}
 	public int getFetchSize() {//TODO
 		return passiveFetchSize;
@@ -33,5 +39,8 @@ public enum TaskType {//TODO
 	}
 	public String getPassiveTaskSenderBeanName() {
 		return name() + "PassiveTaskSender";
+	}
+	public int getMinPriorityTaskCount() {
+		return minPriorityTaskCount;
 	}
 }
