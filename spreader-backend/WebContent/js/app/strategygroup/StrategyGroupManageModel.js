@@ -303,12 +303,39 @@ Ext.onReady(function() {
 			});
 
 	// 嵌入的FORM
+	// var infoViewForm = new Ext.form.FormPanel({
+	// autoScroll : true,
+	// id : 'infoViewForm',
+	// split : true,
+	// title:'KKKK',
+	// region : 'north',
+	// height : 100,
+	// // border : true,
+	// // labelWidth : 100, // 标签宽度
+	// frame : true, // 是否渲染表单面板背景色
+	// defaultType : 'textfield', // 表单元素默认类型
+	// labelAlign : 'left', // 标签对齐方式
+	// bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
+	// items : [{
+	// xtype : 'label',
+	// fieldLabel : '策略信息',
+	// id : 'stginfo',
+	// labelStyle : 'padding:0px',
+	// text : ''
+	// }]
+	// });
+	// 策略说明的隐藏域
+	var descField = new Ext.form.Hidden({
+				name : 'descField'
+			});
+	// 嵌入的FORM
 	var infoViewForm = new Ext.form.FormPanel({
 				autoScroll : true,
+				title : '选择用户分组',
 				id : 'infoViewForm',
 				split : true,
 				region : 'north',
-				height : 80,
+				height : 120,
 				border : true,
 				// labelWidth : 100, // 标签宽度
 				frame : true, // 是否渲染表单面板背景色
@@ -321,27 +348,7 @@ Ext.onReady(function() {
 							id : 'stginfo',
 							labelStyle : 'padding:0px',
 							text : ''
-						}]
-			});
-	// 策略说明的隐藏域
-	var descField = new Ext.form.Hidden({
-				name : 'descField'
-			});
-	// 嵌入的FORM
-	var addUserGroupSelectCmbForm = new Ext.form.FormPanel({
-				autoScroll : true,
-				title : '选择用户分组',
-				id : 'addUserGroupSelectCmbForm',
-				split : true,
-				region : 'south',
-				height : 100,
-				border : true,
-				// labelWidth : 100, // 标签宽度
-				frame : true, // 是否渲染表单面板背景色
-				defaultType : 'textfield', // 表单元素默认类型
-				labelAlign : 'left', // 标签对齐方式
-				bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
-				items : [fromSelectUserGroupCombo, toSelectUserGroupCombo]
+						}, fromSelectUserGroupCombo, toSelectUserGroupCombo]
 			});
 	// 创建策略维护的窗口组件
 	var editstgWindow = new Ext.Window({
@@ -373,8 +380,10 @@ Ext.onReady(function() {
 							id : 'editview',
 							split : true,
 							width : 500,
-							items : [infoViewForm, stgdisptree,
-									addUserGroupSelectCmbForm]
+							items : [infoViewForm, stgdisptree
+							// ,
+							// addUserGroupSelectCmbForm
+							]
 						}, {
 							region : 'south',
 							title : '调度配置',
@@ -859,6 +868,7 @@ Ext.onReady(function() {
 				title : '<span class="commoncss">策略选择</span>', // 窗口标题
 				id : 'stgCmbWindow',
 				closeAction : 'hide',
+				modal : true,
 				layout : 'fit', // 设置窗口布局模式
 				width : 300, // 窗口宽度
 				height : 150, // 窗口高度
@@ -1139,6 +1149,7 @@ Ext.onReady(function() {
 				id : 'compGroupWindow',
 				closeAction : 'hide',
 				maximized : true,
+				modal : true,
 				layout : 'border', // 设置窗口布局模式
 				width : 500, // 窗口宽度
 				height : 600, // 窗口高度
@@ -1167,6 +1178,7 @@ Ext.onReady(function() {
 				title : '<span class="commoncss">创建分组</span>', // 窗口标题
 				id : 'groupAddWindow',
 				closeAction : 'hide',
+				modal : true,// 遮罩
 				layout : 'fit', // 设置窗口布局模式
 				width : 350, // 窗口宽度
 				height : 300, // 窗口高度
