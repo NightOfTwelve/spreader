@@ -2,6 +2,7 @@ package com.nali.spreader.analyzer;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,8 +26,6 @@ import com.nali.spreader.util.DataIterator;
 public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
 		Configable<UserGroupContentDto> {
 	private static final MessageLogger logger = LoggerFactory.getLogger(FetchUserContentByGroup.class);
-	@SuppressWarnings("unused")
-	private UserGroupContentDto config;
 	private Date lastFetchTime;
 	@Autowired
 	private IUserGroupService userGroupService;
@@ -39,8 +38,15 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 
 	@Override
 	public void init(UserGroupContentDto config) {
-		this.config = config;
-		this.lastFetchTime = config.getLastFetchTime();
+		Long minute = config.getLastFetchTime();
+		Date time = null;
+		if (minute != null) {
+			long millisecond = TimeUnit.MINUTES.toMillis(minute);
+			time = new Date(System.currentTimeMillis() - millisecond);
+		} else {
+			time = new Date();
+		}
+		this.lastFetchTime = time;
 	}
 
 	@Override
@@ -60,8 +66,8 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 				}
 			}
 		} else {
-			logger.equals("爬取用户组ID为Null");
-			throw new RuntimeException();
+			logger.error("爬取用户组ID为Null");
+			throw new IllegalArgumentException();
 		}
 	}
 }
