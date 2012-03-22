@@ -6,10 +6,6 @@ import com.nali.spreader.factory.config.desc.PropertyDescription;
 
 public class BaseRobotGroupContent implements Serializable {
 	private static final long serialVersionUID = -5192869137013985965L;
-	// 转发
-	public static final String CONFIG_FORWARD = "forward";
-	// 回复
-	public static final String CONFIG_REPLY = "reply";
 	@PropertyDescription("内容时效性(分钟)")
 	private Long expiredSeconds;
 	@PropertyDescription("内容最小长度")

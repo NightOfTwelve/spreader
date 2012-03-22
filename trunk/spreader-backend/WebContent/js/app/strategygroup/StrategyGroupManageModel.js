@@ -1130,7 +1130,7 @@ Ext.onReady(function() {
 						GGROUPTYPE = 21;
 						var trgid = data.id;
 						settingCreateTrigger(trgid);
-						editstgWindow.title = rendDispName(GDISNAME);
+						editstgWindow.title = rendDispName2(GDISNAME);
 						editstgWindow.show();
 					}
 				}
@@ -1286,8 +1286,14 @@ Ext.onReady(function() {
 							.setValue(repeatInternal);
 					ttriggerDispForm.findField("cron").setValue(cron);
 					var remindcmp = Ext.getCmp("jobremind");
-					var tstr = '任务:' + rendDispName(GDISNAME) + ',编号:'
-							+ GDISPID + ',目前运行信息:' + remind;
+					var stext = "";
+					if (isGroup) {
+						stext = rendDispName(GDISNAME);
+					} else {
+						stext = rendDispName2(GDISNAME);
+					}
+					var tstr = '任务:' + stext + ',编号:' + GDISPID + ',目前运行信息:'
+							+ remind;
 					remindcmp
 							.setText('<font color = "red">' + tstr + '</font>');
 				}
@@ -1426,6 +1432,24 @@ Ext.onReady(function() {
 		for (var idx in list) {
 			var tmp = list[idx].groupName;
 			var dname = list[idx].transformName;
+			if (value == tmp) {
+				return dname;
+			}
+		}
+	}
+
+	/**
+	 * 渲染策略名称为中文名 简单分组
+	 * 
+	 * @param {}
+	 *            value
+	 * @return {}
+	 */
+	function rendDispName2(value) {
+		var list = store.reader.jsonData.dispname;
+		for (var idx in list) {
+			var tmp = list[idx].name;
+			var dname = list[idx].displayName;
 			if (value == tmp) {
 				return dname;
 			}
