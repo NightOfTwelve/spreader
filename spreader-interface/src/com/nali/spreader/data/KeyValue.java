@@ -26,5 +26,8 @@ public class KeyValue<K, V> implements Serializable {
 	public void setValue(V value) {
 		this.value = value;
 	}
-
+	@Override
+	public String toString() {
+		return "<" + key + ", " + value + ">";
+	}
 }
