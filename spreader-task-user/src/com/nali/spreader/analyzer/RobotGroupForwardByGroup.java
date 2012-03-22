@@ -6,9 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.log.MessageLogger;
-import com.nali.log.impl.LoggerFactory;
-import com.nali.spreader.config.BaseRobotGroupContent;
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.RobotGroupForwardDto;
 import com.nali.spreader.data.KeyValue;
@@ -36,7 +33,7 @@ import com.nali.spreader.util.random.Randomer;
 @ClassDescription("分组·机器人分组转发微博")
 public class RobotGroupForwardByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
 		Configable<RobotGroupForwardDto> {
-	private static final MessageLogger logger = LoggerFactory.getLogger(RobotGroupForwardByGroup.class);
+//	private static final MessageLogger logger = LoggerFactory.getLogger(RobotGroupForwardByGroup.class);
 	@Autowired
 	private IUserGroupFacadeService userGroupFacadeService;
 	@Autowired

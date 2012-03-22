@@ -4,12 +4,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.RobotGroupReplyDto;
 import com.nali.spreader.data.User;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.Configable;
+import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
@@ -27,6 +29,8 @@ import com.nali.spreader.util.random.Randomer;
  * @author xiefei
  * 
  */
+@Component
+@ClassDescription("分组·机器人分组回复微博")
 public class RobotGroupReplyByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
 		Configable<RobotGroupReplyDto> {
 	@Autowired
