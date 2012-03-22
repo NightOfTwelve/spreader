@@ -22,7 +22,7 @@ public class AccountErrorProcessor extends DefaultErrorProcessor<Long> {
 	
 	@Override
 	public String getErrorCode() {
-		return TaskErrorCode.accountError.getCode();
+		return TaskErrorCode.accountBlock.getCode();
 	}
 
 	@Override
