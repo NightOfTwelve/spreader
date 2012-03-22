@@ -52,14 +52,11 @@ public class GlobalUserService implements IGlobalUserService {
 
 	@Override
 	public Long getOrAssignUid(Integer websiteId, Long websiteUid) {
-		UserExample example = new UserExample();
-		example.createCriteria().andWebsiteIdEqualTo(websiteId)
-				.andWebsiteUidEqualTo(websiteUid);
-		List<User> existUsers = crudUserDao.selectByExample(example);
-		if (existUsers.size() != 0) {
-			return existUsers.get(0).getId();
+		User user = findByUniqueKey(websiteId, websiteUid);
+		if (user!=null) {
+			return user.getId();
 		}
-		User user = new User();
+		user = new User();
 		user.setWebsiteId(websiteId);
 		user.setWebsiteUid(websiteUid);
 		user.setIsRobot(false);
@@ -69,6 +66,19 @@ public class GlobalUserService implements IGlobalUserService {
 			return getOrAssignUid(websiteId, websiteUid);
 		}
 	
+	}
+
+	@Override
+	public User findByUniqueKey(Integer websiteId, Long websiteUid) {
+		UserExample example = new UserExample();
+		example.createCriteria().andWebsiteIdEqualTo(websiteId)
+				.andWebsiteUidEqualTo(websiteUid);
+		List<User> existUsers = crudUserDao.selectByExample(example);
+		if (existUsers.size() != 0) {
+			return existUsers.get(0);
+		} else {
+			return null;
+		}
 	}
 	
 	@Override
@@ -139,14 +149,11 @@ public class GlobalUserService implements IGlobalUserService {
 		user.setCreateTime(new Date());
 		user.setIsRobot(true);
 
-		UserExample example = new UserExample();
-		example.createCriteria().andWebsiteIdEqualTo(websiteId)
-				.andWebsiteUidEqualTo(websiteUid);
-		List<User> existUsers = crudUserDao.selectByExample(example);
+		User existUser = findByUniqueKey(websiteId, websiteUid);
 		Long uid;
-		if (existUsers.size() != 0) {
+		if (existUser!=null) {
 			// 可能被其他爬取任务爬到了
-			uid = existUsers.get(0).getId();
+			uid = existUser.getId();
 			user.setId(uid);
 		} else {
 			uid = userDao.assignUser(user);

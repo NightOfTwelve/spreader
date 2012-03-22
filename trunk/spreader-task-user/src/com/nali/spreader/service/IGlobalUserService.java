@@ -21,4 +21,6 @@ public interface IGlobalUserService {
 	void removeUser(Long id);
 
 	Long getOrAssignUid(Integer websiteId, Long websiteUid);
+
+	User findByUniqueKey(Integer websiteId, Long websiteUid);
 }
