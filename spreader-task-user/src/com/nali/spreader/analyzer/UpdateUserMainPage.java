@@ -3,7 +3,6 @@ package com.nali.spreader.analyzer;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +25,6 @@ import com.nali.spreader.util.NumberUtil;
 @ClassDescription("爬取用户主页")
 public class UpdateUserMainPage implements RegularAnalyzer {//TODO SystemObject
 	private Integer websiteId = Website.weibo.getId();
-	private static Logger logger = Logger.getLogger(UpdateUserMainPage.class);
 	private IRobotUserService robotUserService;
 	private IUserService userService;
 	@AutowireProductLine
@@ -43,7 +41,7 @@ public class UpdateUserMainPage implements RegularAnalyzer {//TODO SystemObject
 	}
 
 	@Override
-	public void work() {//TODO 改的只剩下同步过期用户,同步未更新的机器人用户
+	public String work() {//TODO 改的只剩下同步过期用户,同步未更新的机器人用户
 		final int threshold = 20;//TODO 改为任意机器人类型任务
 		//基本数据计算
 		long uninitializedUserCount = userService.getUninitializedUserCount();
@@ -51,12 +49,10 @@ public class UpdateUserMainPage implements RegularAnalyzer {//TODO SystemObject
 		long userCount = uninitializedUserCount + expiredUserCount;
 		long robotCount = robotUserService.getUserCount();
 		if(userCount==0) {
-			logger.info("no need to FetchWeiboUserMainPage");
-			return;
+			return "no need to FetchWeiboUserMainPage";
 		}
 		if(robotCount==0) {
-			logger.error("not enough users for FetchWeiboUserMainPage");
-			return;
+			return "not enough users for FetchWeiboUserMainPage";
 		}
 		int batchSize = (int) NumberUtil.ceilingDivide(userCount, robotCount);
 		if(batchSize<threshold) {
@@ -91,6 +87,7 @@ public class UpdateUserMainPage implements RegularAnalyzer {//TODO SystemObject
 			robotUser = robotIterator.next();
 			createTasks(robotUser.getUid(), users);
 		}
+		return null;
 	}
 	
 	private void createTasks(Long robotUid, List<User> users) {

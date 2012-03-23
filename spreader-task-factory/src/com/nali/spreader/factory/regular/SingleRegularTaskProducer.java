@@ -5,6 +5,6 @@ import com.nali.spreader.factory.exporter.SingleTaskExporter;
 
 public interface SingleRegularTaskProducer extends RegularTaskProducer<SingleTaskMeta, SingleTaskExporter> {
 
-	void work(SingleTaskExporter exporter);
+	String work(SingleTaskExporter exporter);
 
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.nali.spreader.factory.base.SingleTaskMeta;
 import com.nali.spreader.factory.exporter.BaseDBStoreExporterImpl;
+import com.nali.spreader.factory.exporter.IResultInfo;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.service.ITaskService;
@@ -11,8 +12,8 @@ import com.nali.spreader.service.ITaskService;
 public class TestExporter extends BaseDBStoreExporterImpl<SingleTaskMeta> implements SingleTaskExporter {
 	private Long taskId;
 
-	public TestExporter(SingleTaskMeta taskMeta, ITaskService taskService) {
-		super(taskMeta, null, taskService, taskMeta.getContextMeta().getSystemPropertyMap());
+	public TestExporter(SingleTaskMeta taskMeta, ITaskService taskService, IResultInfo resultInfo) {
+		super(taskMeta, null, taskService, resultInfo, taskMeta.getContextMeta().getSystemPropertyMap());
 	}
 
 	@Override

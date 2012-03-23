@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.nali.spreader.factory.base.SingleTaskMeta;
 import com.nali.spreader.factory.base.TaskMachine;
+import com.nali.spreader.factory.exporter.IResultInfo;
 import com.nali.spreader.factory.result.ResultReceive;
 import com.nali.spreader.model.TaskResult;
 import com.nali.spreader.service.ITaskService;
@@ -23,6 +24,8 @@ public class DoTestWorkshop {
 	private TestWorkshop t;
 	@Autowired
 	private ResultReceive r;
+	@Autowired
+	private IResultInfo resultInfo;
 	
 	@Test
 	public void t() {
@@ -37,7 +40,7 @@ public class DoTestWorkshop {
 	}
 	
 	public TestExporter getExporter(TaskMachine<SingleTaskMeta> t) {
-		return new TestExporter(t.getTaskMeta(), taskService);
+		return new TestExporter(t.getTaskMeta(), taskService, resultInfo);
 	}
 	
 }

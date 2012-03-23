@@ -24,8 +24,9 @@ public class TestUserGroup extends UserGroupExtendedBeanImpl implements RegularA
 	}
 
 	@Override
-	public void work() {
+	public String work() {
 		System.out.println("###############test start");
+		return null;
 //		System.out.println(config);
 //		DataIterator<Long> it = userGroupService.queryGrouppedUids(getFromUserGroup(), 10);
 //		while(it.hasNext()) {

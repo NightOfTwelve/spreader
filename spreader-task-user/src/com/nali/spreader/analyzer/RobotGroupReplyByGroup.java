@@ -54,7 +54,7 @@ public class RobotGroupReplyByGroup extends UserGroupExtendedBeanImpl implements
 	}
 
 	@Override
-	public void work() {
+	public String work() {
 		Long fromGid = this.getFromUserGroup();
 		Long toGid = this.getToUserGroup();
 		// 随机获取被回复用户分组的用户信息
@@ -80,6 +80,7 @@ public class RobotGroupReplyByGroup extends UserGroupExtendedBeanImpl implements
 				}
 			}
 		}
+		return null;
 	}
 
 	@Override

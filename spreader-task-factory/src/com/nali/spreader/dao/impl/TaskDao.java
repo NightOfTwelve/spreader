@@ -8,6 +8,7 @@ import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.nali.spreader.dao.ITaskDao;
+import com.nali.spreader.model.RegularJobResult;
 import com.nali.spreader.model.Task;
 import com.nali.spreader.model.TaskContext;
 
@@ -23,10 +24,14 @@ public class TaskDao implements ITaskDao {
 		return TASK_CONTEXT_KEY_PREFIX + taskId;
 	}
 
-
 	@Override
 	public Long save(Task task) {
 		return (Long) sqlMap.insert("spreader_task.save", task);
+	}
+	
+	@Override
+	public Long insertRegularJobResult(RegularJobResult result) {
+		return (Long) sqlMap.insert("spreader_task.insertResult", result);
 	}
 
 	@Override

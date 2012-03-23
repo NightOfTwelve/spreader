@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="spreader_stat">
+	<select id="taskCount" resultClass="map">
+		select task_type, task_code, count(*) task_count
+		from spreader.tb_client_task
+		where status=0
+		group by task_type, task_code
+	</select>
+	<select id="captchaInput" resultClass="map">
+		SELECT a.client_id,
+				s.cnt s_cnt,
+				a.cnt a_cnt,
+				s.cnt / a.cnt s_rate
+		FROM (SELECT COUNT(*) cnt,
+					handle_client client_id
+				FROM tb_captcha cpout
+				WHERE expire_time > curdate()
+				GROUP BY handle_client) a 
+		LEFT JOIN
+				(SELECT COUNT(*) cnt,
+						handle_client client_id
+				FROM tb_captcha cpout,
+					(SELECT MAX(cp.id) AS id
+					FROM tb_captcha cp,
+						tb_client_task_log cl
+					WHERE cp.task_id = cl.task_id
+					AND  cl.task_code IN ('registerRobotUserEmail','registerWeibo')
+					AND  cl.status = 0
+					AND  cl.executed_time > curdate()
+					GROUP BY cp.task_id, cp.seq) cpmaxid
+				WHERE cpmaxid.id = cpout.id
+				GROUP BY handle_client) s
+		ON a.client_id = s.client_id
+		ORDER BY s.cnt DESC
+	</select>
+</sqlMap>

@@ -56,7 +56,7 @@ public class AddFansToUserByGroup extends UserGroupExtendedBeanImpl implements R
 	}
 
 	@Override
-	public void work() {
+	public String work() {
 		// 粉丝组ID
 		Long fromGroup = this.getFromUserGroup();
 		// 关注用户组ID
@@ -83,5 +83,6 @@ public class AddFansToUserByGroup extends UserGroupExtendedBeanImpl implements R
 				}
 			}
 		}
+		return null;
 	}
 }

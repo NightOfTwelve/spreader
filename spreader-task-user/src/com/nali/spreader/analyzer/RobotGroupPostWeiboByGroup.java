@@ -57,7 +57,7 @@ public class RobotGroupPostWeiboByGroup extends UserGroupExtendedBeanImpl implem
 	}
 
 	@Override
-	public void work() {
+	public String work() {
 		Long fromGid = this.getFromUserGroup();
 		Long toGid = this.getToUserGroup();
 		Iterator<User> toIterator = this.userGroupFacadeService.queryLimitedRandomGrouppedUser(toGid,
@@ -84,6 +84,7 @@ public class RobotGroupPostWeiboByGroup extends UserGroupExtendedBeanImpl implem
 				}
 			}
 		}
+		return null;
 	}
 
 	@Override

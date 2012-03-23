@@ -22,7 +22,7 @@ public class FillUserAvatar implements RegularAnalyzer, SystemObject {
 	private TaskProduceLine<Long> uploadUserAvatar;
 
 	@Override
-	public void work() {
+	public String work() {
 		List<User> list = userService.findNoAvatarRobotUserList();
 		if (list.size() > 0) {
 			for (User u : list) {
@@ -30,5 +30,6 @@ public class FillUserAvatar implements RegularAnalyzer, SystemObject {
 				uploadUserAvatar.send(id);
 			}
 		}
+		return null;
 	}
 }

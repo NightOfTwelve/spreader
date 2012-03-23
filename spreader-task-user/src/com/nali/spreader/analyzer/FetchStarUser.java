@@ -15,8 +15,9 @@ public class FetchStarUser implements RegularAnalyzer, SystemObject {
 	private TaskProduceLine<Object> fetchWeiboStarUser;
 
 	@Override
-	public void work() {
+	public String work() {
 		fetchWeiboStarUser.send(null);
+		return null;
 	}
 
 }

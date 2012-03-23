@@ -71,7 +71,7 @@ public class ReplyWeiboByGroup extends UserGroupExtendedBeanImpl implements Regu
 	}
 	
 	@Override
-	public void work() {
+	public String work() {
 		Long fromGroup = this.getFromUserGroup();
 		for (String url : urlList) {
 			Content content = contentService.parseUrl(url);
@@ -92,6 +92,7 @@ public class ReplyWeiboByGroup extends UserGroupExtendedBeanImpl implements Regu
 				replyWeibo.send(dto);
 			}
 		}
+		return null;
 	}
 
 	@Override
