@@ -220,7 +220,7 @@
   			<![CDATA[ u.attentions>= #attentionsGte#]]>
   		</isNotNull>
   		<isNotNull prepend="and" property="attentionsLte">
-  			<![CDATA[ u.categoryId<= #attentionsLte#]]>
+  			<![CDATA[ u.attentions<= #attentionsLte#]]>
   		</isNotNull>
   		
   		<!-- 出生日期 -->
