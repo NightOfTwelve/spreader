@@ -15,7 +15,7 @@ import com.nali.spreader.service.IGlobalRobotUserService;
 import com.nali.spreader.service.IGlobalUserService;
 
 @Component
-public class TargetUserAccountErrorProcessor extends DefaultErrorProcessor<KeyValue<Integer, Long>> {
+public class TargetUserAccountErrorProcessor extends DefaultErrorProcessor<KeyValue<Integer, Object>> {
 	private static Logger logger = Logger.getLogger(TargetUserAccountErrorProcessor.class);
 	@Autowired
 	private IGlobalRobotUserService globalRobotUserService;
@@ -28,9 +28,20 @@ public class TargetUserAccountErrorProcessor extends DefaultErrorProcessor<KeyVa
 	}
 
 	@Override
-	public void handleError(KeyValue<Integer, Long> websiteUser, Map<String, Object> contextContents, Long uid, Date errorTime) {
+	public void handleError(KeyValue<Integer, Object> websiteUser, Map<String, Object> contextContents, Long uid, Date errorTime) {
 		Integer websiteId = websiteUser.getKey();
-		Long websiteUid = websiteUser.getValue();
+		Object websiteUidValue = websiteUser.getValue();
+		Long websiteUid;
+		if (websiteUidValue instanceof String) {
+			websiteUid = Long.valueOf((String) websiteUidValue);
+		} else if (websiteUidValue instanceof Long) {
+			websiteUid = (Long) websiteUidValue;
+		} else if (websiteUidValue instanceof Integer) {
+			websiteUid = ((Integer) websiteUidValue).longValue();
+		} else {
+			logger.error("receive illegal type of websiteUid:" + websiteUidValue);
+			return;
+		}
 		User user = globalUserService.findByUniqueKey(websiteId, websiteUid);
 		if(user==null) {
 			logger.warn("remove user failed, not found:" + websiteUser);
