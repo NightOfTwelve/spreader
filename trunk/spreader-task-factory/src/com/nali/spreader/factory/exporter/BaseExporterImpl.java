@@ -16,8 +16,9 @@ public abstract class BaseExporterImpl<TM extends TaskMeta> implements Exporter<
 	private static final int DEFAULT_PRIORITY = 0;
 	private static Logger logger = Logger.getLogger(BaseExporterImpl.class);
 	private static final ContentSerializer DEFAULT_CONTENT_SERIALIZER=new JacksonSerializer();
-	private ContentSerializer contentSerializer = DEFAULT_CONTENT_SERIALIZER;
 	private final TM taskMeta;
+	private ContentSerializer contentSerializer = DEFAULT_CONTENT_SERIALIZER;
+	private IResultInfo resultInfo;
 	private int basePriority=DEFAULT_PRIORITY;
 	private Date startTime;
 	private Date expiredTime;
@@ -27,9 +28,10 @@ public abstract class BaseExporterImpl<TM extends TaskMeta> implements Exporter<
 	
 	private final Map<String, Boolean> systemPropertyMap;
 	
-	public BaseExporterImpl(TM taskMeta, Map<String, Boolean> systemPropertyMap) {
+	public BaseExporterImpl(TM taskMeta, Map<String, Boolean> systemPropertyMap, IResultInfo resultInfo) {
 		this.taskMeta = taskMeta;
 		this.systemPropertyMap = systemPropertyMap;
+		this.resultInfo = resultInfo;
 	}
 
 	protected TM getTaskMeta() {
@@ -112,6 +114,8 @@ public abstract class BaseExporterImpl<TM extends TaskMeta> implements Exporter<
 			task.setStartTime(startTime==null?task.getCreateTime():startTime);
 			task.setTaskCode(taskMeta.getCode());
 			task.setUid(uid);
+			task.setResultId(resultInfo.getResultId());
+			task.setTraceLink(resultInfo.getTraceLink());
 			Long taskId = save(task);
 			if(context!=null) {
 				if(systemPropertyMap==null) {

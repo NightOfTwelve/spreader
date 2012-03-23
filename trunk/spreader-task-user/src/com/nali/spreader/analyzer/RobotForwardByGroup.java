@@ -59,7 +59,7 @@ public class RobotForwardByGroup extends UserGroupExtendedBeanImpl implements Re
 	}
 
 	@Override
-	public void work() {
+	public String work() {
 		Long fromGroup = this.getFromUserGroup();
 		for (String url : urlList) {
 			Content content = contentService.parseUrl(url);
@@ -75,6 +75,7 @@ public class RobotForwardByGroup extends UserGroupExtendedBeanImpl implements Re
 				forwardWeiboContent.send(new KeyValue<Long, Content>(robot.getId(), content));
 			}
 		}
+		return null;
 	}
 
 }

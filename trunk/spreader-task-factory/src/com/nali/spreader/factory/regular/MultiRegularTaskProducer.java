@@ -5,6 +5,6 @@ import com.nali.spreader.factory.exporter.MultiTaskExporter;
 
 public interface MultiRegularTaskProducer extends RegularTaskProducer<MultiTaskMeta, MultiTaskExporter> {
 
-	void work(MultiTaskExporter exporter);
+	String work(MultiTaskExporter exporter);
 
 }

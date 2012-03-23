@@ -15,8 +15,9 @@ public class ReRegister implements RegularAnalyzer, SystemObject {//TODO temp co
 	private TaskProduceLine<Object> reRegisterPassive;
 
 	@Override
-	public void work() {
+	public String work() {
 		reRegisterPassive.send(null);
+		return null;
 	}
 
 

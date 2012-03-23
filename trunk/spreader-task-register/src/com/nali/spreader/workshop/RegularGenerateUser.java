@@ -18,7 +18,7 @@ public class RegularGenerateUser implements RegularAnalyzer, Configable<Integer>
 	private Integer addCount;
 
 	@Override
-	public void work() {
+	public String work() {
 //		int accountRegistering = robotRegisterService.countRegisteringAccount(Website.weibo.getId());
 //		int emailRegistering = robotRegisterService.countNoEmail();
 //		if (accountRegistering + emailRegistering < minActiveCount) {
@@ -27,6 +27,7 @@ public class RegularGenerateUser implements RegularAnalyzer, Configable<Integer>
 		for (int i = 0; i < addCount; i++) {
 			generateRobotUserInfo.send(null);
 		}
+		return null;
 	}
 
 	@Override

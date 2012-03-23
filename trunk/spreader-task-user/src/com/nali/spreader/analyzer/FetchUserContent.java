@@ -31,12 +31,13 @@ public class FetchUserContent implements RegularAnalyzer,Configable<UserDto> {
 	}
 
 	@Override
-	public void work() {
+	public String work() {
 		List<KeyValue<Long, Long>> uidToWebsiteUidMaps = userService.findUidToWebsiteUidMapByDto(dto);
 		for (KeyValue<Long, Long> uidToWebsiteUidMap : uidToWebsiteUidMaps) {
 			Long uid = uidToWebsiteUidMap.getKey();
 			fetchWeiboContent.send(new KeyValue<Long, Long>(uid, null));
 		}
+		return null;
 	}
 
 	@Override

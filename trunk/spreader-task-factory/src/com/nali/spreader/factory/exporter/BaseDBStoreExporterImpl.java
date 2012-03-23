@@ -13,8 +13,8 @@ public abstract class BaseDBStoreExporterImpl<TM extends TaskMeta> extends BaseE
 	private TaskSender taskSender;
 	private ITaskService taskService;
 
-	public BaseDBStoreExporterImpl(TM taskMeta, TaskSender taskSender, ITaskService taskService, Map<String, Boolean> systemPropertyMap) {
-		super(taskMeta, systemPropertyMap);
+	public BaseDBStoreExporterImpl(TM taskMeta, TaskSender taskSender, ITaskService taskService, IResultInfo resultInfo, Map<String, Boolean> systemPropertyMap) {
+		super(taskMeta, systemPropertyMap, resultInfo);
 		this.taskSender = taskSender;
 		this.taskService = taskService;
 	}

@@ -14,6 +14,8 @@ public class ClientTaskExporterFactorys {
 	private MultiLwtmqTaskSender passiveTaskSender = new MultiLwtmqTaskSender();
 	@Autowired
 	private ITaskService taskService;
+	@Autowired
+	private ThreadLocalResultInfo threadLocalResultInfo;
 
 	@Autowired
 	public void setWeiboNormalPassiveTaskSender(AsyncSender<ClientTask> weiboNormalPassiveTaskSender) {
@@ -32,7 +34,7 @@ public class ClientTaskExporterFactorys {
 	
 	@Bean
 	public ClientTaskExporterFactory passiveTaskExporterFactory() {//TODO 减少queue配置
-		return new ClientTaskExporterFactory(taskService, passiveTaskSender);
+		return new ClientTaskExporterFactory(taskService, passiveTaskSender, threadLocalResultInfo);
 	}
 
 	@Bean
@@ -40,6 +42,6 @@ public class ClientTaskExporterFactorys {
 	public ClientTaskExporterFactory regularTaskExporterFactory(AsyncSender<ClientTask> regularTaskSender) {
 		LwtmqTaskSender lwtmqTaskSender = new LwtmqTaskSender();
 		lwtmqTaskSender.setLwtmqSender(regularTaskSender);
-		return new ClientTaskExporterFactory(taskService, lwtmqTaskSender);
+		return new ClientTaskExporterFactory(taskService, lwtmqTaskSender, threadLocalResultInfo);
 	}
 }

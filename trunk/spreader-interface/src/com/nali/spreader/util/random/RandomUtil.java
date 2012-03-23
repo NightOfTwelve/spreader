@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.RandomAccess;
 import java.util.Set;
 
 public class RandomUtil {
@@ -59,6 +60,36 @@ public class RandomUtil {
 	 */
 	public static<E> List<E> randomItemsUnmodify(List<E> allList, Collection<E> exists, int count) {
 		return randomItems(allList, exists==null?new HashSet<E>():new HashSet<E>(exists),count);
+	}
+
+	/**
+	 * 洗牌allList版，注意：必须使用RandomAccess的list
+	 */
+	public static<E> List<E> randomItemsShuffle(List<E> allList, Set<E> exists, int count) {
+		if (allList instanceof RandomAccess == false) {
+			throw new IllegalArgumentException("allList must be RandomAccess");
+		}
+		List<E> rlt = new ArrayList<E>(count);
+		int n = allList.size();
+		for (int i = n; i > 0; i--) {
+			int idx = random.nextInt(i);
+			E replaced = swap(allList, idx, i-1);
+			if(exists.contains(replaced)) {
+				continue;
+			} else {
+				if(--count<=0) {
+					break;
+				}
+			}
+		}
+		return rlt;
+	}
+
+	private static <E> E swap(List<E> list, int first, int second) {//return the previous element on first index
+		if(first==second) {
+			return list.get(first);
+		}
+		return list.set(first, list.set(second, list.get(first)));
 	}
 	
 	/**

@@ -3,7 +3,6 @@ package com.nali.spreader.analyzer;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +25,7 @@ import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
+import com.nali.spreader.util.random.RandomUtil;
 
 @Component
 @ClassDescription("机器人转发")
@@ -37,7 +37,6 @@ public class RobotForward implements RegularAnalyzer,Configable<RobotForwardDto>
 	private IContentService contentService;
 	@AutowireProductLine
 	private TaskProduceLine<KeyValue<Long, Long>> forwardWeiboContent;
-	private Random random = new Random();
 	
 	@Autowired
 	public void initUserService(IUserServiceFactory userServiceFactory) {
@@ -45,7 +44,7 @@ public class RobotForward implements RegularAnalyzer,Configable<RobotForwardDto>
 	}
 
 	@Override
-	public void work() {
+	public String work() {
 		UserDto userDto = UserDto.genUserDtoFrom(dto);
 		userDto.setCategories(Arrays.asList(dto.getCategory()));
 		userDto.setIsRobot(true);
@@ -55,6 +54,7 @@ public class RobotForward implements RegularAnalyzer,Configable<RobotForwardDto>
 			Long uid = uidToWebsiteUidMap.getKey();
 			recommendContentToUid(uid);
 		}
+		return null;
 	}
 
 	protected void recommendContentToUid(Long uid) {
@@ -80,19 +80,9 @@ public class RobotForward implements RegularAnalyzer,Configable<RobotForwardDto>
 		
 		List<Long> contentIds = contentService.findContentIdByDto(contentDto);
 		Set<Long> postContentIds = contentService.getPostContentIds(uid);
-		int n = contentIds.size();
-		int count = dto.getCount();
-		for (int i = n; i > 0; i--) {
-			int idx = random.nextInt(i);
-			Long contentId = contentIds.set(idx, contentIds.get(i-1));
-			if(postContentIds.contains(contentId)) {
-				continue;
-			} else {
-				forwardWeiboContent.send(new KeyValue<Long, Long>(uid, contentId));
-				if(--count<=0) {
-					break;
-				}
-			}
+		List<Long> randomIds = RandomUtil.randomItemsShuffle(contentIds, postContentIds, dto.getCount());
+		for (Long contentId : randomIds) {
+			forwardWeiboContent.send(new KeyValue<Long, Long>(uid, contentId));
 		}
 	}
 

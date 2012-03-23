@@ -50,7 +50,7 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 	}
 
 	@Override
-	public void work() {
+	public String work() {
 		Long gid = this.getFromUserGroup();
 		if (gid != null) {
 			DataIterator<GrouppedUser> data = this.userGroupService.queryGrouppedUserIterator(gid, 100);
@@ -69,5 +69,6 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 			logger.error("爬取用户组ID为Null");
 			throw new IllegalArgumentException();
 		}
+		return null;
 	}
 }

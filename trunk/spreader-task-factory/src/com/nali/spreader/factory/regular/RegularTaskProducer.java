@@ -6,6 +6,6 @@ import com.nali.spreader.factory.exporter.Exporter;
 
 public interface RegularTaskProducer<TM extends TaskMeta, E extends Exporter<TM>> extends TaskMachine<TM>, RegularObject {
 
-	void work(E exporter);
+	String work(E exporter);
 
 }

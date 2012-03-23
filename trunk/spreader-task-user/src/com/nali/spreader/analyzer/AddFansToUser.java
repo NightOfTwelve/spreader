@@ -45,13 +45,12 @@ public class AddFansToUser implements RegularAnalyzer,Configable<CategoryUserMat
 	}
 
 	@Override
-	public void work() {
+	public String work() {
 		List<User> users = findUserFansInfoByDto(dto.getUser(), dto.getCategory(), dto.getWebsiteId(), false);//目前websiteId会强制为微博
 		List<User> robots = findUserFansInfoByDto(dto.getRobot(), dto.getCategory(), dto.getWebsiteId(), true);
 		List<Long> robotIds = ids(robots);
 		if(users.size()==0 || robots.size()==0) {
-			logger.warn("not enough users in category:" + dto.getCategory());
-			return;
+			return "not enough users in category:" + dto.getCategory();
 		}
 		double robotRate = dto.getRobotRate();
 		//关注上限
@@ -75,6 +74,7 @@ public class AddFansToUser implements RegularAnalyzer,Configable<CategoryUserMat
 				logger.info(matchRobotIds.size() + " robots are going to follow user:" + toUid);
 			}
 		}
+		return null;
 	}
 
 	private Number nvl(Number n) {

@@ -40,12 +40,13 @@ public class AutoReplyWeibo implements RegularAnalyzer,Configable<ContentDto> {
 	}
 	
 	@Override
-	public void work() {
+	public String work() {
 		List<Long> contentIds = contentService.findContentIdByDto(dto);
 		for (Long contentId : contentIds) {
 			String text = replyWords.get();
 			replyWeibo.send(new KeyValue<Long, String>(contentId, text));
 		}
+		return null;
 	}
 
 	@Override

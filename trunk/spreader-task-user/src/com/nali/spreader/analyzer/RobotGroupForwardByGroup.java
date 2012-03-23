@@ -54,7 +54,7 @@ public class RobotGroupForwardByGroup extends UserGroupExtendedBeanImpl implemen
 	}
 
 	@Override
-	public void work() {
+	public String work() {
 		Long fromGid = this.getFromUserGroup();
 		Long toGid = this.getToUserGroup();
 		// 随机获取被转发用户分组的用户信息
@@ -79,6 +79,7 @@ public class RobotGroupForwardByGroup extends UserGroupExtendedBeanImpl implemen
 				}
 			}
 		}
+		return null;
 	}
 
 	@Override

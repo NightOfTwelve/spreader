@@ -57,21 +57,21 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 			clientsLock.unlock();
 		}
 		
-		List<ItemCount<KeyValuePair<Long, Long>>> normal = clientUid.getNormal();
-		List<ItemCount<Long>> notLogin;
-		List<ItemCount<Long>> anyone;
+		List<ClientTask> tasks = new ArrayList<ClientTask>();
+		Long batchId = uidPoolService.getBatchId(taskType.getId(), clientId);
+		List<ItemCount<KeyValuePair<Long, Long>>> normal = clientUid.getNormal();//ASK noraml first or anyone first
+		assignTasks(batchId, tasks, normal);
 		sharedTaskLock.lock();
 		try {
+			List<ItemCount<Long>> notLogin;
+			List<ItemCount<Long>> anyone;
 			notLogin = getNotLogin();
 			anyone = getAnyone();
+			assignTasks(batchId, tasks, User.UID_NOT_LOGIN, notLogin, null);
+			assignTasks(batchId, tasks, User.UID_ANYONE, anyone, clientUid);
 		} finally {
 			sharedTaskLock.unlock();
 		}
-		List<ClientTask> tasks = new ArrayList<ClientTask>();
-		Long batchId = uidPoolService.getBatchId(taskType.getId(), clientId);
-		assignTasks(batchId, tasks, normal);
-		assignTasks(batchId, tasks, User.UID_NOT_LOGIN, notLogin, null);
-		assignTasks(batchId, tasks, User.UID_ANYONE, anyone, clientUid);
 		//TODO handle empty list
 		return tasks;
 	}

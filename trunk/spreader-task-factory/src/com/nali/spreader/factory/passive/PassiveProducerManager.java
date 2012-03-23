@@ -16,6 +16,7 @@ import com.nali.spreader.factory.config.ConfigableListener;
 import com.nali.spreader.factory.exporter.ClientTaskExporterFactory;
 import com.nali.spreader.factory.exporter.Exporter;
 import com.nali.spreader.factory.exporter.ExporterProvider;
+import com.nali.spreader.factory.exporter.ThreadLocalResultInfo;
 import com.nali.spreader.util.AnnotatedMethodIterator;
 import com.nali.spreader.util.reflect.GenericInfo;
 
@@ -26,6 +27,8 @@ public class PassiveProducerManager {
 	private PassiveConfigService passiveConfigService;
 	@Autowired
 	private ClientTaskExporterFactory passiveTaskExporterFactory;
+	@Autowired
+	private ThreadLocalResultInfo threadLocalResultInfo;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public TaskProduceLine<?> getProduceLine(String beanName, PassiveObject passive, Type paramType) {
@@ -35,7 +38,7 @@ public class PassiveProducerManager {
 				Configable<?> configable = (Configable<?>) passive;
 				registerAndListen(beanName, configable, new AnalyzerProduceLineReplace(produceLine));
 			}
-			return produceLine;
+			return new ResultInfoWrappedProduceLine(produceLine, beanName);
 		} else if (passive instanceof PassiveTaskProducer) {
 			PassiveTaskProducer passiveTaskProducer = (PassiveTaskProducer) passive;
 			TaskProducerProduceLine produceLine = new TaskProducerProduceLine(passiveTaskProducer, passiveTaskExporterFactory, paramType);
@@ -43,7 +46,7 @@ public class PassiveProducerManager {
 				Configable<?> configable = (Configable<?>) passive;
 				registerAndListen(beanName, configable, new TaskProducerProduceLineReplace(produceLine));
 			}
-			return produceLine;
+			return new ResultInfoWrappedProduceLine(produceLine, beanName);
 		} else {
 			throw new IllegalArgumentException("illegal bean type:" + passive.getClass());
 		}
@@ -105,6 +108,24 @@ public class PassiveProducerManager {
 	static interface MethodFilter {
 		/** null if illegal argument */
 		Boolean check(Method method);
+	}
+	
+	private class ResultInfoWrappedProduceLine<T> implements TaskProduceLine<T> {
+		private TaskProduceLine<T> inner;
+		private String name;
+		
+		public ResultInfoWrappedProduceLine(TaskProduceLine<T> inner, String name) {
+			super();
+			this.inner = inner;
+			this.name = name;
+		}
+
+		@Override
+		public void send(T data) {
+			threadLocalResultInfo.inProduceLine(name);
+			inner.send(data);
+			threadLocalResultInfo.outProduceLine();
+		}
 	}
 	
 	public static class AnalyzerProduceLine<T> implements TaskProduceLine<T> {
