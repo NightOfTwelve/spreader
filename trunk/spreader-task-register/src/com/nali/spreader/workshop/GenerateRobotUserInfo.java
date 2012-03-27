@@ -99,6 +99,7 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 				return;
 			}
 		}
+		//when not found direct cities
 		provinceAreas = new AvgRandomer<Area>(list);
 		logger.error("not found direct cities.");
 	}
@@ -221,18 +222,14 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 	}
 
 	void setAreaAndId(RobotRegister robot) {//require gender
-		String province;
-		Area city;
+		Area province;
 		if(Math.random()<directRate) {
-			Area directCity = directAreas.get();
-			province = directCity.getName();
-			city = directCity;
+			province = directAreas.get();
 		} else {
-			Area area = provinceAreas.get();
-			province = area.getName();
-			city = RandomUtil.randomItem(area.getSubAreas(), random);
+			province = provinceAreas.get();
 		}
-		robot.setProvince(province);
+		Area city = RandomUtil.randomItem(province.getSubAreas(), random);
+		robot.setProvince(province.getName());
 		robot.setCity(city.getName());
 		Area county = city.getSubAreas()==null? city : RandomUtil.randomItem(city.getSubAreas(), random);
 		robot.setCounty(county.getName());

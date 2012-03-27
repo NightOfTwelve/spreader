@@ -1,30 +1,13 @@
 package com.nali.spreader.factory.regular;
 
-import java.util.Date;
-
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.model.RegularJob;
-import com.nali.spreader.model.RegularJob.JobDto;
 
 public interface RegularScheduler {
 
-	/**
-	 * 生成cron调度
-	 */
-	Long scheduleCronTrigger(String name, Object config, String desc, Long gid,
-			String groupName, String cron, Integer jobType, Object extendConfig);
-
-	/**
-	 * 生成simple调度
-	 * 
-	 * @param repeatInternal
-	 *            毫秒
-	 */
-	Long scheduleSimpleTrigger(String name, Object config, String desc,
-			Long gid, String groupName, Date start, int repeatTimes,
-			int repeatInternal, Integer jobType, Object extendConfig);
-
+	Long scheduleRegularJob(RegularJob regularJob);
+	
 	/**
 	 * 查看已有调度
 	 */
@@ -37,17 +20,18 @@ public interface RegularScheduler {
 	void unSchedule(Long id);
 
 	/**
-	 * 获取已有配置
+	 * 获取详细的RegularJob，包括各种相关Object对象
 	 */
-	JobDto getConfig(Long id);
+	RegularJob getRegularJobObject(Long id);
 
 	/**
-	 * 通过简单分组的id获取RegularJob
+	 * 通过简单分组的id获取RegularJob id
 	 * 
 	 * @param gid
 	 * @return
 	 */
-	RegularJob findRegularJobBySimpleGroupId(Long gid);
+	Long findRegularJobIdBySimpleGroupId(Long gid);
 
 	Object getExtendConfig(String name, Long sid);
+
 }

@@ -1,7 +1,6 @@
 package com.nali.spreader.controller;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,18 +16,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.pagination.PageResult;
 import com.nali.lang.StringUtils;
-import com.nali.lts.SchedulerFactory;
 import com.nali.lts.exceptions.SchedulerException;
-import com.nali.lts.trigger.Trigger;
-import com.nali.lts.trigger.TriggerScheduleInfo;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.factory.config.IConfigService;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.regular.RegularScheduler;
 import com.nali.spreader.model.RegularJob;
-import com.nali.spreader.model.RegularJob.JobDto;
-import com.nali.spreader.utils.TimeHelper;
+import com.nali.spreader.model.RegularJob.TriggerDto;
 
 @Controller
 @RequestMapping(value = "/dispsys")
@@ -40,8 +35,6 @@ public class StrategySystemDispatchController {
 	private RegularScheduler cfgService;
 	@Autowired
 	private IConfigService<Long> regularConfigService;
-	// 系统JOB
-	private final Integer SYSTEM_JOB_TYPE = 0;
 
 	/**
 	 * 策略调度列表的显示页
@@ -102,7 +95,7 @@ public class StrategySystemDispatchController {
 				.writeValueAsString(new DispatchData(null, regularConfigService
 						.getConfigableInfo(name).getDisplayName(),
 						regularConfigService.getConfigDefinition(name),
-						id != null && id > 0 ? cfgService.getConfig(id)
+						id != null && id > 0 ? cfgService.getRegularJobObject(id)
 								.getConfig() : null));
 	}
 
@@ -120,56 +113,11 @@ public class StrategySystemDispatchController {
 	@RequestMapping(value = "/settgrparam")
 	public String settingTriggerParam(Long id) throws JsonGenerationException,
 			JsonMappingException, IOException, SchedulerException {
-		JobDto job = cfgService.getConfig(id);
-		String remind = "";
-		if (job != null) {
-			String name = job.getName();
-			String triggerName = new StringBuffer(name).append("_").append(id)
-					.toString();
-			// TriggerMetaInfo tm = new TriggerMetaInfo(triggerName, name, name
-			// + "Task", null, TriggerType.INDEPENDENT_TRIGGER);
-			Trigger trigger = SchedulerFactory.getInstance().getScheduler()
-					.getTrigger(triggerName, name);
-			if (trigger != null) {
-				TriggerScheduleInfo scheduleInfo = trigger
-						.getTriggerScheduleInfo();
-				StringBuffer buff = new StringBuffer();
-				String cronExpression = scheduleInfo.getCronExpression();
-				if (StringUtils.isEmptyNoOffset(cronExpression)) {
-					// simple trigger
-					int rcount = scheduleInfo.getRepeatCount();
-					// 已完成的次数
-					int times = trigger.getTimesTriggered();
-					int left = times == -1 ? 0 : rcount + 1 - times;
-
-					buff.append("剩余执行次数:");
-					buff.append(left);
-				} else {
-					buff.append("Cron表达式:").append(cronExpression);
-				}
-
-				buff.append(";");
-				Date nextDate = trigger.getNextFireTime();
-				if (nextDate != null) {
-					String nextTime = TimeHelper.date2StringHms(nextDate);
-					buff.append("下次运行时间为:");
-					buff.append(nextTime);
-					buff.append(";");
-				}
-				Date endDate = scheduleInfo.getEndTime();
-				if (endDate != null) {
-					String endTime = TimeHelper.date2StringHms(endDate);
-					buff.append("任务结束时间为:");
-					buff.append(endTime);
-					buff.append(";");
-				}
-				remind = buff.toString();
-			} else {
-				remind = "任务执行完毕, 您可以重新编辑保存，产生新的任务";
-			}
-		}
-		job.setRemind(remind);
-		return jacksonMapper.writeValueAsString(job);
+		RegularJob job = cfgService.getRegularJobObject(id);
+		TriggerDto triggerObject = job.getTriggerObject();
+		triggerObject.setDescription(job.getDescription());
+		triggerObject.setTriggerType(job.getTriggerType());
+		return jacksonMapper.writeValueAsString(triggerObject);
 	}
 
 	/**
@@ -184,41 +132,23 @@ public class StrategySystemDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/dispsave")
-	public String saveStrategyConfig(String name, String config,
-			Integer triggerType, String description, Date start,
-			Integer repeatTimes, Integer repeatInternal, String cron, Long id)
+	public String saveStrategyConfig(RegularJob regularJob, TriggerDto triggerDto)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		// 如果是编辑则先删除
-		if (id != null && id > 0) {
-			cfgService.unSchedule(id);
-		}
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
 		message.put("success", false);
-		Class<?> dataClass = regularConfigService.getConfigableInfo(name)
+		Class<?> dataClass = regularConfigService.getConfigableInfo(regularJob.getName())
 				.getDataClass();
-		Object configObj = null;
-		if (StringUtils.isNotEmptyNoOffset(config)) {
-			configObj = jacksonMapper.readValue(config, dataClass);
+		if(regularJob.getConfig()!=null) {
+			Object configObj = jacksonMapper.readValue(regularJob.getConfig(), dataClass);
+			regularJob.setConfigObject(configObj);
 		}
-		if (RegularJob.TRIGGER_TYPE_SIMPLE.equals(triggerType)) {
-			try {
-				cfgService.scheduleSimpleTrigger(name, configObj, description,
-						null, null, start, repeatTimes, repeatInternal,
-						SYSTEM_JOB_TYPE, null);
-				message.put("success", true);
-			} catch (Exception e) {
-				LOGGER.error("保存SimpleTrigger失败", e);
-			}
-		} else if (RegularJob.TRIGGER_TYPE_CRON.equals(triggerType)) {
-			try {
-				cfgService.scheduleCronTrigger(name, configObj, description,
-						null, null, cron, SYSTEM_JOB_TYPE, null);
-				message.put("success", true);
-			} catch (Exception e) {
-				LOGGER.error("保存CronTrigger失败", e);
-			}
-		} else {
-			LOGGER.info("调度类型获取错误保存失败");
+		regularJob.setTriggerObject(triggerDto);
+		regularJob.setJobType(ConfigableType.system.jobType);
+		try {
+			cfgService.scheduleRegularJob(regularJob);
+			message.put("success", true);
+		} catch (Exception e) {
+			LOGGER.error("保存Trigger失败", e);
 		}
 		return jacksonMapper.writeValueAsString(message);
 	}
@@ -290,7 +220,6 @@ public class StrategySystemDispatchController {
 		private ConfigDefinition def;
 		// 节点数据
 		private Object data;
-		private JobDto jobdto;
 
 		public DispatchData(String treeid, String treename,
 				ConfigDefinition def, Object data) {
@@ -298,10 +227,6 @@ public class StrategySystemDispatchController {
 			this.treename = treename;
 			this.def = def;
 			this.data = data;
-		}
-
-		public DispatchData(JobDto jobdto) {
-			this.jobdto = jobdto;
 		}
 
 		public String getTreeid() {
@@ -334,14 +259,6 @@ public class StrategySystemDispatchController {
 
 		public void setData(Object data) {
 			this.data = data;
-		}
-
-		public JobDto getJobdto() {
-			return jobdto;
-		}
-
-		public void setJobdto(JobDto jobdto) {
-			this.jobdto = jobdto;
 		}
 
 	}
