@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.common.util.DateFormatUtil;
+import com.nali.lang.StringUtils;
 import com.nali.lts.SchedulerFactory;
 import com.nali.lts.context.TaskExecuteContext;
 import com.nali.lts.exceptions.SchedulerException;
@@ -26,7 +28,7 @@ import com.nali.spreader.dao.ICrudRegularJobDao;
 import com.nali.spreader.dao.IRegularJobDao;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.model.RegularJob;
-import com.nali.spreader.model.RegularJob.JobDto;
+import com.nali.spreader.model.RegularJob.TriggerDto;
 import com.nali.spreader.model.RegularJobExample;
 import com.nali.spreader.model.RegularJobExample.Criteria;
 
@@ -85,56 +87,35 @@ public class LtsRegularScheduler extends AbstractTask implements
 	}
 
 	@Override
-	public Long scheduleCronTrigger(String name, Object config, String desc,
-			Long gid, String groupName, String cron, Integer jobType, Object extendConfig) {
-		JobDto triggerInfo = new JobDto();
-		triggerInfo.setCron(cron);
-
-		Long id = registerRegularJob(name, desc, gid, groupName, config,
-				RegularJob.TRIGGER_TYPE_CRON, triggerInfo, jobType);
-		regularProducerManager.saveExtendConfig(name, id, extendConfig);
-		TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(cron);
+	public Long scheduleRegularJob(RegularJob regularJob) {
+		String name = regularJob.getName();
+		TriggerDto triggerObject = regularJob.getTriggerObject();
+		Integer triggerType = triggerObject.getTriggerType();
+		TriggerScheduleInfo scheInfo;
+		if(RegularJob.TRIGGER_TYPE_SIMPLE.equals(triggerType)) {
+			scheInfo = new TriggerScheduleInfo(triggerObject.getStart(), null,
+					triggerObject.getRepeatTimes(), triggerObject.getRepeatInternal());
+		} else if(RegularJob.TRIGGER_TYPE_CRON.equals(triggerType)) {
+			scheInfo = new TriggerScheduleInfo(triggerObject.getCron());
+		} else {
+			throw new IllegalArgumentException("illegal triggerType:"+triggerType);
+		}
+		regularJob.setTriggerInfo(triggerDto2String(triggerObject));
+		regularJob.setConfig(regularProducerManager.serializeConfigData(regularJob.getConfigObject()));
+		
+		Long id = regularJob.getId();
+		if(id==null) {
+			id = regularJobDao.insert(regularJob);
+		} else {
+			crudRegularJobDao.updateByPrimaryKeySelective(regularJob);
+			unSchedule(name, id);
+		}
+		regularProducerManager.saveExtendConfig(name, id, regularJob.getExtendConfigObject());
 		ltsSchedule(name, id, scheInfo);
 		return id;
 	}
 
-	@Override
-	public Long scheduleSimpleTrigger(String name, Object config, String desc,
-			Long gid, String groupName, Date start, int repeatTimes,
-			int repeatInternal, Integer jobType, Object extendConfig) {
-		JobDto triggerInfo = new JobDto();
-		triggerInfo.setStart(start);
-		triggerInfo.setRepeatInternal(repeatInternal);
-		triggerInfo.setRepeatTimes(repeatTimes);
-		Long id = registerRegularJob(name, desc, gid, groupName, config,
-				RegularJob.TRIGGER_TYPE_SIMPLE, triggerInfo, jobType);
-		regularProducerManager.saveExtendConfig(name, id, extendConfig);
-		TriggerScheduleInfo scheInfo = new TriggerScheduleInfo(start, null,
-				repeatTimes, repeatInternal);
-		ltsSchedule(name, id, scheInfo);
-		return id;
-	}
-
-	// modified xiefei 2012.01.09 增加组ID
-	// modified xiefei 2012.01.11 增加组名称
-	// modified xiefei 2012.01.12 增加jobType
-	private Long registerRegularJob(String name, String desc, Long gid,
-			String groupName, Object config, Integer triggerType,
-			JobDto triggerInfo, Integer jobType) {
-		RegularJob regularJob = new RegularJob();
-		regularJob.setName(name);
-		regularJob.setDescription(desc);
-		regularJob
-				.setConfig(regularProducerManager.serializeConfigData(config));
-		regularJob.setTriggerType(triggerType);
-		regularJob.setTriggerInfo(jobDto2String(triggerInfo));
-		regularJob.setGid(gid);
-		regularJob.setGname(groupName);
-		regularJob.setJobType(jobType);
-		return regularJobDao.insert(regularJob);
-	}
-
-	private String jobDto2String(JobDto obj) {
+	private String triggerDto2String(TriggerDto obj) {
 		try {
 			return objectMapper.writeValueAsString(obj);
 		} catch (IOException e) {
@@ -142,8 +123,8 @@ public class LtsRegularScheduler extends AbstractTask implements
 		}
 	}
 
-	private JobDto string2JobDto(String triggerInfo) throws IOException {
-		return objectMapper.readValue(triggerInfo, JobDto.class);
+	private TriggerDto string2TriggerDto(String triggerInfo) throws IOException {
+		return objectMapper.readValue(triggerInfo, TriggerDto.class);
 	}
 
 	@Override
@@ -158,22 +139,68 @@ public class LtsRegularScheduler extends AbstractTask implements
 	}
 
 	@Override
-	public JobDto getConfig(Long id) {
-		RegularJob regularJob = getRegularJob(id);
-		JobDto rlt;
+	public RegularJob getRegularJobObject(Long id) {
 		try {
-			rlt = string2JobDto(regularJob.getTriggerInfo());
+			RegularJob regularJob = getRegularJob(id);
 			Object config = regularProducerManager.unSerializeConfigData(
 					regularJob.getConfig(), regularJob.getName());
-			rlt.setConfig(config);
+			Object extendConfig = getExtendConfig(regularJob.getName(), id);
+			TriggerDto triggerDto = string2TriggerDto(regularJob.getTriggerInfo());
+			String remind = getRemind(getTriggerName(regularJob.getName(), id), regularJob.getName());
+			triggerDto.setRemind(remind);
+			
+			regularJob.setConfigObject(config);
+			regularJob.setExtendConfigObject(extendConfig);
+			regularJob.setTriggerObject(triggerDto);
+			return regularJob;
 		} catch (Exception e) {
-			logger.error(e, e);
 			throw new RuntimeException(e);
 		}
-		rlt.setName(regularJob.getName());
-		rlt.setDescription(regularJob.getDescription());
-		rlt.setTriggerType(regularJob.getTriggerType());
-		return rlt;
+	}
+
+	//String triggerName = getTriggerName(name, id);
+	private String getRemind(String triggerName, String groupName) throws SchedulerException {
+		String remind = "";
+		// TriggerMetaInfo tm = new TriggerMetaInfo(triggerName, name, name
+		// + "Task", null, TriggerType.INDEPENDENT_TRIGGER);
+		Trigger trigger = SchedulerFactory.getInstance().getScheduler().getTrigger(triggerName, groupName);
+		if (trigger != null) {
+			TriggerScheduleInfo scheduleInfo = trigger.getTriggerScheduleInfo();
+			StringBuffer buff = new StringBuffer();
+			String cronExpression = scheduleInfo.getCronExpression();
+			if (StringUtils.isEmptyNoOffset(cronExpression)) {
+				// simple trigger
+				int rcount = scheduleInfo.getRepeatCount();
+				// 已完成的次数
+				int times = trigger.getTimesTriggered();
+				int left = times == -1 ? 0 : rcount + 1 - times;
+				
+				buff.append("剩余执行次数:");
+				buff.append(left);
+			} else {
+				buff.append("Cron表达式:").append(cronExpression);
+			}
+			
+			buff.append(";");
+			Date nextDate = trigger.getNextFireTime();
+			if (nextDate != null) {
+				String nextTime = DateFormatUtil.formatDateTime(nextDate);
+				buff.append("下次运行时间为:");
+				buff.append(nextTime);
+				buff.append(";");
+			}
+			Date endDate = scheduleInfo.getEndTime();
+			if (endDate != null) {
+				String endTime = DateFormatUtil.formatDateTime(endDate);
+				buff.append("任务结束时间为:");
+				buff.append(endTime);
+				buff.append(";");
+			}
+			remind = buff.toString();
+		} else {
+			remind = "任务执行完毕, 您可以重新编辑保存，产生新的任务";
+		}
+		return remind;
 	}
 
 	private RegularJob getRegularJob(Long id) {
@@ -229,15 +256,15 @@ public class LtsRegularScheduler extends AbstractTask implements
 	}
 
 	@Override
-	public RegularJob findRegularJobBySimpleGroupId(Long gid) {
+	public Long findRegularJobIdBySimpleGroupId(Long gid) {
 		if (gid != null) {
 			RegularJobExample example = new RegularJobExample();
 			Criteria c = example.createCriteria();
 			c.andGidEqualTo(gid);
 			List<RegularJob> list = crudRegularJobDao
-					.selectByExampleWithBLOBs(example);
+					.selectByExampleWithoutBLOBs(example);
 			if (list.size() > 0) {
-				return list.get(0);
+				return list.get(0).getId();
 			} else {
 				logger.warn("未能获取分组ID为:" + gid + "的调度，可能未同步数据");
 				return null;

@@ -3,6 +3,7 @@ package com.nali.spreader.workshop;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ import com.nali.spreader.util.SpecialDateUtil;
 @Component
 public class FetchWeiboContent extends SingleTaskMachineImpl implements
 		PassiveWorkshop<KeyValue<Long, Long>, List<Content>> {
+	private static Logger logger = Logger.getLogger(FetchWeiboContent.class);
 	@Autowired
 	private IContentService contentService;
 	@Autowired
@@ -56,7 +58,12 @@ public class FetchWeiboContent extends SingleTaskMachineImpl implements
 		} else {
 			contentService.getAndTouchLastFetchTime(uid);
 		}
-		exporter.setProperty("websiteUid", globalUserService.getWebsiteUid(uid));
+		Long websiteUid = globalUserService.getWebsiteUid(uid);
+		if(websiteUid==null) {
+			logger.warn("not found user:" + uid);
+			return;
+		}
+		exporter.setProperty("websiteUid", websiteUid);
 		exporter.setProperty("lastFetchTime", lastFetchTime);
 		exporter.send(robotId, SpecialDateUtil.afterToday(2));
 	}

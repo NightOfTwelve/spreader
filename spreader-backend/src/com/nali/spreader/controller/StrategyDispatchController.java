@@ -18,21 +18,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
 import com.nali.lang.StringUtils;
-import com.nali.lts.SchedulerFactory;
 import com.nali.lts.exceptions.SchedulerException;
-import com.nali.lts.trigger.Trigger;
-import com.nali.lts.trigger.TriggerScheduleInfo;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.factory.config.IConfigService;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.regular.RegularScheduler;
 import com.nali.spreader.model.RegularJob;
-import com.nali.spreader.model.RegularJob.JobDto;
+import com.nali.spreader.model.RegularJob.TriggerDto;
 import com.nali.spreader.model.StrategyGroup;
 import com.nali.spreader.model.StrategyUserGroup;
 import com.nali.spreader.service.IStrategyGroupService;
-import com.nali.spreader.utils.TimeHelper;
 
 @Controller
 public class StrategyDispatchController {
@@ -44,14 +40,10 @@ public class StrategyDispatchController {
 	private IConfigService<Long> regularConfigService;
 	@Autowired
 	private IStrategyGroupService groupService;
-	// 普通JOBTYPE
-	private final Integer NORMAL_JOB_TYPE = 1;
 	// 简单分组
 	private final Integer SIMPLE_GROUP_TYPE = 1;
 	// 复杂分组
 	// private final Integer COMPLEX_GROUP_TYPE = 2;
-	// 复杂分组下的调度配置
-	private final Integer COMPLEX_GROUP_DISP_TYPE = 21;
 
 	/**
 	 * 策略调度列表的显示页
@@ -83,8 +75,7 @@ public class StrategyDispatchController {
 		} else {
 			start = start / limit + 1;
 		}
-		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname, triggerType, groupId,
-				ConfigableType.normal, start, limit);
+		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname, triggerType, groupId, ConfigableType.normal, start, limit);
 		List<RegularJob> list = pr.getList();
 		List<ConfigableInfo> dispnamelist = regularConfigService.listConfigableInfo(ConfigableType.normal);
 		int rowcount = pr.getTotalCount();
@@ -118,7 +109,7 @@ public class StrategyDispatchController {
 		String extendType = cfg.getExtendType();
 		Object meta = cfg.getExtendMeta();
 		ConfigDefinition def = regularConfigService.getConfigDefinition(name);
-		Object data = id != null ? cfgService.getConfig(id).getConfig() : null;
+		Object data = id != null ? cfgService.getRegularJobObject(id).getConfig() : null;
 		Object sug = null;
 		if (!StringUtils.isEmpty(extendType)) {
 			sug = cfgService.getExtendConfig(name, id);
@@ -151,53 +142,11 @@ public class StrategyDispatchController {
 			LOGGER.error("不能获取任务ID，设置参数错误");
 			return jacksonMapper.writeValueAsString(err);
 		}
-		JobDto job = cfgService.getConfig(id);
-		String remind = "";
-		if (job != null) {
-			String name = job.getName();
-			String triggerName = new StringBuffer(name).append("_").append(id).toString();
-			// TriggerMetaInfo tm = new TriggerMetaInfo(triggerName, name, name
-			// + "Task", null, TriggerType.INDEPENDENT_TRIGGER);
-			Trigger trigger = SchedulerFactory.getInstance().getScheduler().getTrigger(triggerName, name);
-			if (trigger != null) {
-				TriggerScheduleInfo scheduleInfo = trigger.getTriggerScheduleInfo();
-				StringBuffer buff = new StringBuffer();
-				String cronExpression = scheduleInfo.getCronExpression();
-				if (StringUtils.isEmptyNoOffset(cronExpression)) {
-					// simple trigger
-					int rcount = scheduleInfo.getRepeatCount();
-					// 已完成的次数
-					int times = trigger.getTimesTriggered();
-					int left = times == -1 ? 0 : rcount + 1 - times;
-
-					buff.append("剩余执行次数:");
-					buff.append(left);
-				} else {
-					buff.append("Cron表达式:").append(cronExpression);
-				}
-
-				buff.append(";");
-				Date nextDate = trigger.getNextFireTime();
-				if (nextDate != null) {
-					String nextTime = TimeHelper.date2StringHms(nextDate);
-					buff.append("下次运行时间为:");
-					buff.append(nextTime);
-					buff.append(";");
-				}
-				Date endDate = scheduleInfo.getEndTime();
-				if (endDate != null) {
-					String endTime = TimeHelper.date2StringHms(endDate);
-					buff.append("任务结束时间为:");
-					buff.append(endTime);
-					buff.append(";");
-				}
-				remind = buff.toString();
-			} else {
-				remind = "任务执行完毕, 您可以重新编辑保存，产生新的任务";
-			}
-		}
-		job.setRemind(remind);
-		return jacksonMapper.writeValueAsString(job);
+		RegularJob job = cfgService.getRegularJobObject(id);
+		TriggerDto triggerObject = job.getTriggerObject();
+		triggerObject.setDescription(job.getDescription());
+		triggerObject.setTriggerType(job.getTriggerType());
+		return jacksonMapper.writeValueAsString(triggerObject);
 	}
 
 	/**
@@ -212,111 +161,82 @@ public class StrategyDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategy/dispsave")
-	public String saveStrategyConfig(String name, String groupName, String config, Integer triggerType,
-			String description, String groupNote, Long groupId, Integer groupType, Date start,
-			Integer repeatTimes, Integer repeatInternal, String cron, Long id, Long fromGroupId,
-			Long toGroupId) throws JsonGenerationException, JsonMappingException, IOException {
-		Map<String, Object> message = new HashMap<String, Object>();
-		message.put("success", false);
-		if (groupType != null && groupType > 0) {
-			// 分组名临时变量
-			String tmpGroupName = null;
-			// 处理简单分组
-			if (SIMPLE_GROUP_TYPE.equals(groupType)) {
-				tmpGroupName = name;
-				if (groupId != null && groupId > 0) {
-					Long regId = this.getRegularIdByGid(groupId);
-					if (regId != null && regId > 0) {
-						// 如果分组ID不为null,首先检查并同步策略表
-						groupService.syncRegularJob(groupId, tmpGroupName, regId);
-					} else {
-						LOGGER.warn("通过组ID:" + groupId + ",获取regularJob失败");
-						message.put("message", "通过组ID:" + groupId + ",获取regularJob失败");
-						return jacksonMapper.writeValueAsString(message);
-					}
+	public String saveStrategyConfig(String groupName, Long groupId, Integer groupType,
+			Long fromGroupId, Long toGroupId, RegularJob regularJob, TriggerDto triggerDto) throws JsonGenerationException, JsonMappingException, IOException {
+		//检查参数
+		if (groupType == null) {
+			return returnError("分组类型为空，不能保存策略配置");
+		}
+		
+		//处理分组相关字段
+		if (SIMPLE_GROUP_TYPE.equals(groupType)) {
+			groupName = regularJob.getName();
+			if (groupId != null) {
+				Long id = getRegularIdByGid(groupId);
+				regularJob.setId(id);//把页面上传过来的错误的id刷成正确的
+				if (id != null) {
+					// 如果分组ID不为null,首先检查并同步策略表
+					groupService.syncRegularJob(groupId, groupName, id);
 				} else {
-					// 否则先保存分组获取分组ID
-					groupId = getNewGroupId(groupType, tmpGroupName, description);
+					return returnError("通过组ID:" + groupId + ",获取regularJob失败");
 				}
 			} else {
-				tmpGroupName = groupName;
-				// 处理复杂分组,只检查传入的groupId
-				if (groupId == null || groupId <= 0) {
-					LOGGER.warn("复杂分组传入的groupId为空或小于等于0，不能保存策略");
-					message.put("message", "复杂分组传入的groupId为空或小于等于0，不能保存策略");
-					return jacksonMapper.writeValueAsString(message);
-				}
-			}
-			// 如果是编辑则先删除
-			// 取消调度要考虑简单分组
-			if (id != null && id > 0) {
-				if (SIMPLE_GROUP_TYPE.equals(groupType)) {
-					Long regId = this.getRegularIdByGid(id);
-					if (regId != null && regId > 0) {
-						cfgService.unSchedule(regId);
-					}
-				} else if (COMPLEX_GROUP_DISP_TYPE.equals(groupType)) {
-					cfgService.unSchedule(id);
-				}
-			}
-			// 执行次数默认为0
-			if (repeatTimes == null || repeatTimes <= 0) {
-				repeatTimes = 0;
-			}
-			if (repeatInternal == null) {
-				repeatInternal = 1;
-			}
-			Class<?> dataClass = regularConfigService.getConfigableInfo(name).getDataClass();
-			Object configObj = null;
-			if (StringUtils.isNotEmptyNoOffset(config)) {
-				// 异常区域做回滚处理
-				try {
-					configObj = jacksonMapper.readValue(config, dataClass);
-				} catch (Exception e) {
-					groupService.rollBackStrategyGroupByGid(groupId);
-					LOGGER.error("获取configObj异常,回滚分组：" + groupId, e);
-					message.put("message", "获取configObj异常,回滚分组：" + groupId);
-					return jacksonMapper.writeValueAsString(message);
-				}
-			}
-			StrategyUserGroup sug = null;
-			// fromGroupId，toGroupId至少有一个不为空才设置StrategyUserGroup
-			if (fromGroupId != null || toGroupId != null) {
-				sug = new StrategyUserGroup();
-				sug.setFromUserGroup(fromGroupId);
-				sug.setToUserGroup(toGroupId);
-			}
-			if (RegularJob.TRIGGER_TYPE_SIMPLE.equals(triggerType)) {
-				try {
-					cfgService.scheduleSimpleTrigger(name, configObj, description, groupId, tmpGroupName,
-							start, repeatTimes, repeatInternal, NORMAL_JOB_TYPE, sug);
-					message.put("success", true);
-				} catch (Exception e) {
-					groupService.rollBackStrategyGroupByGid(groupId);
-					LOGGER.error("保存SimpleTrigger失败", e);
-					message.put("message", "保存SimpleTrigger失败,请检查数据重新填写,数据已回滚");
-				}
-			} else if (RegularJob.TRIGGER_TYPE_CRON.equals(triggerType)) {
-				try {
-					cfgService.scheduleCronTrigger(name, configObj, description, groupId, tmpGroupName, cron,
-							NORMAL_JOB_TYPE, sug);
-					message.put("success", true);
-				} catch (Exception e) {
-					groupService.rollBackStrategyGroupByGid(groupId);
-					LOGGER.error("保存CronTrigger失败", e);
-					message.put("message", "保存CronTrigger失败,请检查数据重新填写,数据已回滚");
-				}
-			} else {
-				LOGGER.warn("调度类型获取错误,保存失败");
-				message.put("message", "调度类型获取错误,保存失败");
+				// 否则先保存分组获取分组ID
+				groupId = getNewGroupId(groupType, groupName, regularJob.getDescription());
 			}
 		} else {
-			LOGGER.warn("分组类型为空，不能保存策略配置");
-			message.put("message", "分组类型为空，不能保存策略配置");
+			//复杂分组
+			if (groupId == null) {
+				return returnError("复杂分组传入的groupId为空或小于等于0，不能保存策略");
+			}
 		}
-		return jacksonMapper.writeValueAsString(message);
+		regularJob.setGid(groupId);
+		regularJob.setGname(groupName);
+		
+		//check config
+		Class<?> dataClass = regularConfigService.getConfigableInfo(regularJob.getName()).getDataClass();
+		if(regularJob.getConfig()!=null) {
+			try {
+				Object configObj = jacksonMapper.readValue(regularJob.getConfig(), dataClass);
+				regularJob.setConfigObject(configObj);
+			} catch (Exception e) {
+				groupService.rollBackStrategyGroupByGid(groupId);
+				return returnError("获取configObj异常,回滚分组：" + groupId);
+			}
+		}
+		
+		//处理StrategyUserGroup
+		if (fromGroupId != null || toGroupId != null) {
+			StrategyUserGroup sug = new StrategyUserGroup();
+			sug.setFromUserGroup(fromGroupId);
+			sug.setToUserGroup(toGroupId);
+			regularJob.setExtendConfigObject(sug);
+		}
+		
+		//设置triggerDto和JobType
+		regularJob.setTriggerObject(triggerDto);
+		regularJob.setJobType(ConfigableType.normal.jobType);
+		
+		//save
+		try {
+			cfgService.scheduleRegularJob(regularJob);
+			Map<String, Object> message = CollectionUtils.newHashMap(1);
+			message.put("success", true);
+			return jacksonMapper.writeValueAsString(message);
+		} catch (Exception e) {
+			groupService.rollBackStrategyGroupByGid(groupId);
+			return returnError("保存失败,请检查数据重新填写,数据已回滚");
+		}
 	}
 
+	private String returnError(String msg) throws IOException {
+		LOGGER.warn(msg);
+		Map<String, Object> message = CollectionUtils.newHashMap(2);
+		message.put("success", false);
+		message.put("message", msg);
+		return jacksonMapper.writeValueAsString(message);
+	}
+	
 	/**
 	 * 批量删除调度信息
 	 * 
@@ -396,14 +316,7 @@ public class StrategyDispatchController {
 	 * @return
 	 */
 	private Long getRegularIdByGid(Long gid) {
-		Long id = null;
-		if (gid != null) {
-			RegularJob rj = cfgService.findRegularJobBySimpleGroupId(gid);
-			if (rj != null) {
-				id = rj.getId();
-			}
-		}
-		return id;
+		return cfgService.findRegularJobIdBySimpleGroupId(gid);
 	}
 
 	/**
@@ -438,7 +351,6 @@ public class StrategyDispatchController {
 		private ConfigDefinition def;
 		// 节点数据
 		private Object data;
-		private JobDto jobdto;
 		private String extendType;
 		private Object extendMeta;
 		private Object sug;
@@ -478,10 +390,6 @@ public class StrategyDispatchController {
 			this.extendMeta = extendMeta;
 		}
 
-		public DispatchData(JobDto jobdto) {
-			this.jobdto = jobdto;
-		}
-
 		public String getTreeid() {
 			return treeid;
 		}
@@ -512,14 +420,6 @@ public class StrategyDispatchController {
 
 		public void setData(Object data) {
 			this.data = data;
-		}
-
-		public JobDto getJobdto() {
-			return jobdto;
-		}
-
-		public void setJobdto(JobDto jobdto) {
-			this.jobdto = jobdto;
 		}
 
 	}

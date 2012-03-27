@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.nali.spreader.dao.ICrudRegularJobResultDao;
 import com.nali.spreader.dao.ITaskDao;
+import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.config.extend.ExtendExecuter;
 import com.nali.spreader.factory.config.extend.ExtendedBean;
 import com.nali.spreader.factory.exporter.ClientTaskExporterFactory;
@@ -110,7 +112,8 @@ public class RegularProducerManager {
 			}
 			logResultEnd(resultId, msg, RegularJobResult.STATUS_SUCCESS);
 		} catch (Exception e) {
-			logResultEnd(resultId, e.getMessage(), RegularJobResult.STATUS_FAIL);
+			logger.error(e, e);
+			logResultEnd(resultId, ExceptionUtils.getFullStackTrace(e), RegularJobResult.STATUS_FAIL);
 		}
 		logger.info("end invoking task:"+name+"#"+sid);
 	}
@@ -120,7 +123,12 @@ public class RegularProducerManager {
 	}
 	
 	public Object getExtendConfig(String name, Long sid) {
-		return regularConfigService.getExtendConfig(name, sid);
+		ConfigableInfo configableInfo = regularConfigService.getConfigableInfo(name);
+		if(configableInfo.getExtendType()!=null) {
+			return regularConfigService.getExtendConfig(name, sid);
+		} else {
+			return null;
+		}
 	}
 
 	public String serializeConfigData(Object obj) {

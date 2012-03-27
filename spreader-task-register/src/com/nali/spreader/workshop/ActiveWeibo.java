@@ -49,6 +49,7 @@ public class ActiveWeibo extends SingleTaskMachineImpl implements PassiveWorksho
 		user.setBirthdayDay(robotRegister.getBirthdayDay());
 		user.setBirthdayMonth(robotRegister.getBirthdayMonth());
 		user.setBirthdayYear(robotRegister.getBirthdayYear());
+		user.setProvince(robotRegister.getProvince());
 		user.setCity(robotRegister.getCity());
 		user.setConstellation(robotRegister.getConstellation());
 		user.setEmail(robotRegister.getEmail());
