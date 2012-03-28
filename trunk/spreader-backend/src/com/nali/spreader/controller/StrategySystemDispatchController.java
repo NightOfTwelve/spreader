@@ -96,7 +96,7 @@ public class StrategySystemDispatchController {
 						.getConfigableInfo(name).getDisplayName(),
 						regularConfigService.getConfigDefinition(name),
 						id != null && id > 0 ? cfgService.getRegularJobObject(id)
-								.getConfig() : null));
+								.getConfigObject() : null));
 	}
 
 	/**

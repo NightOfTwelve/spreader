@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="spreader_regular_job_result">
+	<resultMap class="com.nali.spreader.factory.config.RegularJobResultDto"
+		id="JobResultResultMap" extends="spreader_tb_regular_job_result.ibatorgenerated_BaseResultMap">
+		<result column="job_name" jdbcType="VARCHAR" property="jobName" />
+	</resultMap>
+	<select id="selectJobResultResult" parameterClass="java.util.HashMap"
+		resultMap="JobResultResultMap">
+		select re.id as id,re.job_id as job_id,re.start_time as
+		start_time
+		,re.end_time as end_time,re.result as result,re.status as
+		status,job.name as
+		job_name
+		from spreader.tb_regular_job_result re
+		left
+		join spreader.tb_regular_job job on re.job_id = job.id
+		where re.job_id = #jobId# limit $limit.offset$,$limit.maxRows$
+	</select>
+	<select id="countJobResultResult" parameterClass="java.lang.Long"
+		resultClass="java.lang.Integer">
+		select count(re.id) as cnt
+		from spreader.tb_regular_job_result re
+		left
+		join spreader.tb_regular_job job on re.job_id = job.id
+		<isNotNull prepend="where">
+			re.job_id = #jobId#
+		</isNotNull>
+	</select>
+</sqlMap>

@@ -47,11 +47,15 @@ public class AddFansToUserByGroup extends UserGroupExtendedBeanImpl implements R
 	public void init(GroupUserAddFansDto config) {
 		Integer minValue = config.getMinUserValue();
 		Integer maxValue = config.getMaxUserValue();
-		if (minValue != null && maxValue != null) {
+		// 下限可以为0
+		if (minValue == null) {
+			minValue = 0;
+		}
+		if (maxValue != null) {
 			this.random = new NumberRandomer(minValue, maxValue + 1);
 		} else {
 			logger.error("关注数上限为null");
-			throw new NullPointerException();
+			throw new IllegalArgumentException();
 		}
 	}
 

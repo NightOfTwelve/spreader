@@ -109,7 +109,7 @@ public class StrategyDispatchController {
 		String extendType = cfg.getExtendType();
 		Object meta = cfg.getExtendMeta();
 		ConfigDefinition def = regularConfigService.getConfigDefinition(name);
-		Object data = id != null ? cfgService.getRegularJobObject(id).getConfig() : null;
+		Object data = id != null ? cfgService.getRegularJobObject(id).getConfigObject() : null;
 		Object sug = null;
 		if (!StringUtils.isEmpty(extendType)) {
 			sug = cfgService.getExtendConfig(name, id);
