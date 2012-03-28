@@ -576,9 +576,22 @@ Ext.onReady(function() {
 				renderer : renderBrief,
 				width : 100
 			}, {
-				header : '相关操作',
+				header : '属性配置',
 				renderer : function showbutton() {
 					var returnStr = "<input type='button' value='配置'/>";
+					return returnStr;
+				},
+				width : 100
+			}, {
+				header : '执行情况',
+				renderer : function showbutton(value, cellmeta, record,
+						rowIndex, columnIndex, store) {
+					var gtype = record.data['groupType'];
+					var returnStr = "";
+					// 手动分组不显示查看按钮
+					if (gtype == 1) {
+						returnStr = "<input type='button' value='执行情况'/>";
+					}
 					return returnStr;
 				},
 				width : 100
@@ -697,16 +710,16 @@ Ext.onReady(function() {
 				}],
 		bbar : groupBbar,
 		onCellClick : function(grid, rowIndex, columnIndex, e) {
+			var butname = e.target.defaultValue;
+			var record = grid.getStore().getAt(rowIndex);
+			var data = record.data;
 			// 找出表格中‘配置’按钮
-			if (e.target.defaultValue == '配置') {
-				var record = grid.getStore().getAt(rowIndex);
-				var data = record.data;
+			if (butname == '配置') {
 				// 获取分组类型分别做判断
 				var gType = data.groupType;
 				cleanGlobalVar();
 				var descText = descField.getValue();
 				settingDescInfo(descText);
-				// TODO
 				// 简单分组
 				if (gType == 1) {
 					GDISNAME = data.groupName;
@@ -731,6 +744,13 @@ Ext.onReady(function() {
 					store.setBaseParam('groupId', data.id);
 					store.reload();
 				}
+			}
+			if (butname == '执行情况') {
+				var gid = data.id;
+				jobResultStore.setBaseParam('gid', gid);
+				jobResultStore.setBaseParam('groupType', 'simple');
+				jobResultStore.reload();
+				taskWindow.show();
 			}
 		}
 	});
@@ -770,7 +790,7 @@ Ext.onReady(function() {
 				}
 				stgSelectCombo.reset();
 			});
-
+	
 	// 创建ComboBox数据源，支持Ajax取值
 	var stgCmbStore = new Ext.data.Store({
 				// 代理模式
@@ -1041,6 +1061,13 @@ Ext.onReady(function() {
 					return returnStr;
 				},
 				width : 100
+			}, {
+				header : '执行情况',
+				renderer : function showbutton() {
+					var returnStr = "<input type='button' value='执行情况'/>";
+					return returnStr;
+				},
+				width : 100
 			}]);
 	// 页数
 	var number = 20;
@@ -1120,10 +1147,11 @@ Ext.onReady(function() {
 						}],
 				bbar : bbar,
 				onCellClick : function(grid, rowIndex, columnIndex, e) {
+					var button = e.target.defaultValue;
+					var record = grid.getStore().getAt(rowIndex);
+					var data = record.data;
 					// 找出表格中‘配置’按钮
-					if (e.target.defaultValue == '配置') {
-						var record = grid.getStore().getAt(rowIndex);
-						var data = record.data;
+					if (button == '配置') {
 						GDISNAME = data.name;
 						GOBJID = data.name;
 						GDISPID = data.id;
@@ -1132,6 +1160,12 @@ Ext.onReady(function() {
 						settingCreateTrigger(trgid);
 						editstgWindow.title = rendDispName2(GDISNAME);
 						editstgWindow.show();
+					} else if (button == '执行情况') {
+						var jobId = data.id;
+						jobResultStore.setBaseParam('jobId', jobId);
+						jobResultStore.setBaseParam('groupType', 'complex');
+						jobResultStore.reload();
+						taskWindow.show();
 					}
 				}
 			});

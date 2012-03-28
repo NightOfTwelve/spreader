@@ -127,6 +127,44 @@ function renderDateHis(value) {
 			: '';
 }
 /**
+ * 格式化任务执行结果状态
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderJobResultStatus(value) {
+	if (value == 0) {
+		return '<span style="color:green;">' + '执行中' + '</span>';
+	} else if (value == 1) {
+		return '<span style="color:blue;">' + '完成' + '</span>';
+	} else if (value == 2) {
+		return '<span style="color:red;">' + '异常中断' + '</span>';
+	}
+	return value;
+}
+/**
+ * 格式化任务状态
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderTaskStatus(value) {
+	if (value == 0) {
+		return '<span style="color:#8600FF;">' + '已分配' + '</span>';
+	} else if (value == 1) {
+		return '<span style="color:green;">' + '成功' + '</span>';
+	} else if (value == 2) {
+		return '<span style="color:red;">' + '失败' + '</span>';
+	} else if (value == 3) {
+		return '<span style="color:bule;">' + '放弃' + '</span>';
+	} else if (value == 4) {
+		return '<span style="color:black;">' + '过期' + '</span>';
+	}
+	return value;
+}
+/**
  * 性别中文渲染
  * 
  * @param {}
@@ -138,7 +176,6 @@ function renderGender(value) {
 	} else {
 		return '女';
 	}
-
 }
 /**
  * 渲染是否位机器人
