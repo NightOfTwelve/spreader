@@ -179,22 +179,22 @@ public class UserService extends WebsiteBaseService implements IUserService {
 			if(uid==null) {
 				throw new IllegalArgumentException("uid is null");
 			}
-			User user = crudUserDao.selectByPrimaryKey(uid);
-			if(user==null) {
+			Long websiteUid = globalUserService.getWebsiteUid(uid);
+			if(websiteUid==null) {
 				throw new IllegalArgumentException("cannot find user:" + uid);
 			}
-			relation.setWebsiteUid(user.getWebsiteUid());
+			relation.setWebsiteUid(websiteUid);
 		}
 		if(relation.getToWebsiteUid()==null) {
 			Long toUid = relation.getToUid();
 			if(toUid==null) {
 				throw new IllegalArgumentException("toUid is null");
 			}
-			User user = crudUserDao.selectByPrimaryKey(toUid);
-			if(user==null) {
+			Long websiteUid = globalUserService.getWebsiteUid(toUid);
+			if(websiteUid==null) {
 				throw new IllegalArgumentException("cannot find user:" + toUid);
 			}
-			relation.setToWebsiteUid(user.getWebsiteUid());
+			relation.setToWebsiteUid(websiteUid);
 		}
 		UserRelation rlt = crudUserRelationDao.selectByPrimaryKey(relation.getToUid(), relation.getType(), relation.getUid());
 		if(rlt!=null) {

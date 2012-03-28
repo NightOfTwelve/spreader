@@ -137,7 +137,22 @@ public class GlobalUserService implements IGlobalUserService {
 	@Override
 	public Long getWebsiteUid(Long uid) {// TODO cache
 		User user = crudUserDao.selectByPrimaryKey(uid);
+		if(user==null) {
+			user = findDeletedUser(uid);
+		}
 		return user == null ? null : user.getWebsiteUid();
+	}
+
+	private User findDeletedUser(Long uid) {
+		UserExample userExample = new UserExample();
+		userExample.setShard(BAK_USER_SHARD);
+		userExample.createCriteria().andIdEqualTo(uid);
+		List<User> rlt = crudUserDao.selectByExample(userExample);
+		if(rlt.size()==0) {
+			return null;
+		} else {
+			return rlt.get(0);
+		}
 	}
 
 	@Override

@@ -38,7 +38,7 @@ public class FetchWeiboUserMainPage extends SingleTaskMachineImpl implements Pas
 	private Boolean fetchAttention=true;
 	
 	public FetchWeiboUserMainPage() {
-		super(SimpleActionConfig.fetchWeiboUserMainPage, Website.weibo, Channel.normal);
+		super(SimpleActionConfig.fetchWeiboUserMainPage, Website.weibo, Channel.fetch);
 	}
 	
 	@Autowired

@@ -47,7 +47,7 @@ public class TargetUserAccountErrorProcessor extends DefaultErrorProcessor<KeyVa
 			logger.warn("remove user failed, not found:" + websiteUser);
 			return;
 		}
-		logger.warn("remove user:" + user.getId());
+		logger.warn("remove user:" + websiteUser);
 		if(user.getIsRobot()) {
 			globalRobotUserService.disableAccount(user.getId());
 		}

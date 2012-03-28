@@ -32,7 +32,7 @@ public class FetchWeiboContent extends SingleTaskMachineImpl implements
 	private IGlobalUserService globalUserService;
 
 	public FetchWeiboContent() {
-		super(SimpleActionConfig.fetchWeiboContent, Website.weibo, Channel.normal);
+		super(SimpleActionConfig.fetchWeiboContent, Website.weibo, Channel.fetch);
 	}
 
 	@Override
