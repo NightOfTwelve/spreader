@@ -32,7 +32,7 @@ public class FetchWeiboStarUser extends SingleTaskMachineImpl implements Passive
 	private TaskProduceLine<Long> fetchWeiboUserMainPage;
 
 	public FetchWeiboStarUser() {
-		super(SimpleActionConfig.fetchWeiboStarUser, Website.weibo, Channel.normal);
+		super(SimpleActionConfig.fetchWeiboStarUser, Website.weibo, Channel.fetch);
 	}
 	
 	@Autowired

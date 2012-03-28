@@ -32,7 +32,7 @@ public class FetchUserAttentions extends SingleTaskMachineImpl implements Passiv
 	private TaskProduceLine<Long> fetchWeiboUserMainPage;
 	
 	public FetchUserAttentions() {
-		super(SimpleActionConfig.fetchUserAttentions, Website.weibo, Channel.normal);
+		super(SimpleActionConfig.fetchUserAttentions, Website.weibo, Channel.fetch);
 	}
 	
 	@Autowired
