@@ -19,7 +19,10 @@ public class StrategyUserGroupService implements IStrategyUserGroupService {
 
 	@Override
 	public void save(StrategyUserGroup extendConfig) {
-		crudStrategyUserGroupDao.insertSelective(extendConfig);		
+		int updateCount = crudStrategyUserGroupDao.updateByPrimaryKey(extendConfig);
+		if(updateCount==0) {
+			crudStrategyUserGroupDao.insertSelective(extendConfig);		
+		}
 	}
 
 }
