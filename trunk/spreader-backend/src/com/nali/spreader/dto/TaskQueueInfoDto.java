@@ -1,7 +1,9 @@
 package com.nali.spreader.dto;
 
-public class TaskQueueInfoDto {
+import java.io.Serializable;
 
+public class TaskQueueInfoDto implements Serializable {
+	private static final long serialVersionUID = -3628323770017591110L;
 	// 普通任务队列长度
 	private Long normalSize;
 	// 注册任务
