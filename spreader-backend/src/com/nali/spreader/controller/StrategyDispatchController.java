@@ -165,7 +165,7 @@ public class StrategyDispatchController {
 			Long fromGroupId, Long toGroupId, RegularJob regularJob, TriggerDto triggerDto) throws JsonGenerationException, JsonMappingException, IOException {
 		//检查参数
 		if (groupType == null) {
-			return returnError("分组类型为空，不能保存策略配置");
+			return returnError("分组类型为空，不能保存策略配置", null);
 		}
 		
 		//处理分组相关字段
@@ -178,7 +178,7 @@ public class StrategyDispatchController {
 					// 如果分组ID不为null,首先检查并同步策略表
 					groupService.syncRegularJob(groupId, groupName, id);
 				} else {
-					return returnError("通过组ID:" + groupId + ",获取regularJob失败");
+					return returnError("通过组ID:" + groupId + ",获取regularJob失败", null);
 				}
 			} else {
 				// 否则先保存分组获取分组ID
@@ -187,7 +187,7 @@ public class StrategyDispatchController {
 		} else {
 			//复杂分组
 			if (groupId == null) {
-				return returnError("复杂分组传入的groupId为空或小于等于0，不能保存策略");
+				return returnError("复杂分组传入的groupId为空或小于等于0，不能保存策略", null);
 			}
 		}
 		regularJob.setGid(groupId);
@@ -201,7 +201,7 @@ public class StrategyDispatchController {
 				regularJob.setConfigObject(configObj);
 			} catch (Exception e) {
 				groupService.rollBackStrategyGroupByGid(groupId);
-				return returnError("获取configObj异常,回滚分组：" + groupId);
+				return returnError("获取configObj异常,回滚分组：" + groupId, e);
 			}
 		}
 		
@@ -225,12 +225,16 @@ public class StrategyDispatchController {
 			return jacksonMapper.writeValueAsString(message);
 		} catch (Exception e) {
 			groupService.rollBackStrategyGroupByGid(groupId);
-			return returnError("保存失败,请检查数据重新填写,数据已回滚");
+			return returnError("保存失败,请检查数据重新填写,数据已回滚", e);
 		}
 	}
 
-	private String returnError(String msg) throws IOException {
-		LOGGER.warn(msg);
+	private String returnError(String msg, Throwable e) throws IOException {
+		if(e==null) {
+			LOGGER.warn(msg);
+		} else {
+			LOGGER.warn(msg, e);
+		}
 		Map<String, Object> message = CollectionUtils.newHashMap(2);
 		message.put("success", false);
 		message.put("message", msg);
