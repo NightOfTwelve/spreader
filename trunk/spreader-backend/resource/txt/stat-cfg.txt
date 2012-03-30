@@ -1,0 +1,9 @@
+stat.captchaInput=验证码输入情况
+stat.captchaInput.sql=spreader_stat.captchaInput
+stat.captchaInput.columns=client_id,客户端Id, s_cnt,成功数, a_cnt,总数, s_rate,成功率
+stat.captchaInput.extend=com.nali.spreader.stat.TimeRangeExtend
+
+stat.taskCount=未执行任务总数
+stat.taskCount.sql=spreader_stat.taskCount
+stat.taskCount.columns=task_type,通道, task_code,任务代号, task_count,数量
+stat.taskCount.extend=com.nali.spreader.stat.TimeRangeExtend

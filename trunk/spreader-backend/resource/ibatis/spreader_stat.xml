@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
 <sqlMap namespace="spreader_stat">
-	<select id="taskCount" resultClass="map">
+	<select id="taskCount" resultClass="java.util.HashMap">
 		select task_type, task_code, count(*) task_count
 		from spreader.tb_client_task
 		where status=0
 		group by task_type, task_code
 	</select>
-	<select id="captchaInput" resultClass="map">
+	<select id="captchaInput" resultClass="java.util.HashMap" parameterClass="com.nali.spreader.stat.TimeRange">
 		SELECT a.client_id,
 				s.cnt s_cnt,
 				a.cnt a_cnt,
@@ -15,7 +15,7 @@
 		FROM (SELECT COUNT(*) cnt,
 					handle_client client_id
 				FROM tb_captcha cpout
-				WHERE expire_time > curdate()
+				WHERE expire_time between #begin# and #end#
 				GROUP BY handle_client) a 
 		LEFT JOIN
 				(SELECT COUNT(*) cnt,
@@ -27,7 +27,7 @@
 					WHERE cp.task_id = cl.task_id
 					AND  cl.task_code IN ('registerRobotUserEmail','registerWeibo')
 					AND  cl.status = 0
-					AND  cl.executed_time > curdate()
+					AND  cl.executed_time between #begin# and #end#
 					GROUP BY cp.task_id, cp.seq) cpmaxid
 				WHERE cpmaxid.id = cpout.id
 				GROUP BY handle_client) s
