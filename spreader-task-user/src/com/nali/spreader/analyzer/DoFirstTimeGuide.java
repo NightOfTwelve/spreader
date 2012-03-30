@@ -45,7 +45,7 @@ public class DoFirstTimeGuide extends UserGroupExtendedBeanImpl implements Regul
 		Calendar calendar = Calendar.getInstance();
 		while (userIterator.hasNext()) {
 			GrouppedUser grouppedUser = (GrouppedUser) userIterator.next();
-			Long uid = grouppedUser.getUser().getId();
+			Long uid = grouppedUser.getUid();
 			boolean userGuide = firstLoginGuideService.isUserGuide(uid);
 			if(userGuide) {
 				continue;
