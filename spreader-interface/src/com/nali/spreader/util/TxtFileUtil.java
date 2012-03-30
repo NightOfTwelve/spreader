@@ -186,7 +186,7 @@ public class TxtFileUtil {
 						throw new IllegalArgumentException("not a key value pair:" + line);
 					}
 				} else {
-					pairHandler.handle(pair[0], pair[1]);
+					pairHandler.handle(pair[0].trim(), pair[1].trim());
 				}
 			}};
 		read(src, lineHandler);

@@ -28,4 +28,8 @@ public class KeyValuePair<K, V> implements Map.Entry<K, V> {
 		return value;
 	}
 
+	@Override
+	public String toString() {
+		return "<" + key + ", " + value + ">";
+	}
 }
