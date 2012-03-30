@@ -27,7 +27,7 @@ import com.nali.spreader.util.random.NumberRandomer;
 @Component
 @ClassDescription("注册后关注用户")
 public class GenerateRobotFoo implements PassiveAnalyzer<Long>, Configable<NamedGroupUserAddFansDto> {
-	private static final int basePriority = ClientTask.BASE_PRIORITY_MAX/2;
+	private static final int basePriority = ClientTask.BASE_PRIORITY_MAX+1;
 	@Autowired
 	private IUserGroupService userGroupService;
 	@Autowired
