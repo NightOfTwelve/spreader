@@ -1,0 +1,69 @@
+package com.nali.spreader.controller;
+
+import java.io.IOException;
+import java.util.Date;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.nali.common.model.Limit;
+import com.nali.common.pagination.PageResult;
+import com.nali.spreader.dto.ClientTaskExcutionSummaryDto;
+import com.nali.spreader.dto.ClientTaskSumQueryParamDto;
+import com.nali.spreader.service.IClientTaskStatService;
+
+/**
+ * 任务查询CTRL
+ * 
+ * @author xiefei
+ * 
+ */
+@Controller
+@RequestMapping(value = "/taskstat")
+public class ClientTaskStatController {
+	private static ObjectMapper json = new ObjectMapper();
+	@Autowired
+	private IClientTaskStatService taskService;
+
+	@RequestMapping(value = "/init")
+	public String init() {
+		return "/show/main/ClientTaskStatShow";
+	}
+
+	/**
+	 * 统计情况列表
+	 * 
+	 * @param cid
+	 * @param startTime
+	 * @param endTime
+	 * @param start
+	 * @param limit
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	@ResponseBody
+	@RequestMapping("/taskgridstore")
+	public String searchClientTaskStat(Long cid, Date startTime, Date endTime, Integer start, Integer limit) throws JsonGenerationException, JsonMappingException, IOException {
+		if (start == null) {
+			start = 0;
+		}
+		if (limit == null) {
+			limit = 20;
+		}
+		Limit lit = Limit.newInstanceForLimit(start, limit);
+		ClientTaskSumQueryParamDto param = new ClientTaskSumQueryParamDto();
+		param.setCid(cid);
+		param.setStartTime(startTime);
+		param.setEndTime(endTime);
+		param.setLimit(lit);
+		PageResult<ClientTaskExcutionSummaryDto> page = this.taskService.queryClientTaskStatPageResult(param);
+		return json.writeValueAsString(page);
+	}
+}

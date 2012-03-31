@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="spreader_client_task_stat">
+	<resultMap class="com.nali.spreader.dto.ClientTaskExcutionSummaryDto"
+		id="client_task_execution_stat_resultmap">
+		<result column="cid" jdbcType="BIGINT" property="cid" />
+		<result column="task_code" jdbcType="VARCHAR" property="taskCode" />
+		<result column="success" jdbcType="INTEGER" property="success" />
+		<result column="fail" jdbcType="INTEGER" property="fail" />
+	</resultMap>
+	<resultMap class="com.nali.spreader.dto.ClientTaskaStatDetailDto"
+		id="clientTaskStatDtlResultMap">
+		<result column="id" jdbcType="BIGINT" property="taskId" />
+		<result column="contents" jdbcType="LONGVARCHAR" property="contents" />
+		<result column="task_code" jdbcType="VARCHAR" property="taskCode" />
+		<result column="client_id" jdbcType="BIGINT" property="clientId" />
+		<result column="status" jdbcType="INTEGER" property="status" />
+		<result column="executed_time" jdbcType="TIMESTAMP" property="executedTime" />
+		<result column="uid" jdbcType="BIGINT" property="uid" />
+		<result column="error_code" jdbcType="VARCHAR" property="errorCode" />
+		<result column="website_id" jdbcType="INTEGER" property="websiteId" />
+		<result column="website_error_desc" jdbcType="LONGVARCHAR"
+			property="websiteErrorDesc" />
+	</resultMap>
+	<select id="selectClientTaskStat" parameterClass="com.nali.spreader.dto.ClientTaskSumQueryParamDto"
+		resultMap="client_task_execution_stat_resultmap">
+		select b.cid,task_code,IFNULL(MAX(success),0) AS
+		success,IFNULL(MAX(fail),0) AS fail from
+		(select a.cid,task_code, CASE
+		status WHEN '0' THEN cs END AS 'success',
+		CASE status WHEN '1' THEN cs
+		END AS 'fail' from(
+		select client_id cid,task_code,status,count(status)
+		cs
+		from spreader.tb_client_task_log
+		<dynamic prepend="where">
+			<isNotNull prepend="and" property="cid">
+				client_id = #cid#
+			</isNotNull>
+			<isNotNull prepend="and" property="startTime">
+				<![CDATA[executed_time>=#startTime#]]>
+			</isNotNull>
+			<isNotNull prepend="and" property="endTime">
+				<![CDATA[executed_time <= #endTime#]]>
+			</isNotNull>
+		</dynamic>
+		group by client_id,task_code,status ) a) b
+		group by cid,task_code order
+		by cid
+		<isNotNull property="limit">
+			limit $limit.offset$,$limit.maxRows$
+		</isNotNull>
+	</select>
+	<select id="countClientTaskStat" parameterClass="com.nali.spreader.dto.ClientTaskSumQueryParamDto"
+		resultClass="java.lang.Integer">
+		select count(cid) cnt from(
+		select
+		b.cid,task_code,IFNULL(MAX(success),0) AS success,IFNULL(MAX(fail),0)
+		AS fail from
+		(select a.cid,task_code, CASE status WHEN '0' THEN cs END
+		AS 'success',
+		CASE status WHEN '1' THEN cs END AS 'fail' from(
+		select
+		client_id cid,task_code,status,count(status) cs
+		from
+		spreader.tb_client_task_log
+		<dynamic prepend="where">
+			<isNotNull prepend="and" property="cid">
+				client_id = #cid#
+			</isNotNull>
+			<isNotNull prepend="and" property="startTime">
+				<![CDATA[executed_time>=#startTime#]]>
+			</isNotNull>
+			<isNotNull prepend="and" property="endTime">
+				<![CDATA[executed_time <= #endTime#]]>
+			</isNotNull>
+		</dynamic>
+		group by client_id,task_code,status ) a) b
+		group by cid,task_code)c
+	</select>
+	<sql id="selectClientTaskStatDtlCondition">
+		<isNotNull prepend="and" property="taskId">
+			ct.id = #taskId#
+		</isNotNull>
+		<isNotEmpty prepend="and" property="taskCode">
+			ct.task_code =
+			#taskCode#
+		</isNotEmpty>
+		<isNotNull prepend="and" property="clientId">
+			cl.client_id =
+			#clientId#
+		</isNotNull>
+		<isNotNull prepend="and" property="status">
+			cl.status = #status#
+		</isNotNull>
+		<isNotNull prepend="and" property="startTime">
+				<![CDATA[cl.executed_time >=
+				#startTime#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="endTime">
+				<![CDATA[cl.executed_time <=
+				#endTime#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="uid">
+			ce.uid = #uid#
+		</isNotNull>
+		<isNotEmpty prepend="and" property="errorCode">
+			ce.error_code =
+			#errorCode#
+		</isNotEmpty>
+		<isNotNull prepend="and" property="websiteId">
+			ce.website_id =
+			#websiteId#
+		</isNotNull>
+	</sql>
+	<select id="selectClientTaskStatDtl"
+		parameterClass="com.nali.spreader.dto.ClientTaskStatDtlQueryParamDto"
+		resultMap="clientTaskStatDtlResultMap">
+		select
+		ct.id,ct.contents,ct.task_code,cl.client_id,cl.status,cl.executed_time
+		,ce.uid,ce.error_code,ce.website_id,ce.website_error_desc
+		from
+		spreader.tb_client_task ct
+		left join spreader.tb_client_task_log cl on
+		ct.id = cl.task_id
+		left join spreader.tb_client_error ce on ct.id =
+		ce.task_id
+		<dynamic prepend="where">
+			<include refid="selectClientTaskStatDtlCondition" />
+		</dynamic>
+		<isNotNull property="lit">
+			limit $lit.offset$,$lit.maxRows$
+		</isNotNull>
+	</select>
+	<select id="countClientTaskStatDtl"
+		parameterClass="com.nali.spreader.dto.ClientTaskStatDtlQueryParamDto"
+		resultClass="java.lang.Integer">
+		select
+		count(ct.id) cnt
+		from
+		spreader.tb_client_task ct
+		left join
+		spreader.tb_client_task_log cl on
+		ct.id = cl.task_id
+		left join
+		spreader.tb_client_error ce on ct.id =
+		ce.task_id
+		<dynamic prepend="where">
+			<include refid="selectClientTaskStatDtlCondition" />
+		</dynamic>
+	</select>
+</sqlMap>

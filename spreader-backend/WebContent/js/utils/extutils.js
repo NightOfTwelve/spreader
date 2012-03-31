@@ -165,6 +165,32 @@ function renderTaskStatus(value) {
 	return value;
 }
 /**
+ * 渲染颜色
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderRed(value) {
+	if (value != null) {
+		return '<span style="color:red;">' + value + '</span>';
+	}
+	return value;
+}
+/**
+ * 渲染颜色
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderGreen(value) {
+	if (value != null) {
+		return '<span style="color:green;">' + value + '</span>';
+	}
+	return value;
+}
+/**
  * 性别中文渲染
  * 
  * @param {}

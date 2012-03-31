@@ -31,15 +31,21 @@ var resultgridsm = new Ext.grid.CheckboxSelectionModel({
 				// 选择事件
 				rowselect : function(model, rowIndex, record) {
 					var resultId = record.get('id');
+					// 先清除缓存
+					taskDtlStore.removeAll();
 					taskDtlStore.setBaseParam('resultId', resultId);
 					taskDtlStore.reload();
 				}
 			}
 		});
 
-var resultgridsmcm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(),
+var resultgridcm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(),
 		resultgridsm, {
-			header : '任务编号',
+			header : 'ID',
+			dataIndex : 'id',
+			width : 80
+		}, {
+			header : '调度编号',
 			dataIndex : 'jobId',
 			width : 80
 		}, {
@@ -50,6 +56,11 @@ var resultgridsmcm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(),
 			header : '任务状态',
 			dataIndex : 'status',
 			renderer : renderJobResultStatus,
+			width : 100
+		}, {
+			header : '执行结果',
+			dataIndex : 'result',
+			renderer : renderBrief,
 			width : 100
 		}, {
 			header : '发起时间',
@@ -103,7 +114,7 @@ var jobResultGrid = new Ext.grid.GridPanel({
 			height : 230,
 			id : 'jobResultGrid',
 			store : jobResultStore,
-			cm : resultgridsmcm,
+			cm : resultgridcm,
 			sm : resultgridsm,
 			bbar : jobResultBbar
 		})
@@ -140,7 +151,11 @@ var taskDtlStore = new Ext.data.GroupingStore({
 			autoLoad : true
 		});
 // TASK CM
-var taskgridsmcm = new Ext.grid.ColumnModel([{
+var taskgridcm = new Ext.grid.ColumnModel([{
+			header : 'ID',
+			dataIndex : 'id',
+			width : 100
+		}, {
 			header : '任务代码',
 			dataIndex : 'taskCode',
 			width : 100
@@ -183,7 +198,7 @@ var taskGrid = new Ext.grid.GridPanel({
 	split : true,
 	id : 'taskGrid',
 	store : taskDtlStore,
-	cm : taskgridsmcm,
+	cm : taskgridcm,
 	view : new Ext.grid.GroupingView({
 		forceFit : true,
 		startCollapsed : true, // 默认收起

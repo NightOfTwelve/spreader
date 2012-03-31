@@ -1,8 +1,10 @@
 package com.nali.spreader.factory.config;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class RegularJobResultDto {
+public class RegularJobResultDto implements Serializable {
+	private static final long serialVersionUID = -5640869958385155442L;
 	private Long id;
 	private Long jobId;
 	private String jobName;

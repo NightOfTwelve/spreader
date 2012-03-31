@@ -79,6 +79,16 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "队列查询",
 									leaf : true,
 									url : '../queuemoitor/init'
+								}, {
+									id : 'clientTaskStat',
+									text : "客户端任务检索",
+									leaf : true,
+									url : '../taskstat/init'
+								}, {
+									id : 'clientTaskStatDtl',
+									text : "客户端任务详细信息",
+									leaf : true,
+									url : '../taskstatdtl/init'
 								}]
 					}),
 			// 添加监听事件
@@ -109,7 +119,7 @@ var menuTree_ContentLibQuery = new Ext.tree.TreePanel({
 						id : '-1',
 						text : '基础信息',
 						children : [{
-									id : 'contentLib1',
+									id : 'contentLib',
 									text : "微博内容库检索",
 									leaf : true,
 									url : '../contentlib/init'
