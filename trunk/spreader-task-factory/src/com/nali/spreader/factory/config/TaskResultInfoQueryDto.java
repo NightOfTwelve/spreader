@@ -1,12 +1,15 @@
 package com.nali.spreader.factory.config;
 
+import java.io.Serializable;
+
 /**
  * 任务执行情况的DTO
  * 
  * @author xiefei
  * 
  */
-public class TaskResultInfoQueryDto {
+public class TaskResultInfoQueryDto implements Serializable {
+	private static final long serialVersionUID = 6212285204127937425L;
 
 	private String status;
 
