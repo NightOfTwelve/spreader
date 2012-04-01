@@ -1,6 +1,7 @@
 package com.nali.spreader.controller;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.common.util.DateUtils;
 import com.nali.spreader.dto.ClientTaskStatDtlQueryParamDto;
 import com.nali.spreader.dto.ClientTaskaStatDetailDto;
 import com.nali.spreader.service.IClientTaskStatService;
@@ -58,8 +60,21 @@ public class ClientTaskStatDtlController {
 			start = 0;
 		if (limit == null)
 			limit = 20;
+		Date startTime = param.getStartTime();
+		Date endTime = param.getEndTime();
+		// 对ENDTIME做特别处理
+		Date tmpEndTime = DateUtils.addDays(new Date(), 1);
+		if (endTime != null) {
+			tmpEndTime = DateUtils.addDays(endTime, 1);
+		}
+		// 同时为NULL时默认查当天
+		if (startTime == null) {
+			startTime = new Date();
+		}
 		Limit lit = Limit.newInstanceForLimit(start, limit);
 		param.setLit(lit);
+		param.setStartTime(startTime);
+		param.setEndTime(tmpEndTime);
 		PageResult<ClientTaskaStatDetailDto> pg = this.taskService
 				.queryClientTaskaStatDetailPageResult(param);
 		return json.writeValueAsString(pg);

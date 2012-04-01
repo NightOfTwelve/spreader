@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.common.util.DateUtils;
 import com.nali.spreader.dto.ClientTaskExcutionSummaryDto;
 import com.nali.spreader.dto.ClientTaskSumQueryParamDto;
 import com.nali.spreader.service.IClientTaskStatService;
@@ -58,18 +59,23 @@ public class ClientTaskStatController {
 		if (limit == null) {
 			limit = 20;
 		}
+		// 对ENDTIME做特别处理
+		Date tmpEndTime = DateUtils.addDays(new Date(), 1);
+		if (endTime != null) {
+			tmpEndTime = DateUtils.addDays(endTime, 1);
+		}
 		// 同时为NULL时默认查当天
-		if (startTime == null && endTime == null) {
+		if (startTime == null) {
 			startTime = new Date();
-			endTime = new Date();
 		}
 		Limit lit = Limit.newInstanceForLimit(start, limit);
 		ClientTaskSumQueryParamDto param = new ClientTaskSumQueryParamDto();
 		param.setCid(cid);
 		param.setStartTime(startTime);
-		param.setEndTime(endTime);
+		param.setEndTime(tmpEndTime);
 		param.setLimit(lit);
 		PageResult<ClientTaskExcutionSummaryDto> page = this.taskService.queryClientTaskStatPageResult(param);
 		return json.writeValueAsString(page);
 	}
+
 }
