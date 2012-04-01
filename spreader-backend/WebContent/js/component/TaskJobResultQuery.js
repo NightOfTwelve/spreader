@@ -60,7 +60,7 @@ var resultgridcm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(),
 		}, {
 			header : '执行结果',
 			dataIndex : 'result',
-			renderer : renderBrief,
+			renderer : renderHtmlBrief,
 			width : 100
 		}, {
 			header : '发起时间',
