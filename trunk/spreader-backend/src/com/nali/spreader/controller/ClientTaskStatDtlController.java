@@ -63,13 +63,13 @@ public class ClientTaskStatDtlController {
 		Date startTime = param.getStartTime();
 		Date endTime = param.getEndTime();
 		// 对ENDTIME做特别处理
-		Date tmpEndTime = DateUtils.addDays(new Date(), 1);
+		Date tmpEndTime = DateUtils.addDays(DateUtils.truncateTime(new Date()), 1);
 		if (endTime != null) {
-			tmpEndTime = DateUtils.addDays(endTime, 1);
+			tmpEndTime = DateUtils.addDays(DateUtils.truncateTime(endTime), 1);
 		}
 		// 同时为NULL时默认查当天
 		if (startTime == null) {
-			startTime = new Date();
+			startTime = DateUtils.truncateTime(new Date());
 		}
 		Limit lit = Limit.newInstanceForLimit(start, limit);
 		param.setLit(lit);

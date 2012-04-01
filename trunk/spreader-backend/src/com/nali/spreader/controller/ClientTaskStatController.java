@@ -1,6 +1,7 @@
 package com.nali.spreader.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -48,11 +49,12 @@ public class ClientTaskStatController {
 	 * @throws IOException
 	 * @throws JsonMappingException
 	 * @throws JsonGenerationException
+	 * @throws ParseException
 	 */
 	@ResponseBody
 	@RequestMapping("/taskgridstore")
 	public String searchClientTaskStat(Long cid, Date startTime, Date endTime, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
+			throws JsonGenerationException, JsonMappingException, IOException, ParseException {
 		if (start == null) {
 			start = 0;
 		}
@@ -60,14 +62,15 @@ public class ClientTaskStatController {
 			limit = 20;
 		}
 		// 对ENDTIME做特别处理
-		Date tmpEndTime = DateUtils.addDays(new Date(), 1);
+		Date tmpEndTime = DateUtils.addDays(DateUtils.truncateTime(new Date()), 1);
 		if (endTime != null) {
-			tmpEndTime = DateUtils.addDays(endTime, 1);
+			tmpEndTime = DateUtils.addDays(DateUtils.truncateTime(endTime), 1);
 		}
 		// 同时为NULL时默认查当天
 		if (startTime == null) {
-			startTime = new Date();
+			startTime = DateUtils.truncateTime(new Date());
 		}
+
 		Limit lit = Limit.newInstanceForLimit(start, limit);
 		ClientTaskSumQueryParamDto param = new ClientTaskSumQueryParamDto();
 		param.setCid(cid);
@@ -77,5 +80,4 @@ public class ClientTaskStatController {
 		PageResult<ClientTaskExcutionSummaryDto> page = this.taskService.queryClientTaskStatPageResult(param);
 		return json.writeValueAsString(page);
 	}
-
 }
