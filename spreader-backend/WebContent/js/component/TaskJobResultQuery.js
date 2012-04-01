@@ -234,6 +234,7 @@ var taskWindow = new Ext.Window({
 		// 嵌入的表单面板
 	});
 taskWindow.on('show', function() {
+			jobResultStore.removeAll();
 			jobResultStore.reload();
 			taskDtlStore.removeAll();
 		});
