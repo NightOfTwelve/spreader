@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nali.common.model.Limit;
 import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.IFirstLoginGuideDao;
 import com.nali.spreader.data.User;
@@ -26,10 +27,19 @@ public class FirstLoginGuideService implements IFirstLoginGuideService {
 		boolean initFlagOn = firstLoginGuideDao.isInitFlagOn();
 		if(initFlagOn==false) {
 			UserExample example = new UserExample();
-			example.createCriteria().andCreateTimeLessThan(new SimpleDateFormat("yyyy-MM-dd").parse("2012-03-28")).andIsRobotEqualTo(true);
-			List<User> list = crudUserDao.selectByExample(example);
-			for (User user : list) {
-				firstLoginGuideDao.init(user.getId());
+			int start=0;
+			while(true) {
+				Limit limit = Limit.newInstanceForLimit(start, 100);
+				example.createCriteria().andCreateTimeLessThan(new SimpleDateFormat("yyyy-MM-dd").parse("2012-03-28")).andIsRobotEqualTo(true);
+				example.setLimit(limit);
+				List<User> list = crudUserDao.selectByExample(example);
+				if(list.size()==0) {
+					break;
+				}
+				for (User user : list) {
+					firstLoginGuideDao.init(user.getId());
+				}
+				start+=list.size();
 			}
 			
 			firstLoginGuideDao.setInitFlagOn();
