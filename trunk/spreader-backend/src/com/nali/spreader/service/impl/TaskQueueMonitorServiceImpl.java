@@ -13,11 +13,7 @@ import com.nali.spreader.service.ITaskQueueMonitorService;
 @Service
 public class TaskQueueMonitorServiceImpl implements ITaskQueueMonitorService {
 	@Autowired
-	private RedisQueue weiboNormalPassiveTaskQueue;// 微博普通任务队列:
-	@Autowired
-	private RedisQueue weiboRegisterPassiveTaskQueue;// 微博注册任务队列:
-	@Autowired
-	private RedisQueue weiboInstantPassiveTaskQueue;// 微博实时任务队列:
+	private RedisQueue taskQueue;// 微博普通任务队列:
 
 	private final String NORMAL_QUEUE = "normal";
 	private final String REGISTER_QUEUE = "register";
@@ -25,9 +21,9 @@ public class TaskQueueMonitorServiceImpl implements ITaskQueueMonitorService {
 
 	@Override
 	public List<TaskQueueInfoDto> findQueueSizeList() {
-		Long normalSize = weiboNormalPassiveTaskQueue.size();
-		Long registerSize = weiboRegisterPassiveTaskQueue.size();
-		Long instantSize = weiboInstantPassiveTaskQueue.size();
+		Long normalSize = taskQueue.size();
+		Long registerSize = -1L;
+		Long instantSize = -1L;
 		TaskQueueInfoDto tqDto = new TaskQueueInfoDto();
 		tqDto.setNormalSize(normalSize);
 		tqDto.setRegisterSize(registerSize);
@@ -42,21 +38,13 @@ public class TaskQueueMonitorServiceImpl implements ITaskQueueMonitorService {
 	public void deleteQueueByType(String type) {
 		if (this.NORMAL_QUEUE.equals(type)) {
 			Object obj;
-			while ((obj = weiboNormalPassiveTaskQueue.pop(1)) != null) {
+			while ((obj = taskQueue.pop(1)) != null) {
 			}
 			;
 		}
 		if (this.REGISTER_QUEUE.equals(type)) {
-			Object obj;
-			while ((obj = weiboRegisterPassiveTaskQueue.pop(1)) != null) {
-			}
-			;
 		}
 		if (this.INSTANT_QUEUE.equals(type)) {
-			Object obj;
-			while ((obj = weiboInstantPassiveTaskQueue.pop(1)) != null) {
-			}
-			;
 		}
 	}
 }
