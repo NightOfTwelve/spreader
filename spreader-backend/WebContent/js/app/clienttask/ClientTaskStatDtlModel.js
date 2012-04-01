@@ -149,6 +149,8 @@ Ext.onReady(function() {
 						taskStore.setBaseParam('uid', uid);
 						taskStore.setBaseParam('errorCode', errorCode);
 						taskStore.setBaseParam('websiteId', websiteId);
+						taskStore.setBaseParam('start', 0);
+						taskStore.setBaseParam('limit', 20);
 						taskStore.load();
 					}
 				}, {
@@ -250,7 +252,7 @@ Ext.onReady(function() {
 			}, {
 				header : '内容',
 				dataIndex : 'contents',
-				// renderer : renderBrief,
+				renderer : renderHtmlBrief,
 				width : 100
 			}, {
 				header : '状态',
@@ -276,7 +278,7 @@ Ext.onReady(function() {
 			}, {
 				header : '错误内容',
 				dataIndex : 'websiteErrorDesc',
-				// renderer : renderBrief,
+				renderer : renderHtmlBrief,
 				width : 100
 			}]);
 	// // 分页菜单

@@ -208,7 +208,7 @@ Ext.onReady(function() {
 			}, {
 				header : '调度备注',
 				dataIndex : 'triggerInfo',
-				renderer : renderBrief,
+				renderer : renderHtmlBrief,
 				width : 100
 			}, {
 				header : '描述',

@@ -50,12 +50,18 @@ public class ClientTaskStatController {
 	 */
 	@ResponseBody
 	@RequestMapping("/taskgridstore")
-	public String searchClientTaskStat(Long cid, Date startTime, Date endTime, Integer start, Integer limit) throws JsonGenerationException, JsonMappingException, IOException {
+	public String searchClientTaskStat(Long cid, Date startTime, Date endTime, Integer start, Integer limit)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		if (start == null) {
 			start = 0;
 		}
 		if (limit == null) {
 			limit = 20;
+		}
+		// 同时为NULL时默认查当天
+		if (startTime == null && endTime == null) {
+			startTime = new Date();
+			endTime = new Date();
 		}
 		Limit lit = Limit.newInstanceForLimit(start, limit);
 		ClientTaskSumQueryParamDto param = new ClientTaskSumQueryParamDto();
