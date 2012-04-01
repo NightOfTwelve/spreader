@@ -2,7 +2,7 @@
 <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
 <sqlMap namespace="spreader_regular_job_result">
 	<resultMap class="com.nali.spreader.factory.config.RegularJobResultDto"
-		id="JobResultResultMap" extends="spreader_tb_regular_job_result.ibatorgenerated_BaseResultMap">
+		id="JobResultResultMap" extends="spreader_tb_regular_job_result.ibatorgenerated_ResultMapWithBLOBs">
 		<result column="job_name" jdbcType="VARCHAR" property="jobName" />
 	</resultMap>
 	<select id="selectJobResultResult" parameterClass="java.util.HashMap"
