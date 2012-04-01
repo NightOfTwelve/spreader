@@ -54,6 +54,7 @@ public class DoFirstTimeGuide extends UserGroupExtendedBeanImpl implements Regul
 			calendar.add(Calendar.MILLISECOND, timeIntervalInMills);
 			KeyValue<Long, Date> uidDate = new KeyValue<Long, Date>(uid, date);
 			firstTimeGuide.send(uidDate);
+			count++;
 		}
 		return "重新执行新用户引导:" + count;
 	}
