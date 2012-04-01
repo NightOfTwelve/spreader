@@ -7,6 +7,13 @@
 		where status=0
 		group by task_type, task_code
 	</select>
+	<select id="clientCaptcha" resultClass="java.util.HashMap" parameterClass="com.nali.spreader.stat.TimeRange">
+		SELECT post_client,count(*) cnt
+		FROM spreader.tb_captcha
+		where expire_time between #begin# and #end# and type=0
+		group by post_client
+		order by count(*) desc
+	</select>
 	<select id="captchaInput" resultClass="java.util.HashMap" parameterClass="com.nali.spreader.stat.TimeRange">
 		SELECT a.client_id,
 				s.cnt s_cnt,
