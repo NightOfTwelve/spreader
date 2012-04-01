@@ -790,7 +790,7 @@ Ext.onReady(function() {
 				}
 				stgSelectCombo.reset();
 			});
-	
+
 	// 创建ComboBox数据源，支持Ajax取值
 	var stgCmbStore = new Ext.data.Store({
 				// 代理模式
@@ -1038,7 +1038,7 @@ Ext.onReady(function() {
 			}, {
 				header : '调度备注',
 				dataIndex : 'triggerInfo',
-				renderer : renderBrief,
+				renderer : renderHtmlBrief,
 				width : 100
 			}, {
 				header : '分组编号',

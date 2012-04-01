@@ -54,6 +54,10 @@ public class ClientTaskStatDtlController {
 		}
 		Integer start = param.getStart();
 		Integer limit = param.getLimit();
+		if (start == null)
+			start = 0;
+		if (limit == null)
+			limit = 20;
 		Limit lit = Limit.newInstanceForLimit(start, limit);
 		param.setLit(lit);
 		PageResult<ClientTaskaStatDetailDto> pg = this.taskService

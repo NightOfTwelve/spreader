@@ -53,6 +53,7 @@ public class StrategyGroupServiceImpl implements IStrategyGroupService {
 		if (groupType != null && groupType > 0) {
 			criteria.andGroupTypeEqualTo(groupType);
 		}
+		exp.setOrderByClause("id desc");
 		Limit lit = Limit.newInstanceForLimit(pageNum, pageSize);
 		exp.setLimit(lit);
 		List<StrategyGroup> list = gcrudDao.selectByExample(exp);

@@ -92,6 +92,48 @@ function renderBrief(value, p, record) {
 	}
 }
 /**
+ * 渲染带有HTML的字符串
+ * 
+ * @param {}
+ *            value
+ * @param {}
+ *            p
+ * @param {}
+ *            record
+ * @return {}
+ */
+function renderHtmlBrief(value, p, record) {
+	var shtml = renderHtmlEncode(value);
+	var str = renderBrief(shtml);
+	return str;
+}
+/**
+ * 将将某些字符(&, <, >,和')转换成它们等价的HTML字符， 以便在web页面中显示这些字符的字面值。
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderHtmlEncode(value) {
+	if (!Ext.isEmpty(value)) {
+		value = Ext.util.Format.htmlEncode(value);
+	}
+	return value;
+}
+/**
+ * 将等价的HTML字符转换成某些字符(&, <, >, 和 ')。
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderHtmlDecode(value) {
+	if (!Ext.isEmpty(value)) {
+		value = Ext.util.Format.htmlDecode(value);
+	}
+	return value;
+}
+/**
  * 截取最后一个分隔符
  * 
  * @param {}
