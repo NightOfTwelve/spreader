@@ -95,11 +95,16 @@ public class ErrorReceive {
 			logger.error("not found task:" + error.getTaskId());
 			return;
 		}
-		
+
+		Long taskId = error.getTaskId();
+		Object errorData = error.getErrrorData();//TODO check errorData class
+		Date errorTime = error.getErrorTime();
 		String taskCode = task.getTaskCode();
+		
 		ErrorProcessor errorProcessor = getProcessor(taskCode, error);
 		if(errorProcessor==null) {
 			logger.error("code not found, taskCode:"+taskCode + ", errorCode:" + error.getErrorCode());
+			taskService.updateStatus(taskId, Task.STATUS_FAILED, errorTime);
 			return;
 		}
 		
@@ -107,9 +112,6 @@ public class ErrorReceive {
 			logger.info("handle error, taskCode:"+taskCode + ", errorCode:" + error.getErrorCode());
 		}
 		
-		Long taskId = error.getTaskId();
-		Object errorData = error.getErrrorData();//TODO check errorData class
-		Date errorTime = error.getErrorTime();
 		try {
 			TaskContext context = taskService.popContext(taskId);
 			errorProcessor.handleError(errorData, context==null?null:context.getContents(), task.getUid(), errorTime);
