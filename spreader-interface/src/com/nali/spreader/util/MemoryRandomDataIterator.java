@@ -17,7 +17,7 @@ public abstract class MemoryRandomDataIterator<T, E> extends DataIterator<E>{
 			excludeSize = excludeIds.size();
 		}
 		int tempCount = ids.size() - excludeSize;
-		if(tempCount <= upperCount || upperCount <= 0) {
+		if(tempCount <= upperCount || upperCount < 0) {
 			this.count = tempCount;
 			ids = CollectionUtils.exclude(ids, excludeIds);
 			Collections.shuffle(ids);
@@ -35,7 +35,7 @@ public abstract class MemoryRandomDataIterator<T, E> extends DataIterator<E>{
 	}
 	
 	@Override
-	protected List<E> query(long offset, int limit) {
+	public List<E> query(long offset, int limit) {
 		List<T> rtnIds = this.randomIds.subList((int)offset, (int)(offset + limit));
 	    List<E> elements = this.queryElements(rtnIds);
 	    return elements;
