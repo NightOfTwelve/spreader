@@ -89,6 +89,11 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "客户端任务详细信息",
 									leaf : true,
 									url : '../taskstatdtl/init'
+								},{
+									id : 'clientTaskStatReport',
+									text : "报表查询",
+									leaf : true,
+									url : '../taskreport/init'
 								}]
 					}),
 			// 添加监听事件
