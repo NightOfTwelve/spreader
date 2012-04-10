@@ -11,5 +11,9 @@ public interface IFirstLoginGuideDao {
 	void setInitFlagOn();
 
 	boolean isInitFlagOn();
+	
+	boolean isDeletedUserInitFlagOn();
+	
+	void setDeletedUserInitFlagOn();
 
 }

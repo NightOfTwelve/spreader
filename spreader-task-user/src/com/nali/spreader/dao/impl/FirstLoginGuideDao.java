@@ -9,6 +9,7 @@ import com.nali.spreader.dao.IFirstLoginGuideDao;
 @Repository
 public class FirstLoginGuideDao implements IFirstLoginGuideDao {
 	private static final String FIRST_LOGIN_GUIDE_FLAG = "FirstLoginGuideFlag";
+	private static final String DELETED_USER_LOGIN_GUIDE_FLAG = "DeletedUserGuideFlag";
 	private static final String FIRST_LOGIN_GUIDE= "FirstLoginGuide";
 	@Autowired
 	private RedisTemplate<String, Long> redisTemplate;
@@ -36,5 +37,15 @@ public class FirstLoginGuideDao implements IFirstLoginGuideDao {
 	@Override
 	public void init(Long uid) {
 		redisTemplate.opsForSet().add(FIRST_LOGIN_GUIDE, uid);
+	}
+
+	@Override
+	public boolean isDeletedUserInitFlagOn() {
+		return redisTemplate.opsForValue().get(DELETED_USER_LOGIN_GUIDE_FLAG)!=null;
+	}
+
+	@Override
+	public void setDeletedUserInitFlagOn() {
+		redisTemplate.opsForValue().set(DELETED_USER_LOGIN_GUIDE_FLAG, System.currentTimeMillis());
 	}
 }
