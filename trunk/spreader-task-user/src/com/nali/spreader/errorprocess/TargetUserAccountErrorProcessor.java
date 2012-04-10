@@ -52,6 +52,10 @@ public class TargetUserAccountErrorProcessor extends DefaultErrorProcessor<KeyVa
 			globalRobotUserService.disableAccount(user.getId());
 		}
 		globalUserService.removeUser(user.getId());
+		afterRemove(user);
+	}
+
+	protected void afterRemove(User user) {
 	}
 
 }

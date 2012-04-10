@@ -18,6 +18,7 @@ public enum TaskErrorCode {
 	userHomePageError(10007),//用户首页不能访问 tmp
 	targetUserAccountError(10008),//目标用户被封，KeyValue<WebsiteId, WebsiteUid>
 	accountBlock(10009),//帐号无法使用了
+	needAppeal(10010),//需要申诉
 	;
 	private final String code;
 	private TaskErrorCode(int code) {

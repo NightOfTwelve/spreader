@@ -41,6 +41,14 @@ public class GlobalRobotUserService implements IGlobalRobotUserService {
 	}
 	
 	@Override
+	public void resumeAccount(Long uid) {
+		RobotUser record = new RobotUser();
+		record.setUid(uid);
+		record.setAccountState(RobotUser.ACCOUNT_STATE_NORMAL);
+		crudRobotUserDao.updateByPrimaryKeySelective(record);
+	}
+	
+	@Override
 	public void syncLoginConfig(RobotUser robotUser) {
 		try {
 			Map<String, Object> contentObjects = CollectionUtils.newHashMap(2);
@@ -51,5 +59,10 @@ public class GlobalRobotUserService implements IGlobalRobotUserService {
 		} catch (Exception e) {
 			logger.error(e, e);
 		}
+	}
+
+	@Override
+	public RobotUser getRobotUser(Long uid) {
+		return crudRobotUserDao.selectByPrimaryKey(uid);
 	}
 }

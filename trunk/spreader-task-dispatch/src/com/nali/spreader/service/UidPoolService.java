@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.nali.common.model.Limit;
 import com.nali.spreader.dao.ICrudClientTaskDao;
@@ -22,6 +22,7 @@ import com.nali.spreader.util.SpecialDateUtil;
 
 @Service
 public class UidPoolService implements IUidPoolService {
+	private static Logger logger = Logger.getLogger(UidPoolService.class);
 	@Autowired
 	private ICrudClientTaskDao crudClientTaskDao;
 	@Autowired
@@ -60,7 +61,6 @@ public class UidPoolService implements IUidPoolService {
 	}
 	
 	@Override
-	@Transactional
 	public List<ClientTask> assignTasks(Long batchId, Long uid, Long actionId, Integer taskType, Integer count) {
 		UserTaskCount dto = new UserTaskCount();
 		dto.setUid(uid);
@@ -87,7 +87,7 @@ public class UidPoolService implements IUidPoolService {
 		example.createCriteria().andStatusNotEqualTo(ClientTask.STATUS_ASSIGNED).andIdIn(taskIds);
 		int updateCount = crudClientTaskDao.updateByExampleSelective(record, example);
 		if(updateCount!=taskIds.size()) {
-			throw new IllegalStateException("transaction error, taskIds:" + taskIds);//TODO log and retry?
+			logger.error("transaction error, taskIds:" + taskIds + ", updateCount:" + updateCount);//TODO retry?
 		}
 	}
 

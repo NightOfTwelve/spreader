@@ -142,6 +142,9 @@ public class ResultReceive {
 		@Override
 		public void handle(Long taskId, R resultObject, Date updateTime) {
 			TaskContext context = taskService.popContext(taskId);
+			if(context==null) {
+				throw new IllegalArgumentException("task context missing, taskId:" + taskId);
+			}
 			processor.handleResult(updateTime, resultObject, context.getContents(), context.getUid());
 		}
 		@SuppressWarnings("unchecked")

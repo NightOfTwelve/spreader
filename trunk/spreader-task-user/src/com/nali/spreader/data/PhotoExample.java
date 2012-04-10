@@ -1,12 +1,13 @@
 package com.nali.spreader.data;
 
-import com.nali.common.model.Limit;
-import com.nali.common.model.Shard;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.nali.common.model.Limit;
+import com.nali.common.model.Shard;
 
 public class PhotoExample {
 
@@ -17,7 +18,7 @@ public class PhotoExample {
      * @ibatorgenerated Tue Nov 29 11:08:15 CST 2011
      */
     public PhotoExample() {
-        oredCriteria = new ArrayList();
+        oredCriteria = new ArrayList<Criteria>();
     }
 
     /**
