@@ -6,12 +6,13 @@ import com.nali.spreader.factory.config.desc.PropertyDescription;
 
 public class GroupUserAddFansDto implements Serializable {
 	private static final long serialVersionUID = 4995588216370590441L;
-	@PropertyDescription("最大关注人数")
-	private Integer maxUserValue;
 	@PropertyDescription("最小关注人数")
 	private Integer minUserValue;
-//	@PropertyDescription("机器人比例")
-//	private Double robotRate;
+	@PropertyDescription("最大关注人数")
+	private Integer maxUserValue;
+
+	// @PropertyDescription("机器人比例")
+	// private Double robotRate;
 
 	public Integer getMaxUserValue() {
 		return maxUserValue;
