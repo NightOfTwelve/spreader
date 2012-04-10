@@ -10,5 +10,9 @@ public interface IGlobalRobotUserService {
 	void syncLoginConfig(RobotUser robotUser);
 
 	void disableAccount(Long uid);
+	
+	RobotUser getRobotUser(Long uid);
+
+	void resumeAccount(Long uid);
 
 }

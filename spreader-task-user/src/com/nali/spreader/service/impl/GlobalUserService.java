@@ -15,6 +15,7 @@ import com.nali.spreader.dao.ICrudRobotUserDao;
 import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.ICrudUserRelationDao;
 import com.nali.spreader.dao.ICrudUserTagDao;
+import com.nali.spreader.dao.ICrudWeiboAppealDao;
 import com.nali.spreader.dao.IUserDao;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserExample;
@@ -23,6 +24,8 @@ import com.nali.spreader.data.UserRelationExample;
 import com.nali.spreader.data.UserTag;
 import com.nali.spreader.data.UserTagExample;
 import com.nali.spreader.data.UserRelationExample.Criteria;
+import com.nali.spreader.data.WeiboAppeal;
+import com.nali.spreader.data.WeiboAppealExample;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.ICategoryService;
 import com.nali.spreader.service.IGlobalUserService;
@@ -43,6 +46,8 @@ public class GlobalUserService implements IGlobalUserService {
 	private ICrudUserTagDao crudUserTagDao;
 	@Autowired
 	private ICategoryService categoryService;
+	@Autowired
+	private ICrudWeiboAppealDao crudWeiboAppealDao;
 	
 	static {
 		BAK_USER_SHARD = new Shard();
@@ -138,12 +143,13 @@ public class GlobalUserService implements IGlobalUserService {
 	public Long getWebsiteUid(Long uid) {// TODO cache
 		User user = crudUserDao.selectByPrimaryKey(uid);
 		if(user==null) {
-			user = findDeletedUser(uid);
+			user = getDeletedUser(uid);
 		}
 		return user == null ? null : user.getWebsiteUid();
 	}
 
-	private User findDeletedUser(Long uid) {
+	@Override
+	public User getDeletedUser(Long uid) {
 		UserExample userExample = new UserExample();
 		userExample.setShard(BAK_USER_SHARD);
 		userExample.createCriteria().andIdEqualTo(uid);
@@ -179,5 +185,71 @@ public class GlobalUserService implements IGlobalUserService {
 		robotUser.setUid(uid);
 		crudRobotUserDao.insert(robotUser);
 		return uid;
+	}
+
+	@Override
+	public void mergeWeiboAppeal(WeiboAppeal weiboAppeal) {
+		int updateCount = crudWeiboAppealDao.updateByPrimaryKeySelective(weiboAppeal);
+		if(updateCount==0) {
+			try {
+				crudWeiboAppealDao.insertSelective(weiboAppeal);
+			} catch (DuplicateKeyException e) {
+				logger.error("duplicate insert weiboAppeal, uid:"+weiboAppeal.getUid());
+				mergeWeiboAppeal(weiboAppeal);
+			}
+		}
+	}
+
+	@Override
+	public void removeWeiboAppeal(Long uid) {
+		crudWeiboAppealDao.deleteByPrimaryKey(uid);		
+	}
+
+	@Override
+	public boolean initWeiboAppeal(Long uid, boolean forceMerge) {
+		WeiboAppeal weiboAppeal = new WeiboAppeal();
+		weiboAppeal.setUid(uid);
+		weiboAppeal.setStatus(WeiboAppeal.STATUS_INIT);
+		if(forceMerge) {
+			mergeWeiboAppeal(weiboAppeal);
+			return true;
+		} else {
+			try {
+				crudWeiboAppealDao.insertSelective(weiboAppeal);
+				return true;
+			} catch (DuplicateKeyException e) {
+				return false;
+			}
+		}
+	}
+
+	@Override
+	public User recoverDeletedUser(Long uid) {
+		User user = getDeletedUser(uid);
+		if(user==null) {
+			return getUserById(uid);
+		} else {
+			user.setShard(null);
+			try {
+				crudUserDao.insertSelective(user);
+			} catch (DuplicateKeyException e) {
+				logger.error("double insert on recoverDeletedUser, uid:"+uid);
+			}
+			UserExample example = new UserExample();
+			example.setShard(BAK_USER_SHARD);
+			example.createCriteria().andIdEqualTo(uid);
+			crudUserDao.deleteByExample(example);
+			return user;
+		}
+	}
+
+	@Override
+	public List<WeiboAppeal> findUncheckedWeiboAppeal(Date startDate) {
+		WeiboAppealExample example = new WeiboAppealExample();
+		com.nali.spreader.data.WeiboAppealExample.Criteria criteria = example.createCriteria().andStatusEqualTo(WeiboAppeal.STATUS_START);
+		if(startDate!=null) {
+			criteria.andStartTimeGreaterThan(startDate);
+		}
+		return crudWeiboAppealDao.selectByExample(example);
 	}
 }
