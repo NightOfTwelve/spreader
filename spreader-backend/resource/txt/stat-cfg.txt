@@ -1,6 +1,6 @@
 stat.captchaInput=验证码输入情况
 stat.captchaInput.sql=spreader_stat.captchaInput
-stat.captchaInput.columns=client_id,客户端Id, s_cnt,成功数, a_cnt,总数, s_rate,成功率
+stat.captchaInput.columns=client_id,客户端Id, pic_type,图片代号, s_cnt,成功数, a_cnt,总数, s_rate,成功率
 stat.captchaInput.extend=com.nali.spreader.stat.TimeRangeExtend
 
 stat.clientCaptcha=客户端开机情况

@@ -16,19 +16,21 @@
 	</select>
 	<select id="captchaInput" resultClass="java.util.HashMap" parameterClass="com.nali.spreader.stat.TimeRange">
 		SELECT a.client_id,
+				concat(a.task_code, '---', a.seq) pic_type,
 				s.cnt s_cnt,
 				a.cnt a_cnt,
 				s.cnt / a.cnt s_rate
 		FROM (SELECT COUNT(*) cnt,
-					handle_client client_id
+					handle_client client_id, task_code, seq
 				FROM tb_captcha cpout
-				WHERE expire_time between #begin# and #end#
-				GROUP BY handle_client) a 
+				join tb_client_task ct on cpout.task_id=ct.id
+				WHERE cpout.expire_time between #begin# and #end#
+				GROUP BY handle_client, task_code, seq) a 
 		LEFT JOIN
 				(SELECT COUNT(*) cnt,
-						handle_client client_id
+						handle_client client_id, cpmaxid.task_code, cpmaxid.seq
 				FROM tb_captcha cpout,
-					(SELECT MAX(cp.id) AS id
+					(SELECT MAX(cp.id) AS id, max(cl.task_code) AS task_code, cp.seq AS seq
 					FROM tb_captcha cp,
 						tb_client_task_log cl
 					WHERE cp.task_id = cl.task_id
@@ -37,8 +39,8 @@
 					AND  cl.executed_time between #begin# and #end#
 					GROUP BY cp.task_id, cp.seq) cpmaxid
 				WHERE cpmaxid.id = cpout.id
-				GROUP BY handle_client) s
-		ON a.client_id = s.client_id
-		ORDER BY s.cnt DESC
+				GROUP BY handle_client, cpmaxid.task_code, cpmaxid.seq) s
+		ON a.client_id = s.client_id and a.task_code=s.task_code and a.seq=s.seq
+		ORDER BY a.client_id,a.task_code,a.seq ASC
 	</select>
 </sqlMap>
