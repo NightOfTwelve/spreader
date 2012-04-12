@@ -15,11 +15,11 @@
 		order by count(*) desc
 	</select>
 	<resultMap class="java.util.HashMap" id="captchaInputResult">
-		<result property="client_id" jdbcType="BIGINT"/>
-		<result property="pic_type" jdbcType="VARCHAR"/>
-		<result property="s_cnt" jdbcType="INTEGER"/>
-		<result property="a_cnt" jdbcType="INTEGER"/>
-		<result property="s_rate" jdbcType="DOUBLE"/>
+		<result property="client_id" jdbcType="BIGINT" javaType="java.lang.Long"/>
+		<result property="pic_type" jdbcType="VARCHAR" javaType="java.lang.String"/>
+		<result property="s_cnt" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+		<result property="a_cnt" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+		<result property="s_rate" jdbcType="DOUBLE" javaType="java.lang.Double"/>
 	</resultMap>
 	<select id="captchaInput" resultMap="captchaInputResult" parameterClass="com.nali.spreader.stat.TimeRange">
 		SELECT a.client_id,
