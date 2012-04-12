@@ -248,7 +248,7 @@ public class GlobalUserService implements IGlobalUserService {
 		WeiboAppealExample example = new WeiboAppealExample();
 		com.nali.spreader.data.WeiboAppealExample.Criteria criteria = example.createCriteria().andStatusEqualTo(WeiboAppeal.STATUS_START);
 		if(startDate!=null) {
-			criteria.andStartTimeGreaterThan(startDate);
+			criteria.andStartTimeLessThan(startDate);
 		}
 		return crudWeiboAppealDao.selectByExample(example);
 	}

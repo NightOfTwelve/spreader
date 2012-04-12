@@ -14,7 +14,7 @@ import com.nali.spreader.service.ICaptchaService;
 @Service
 public class CaptchaResultBoard implements ICaptchaResultBoard {
 	private static Logger logger = Logger.getLogger(CaptchaResultBoard.class);
-	private static final long EXPIRED_TIME = 1000L*60*5;
+	private static final long EXPIRED_TIME = 1000L*60*5 - 30*1000;
 	@Autowired
 	private ICaptchaService captchaService;
 
