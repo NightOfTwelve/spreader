@@ -14,7 +14,14 @@
 		group by post_client
 		order by count(*) desc
 	</select>
-	<select id="captchaInput" resultClass="java.util.HashMap" parameterClass="com.nali.spreader.stat.TimeRange">
+	<resultMap class="java.util.HashMap" id="captchaInputResult">
+		<result property="client_id" jdbcType="BIGINT"/>
+		<result property="pic_type" jdbcType="VARCHAR"/>
+		<result property="s_cnt" jdbcType="INTEGER"/>
+		<result property="a_cnt" jdbcType="INTEGER"/>
+		<result property="s_rate" jdbcType="DOUBLE"/>
+	</resultMap>
+	<select id="captchaInput" resultMap="captchaInputResult" parameterClass="com.nali.spreader.stat.TimeRange">
 		SELECT a.client_id,
 				concat(a.task_code, '---', a.seq) pic_type,
 				s.cnt s_cnt,
