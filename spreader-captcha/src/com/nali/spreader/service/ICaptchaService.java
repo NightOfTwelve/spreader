@@ -5,6 +5,8 @@ import java.util.List;
 import com.nali.spreader.model.Captcha;
 
 public interface ICaptchaService {
+	String SKIPPED_RESULT = "^skip$";
+	String EXPIRE_RESULT = "^expire$";
 
 	List<Captcha> assignCaptcha(Long clientId, int count);
 
