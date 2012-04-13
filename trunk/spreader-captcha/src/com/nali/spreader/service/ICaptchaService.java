@@ -1,6 +1,8 @@
 package com.nali.spreader.service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.nali.spreader.model.Captcha;
 
@@ -15,5 +17,7 @@ public interface ICaptchaService {
 	Captcha get(Long id);
 
 	Long save(Captcha captcha);
+
+	Map<String, Object> queryInputStat(Long clientId, Date from, Date to);
 
 }

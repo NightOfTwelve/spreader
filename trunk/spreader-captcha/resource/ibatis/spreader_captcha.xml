@@ -75,4 +75,42 @@
 			select LAST_INSERT_ID() as value
 		</selectKey>
 	</insert>
+	
+	<resultMap class="java.util.HashMap" id="captchaInputResult">
+		<result property="client_id" jdbcType="BIGINT" javaType="java.lang.Long"/>
+		<result property="pic_type" jdbcType="VARCHAR" javaType="java.lang.String"/>
+		<result property="s_cnt" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+		<result property="a_cnt" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+		<result property="s_rate" jdbcType="DOUBLE" javaType="java.lang.Double"/>
+	</resultMap>
+	<select id="captchaInput" resultMap="captchaInputResult" parameterClass="com.nali.spreader.model.CaptchaTimeDto">
+		SELECT concat(a.task_code, '---', a.seq) pic_type,
+				s.cnt s_cnt,
+				a.cnt a_cnt,
+				s.cnt / a.cnt s_rate
+		FROM (SELECT COUNT(*) cnt,
+					handle_client client_id, task_code, seq
+				FROM tb_captcha cpout
+				join tb_client_task ct on cpout.task_id=ct.id
+				WHERE cpout.expire_time between #begin# and #end#
+				AND handle_client=#clientId#
+				GROUP BY handle_client, task_code, seq) a 
+		LEFT JOIN
+				(SELECT COUNT(*) cnt,
+						handle_client client_id, cpmaxid.task_code, cpmaxid.seq
+				FROM tb_captcha cpout,
+					(SELECT MAX(cp.id) AS id, max(cl.task_code) AS task_code, cp.seq AS seq
+					FROM tb_captcha cp,
+						tb_client_task_log cl
+					WHERE cp.task_id = cl.task_id
+					AND  cl.task_code IN ('registerRobotUserEmail','registerWeibo')
+					AND  cl.status = 0
+					AND  cl.executed_time between #begin# and #end#
+					GROUP BY cp.task_id, cp.seq) cpmaxid
+				WHERE cpmaxid.id = cpout.id
+				AND handle_client=#clientId#
+				GROUP BY handle_client, cpmaxid.task_code, cpmaxid.seq) s
+		ON a.client_id = s.client_id and a.task_code=s.task_code and a.seq=s.seq
+		ORDER BY a.task_code,a.seq ASC
+	</select>
 </sqlMap>

@@ -212,7 +212,7 @@ public class UserService extends WebsiteBaseService implements IUserService {
 	}
 
 	private void increaseRobotFans(Long uid) {
-		userDao.increaseRobotFans(uid);
+		userDao.increaseRobotFansCount(uid);
 	}
 
 	@Override
