@@ -52,8 +52,8 @@ public class UserDao implements IUserDao {
 	}
 
 	@Override
-	public void increaseRobotFans(Long uid) {
-		sqlMap.update("spreader_user.increaseRobotFans", uid);
+	public void increaseRobotFansCount(Long uid) {
+		sqlMap.update("spreader_user.increaseRobotFansCount", uid);
 	}
 
 	@SuppressWarnings("unchecked")

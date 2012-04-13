@@ -25,7 +25,7 @@ public interface IUserDao {
 
 	List<User> findUserFansInfoByDto(UserDto dto);
 
-	void increaseRobotFans(Long uid);
+	void increaseRobotFansCount(Long uid);
 
 	/**
 	 * 查询用户列表需TAG关联

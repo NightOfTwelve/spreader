@@ -1,6 +1,7 @@
 package com.nali.spreader.remote;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,12 @@ public class CaptchaResultBoard implements ICaptchaResultBoard {
 		captcha.setTaskId(taskId);
 		captcha.setSeq(seq);
 		return captchaService.save(captcha);
+	}
+
+	@Override
+	public Map<String, Object> queryInputStat(Date from, Date to) {
+		ClientContext context = ClientContext.getCurrentContext();
+		return captchaService.queryInputStat(context.getClientId(), from, to);
 	}
 
 }

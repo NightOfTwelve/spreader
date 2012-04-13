@@ -115,10 +115,11 @@
 		<include refid="baseUserCondition"/>
 	</dynamic>
   </select>
-  <update id="increaseRobotFans" parameterClass="long">
+  <update id="increaseRobotFansCount" parameterClass="long">
   	update spreader.tb_user
-  	set robot_fans = robot_fans+1
-  	where id = #id#
+  	set robot_fans = robot_fans+1,
+  		fans = fans+1
+  	where id = #uid#
   </update>
   <select id="getUserTagList" parameterClass="int" resultMap="spreader_tb_user_tag.ibatorgenerated_BaseResultMap">
 		select * From tb_user_tag where uid = #id#

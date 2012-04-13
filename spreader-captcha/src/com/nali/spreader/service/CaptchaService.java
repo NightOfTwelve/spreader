@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import com.nali.spreader.dao.ICaptchaDao;
 import com.nali.spreader.dao.ICrudCaptchaDao;
 import com.nali.spreader.model.Captcha;
 import com.nali.spreader.model.CaptchaExample;
+import com.nali.spreader.model.CaptchaTimeDto;
 
 @Service
 public class CaptchaService implements ICaptchaService {
@@ -67,6 +69,15 @@ public class CaptchaService implements ICaptchaService {
 		record.setResult(code);
 		record.setHandleClient(clientId);
 		crudCaptchaDao.updateByPrimaryKeySelective(record);
+	}
+
+	@Override
+	public Map<String, Object> queryInputStat(Long clientId, Date from, Date to) {
+		CaptchaTimeDto captchaTimeDto = new CaptchaTimeDto();
+		captchaTimeDto.setClientId(clientId);
+		captchaTimeDto.setBegin(from);
+		captchaTimeDto.setEnd(to);
+		return captchaDao.queryInputStat(captchaTimeDto);
 	}
 
 }
