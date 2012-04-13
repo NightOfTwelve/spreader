@@ -168,6 +168,32 @@ function renderDateHis(value) {
 			? new Date(value).format('Y-m-d H:i:s')
 			: '';
 }
+
+/**
+ * 获取默认日期
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function createInitDate() {
+	var tdate = renderDate(new Date());
+	tdate = renderDateHis(tdate);
+	return tdate;
+}
+
+/**
+ * 获取当天的后一天
+ * 
+ * @param {}
+ *            value
+ */
+function createNextDate() {
+	var sdate = new Date().add(Date.DAY, 1);
+	var tdate = renderDate(sdate);
+	tdate = renderDateHis(tdate);
+	return tdate;
+}
 /**
  * 格式化任务执行结果状态
  * 

@@ -90,7 +90,7 @@ Ext.onReady(function() {
 				header : '报表名称',
 				dataIndex : 'value',
 				locked : true,
-				width : 80
+				width : 120
 			}, {
 				header : '详情',
 				renderer : function showbutton() {
@@ -166,17 +166,19 @@ Ext.onReady(function() {
 						columnWidth : .5,
 						layout : "form",
 						items : [{
-									xtype : "datefield",
+									xtype : "datetimefield",
 									fieldLabel : "起始时间",
 									width : 150,
+									value : createInitDate(),
 									name : 'startTime'
 								}]
 					}, {
 						columnWidth : .5,
 						layout : "form",
 						items : [{
-									xtype : "datefield",
+									xtype : "datetimefield",
 									fieldLabel : "结束时间",
+									value : createNextDate(),
 									width : 150,
 									name : 'endTime'
 								}]
@@ -330,6 +332,10 @@ Ext.onReady(function() {
 										},
 										cm : colunm,
 										tbar : [{
+													id : 'reportName',
+													name : 'reportName',
+													xtype : 'tbtext'
+												}, {
 													text : '刷新',
 													iconCls : 'arrow_refreshIcon',
 													handler : function() {
@@ -340,6 +346,9 @@ Ext.onReady(function() {
 							reportStore.setBaseParam('repName', repName);
 							reportStore.setBaseParam('startTime', null);
 							reportStore.setBaseParam('endTime', null);
+							var repNameCmp = Ext.getCmp("reportName");
+							repNameCmp.setText('<font color = "red">' + disName
+									+ '</font>');
 							if ('time' == extcode) {
 								reportStore.setBaseParam('extCode', 'time');
 								// 获取组件的区域
@@ -389,7 +398,7 @@ Ext.onReady(function() {
 		for (var i = 0; i < columnIndexs.length; i++) {
 			columnArray[i + 1] = {
 				header : columnNames[i],
-				width : 75,
+				width : 120,
 				dataIndex : columnIndexs[i]
 			}
 		}

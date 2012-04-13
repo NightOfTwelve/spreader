@@ -64,7 +64,20 @@ public class FetchWeiboUserMainPage extends SingleTaskMachineImpl implements Pas
 	public void work(Long uid, SingleTaskExporter exporter) {
 		work(uid, weiboRobotUserHolder.getRobotUid(), exporter);
 	}
-	
+
+	@Input
+	public void work(SingleTaskExporter exporter, KeyValue<Long, Date> data) {
+		Long uid = data.getKey();
+		Date lastFetchTime = data.getValue();
+		Long websiteUid = globalUserService.getWebsiteUid(uid);
+		if (websiteUid == null) {
+			logger.error("user does not exist,uid:" + uid);
+			return;
+		}
+		exporter.setProperty("id", uid);
+		exporter.setProperty("websiteUid", websiteUid);
+		exporter.send(weiboRobotUserHolder.getRobotUid(), lastFetchTime);
+	}
 	private void work(Long uid, Long robotUid, SingleTaskExporter exporter) {
 		Long websiteUid = globalUserService.getWebsiteUid(uid);
 		if(websiteUid==null) {
