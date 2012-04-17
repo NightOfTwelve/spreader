@@ -72,7 +72,7 @@ public class CaptchaService implements ICaptchaService {
 	}
 
 	@Override
-	public Map<String, Object> queryInputStat(Long clientId, Date from, Date to) {
+	public List<Map<String, Object>> queryInputStat(Long clientId, Date from, Date to) {
 		CaptchaTimeDto captchaTimeDto = new CaptchaTimeDto();
 		captchaTimeDto.setClientId(clientId);
 		captchaTimeDto.setBegin(from);

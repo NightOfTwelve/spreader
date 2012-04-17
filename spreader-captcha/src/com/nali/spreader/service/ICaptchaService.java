@@ -18,6 +18,6 @@ public interface ICaptchaService {
 
 	Long save(Captcha captcha);
 
-	Map<String, Object> queryInputStat(Long clientId, Date from, Date to);
+	List<Map<String, Object>> queryInputStat(Long clientId, Date from, Date to);
 
 }

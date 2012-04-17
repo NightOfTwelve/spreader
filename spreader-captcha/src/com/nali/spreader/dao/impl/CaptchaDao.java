@@ -1,5 +1,6 @@
 package com.nali.spreader.dao.impl;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class CaptchaDao implements ICaptchaDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> queryInputStat(CaptchaTimeDto captchaTimeDto) {
-		return (Map<String, Object>) sqlMap.queryForObject("spreader.captchaInput", captchaTimeDto);
+	public List<Map<String, Object>> queryInputStat(CaptchaTimeDto captchaTimeDto) {
+		return sqlMap.queryForList("spreader.captchaInput", captchaTimeDto);
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.nali.spreader.remote;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -47,7 +48,7 @@ public class CaptchaResultBoard implements ICaptchaResultBoard {
 	}
 
 	@Override
-	public Map<String, Object> queryInputStat(Date from, Date to) {
+	public List<Map<String, Object>> queryInputStat(Date from, Date to) {
 		ClientContext context = ClientContext.getCurrentContext();
 		return captchaService.queryInputStat(context.getClientId(), from, to);
 	}

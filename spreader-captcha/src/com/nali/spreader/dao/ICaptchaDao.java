@@ -1,5 +1,6 @@
 package com.nali.spreader.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import com.nali.spreader.model.Captcha;
@@ -9,6 +10,6 @@ public interface ICaptchaDao {
 
 	Long insertCaptcha(Captcha captcha);
 
-	Map<String, Object> queryInputStat(CaptchaTimeDto captchaTimeDto);
+	List<Map<String, Object>> queryInputStat(CaptchaTimeDto captchaTimeDto);
 
 }
