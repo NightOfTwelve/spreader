@@ -48,6 +48,8 @@ public class DoWeiboAppeal extends SingleTaskMachineImpl implements SinglePassiv
 	private IGlobalRobotUserService globalRobotUserService;
 	@Autowired
 	private IGlobalUserService globalUserService;
+	private long lastTime = -1L;//TODO 如果改成可配置需要放在外部存储
+	private long interval = 1000*60*10L;
 
 	public DoWeiboAppeal() {
 		super(SimpleActionConfig.weiboAppeal, Website.weibo, Channel.normal);
@@ -96,7 +98,16 @@ public class DoWeiboAppeal extends SingleTaskMachineImpl implements SinglePassiv
 		exporter.setProperty("loginName", robotUser.getLoginName());
 		exporter.setProperty("loginPwd", robotUser.getLoginPwd());
 		exporter.setProperty("appealWord", getAppealWord());
-		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterNow(30));
+		Date startTime = getStartTime();
+		exporter.setTimes(startTime, SpecialDateUtil.afterNow(30));
+		exporter.setUid(User.UID_NOT_LOGIN);
+		exporter.send();
+	}
+
+	private synchronized Date getStartTime() {
+		Date startTime = new Date(Math.max(System.currentTimeMillis(), lastTime));
+		lastTime = startTime.getTime() + interval;
+		return startTime;
 	}
 
 	private String getAppealWord() {
