@@ -1,6 +1,7 @@
 package com.nali.spreader.remote;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public interface ICaptchaResultBoard {
@@ -18,5 +19,5 @@ public interface ICaptchaResultBoard {
 	 * result: null no data
 	 * result-key: pic_type:图片代号, s_cnt:成功数, a_cnt:总数, s_rate:成功率
 	 */
-	Map<String, Object> queryInputStat(Date from, Date to);
+	List<Map<String, Object>> queryInputStat(Date from, Date to);
 }
