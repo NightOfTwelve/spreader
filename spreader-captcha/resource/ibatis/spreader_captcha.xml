@@ -77,7 +77,6 @@
 	</insert>
 	
 	<resultMap class="java.util.HashMap" id="captchaInputResult">
-		<result property="client_id" jdbcType="BIGINT" javaType="java.lang.Long"/>
 		<result property="pic_type" jdbcType="VARCHAR" javaType="java.lang.String"/>
 		<result property="s_cnt" jdbcType="INTEGER" javaType="java.lang.Integer"/>
 		<result property="a_cnt" jdbcType="INTEGER" javaType="java.lang.Integer"/>
