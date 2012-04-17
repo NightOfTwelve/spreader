@@ -41,7 +41,6 @@
 					FROM tb_captcha cp,
 						tb_client_task_log cl
 					WHERE cp.task_id = cl.task_id
-					AND  cl.task_code IN ('registerRobotUserEmail','registerWeibo')
 					AND  cl.status = 0
 					AND  cl.executed_time between #begin# and #end#
 					GROUP BY cp.task_id, cp.seq) cpmaxid
