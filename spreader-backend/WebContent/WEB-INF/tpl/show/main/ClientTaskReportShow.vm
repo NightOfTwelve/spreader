@@ -3,6 +3,7 @@
 <head>
 <title>客户端任务报表</title>
 #parse("/show/comm/PublicInclude.vm")
+#parse("/show/comm/DateTimeFieldInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/taskreport/ClientTaskReportModel.js'))"></script>
 </head>
 <body>
