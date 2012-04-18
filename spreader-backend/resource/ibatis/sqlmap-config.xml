@@ -24,6 +24,7 @@
   <sqlMap resource="ibatis/spreader_tb_robot_content_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_regular_job_result_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_weibo_appeal_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_account_logon_SqlMap.xml" />
 
   
   <!-- ×Ô¶¨Òå -->
