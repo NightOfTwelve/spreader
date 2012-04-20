@@ -6,15 +6,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 import com.nali.center.properties.exception.PropertyException;
 import com.nali.center.properties.exception.ValueResolveException;
 import com.nali.center.properties.lookup.DetailValueLookuper;
 import com.nali.center.properties.lookup.ScopeValueLookuper;
 import com.nali.center.properties.lookup.SubValueLookuper;
+import com.nali.center.properties.model.Properties;
+import com.nali.center.service.IPropertyService;
 import com.nali.common.util.CollectionUtils;
 
 public class DBPropertyStore implements PropertyStore, ApplicationContextAware,
@@ -24,7 +26,10 @@ public class DBPropertyStore implements PropertyStore, ApplicationContextAware,
 	private Map<String, PropertyResolver<?>> propertyResolvers;
 	private Map<String, DetailValueLookuper<?>> detailValueLookupers;
 	private ApplicationContext applicationContext;
-
+	
+	@Autowired
+	private IPropertyService propertyService;
+	
 	public DBPropertyStore() {
 	}
 
@@ -81,11 +86,11 @@ public class DBPropertyStore implements PropertyStore, ApplicationContextAware,
 
 		PropertyValue propertyValue = map.get(propertyName);
 		if (propertyValue == null) {
-			List<Property> properties = null;
+			List<Properties> properties = this.propertyService.queryProperties(modName, propertyName);
 
 			try {
 				if (!CollectionUtils.isEmpty(properties)) {
-					Property property = properties.get(0);
+					Properties property = properties.get(0);
 					PropertyResolver propertyResolver = this.propertyResolvers
 							.get(property.getPropertyType().toString());
 
@@ -93,7 +98,7 @@ public class DBPropertyStore implements PropertyStore, ApplicationContextAware,
 							propertyName, properties);
 					
 					PropertyValue wrapperedValue = new PropertyValue();
-					wrapperedValue.setPropertyType(property.getPropertyType());
+					wrapperedValue.setPropertyType(property.getPropertyTypeEnum());
 					wrapperedValue.setValue(result);
 					
 					map.putIfAbsent(propertyName, wrapperedValue);

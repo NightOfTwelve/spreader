@@ -2,9 +2,9 @@ package com.nali.center.dao;
 
 import java.util.List;
 
-import com.nali.center.properties.Property;
+import com.nali.center.properties.model.Properties;
 
 
 public interface IPropertyDao {
-	List<Property> queryProperties(String modName, String propertyName);
+	List<Properties> queryProperties(String modName, String propertyName);
 }
