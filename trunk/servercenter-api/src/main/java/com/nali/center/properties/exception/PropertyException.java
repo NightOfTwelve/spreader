@@ -1,6 +1,6 @@
 package com.nali.center.properties.exception;
 
-public class PropertyException extends Exception {
+public class PropertyException extends RuntimeException {
 	public PropertyException(String message, Exception cause) {
 		super(message, cause);
 	}
