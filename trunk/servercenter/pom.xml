@@ -40,6 +40,9 @@
 			<resource>
 				<directory>src/main/config</directory>
 			</resource>
+			<resource>
+				<directory>conf\${envcfg.dir}</directory>
+			</resource>
 		</resources>
 		<directory>target</directory>
 		<pluginManagement>
@@ -57,9 +60,7 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.4.2</version>
 					<configuration>
-						<!--
-							<includes> <include>**/*Test.java</include> </includes>
-						-->
+						<!-- <includes> <include>**/*Test.java</include> </includes> -->
 						<excludes>
 							<exclude>**/*.java</exclude>
 						</excludes>
@@ -90,6 +91,32 @@
 							</configuration>
 						</execution>
 					</executions>
+				</plugin>
+				<!-- Ignore/Execute plugin execution -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<!-- copy-dependency plugin -->
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
 				</plugin>
 				<plugin>
 					<artifactId>maven-jar-plugin</artifactId>
@@ -122,27 +149,6 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-eclipse-plugin</artifactId>
-					<version>2.8</version>
-					<configuration>
-						<useProjectReferences>false</useProjectReferences>
-						<projectNameTemplate>servercenter</projectNameTemplate>
-						<wtpmanifest>true</wtpmanifest>
-						<wtpapplicationxml>true</wtpapplicationxml>
-						<wtpversion>2.0</wtpversion>
-						<wtpContextName>servercenter</wtpContextName>
-						<additionalProjectnatures>
-							<projectnature>org.eclipse.wst.jsdt.core.jsNature</projectnature>
-							<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
-						</additionalProjectnatures>
-						<additionalBuildcommands>
-							<buildcommand>org.eclipse.wst.jsdt.core.javascriptValidator</buildcommand>
-							<buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
-						</additionalBuildcommands>
-					</configuration>
-				</plugin>
-			   <plugin>
-					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
 					<version>2.1.1</version>
 					<configuration>
@@ -152,7 +158,7 @@
 							</resource>
 						</webResources>
 					</configuration>
-			</plugin>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -172,9 +178,6 @@
 				<artifactId>maven-clean-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<artifactId>maven-eclipse-plugin</artifactId>
-			</plugin>
-			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 			</plugin>
 		</plugins>
@@ -185,7 +188,7 @@
 				<version>1.0-beta-2</version>
 			</extension>
 		</extensions>
-		
+
 		<finalName>servercenter</finalName>
 	</build>
 	<reporting>
@@ -296,11 +299,8 @@
 			<artifactId>common</artifactId>
 			<version>1.1</version>
 		</dependency>
-		<!--
-			<dependency> <groupId>org.apache.velocity</groupId>
-			<artifactId>velocity</artifactId> <version>1.5</version>
-			</dependency>
-		-->
+		<!-- <dependency> <groupId>org.apache.velocity</groupId> <artifactId>velocity</artifactId> 
+			<version>1.5</version> </dependency> -->
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>
@@ -327,7 +327,7 @@
 			<artifactId>servercenter-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.nali</groupId>
 			<artifactId>log</artifactId>
@@ -371,4 +371,6 @@
 			<url>http://192.168.3.161:8082/artifactory/nali-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
+	
+	
 </project>

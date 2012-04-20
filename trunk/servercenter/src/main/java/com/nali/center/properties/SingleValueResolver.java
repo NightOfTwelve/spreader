@@ -3,6 +3,7 @@ package com.nali.center.properties;
 import java.util.List;
 
 import com.nali.center.properties.exception.ValueResolveException;
+import com.nali.center.properties.model.Properties;
 import com.nali.common.util.CollectionUtils;
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
@@ -13,9 +14,9 @@ public abstract class SingleValueResolver<T> implements PropertyResolver<T>{
 
 	@Override
 	public T resolveValues(String modName, String propertyName,
-			List<Property> properties) throws ValueResolveException {
+			List<Properties> properties) throws ValueResolveException {
 		if (!CollectionUtils.isEmpty(properties)) {
-			Property property = properties.get(0);
+			Properties property = properties.get(0);
 			if (properties.size() > 1) {
 				logger
 						.warn(
@@ -33,5 +34,5 @@ public abstract class SingleValueResolver<T> implements PropertyResolver<T>{
 
 	
 	protected abstract T resolveValuesInternal(String modName, String propertyName,
-			Property property) throws ValueResolveException;
+			Properties property) throws ValueResolveException;
 }

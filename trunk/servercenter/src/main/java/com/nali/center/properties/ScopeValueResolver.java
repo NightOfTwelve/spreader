@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nali.center.properties.exception.ValueResolveException;
+import com.nali.center.properties.model.Properties;
 import com.nali.center.type.PropertyValueResolver;
 import com.nali.common.util.CollectionUtils;
 import com.nali.common.util.StringUtil;
@@ -18,11 +19,11 @@ public class ScopeValueResolver implements PropertyResolver<TreeMap<Long, Object
 	
 	@Override
 	public TreeMap<Long, Object> resolveValues(String modName, String propertyName,
-			List<Property> properties) throws ValueResolveException {
+			List<Properties> properties) throws ValueResolveException {
 		if (!CollectionUtils.isEmpty(properties)) {
 			TreeMap<Long, Object> treeMap = new TreeMap<Long, Object>();
-			for(Property property : properties) {
-				String queryValue = property.getPropertyQueryValue();
+			for(Properties property : properties) {
+				String queryValue = property.getSubPropertyName();
 				if(!StringUtil.isEmpty(queryValue)) {
 					Long queryLongValue = Long.parseLong(queryValue);
 					
