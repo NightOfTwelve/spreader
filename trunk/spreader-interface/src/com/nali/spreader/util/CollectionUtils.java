@@ -81,4 +81,12 @@ public class CollectionUtils {
 		}
 		return true;
 	}
+	
+	public static <T> List<String> convertElementToStringList(Collection<T> c) {
+		List<String> list = new ArrayList<String>(c.size()); 
+		for(T t : c) {
+			list.add(String.valueOf(t));
+		}
+		return list;
+	}
 }
