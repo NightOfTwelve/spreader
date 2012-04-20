@@ -2,6 +2,9 @@ package com.nali.spreader.service.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +50,7 @@ public class UserService extends WebsiteBaseService implements IUserService {
 	private ICrudUserRelationDao crudUserRelationDao;
 	@Autowired
 	private IGlobalUserService globalUserService;
-
+	
 	@Override
 	public Long assignUser(Long websiteUid) {
 		UserExample example = new UserExample();
@@ -240,5 +243,28 @@ public class UserService extends WebsiteBaseService implements IUserService {
 	@Override
 	public List<User> findNoAvatarRobotUserList() {
 		return this.userDao.queryNoAvatarRobotUser();
+	}
+
+	@Override
+	public boolean updateCtrlGid(long uid, long gid) {
+		return this.userDao.updateCtrlGid(uid, gid);
+	}
+
+	@Override
+	public Map<Long, Long> queryGids(List<Long> uids) {
+		return this.userDao.queryGids(uids);
+	}
+
+	@Override
+	public void forceUpdateGids(Map<Long, List<Long>> gidRelation) {
+		Set<Entry<Long, List<Long>>> gidEntries =  gidRelation.entrySet();
+		for(Entry<Long, List<Long>> gidEntry : gidEntries) {
+			Long gid = gidEntry.getKey();
+			User user = new User();
+			user.setCtrlGid(gid);
+			UserExample example = new UserExample();
+			example.createCriteria().andIdIn(gidEntry.getValue());
+			this.crudUserDao.updateByExampleSelective(user, example);
+		}
 	}
 }

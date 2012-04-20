@@ -1,8 +1,9 @@
 package com.nali.spreader.dao;
 
+import java.util.List;
+
 import com.nali.spreader.data.UserGroup;
 import com.nali.spreader.data.UserGroupExample;
-import java.util.List;
 
 public interface ICrudUserGroupDao {
     /**

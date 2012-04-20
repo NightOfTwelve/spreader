@@ -365,4 +365,17 @@
   <select id="queryNoAvatarRobotUser" resultMap="spreader_tb_user.ibatorgenerated_BaseResultMap">
   	select * from spreader.tb_user where pid is null and is_robot = true
   </select>
+  
+   <update id="updaetCtrlGid" parameterClass="java.util.Map">
+  	 update spreader.tb_user set ctrl_gid=#gid# where id=#uid# and (ctrl_gid=-1 or ctrl_gid=#gid#)
+  </update>
+  
+  <select id="queryGids" parameterClass="java.util.List" resultClass="long">
+  	 select uid,gid from spreader.tb_user 
+  	 <dynamic prepend="where">
+  	 	<iterate conjunction="or">
+  	 		uid=#value[]#
+  	 	</iterate>
+  	 </dynamic>
+  </select>
 </sqlMap>

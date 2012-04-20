@@ -81,7 +81,7 @@
 
 	<!-- redisTemplate -->
 	<bean id="redisTemplate"
-		class="org.springframework.data.keyvalue.redis.core.RedisTemplate">
+		class="org.springframework.data.redis.core.RedisTemplate">
 		<constructor-arg>
 			<ref bean="redisConnectionFactory" />
 		</constructor-arg>

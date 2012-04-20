@@ -1,8 +1,9 @@
 package com.nali.spreader.data;
 
-import com.nali.common.model.BaseModel;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.nali.common.model.BaseModel;
 
 public class Photo extends BaseModel implements Serializable {
 

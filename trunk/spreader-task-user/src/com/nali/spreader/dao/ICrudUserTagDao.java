@@ -1,8 +1,9 @@
 package com.nali.spreader.dao;
 
+import java.util.List;
+
 import com.nali.spreader.data.UserTag;
 import com.nali.spreader.data.UserTagExample;
-import java.util.List;
 
 public interface ICrudUserTagDao {
 

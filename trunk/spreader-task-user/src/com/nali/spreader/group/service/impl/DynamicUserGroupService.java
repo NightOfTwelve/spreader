@@ -10,11 +10,11 @@ import java.util.Set;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.keyvalue.redis.connection.RedisConnection;
-import org.springframework.data.keyvalue.redis.core.RedisCallback;
-import org.springframework.data.keyvalue.redis.core.RedisTemplate;
-import org.springframework.data.keyvalue.redis.core.ZSetOperations;
-import org.springframework.data.keyvalue.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 
 import com.nali.spreader.group.service.IDynamicUserGroupService;

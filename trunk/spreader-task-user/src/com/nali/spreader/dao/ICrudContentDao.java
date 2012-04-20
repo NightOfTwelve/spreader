@@ -1,8 +1,9 @@
 package com.nali.spreader.dao;
 
+import java.util.List;
+
 import com.nali.spreader.data.Content;
 import com.nali.spreader.data.ContentExample;
-import java.util.List;
 
 public interface ICrudContentDao {
 

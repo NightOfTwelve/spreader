@@ -62,9 +62,9 @@ public class UserGroupAssembler {
 	
 	private void checkUserGroupType(UserGroupType gtype, PropertyExpressionDTO expressionDTO)throws AssembleException {
 		if(gtype == UserGroupType.fixed) {
-			if(expressionDTO.getScore() == null) {
-				throw new AssembleException("静态分组必须按用户评分来划分，而评分为空");
-			}
+//			if(expressionDTO.getScore() == null) {
+//				throw new AssembleException("静态分组必须按用户评分来划分，而评分为空");
+//			}
 		}
 	}
 }

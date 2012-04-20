@@ -14,7 +14,7 @@ public class UserGroupRandomIterator extends RandomDataIterator<GrouppedUser>{
 	}
 
 	@Override
-	protected List<GrouppedUser> query(long offset, int limit) {
+	public List<GrouppedUser> query(long offset, int limit) {
 		return this.userGroupBatchIterator.query(offset, limit);
 	}
 

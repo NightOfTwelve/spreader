@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -34,10 +32,12 @@ import com.nali.spreader.group.exp.PropertyExpression;
 import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.filter.IGrouppedUserFilter;
 import com.nali.spreader.group.meta.UserGroupType;
+import com.nali.spreader.group.service.GrouppedUserFilterIterator;
+import com.nali.spreader.group.service.ICtrlUserGroupService;
 import com.nali.spreader.group.service.IDynamicUserGroupService;
 import com.nali.spreader.group.service.IPropertiesGrouppedUserService;
 import com.nali.spreader.group.service.IUserGroupService;
-import com.nali.spreader.group.service.MemoryUserGroupRandomIterator;
+import com.nali.spreader.group.service.UserFilterIterator;
 import com.nali.spreader.group.service.UserGroupBatchIterator;
 import com.nali.spreader.group.service.UserGroupRandomIterator;
 import com.nali.spreader.model.GrouppedUser;
@@ -54,7 +54,7 @@ public class UserGroupService implements IUserGroupService {
 
 	@Autowired
 	private IUserService userService;
-
+	
 	@Autowired
 	private IUserGroupDao userGroupDao;
 
@@ -75,6 +75,9 @@ public class UserGroupService implements IUserGroupService {
 
 	@Autowired
 	private UserGroupAssembler userGroupAssembler;
+	
+	@Autowired
+	private ICtrlUserGroupService ctrlUserGroupService;
 
 	@Override
 	public UserGroup queryUserGroup(long gid) {
@@ -89,6 +92,7 @@ public class UserGroupService implements IUserGroupService {
 			userGroup.setGid(gid);
 		}
 		
+		Integer gtype = userGroup.getGtype();
 		Date now = new Date();
 
 		if (userGroup.getCreateTime() == null) {
@@ -100,6 +104,11 @@ public class UserGroupService implements IUserGroupService {
 		}
 
 		this.crudUserGroupDao.insertSelective(userGroup);
+		
+	    //如果是控制分组
+		if(UserGroupType.fixed.getTypeVal() == gtype.intValue()){
+	    	this.ctrlUserGroupService.submitCtrlUserGroup(userGroup);
+	    }
 		return gid;
 	}
 
@@ -158,7 +167,7 @@ public class UserGroupService implements IUserGroupService {
 					.queryExcludedUids(gid, limit.offset, limit.maxRows);
 			List<GrouppedUser> grouppedUserList = this
 					.convertUidToGrouppedUser(uidList, true);
-			this.assembleUserToGrouppedUser(grouppedUserList);
+//			this.assembleUserToGrouppedUser(grouppedUserList);
 			list = grouppedUserList;
 		}
 		return new PageResult<GrouppedUser>(list, limit, (int) count);
@@ -195,27 +204,20 @@ public class UserGroupService implements IUserGroupService {
 	@Override
 	public PageResult<GrouppedUser> queryGrouppedUsers(long gid, Limit limit)
 			throws GroupUserQueryException {
-		UserGroup userGroup = this.queryUserGroup(gid);
 		long manualCount = this.dynamicUserGroupService.getUserCount(gid);
-		List<GrouppedUser> grouppedUserList = Collections.emptyList();
-		long count = manualCount;
-		if (userGroup.getGtype().intValue() != UserGroupType.manual
-				.getTypeVal()) {
-			long propertyCount = this.propertiesGrouppedUserService
-					.getUserCount(gid);
+		long propertyCount = this.propertiesGrouppedUserService
+				.getUserCount(gid);
+		if(propertyCount > 0) {
 			long excludeCount = this.dynamicUserGroupService
 					.getExcludeUserCount(gid);
 			propertyCount = propertyCount - excludeCount;
-			
-			 count += propertyCount;
-			 grouppedUserList = this.queryGrouppedUsers(gid,
-					manualCount, propertyCount, limit.offset, limit.maxRows);
-		}else{
-			List<Long> manualUids = this.dynamicUserGroupService.queryGrouppedUids(gid, limit.offset, limit.maxRows);
-			grouppedUserList = this.convertUidToGrouppedUser(manualUids, true);
 		}
-		
-		this.assembleUserToGrouppedUser(grouppedUserList);
+
+		long count = manualCount + propertyCount;
+		List<GrouppedUser> grouppedUserList = this.queryGrouppedUsers(gid,
+				manualCount, propertyCount, limit.offset, limit.maxRows);
+
+//		this.assembleUserToGrouppedUser(grouppedUserList);
 
 		PageResult<GrouppedUser> result = new PageResult<GrouppedUser>(
 				grouppedUserList, limit, (int) count);
@@ -232,22 +234,22 @@ public class UserGroupService implements IUserGroupService {
 		return grouppedUserList;
 	}
 
-	private void assembleUserToGrouppedUser(List<GrouppedUser> grouppedUserList) {
-		Map<Long, GrouppedUser> grouppedUsers = new HashMap<Long, GrouppedUser>(
-				grouppedUserList.size());
-		for (GrouppedUser grouppedUser : grouppedUserList) {
-			grouppedUsers.put(grouppedUser.getUid(), grouppedUser);
-		}
-
-		List<User> users = this.userService.getUsersByIds(new ArrayList<Long>(
-				grouppedUsers.keySet()));
-		for (User user : users) {
-			GrouppedUser grouppedUser = grouppedUsers.get(user.getId());
-			if (grouppedUser != null) {
-				grouppedUser.setUser(user);
-			}
-		}
-	}
+//	private void assembleUserToGrouppedUser(List<GrouppedUser> grouppedUserList) {
+//		Map<Long, GrouppedUser> grouppedUsers = new HashMap<Long, GrouppedUser>(
+//				grouppedUserList.size());
+//		for (GrouppedUser grouppedUser : grouppedUserList) {
+//			grouppedUsers.put(grouppedUser.getUid(), grouppedUser);
+//		}
+//
+//		List<User> users = this.userService.getUsersByIds(new ArrayList<Long>(
+//				grouppedUsers.keySet()));
+//		for (User user : users) {
+//			GrouppedUser grouppedUser = grouppedUsers.get(user.getId());
+//			if (grouppedUser != null) {
+//				grouppedUser.setUser(user);
+//			}
+//		}
+//	}
 
 	@Override
 	public List<GrouppedUser> queryGrouppedUsers(long gid, long manualCount,
@@ -336,7 +338,7 @@ public class UserGroupService implements IUserGroupService {
 					.queryGrouppedUids(gid, limit.offset, limit.maxRows);
 			List<GrouppedUser> grouppedUserList = this
 					.convertUidToGrouppedUser(uidList, true);
-			this.assembleUserToGrouppedUser(grouppedUserList);
+//			this.assembleUserToGrouppedUser(grouppedUserList);
 			list = grouppedUserList;
 		}
 		return new PageResult<GrouppedUser>(list, limit, (int) count);
@@ -373,13 +375,20 @@ public class UserGroupService implements IUserGroupService {
 	}
 
 	@Override
-	public MemoryRandomDataIterator<Long, User> queryMemoryGrouppedUserIterator(
+	public DataIterator<User> queryMemoryGrouppedUserIterator(
 			long gid, int batchSize, int upCount, Collection<Long> excludeUids)
 			throws GroupUserQueryException {
 		UidCollection uidCollection = this.getAllUids(gid);
-		return new MemoryUserGroupRandomIterator(userService, gid, upCount, batchSize, excludeUids, uidCollection);
+		List<Long> allUids = com.nali.spreader.util.CollectionUtils.mergeAsList(uidCollection.getManualUids(), uidCollection.getPropertyUids());
+		Set<Long> excludeSet = com.nali.spreader.util.CollectionUtils.mergeAsSet(uidCollection.getExcludeUids(), excludeUids);
+		return new MemoryRandomDataIterator<Long,User>(upCount, batchSize, allUids, excludeSet){
+			@Override
+			protected List<User> queryByIds(List<Long> ids) {
+				return userService.getUsersByIds(ids);
+			}
+		};
 	}
-
+	
 	@Override
 	public UidCollection getAllUids(long gid) {
 		Set<Long> manualUids = this.dynamicUserGroupService.queryGrouppedUids(gid);
@@ -390,5 +399,29 @@ public class UserGroupService implements IUserGroupService {
 		
 		List<Long> propertiesUids = this.propertiesGrouppedUserService.queryGrouppedUids(gid);
 		return new UidCollection(manualUids, propertiesUids, excludeUids);
+	}
+
+	@Override
+	public DataIterator<GrouppedUser> queryGrouppedUserIterator(
+			String taskCode, long gid, int batchSize)
+			throws GroupUserQueryException {
+		DataIterator<GrouppedUser> grouppedUsers = this.queryGrouppedUserIterator(gid, batchSize);
+		return new GrouppedUserFilterIterator(grouppedUsers, new UserActionCountFilter(ctrlUserGroupService, taskCode));
+	}
+
+	@Override
+	public DataIterator<GrouppedUser> queryGrouppedUserIterator(
+			String taskCode, long gid, int batchSize, long upCount)
+			throws GroupUserQueryException {
+		DataIterator<GrouppedUser> grouppedUsers = this.queryGrouppedUserIterator(gid, batchSize, upCount);
+		return new GrouppedUserFilterIterator(grouppedUsers, new UserActionCountFilter(ctrlUserGroupService, taskCode));
+	}
+
+	@Override
+	public DataIterator<User> queryMemoryGrouppedUserIterator(String taskCode,
+			long gid, int batchSize, int upCount, Collection<Long> excludeUids)
+			throws GroupUserQueryException {
+		DataIterator<User> userIterator = this.queryMemoryGrouppedUserIterator(gid, batchSize, upCount, excludeUids);
+		return new UserFilterIterator(userIterator, new UserActionCountFilter(ctrlUserGroupService, taskCode));
 	}
 }

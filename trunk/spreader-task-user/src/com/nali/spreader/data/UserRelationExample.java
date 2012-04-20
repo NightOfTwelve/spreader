@@ -1,11 +1,12 @@
 package com.nali.spreader.data;
 
-import com.nali.common.model.Limit;
-import com.nali.common.model.Shard;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.nali.common.model.Limit;
+import com.nali.common.model.Shard;
 
 public class UserRelationExample {
 
