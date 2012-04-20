@@ -103,7 +103,7 @@ public class UpdateUserMainPage implements RegularAnalyzer {//TODO SystemObject
 		}
 
 		@Override
-		protected List<User> query(long offset, int batchSize) {
+		public List<User> query(long offset, int batchSize) {
 			return userService.getUninitializedUser(offset, batchSize);
 		}
 		

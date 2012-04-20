@@ -1,7 +1,8 @@
 package com.nali.spreader.model;
 
-import com.nali.common.model.BaseModel;
 import java.io.Serializable;
+
+import com.nali.common.model.BaseModel;
 
 public class StrategyUserGroup extends BaseModel implements Serializable {
     private static final long serialVersionUID = -8202489737343548577L;

@@ -1,15 +1,17 @@
 package com.nali.spreader.dao.impl;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.keyvalue.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.nali.common.model.Limit;
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.ContentDto;
 import com.nali.spreader.config.UserDto;
 import com.nali.spreader.config.UserTagParamsDto;
@@ -111,5 +113,28 @@ public class UserDao implements IUserDao {
 	@Override
 	public List<Long> queryUidsByProperties(Map<String, Object> properties) {
 		return sqlMap.queryForList("spreader_user.queryUidsByProperties", properties);
+	}
+
+	@Override
+	public boolean updateCtrlGid(long uid, long gid) {
+		Map parameterMap = CollectionUtils.newHashMap(2);
+		parameterMap.put("uid", uid);
+		parameterMap.put("gid", gid);
+		return this.sqlMap.update("spreader_user.updaetCtrlGid", parameterMap) > 0;
+	}
+
+	@Override
+	public Map<Long, Long> queryGids(List<Long> uids) {
+		if(!CollectionUtils.isEmpty(uids)) {
+			List<User> userList =  this.sqlMap.queryForList("spreader_user.queryGids", uids);
+			if(!CollectionUtils.isEmpty(userList)) {
+				Map<Long, Long> gidMap = CollectionUtils.newHashMap(userList.size());
+				for(User user : userList) {
+					gidMap.put(user.getId(), user.getCtrlGid());
+				}
+				return gidMap;
+			}
+		}
+		return Collections.emptyMap();
 	}
 }

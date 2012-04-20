@@ -1,9 +1,9 @@
 package com.nali.spreader.model;
 
-import com.nali.spreader.data.User;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GrouppedUser {
-	private User user;
 	private boolean manual;
 	private Long uid;
 
@@ -24,20 +24,22 @@ public class GrouppedUser {
 		this.uid = uid;
 	}
 
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
 	public boolean isManual() {
 		return manual;
 	}
 
 	public void setManual(boolean manual) {
 		this.manual = manual;
+	}
+	
+	
+	
+	public static List<Long> getUids(List<GrouppedUser> grouppedUsers) {
+		List<Long> uids = new ArrayList<Long>(grouppedUsers.size());
+		for(GrouppedUser grouppedUser : grouppedUsers) {
+			uids.add(grouppedUser.getUid());
+		}
+		return uids;
 	}
 	
 	@Override

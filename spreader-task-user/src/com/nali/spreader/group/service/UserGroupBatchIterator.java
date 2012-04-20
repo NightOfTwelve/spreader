@@ -39,7 +39,7 @@ public class UserGroupBatchIterator extends DataIterator<GrouppedUser> {
 	}
 
 	@Override
-	protected List<GrouppedUser> query(long offset, int limit) {
+	public List<GrouppedUser> query(long offset, int limit) {
 		List<GrouppedUser> grouppedUsers = this.userGroupService.queryGrouppedUsers(gid, manualCount,
 				propertyCount, (int) offset, limit);
 		return grouppedUsers;

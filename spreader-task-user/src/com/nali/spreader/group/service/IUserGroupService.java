@@ -15,7 +15,6 @@ import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.util.DataIterator;
-import com.nali.spreader.util.MemoryRandomDataIterator;
 import com.nali.spreader.util.RandomDataIterator;
 
 /**
@@ -134,6 +133,17 @@ public interface IUserGroupService {
 			throws GroupUserQueryException;
 	
 	/**
+	 * 查询可以做某task的所有用户
+	 * @param taskCode
+	 * @param gid
+	 * @param batchSize
+	 * @return
+	 * @throws GroupUserQueryException
+	 */
+	DataIterator<GrouppedUser> queryGrouppedUserIterator(String taskCode, long gid, int batchSize)
+			throws GroupUserQueryException;
+	
+	/**
 	 * 查询某个分组的用户的uids。
 	 * 
 	 * @param gid
@@ -142,6 +152,16 @@ public interface IUserGroupService {
 	 * @throws GroupUserQueryException
 	 */
 	DataIterator<GrouppedUser> queryGrouppedUserIterator(long gid, int batchSize, long upCount) throws GroupUserQueryException;
+	
+	/**
+	 * 查询可以做某task的所有用户
+	 * @param gid
+	 * @param batchSize
+	 * @param upCount
+	 * @return
+	 * @throws GroupUserQueryException
+	 */
+	DataIterator<GrouppedUser> queryGrouppedUserIterator(String taskCode, long gid, int batchSize, long upCount) throws GroupUserQueryException;
 	
 	
 	
@@ -163,9 +183,11 @@ public interface IUserGroupService {
 	 * @return
 	 * @throws GroupUserQueryException
 	 */
-	MemoryRandomDataIterator<Long, User> queryMemoryGrouppedUserIterator(long gid, int batchSize, int upCount, Collection<Long> excludeUids) throws GroupUserQueryException;
+	DataIterator<User> queryMemoryGrouppedUserIterator(long gid, int batchSize, int upCount, Collection<Long> excludeUids) throws GroupUserQueryException;
 	
 	
+	DataIterator<User> queryMemoryGrouppedUserIterator(String taskCode, long gid, int batchSize, int upCount, Collection<Long> excludeUids) throws GroupUserQueryException;
+
 	/**
 	 * 分页查询某个分组的用户
 	 * 
@@ -206,7 +228,6 @@ public interface IUserGroupService {
 	 * @return
 	 */
 	boolean checkUserGroupUniqueByName(String gname);
-	
 	
 	public static class UidCollection {
 		private Set<Long> manualUids;

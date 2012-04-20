@@ -1,6 +1,7 @@
 package com.nali.spreader.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.nali.spreader.config.UserDto;
 import com.nali.spreader.data.KeyValue;
@@ -46,4 +47,11 @@ public interface IUserService {
 	 * @return
 	 */
 	List<User> findNoAvatarRobotUserList();
+	
+	
+	boolean updateCtrlGid(long uid, long gid);
+	
+	Map<Long, Long> queryGids(List<Long> uids);
+	
+	void forceUpdateGids(Map<Long, List<Long>> gidRelation);
 }

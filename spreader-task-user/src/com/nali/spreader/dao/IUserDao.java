@@ -74,4 +74,9 @@ public interface IUserDao {
 	 * @return
 	 */
 	List<User> queryNoAvatarRobotUser();
+	
+	
+	boolean updateCtrlGid(long uid, long gid);
+	
+	Map<Long, Long> queryGids(List<Long> uids);
 }

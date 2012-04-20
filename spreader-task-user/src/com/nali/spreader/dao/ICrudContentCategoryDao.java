@@ -1,8 +1,9 @@
 package com.nali.spreader.dao;
 
+import java.util.List;
+
 import com.nali.spreader.data.ContentCategory;
 import com.nali.spreader.data.ContentCategoryExample;
-import java.util.List;
 
 public interface ICrudContentCategoryDao {
     /**

@@ -1,7 +1,8 @@
 package com.nali.spreader.data;
 
-import com.nali.common.model.BaseModel;
 import java.io.Serializable;
+
+import com.nali.common.model.BaseModel;
 
 public class ContentCategory extends BaseModel implements Serializable {
     private static final long serialVersionUID = 3668642888922156257L;

@@ -1,8 +1,9 @@
 package com.nali.spreader.dao;
 
+import java.util.List;
+
 import com.nali.spreader.data.Photo;
 import com.nali.spreader.data.PhotoExample;
-import java.util.List;
 
 public interface ICrudPhotoDao {
 

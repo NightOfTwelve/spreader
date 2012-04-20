@@ -1,8 +1,9 @@
 package com.nali.spreader.dao;
 
+import java.util.List;
+
 import com.nali.spreader.data.UserRelation;
 import com.nali.spreader.data.UserRelationExample;
-import java.util.List;
 
 public interface ICrudUserRelationDao {
 
