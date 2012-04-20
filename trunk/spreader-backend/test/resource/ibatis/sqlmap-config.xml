@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+  <settings useStatementNamespaces="true" enhancementEnabled="true" errorTracingEnabled="true" lazyLoadingEnabled="true" />
+  
+  <!-- coolsql自动生成 -->
+  <sqlMap resource="ibatis/spreader_tb_career_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_education_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_user_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_user_tag_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_robot_user_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_user_relation_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_content_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_robot_register_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_category_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_content_category_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_regular_job_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_photo_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_task_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_user_group_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_strategy_group_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_strategy_user_group_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_robot_content_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_regular_job_result_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_ctrl_group_conflict_SqlMap.xml"/>
+  <sqlMap resource="ibatis/spreader_tb_ctrl_policy_SqlMap.xml"/>
+
+  
+  <!-- 自定义 -->
+  <sqlMap resource="ibatis/spreader_tb_photo.xml" />
+  <sqlMap resource="ibatis/spreader_user.xml" />
+  <sqlMap resource="ibatis/spreader_content.xml" />
+  <sqlMap resource="ibatis/spreader_regular_job.xml" />
+  <sqlMap resource="ibatis/spreader_register.xml" />
+  <sqlMap resource="ibatis/spreader_task.xml" />
+  <sqlMap resource="ibatis/spreader_user_group.xml" />
+  <sqlMap resource="ibatis/spreader_strategy_group.xml" />
+  <sqlMap resource="ibatis/spreader_robot_content.xml"/>
+  <sqlMap resource="ibatis/spreader_stat.xml"/>
+  <sqlMap resource="ibatis/spreader_task_status.xml"/>
+  <sqlMap resource="ibatis/spreader_regular_job_result.xml"/>
+  <sqlMap resource="ibatis/spreader_client_task_stat.xml"/>
+</sqlMapConfig>
+

@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="spreader_user">
+	<resultMap class="com.nali.spreader.data.User" id="selectuserinfo"
+		extends="spreader_tb_user.ibatorgenerated_BaseResultMap">
+		<result property="tags" column="id" select="spreader_user.getUserTagList" />
+	</resultMap>
+	<insert id="assignUser" parameterClass="com.nali.spreader.data.User">
+		insert into spreader.tb_user(
+		website_id,
+		website_uid,
+		create_time,
+		is_robot
+		)
+		values(
+		#websiteId#,
+		#websiteUid#,
+		now(),
+		#isRobot#
+		)
+		<selectKey resultClass="long" type="post" keyProperty="id">
+			select LAST_INSERT_ID() as value
+	</selectKey>
+	</insert>
+	<sql id="baseUserCondition">
+		<isNotNull prepend="and" property="gender">
+			gender = #gender#
+	</isNotNull>
+		<isNotNull prepend="and" property="province">
+			province = #province#
+	</isNotNull>
+		<isNotNull prepend="and" property="city">
+			city = #city#
+	</isNotNull>
+		<isNotNull prepend="and" property="vType">
+			v_type = #vType#
+	</isNotNull>
+		<isNotNull prepend="and" property="birthdayYear.gte">
+			birthday_year &gt;= #birthdayYear.gte#
+	</isNotNull>
+	<isNotNull prepend="and" property="birthdayYear.lte">
+	  birthday_year &lt;= #birthdayYear.lte#
+	</isNotNull>
+	<isNotNull prepend="and" property="attentions.gte">
+	  attentions &gt;= #attentions.gte#
+	</isNotNull>
+	<isNotNull prepend="and" property="attentions.lte">
+	  attentions &lt;= #attentions.lte#
+	</isNotNull>
+	<isNotNull prepend="and" property="fans.gte">
+	  fans &gt;= #fans.gte#
+	</isNotNull>
+	<isNotNull prepend="and" property="fans.lte">
+	  fans &lt;= #fans.lte#
+	</isNotNull>
+	<isNotNull prepend="and" property="articles.gte">
+	   articles &gt;= #articles.gte#
+	</isNotNull>
+	<isNotNull prepend="and" property="articles.lte">
+	   articles &lt;= #articles.lte#
+	</isNotNull>
+  </sql>
+  <select id="findUidToWebsiteUidMapByDto" parameterClass="com.nali.spreader.config.UserDto" resultClass="com.nali.spreader.data.KeyValue">
+	select id as "key", website_uid as "value"
+	from spreader.tb_user
+	<dynamic prepend="where">
+		<isNotEmpty prepend="and" property="categories">
+			id in (
+				select uid from spreader.tb_user_tag where category_id in (
+					select id from spreader.tb_category where name in
+					<iterate property="categories" open="(" close=")" conjunction=",">
+						#categories[]#
+					</iterate>
+				)
+			)
+		</isNotEmpty>
+		<isNotNull prepend="and" property="isRobot">
+		  is_robot = #isRobot#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteId">
+		  website_id = #websiteId#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteUid">
+		  website_uid = #websiteUid#
+		</isNotNull>
+		<include refid="baseUserCondition"/>
+	</dynamic>
+	<isNotNull property="limit">
+		limit 0, $limit$
+	</isNotNull>
+  </select>
+  <select id="findUserFansInfoByDto" parameterClass="com.nali.spreader.config.UserDto" resultClass="com.nali.spreader.data.User">
+	select id, website_uid as websiteUid, fans, robot_fans as robotFans
+	from spreader.tb_user
+	<dynamic prepend="where">
+		<isNotEmpty prepend="and" property="categories">
+			id in (
+				select uid from spreader.tb_user_tag where category_id in (
+					select id from spreader.tb_category where name in
+					<iterate property="categories" open="(" close=")" conjunction=",">
+						#categories[]#
+					</iterate>
+				)
+			)
+		</isNotEmpty>
+		<isNotNull prepend="and" property="isRobot">
+		  is_robot = #isRobot#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteId">
+		  website_id = #websiteId#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteUid">
+		  website_uid = #websiteUid#
+		</isNotNull>
+		<include refid="baseUserCondition"/>
+	</dynamic>
+  </select>
+  <update id="increaseRobotFansCount" parameterClass="long">
+  	update spreader.tb_user
+  	set robot_fans = robot_fans+1,
+  		fans = fans+1
+  	where id = #uid#
+  </update>
+  <select id="getUserTagList" parameterClass="int" resultMap="spreader_tb_user_tag.ibatorgenerated_BaseResultMap">
+		select * From tb_user_tag where uid = #id#
+  </select>
+  <select id="getUserAndTagInfoByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultMap="selectuserinfo">
+		select u.* from tb_user u
+	<dynamic prepend="where">
+		<isNotNull prepend="and" property="id">
+			u.id = #id#
+		</isNotNull>
+		<isNotNull prepend="and" property="isRobot">
+			u.is_robot = #isRobot#
+		</isNotNull>
+		<isNotEmpty prepend="and" property="nickName">
+			u.nick_name like CONCAT('%', #nickName#, '%')
+		</isNotEmpty>
+		<isNotNull prepend="and" property="minFans">
+			<![CDATA[u.fans >= #minFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="maxFans">
+			<![CDATA[u.fans <= #maxFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="minRobotFans">
+			<![CDATA[u.robot_fans >= #minRobotFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="maxRobotFans">
+			<![CDATA[u.robot_fans <= #maxRobotFans#]]>
+		</isNotNull>
+		<isNotEmpty prepend="and" property="tag">
+			u.id in(select uid from tb_user_tag where tag like CONCAT('%', #tag#, '%'))
+		</isNotEmpty>
+		<isNotNull prepend="and" property="isRobot">
+			u.is_robot = #isRobot#
+		</isNotNull>
+	</dynamic>
+	<isNotNull property="limit">
+        limit $limit.offset$,$limit.maxRows$
+    </isNotNull>
+  </select>
+  <select id="getUserFansInfoByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultMap="selectuserinfo">
+  	select u.*
+  	from spreader.tb_user u 
+	where exists(
+	select 1 from (select ur.uid from spreader.tb_user_relation ur
+	where ur.to_uid = #id#
+	and ur.is_robot_user = #isRobot#)c
+	where u.id = c.uid)
+  </select>
+  <select id="getUserAndTagCountByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultClass="java.lang.Integer">
+  	select count(u.id) as cnum from spreader.tb_user u
+	<dynamic prepend="where">
+		<isNotNull prepend="and" property="id">
+			u.id = #id#
+		</isNotNull>
+		<isNotEmpty prepend="and" property="nickName">
+			u.nick_name like CONCAT('%', #nickName#, '%')
+		</isNotEmpty>
+		<isNotNull prepend="and" property="minFans">
+			<![CDATA[u.fans >= #minFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="maxFans">
+			<![CDATA[u.fans <= #maxFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="minRobotFans">
+			<![CDATA[u.robot_fans >= #minRobotFans#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="maxRobotFans">
+			<![CDATA[u.robot_fans <= #maxRobotFans#]]>
+		</isNotNull>
+		<isNotEmpty prepend="and" property="tag">
+			u.id in(select uid from tb_user_tag where tag like CONCAT('%', #tag#, '%'))
+		</isNotEmpty>
+		<isNotNull prepend="and" property="isRobot">
+			u.is_robot = #isRobot#
+		</isNotNull>
+	</dynamic>
+  </select>
+  <select id="getUserFansCountByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultClass="java.lang.Integer">
+  	select count(u.id) as cnum
+  	from spreader.tb_user u 
+	where exists(
+	select 1 from (select ur.uid from spreader.tb_user_relation ur
+	where ur.to_uid = #id#
+	and ur.is_robot_user = #isRobot#)c
+	where u.id = c.uid)
+  </select>
+  
+  <sql id="propertiesWhere">
+  	 <!-- 文章数 -->
+  		<isNotNull prepend="and" property="articlesGte">
+  			<![CDATA[ u.articles>= #articlesGte#]]>
+  		</isNotNull>
+  		 <isNotNull prepend="and" property="articlesLte">
+  			<![CDATA[ u.articles<= #articlesLte#]]>
+  		</isNotNull>
+  		
+  		<!-- 关注数 -->
+  		<isNotNull prepend="and" property="attentionsGte">
+  			<![CDATA[ u.attentions>= #attentionsGte#]]>
+  		</isNotNull>
+  		<isNotNull prepend="and" property="attentionsLte">
+  			<![CDATA[ u.attentions<= #attentionsLte#]]>
+  		</isNotNull>
+  		
+  		<!-- 出生日期 -->
+  	    <isNotNull prepend="and" property="birthDayYearGte">
+  			<![CDATA[ u.birthday_year>= #birthDayYearGte#]]>
+  		</isNotNull>
+  		 <isNotNull prepend="and" property="birthDayYearLte">
+  			<![CDATA[ u.birthday_year<= #birthDayYearGte#]]>
+  		</isNotNull>
+  	    <isNotNull prepend="and" property="birthDayMonthGte">
+  			<![CDATA[ u.birthday_month>= #birthDayMonthGte#]]>
+  		</isNotNull>
+  		 <isNotNull prepend="and" property="birthDayMonthLte">
+  			<![CDATA[ u.birthday_month<= #birthDayMonthLte#]]>
+  		</isNotNull>
+  		 <isNotNull prepend="and" property="birthDayDayGte">
+  			<![CDATA[ u.birthday_day>= #birthDayDayGte#]]>
+  		</isNotNull>
+  		 <isNotNull prepend="and" property="birthDayDayLte">
+  			<![CDATA[ u.birthday_day<= #birthDayDayLte#]]>
+  		</isNotNull>
+  		
+  		<!-- 用户分类 -->
+  		<isNotNull prepend="and" property="categoryId">
+  	   		u.id = c.uid and c.category_id = #categoryId#
+  	   </isNotNull>
+  	   
+  	   <!-- 城市 -->
+  	   <isNotEmpty prepend="and" property="city">
+  	   		u.city = #city#
+  	   </isNotEmpty>
+  	   
+  	   <!-- 星座 -->
+  	   <isNotNull prepend="and" property="constellation">
+  	   	    u.constellation = #constellation#
+  	   </isNotNull>
+  	   
+  	   <!-- 粉丝数 -->
+  	   <isNotNull prepend="and" property="fansGte">
+  		  <![CDATA[ u.fans>= #fansGte#]]>
+  	   </isNotNull>
+  	   <isNotNull prepend="and" property="fansLte">
+  		  <![CDATA[ u.fans<= #fansLte#]]>
+  	   </isNotNull>
+  		
+  	   <!-- 性别 -->
+  	   <isNotNull prepend="and" property="gender">
+  	   		u.gender = #gender#
+  	   </isNotNull>
+  	   
+  	   <!-- 是否机器人  -->
+	   <isNotNull prepend="and" property="isRobot">
+	   		u.is_robot = #isRobot#
+	   </isNotNull>
+	   
+	   <!-- 国家 -->
+	   <isNotEmpty prepend="and" property="nationality">
+  	   		u.nationality = #nationality#
+  	   </isNotEmpty>
+  	   
+  	   <!-- 昵称 -->
+  	   <isNotEmpty prepend="and" property="nickName">
+  	   		u.nick_name = #nickName#
+  	   </isNotEmpty>
+  	   
+  	   <!-- 省份 -->
+  	   <isNotEmpty prepend="and" property="province">
+  	   		u.province = #province#
+  	   </isNotEmpty>
+  	   
+  	   <!-- 机器人粉丝数 -->
+  	  <isNotNull prepend="and" property="robotFansGte">
+  		  <![CDATA[ u.robot_fans>= #robotFansGte#]]>
+  	   </isNotNull>
+  	   <isNotNull prepend="and" property="robotFansLte">
+  		  <![CDATA[ u.robot_fans<= #robotFansLte#]]>
+  	   </isNotNull>
+  	   
+  	   <!-- 用户分数 -->
+	   	<isNotNull prepend="and" property="scoreGte">
+  		  <![CDATA[ u.score >= #scoreGte#]]>
+  	   </isNotNull>
+  	   <isNotNull prepend="and" property="scoreLte">
+  		  <![CDATA[ u.score <= #scoreLte#]]>
+  	   </isNotNull>
+  	   
+  	   <!-- 是否V认证 -->
+  	   <isNotNull prepend="and" property="vType">
+  	   		u.v_type = #vType#
+  	   </isNotNull>
+  	   
+  	   <!-- 目标网站 -->
+  	   <isNotNull prepend="and" property="websiteId">
+  	   		u.website_id = #websiteId#
+  	   </isNotNull>
+  </sql>
+  
+  <select id="countByProperties" parameterClass="java.util.HashMap" resultClass="int">
+  	select count(u.id) from spreader.tb_user as u
+  	<dynamic prepend=",">
+  	   <!-- 用户分类  -->
+  	   <isNotNull property="categoryId">
+  	   		spreader.tb_user_tag as c
+  	   </isNotNull>
+  	</dynamic> 
+  	<dynamic prepend="where">
+  	    <include refid="propertiesWhere"/>
+  	</dynamic>
+  </select>
+  
+   <select id="queryUidsByProperties" parameterClass="java.util.HashMap" resultClass="long">
+  	select u.id from spreader.tb_user as u
+  	<dynamic prepend=",">
+  	   <!-- 用户分类  -->
+  	   <isNotNull property="categoryId">
+  	   		spreader.tb_user_tag as c
+  	   </isNotNull>
+  	</dynamic> 
+  	<dynamic prepend="where">
+  	    <include refid="propertiesWhere"/>
+  	</dynamic>
+    order by score desc
+     <isNotNull property="limit">
+        limit $limit.offset$,$limit.maxRows$
+    </isNotNull>
+  </select>
+  
+    <select id="queryAllUidsByProperties" parameterClass="java.util.HashMap" resultClass="long">
+		  	select u.id from spreader.tb_user as u
+		  	<dynamic prepend=",">
+		  	   <!-- 用户分类  -->
+		  	   <isNotNull property="categoryId">
+		  	   		spreader.tb_user_tag as c
+		  	   </isNotNull>
+		  	</dynamic> 
+		  	<dynamic prepend="where">
+		  	    <include refid="propertiesWhere"/>
+		  	</dynamic>
+  </select>
+  
+  <select id="queryNoAvatarRobotUser" resultMap="spreader_tb_user.ibatorgenerated_BaseResultMap">
+  	select * from spreader.tb_user where pid is null and is_robot = true
+  </select>
+  
+   <update id="updaetCtrlGid" parameterClass="java.util.Map">
+  	 update spreader.tb_user set ctrl_gid=#gid# where id=#uid# and (ctrl_gid=-1 or ctrl_gid=#gid#)
+  </update>
+  
+  <select id="queryGids" parameterClass="java.util.List" resultClass="com.nali.spreader.data.User">
+  	 select id, ctrl_gid as ctrlGid from spreader.tb_user 
+  	 <dynamic prepend="where">
+  	 	<iterate conjunction="or">
+  	 		id=#value[]#
+  	 	</iterate>
+  	 </dynamic>
+  </select>
+</sqlMap>

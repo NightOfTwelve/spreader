@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="spreader_task" >
+	<insert id="save" parameterClass="com.nali.spreader.model.Task">
+		insert into spreader$shard.databaseSuffix$.tb_task$shard.tableSuffix$
+		<dynamic prepend="(">
+			<isNotNull prepend="," property="id">
+				id
+			</isNotNull>
+			<isNotNull prepend="," property="taskCode">
+				task_code
+			</isNotNull>
+			<isNotNull prepend="," property="bid">
+				bid
+			</isNotNull>
+			<isNotNull prepend="," property="startTime">
+				start_time
+			</isNotNull>
+			<isNotNull prepend="," property="handleTime">
+				handle_time
+			</isNotNull>
+			<isNotNull prepend="," property="status">
+				status
+			</isNotNull>
+			<isNotNull prepend="," property="uid">
+				uid
+			</isNotNull>
+			<isNotNull prepend="," property="createTime">
+				create_time
+			</isNotNull>
+			<isNotNull prepend="," property="resultId">
+				result_id
+			</isNotNull>
+			<isNotNull prepend="," property="traceLink">
+				trace_link
+			</isNotNull>
+			)
+		</dynamic>
+		values
+		<dynamic prepend="(">
+			<isNotNull prepend="," property="id">
+				#id:BIGINT#
+			</isNotNull>
+			<isNotNull prepend="," property="taskCode">
+				#taskCode:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="bid">
+				#bid:BIGINT#
+			</isNotNull>
+			<isNotNull prepend="," property="startTime">
+				#startTime:TIMESTAMP#
+			</isNotNull>
+			<isNotNull prepend="," property="handleTime">
+				#handleTime:TIMESTAMP#
+			</isNotNull>
+			<isNotNull prepend="," property="status">
+				#status:INTEGER#
+			</isNotNull>
+			<isNotNull prepend="," property="uid">
+				#uid:BIGINT#
+			</isNotNull>
+			<isNotNull prepend="," property="createTime">
+				#createTime:TIMESTAMP#
+			</isNotNull>
+			<isNotNull prepend="," property="resultId">
+				#resultId:BIGINT#
+			</isNotNull>
+			<isNotNull prepend="," property="traceLink">
+				#traceLink:VARCHAR#
+			</isNotNull>
+			)
+		</dynamic>
+		<selectKey resultClass="long" type="post" keyProperty="id">
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+	<insert id="insertResult" parameterClass="com.nali.spreader.model.RegularJobResult">
+		insert into
+		spreader$shard.databaseSuffix$.tb_regular_job_result$shard.tableSuffix$
+		<dynamic prepend="(">
+			<isNotNull prepend="," property="id">
+				id
+			</isNotNull>
+			<isNotNull prepend="," property="jobId">
+				job_id
+			</isNotNull>
+			<isNotNull prepend="," property="startTime">
+				start_time
+			</isNotNull>
+			<isNotNull prepend="," property="endTime">
+				end_time
+			</isNotNull>
+			<isNotNull prepend="," property="status">
+				status
+			</isNotNull>
+			<isNotNull prepend="," property="result">
+				result
+			</isNotNull>
+			)
+		</dynamic>
+		values
+		<dynamic prepend="(">
+			<isNotNull prepend="," property="id">
+				#id:BIGINT#
+			</isNotNull>
+			<isNotNull prepend="," property="jobId">
+				#jobId:BIGINT#
+			</isNotNull>
+			<isNotNull prepend="," property="startTime">
+				#startTime:TIMESTAMP#
+			</isNotNull>
+			<isNotNull prepend="," property="endTime">
+				#endTime:TIMESTAMP#
+			</isNotNull>
+			<isNotNull prepend="," property="status">
+				#status:INTEGER#
+			</isNotNull>
+			<isNotNull prepend="," property="result">
+				#result:LONGVARCHAR#
+			</isNotNull>
+			)
+		</dynamic>
+		<selectKey resultClass="long" type="post" keyProperty="id">
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+</sqlMap>

@@ -19,7 +19,7 @@ import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.group.service.IUserGroupService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:application-context.xml"})
+@ContextConfiguration({"classpath:application-context-test.xml"})
 public class UserGroupTest {
 	
 	@Autowired
@@ -32,8 +32,9 @@ public class UserGroupTest {
 	@Test
 	public void testCreateUserGroup() throws AssembleException {
 		try{
-			UserGroup userGroup = this.userGroupCreater.createCategoryUserGroup();
+			UserGroup userGroup = this.userGroupCreater.createCtrlUserGroup();
 //			userGroup.setGid(10001L);
+			userGroup.setGid(10L);
 		    this.userGroupService.createGroup(userGroup);
 		}catch (Exception e) {
 			e.printStackTrace();

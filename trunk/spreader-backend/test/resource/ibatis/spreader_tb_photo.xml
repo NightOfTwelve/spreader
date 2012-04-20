@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="spreader_photo">
+	<select id="getMaxCreateTime" parameterClass="com.nali.spreader.data.Photo"
+		resultClass="java.util.Date">
+		select
+		max(createtime) as maxtime
+		from
+		spreader$shard.databaseSuffix$.tb_photo$shard.tableSuffix$
+	</select>
+	<select id="getAllTypeByGender" parameterClass="com.nali.spreader.data.Photo"
+		resultClass="java.lang.String">
+		select distinct pic_type as picType from spreader.tb_photo p where
+		p.gender in (#gender#,3) and p.avatarflg = true
+	</select>
+</sqlMap>

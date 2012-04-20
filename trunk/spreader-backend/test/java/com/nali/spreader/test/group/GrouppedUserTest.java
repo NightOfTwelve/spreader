@@ -132,7 +132,7 @@ public class GrouppedUserTest {
 
 	@Test
 	public void testMemoryRandomGrouppedUsersWithExclude() {
-		MemoryRandomDataIterator<Long, User> list = this.userGroupService
+		DataIterator<User> list = this.userGroupService
 				.queryMemoryGrouppedUserIterator(191L, 20, 50, null);
 		while (list.hasNext()) {
 			List<User> userlist = list.next();
@@ -145,7 +145,7 @@ public class GrouppedUserTest {
 	@Test
 	public void testMemoryRandomGrouppedUsersWithBigUpCount() {
 		UidCollection collection = this.userGroupService.getAllUids(191L);
-		MemoryRandomDataIterator<Long, User> list = this.userGroupService
+		DataIterator<User> list = this.userGroupService
 				.queryMemoryGrouppedUserIterator(191L, 20, 50000, null);
 		while (list.hasNext()) {
 			List<User> userlist = list.next();
@@ -161,7 +161,7 @@ public class GrouppedUserTest {
 		UidCollection collection = this.userGroupService.getAllUids(191L);
 		List<Long> containUids = collection.getPropertyUids();
 		List<Long> excludeList = RandomUtil.randomItems(containUids, 3);
-		MemoryRandomDataIterator<Long, User> list = this.userGroupService
+		MemoryRandomDataIterator<Long, User> list = (MemoryRandomDataIterator<Long, User>) this.userGroupService
 				.queryMemoryGrouppedUserIterator(191L, 20, 90, excludeList);
 		while (list.hasNext()) {
 			List<User> userlist = list.next();
@@ -172,4 +172,6 @@ public class GrouppedUserTest {
 		Assert.assertTrue(CollectionUtils.notContainsAll(list.getAll(), excludeList));
 		Assert.assertThat(list.getAll(), (Matcher)(Matchers.not(Matchers.hasItems(excludeList))));
 	}
+	
+	
 }

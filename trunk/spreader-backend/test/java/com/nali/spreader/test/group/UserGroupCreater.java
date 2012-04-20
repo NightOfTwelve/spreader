@@ -52,6 +52,15 @@ public class UserGroupCreater {
 		return userGroup;
 	}
 	
+	public UserGroup createCtrlUserGroup() throws AssembleException {
+		PropertyExpressionDTO dto = new PropertyExpressionDTO();
+		Range<Long> fansRange = new Range<Long>();
+		fansRange.setGte(10L);
+		dto.setFans(fansRange);
+		UserGroup userGroup = this.userGroupAssembler.assembleUserGroup(Website.weibo, "ctrl group test", "ctrl group test", UserGroupType.fixed, dto);
+		return userGroup;
+	}
+	
 	public UserGroup[] createRandomUserGroups(int count) throws AssembleException {
 		UserGroup[] userGroups = new UserGroup[count];
 		for(int i = 0; i < count; i++) {
