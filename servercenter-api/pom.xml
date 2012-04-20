@@ -107,6 +107,32 @@
 						</execution>
 					</executions>
 				</plugin>
+					<!-- Ignore/Execute plugin execution -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<!-- copy-dependency plugin -->
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
 				<plugin>
 					<artifactId>maven-source-plugin</artifactId>
 					<executions>
@@ -171,6 +197,11 @@
 			<groupId>com.nali</groupId>
 			<artifactId>lang</artifactId>
 			<version>0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>com.nali</groupId>
+			<artifactId>common</artifactId>
+			<version>1.1</version>
 		</dependency>
 	</dependencies>
 
