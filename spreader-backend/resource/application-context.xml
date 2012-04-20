@@ -80,7 +80,7 @@
 		<property name="dataSource" ref="dbDataSource" />
 	</bean>
 
-	<!-- 用@transactional注解设置事务 ，在需要事务的类和方法上添加 -->
+	<!-- 用@transactional注解设置事务 ，在需要事务的类和方法上添加-->
 	<tx:annotation-driven transaction-manager="txManager" />
 
 	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
@@ -101,8 +101,7 @@
 		</property>
 	</bean>
 	<!-- autowire -->
-	<bean id="productLineAnnotationResolver"
-		class="com.nali.spreader.factory.passive.ProductLinePostAnnotationResolver" />
+	<bean id="productLineAnnotationResolver" class="com.nali.spreader.factory.passive.ProductLinePostAnnotationResolver" />
 	<bean id="postAutowireProcessor" class="com.nali.spreader.util.autowire.PostAutowireProcessor">
 		<property name="annotationResolvers">
 			<list>
@@ -111,21 +110,17 @@
 		</property>
 	</bean>
 	<!-- end autowire -->
-
+	
 	<!-- remote -->
-	<bean id="loginConfigManageService"
-		class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
-		<property name="serviceUrl"
-			value="${front.hessian}/internal/hessian/loginConfigManageService" />
-		<property name="serviceInterface"
-			value="com.nali.spreader.remote.ILoginConfigManageService" />
+	<bean id="loginConfigManageService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+		<property name="serviceUrl" value="${front.hessian}/internal/hessian/loginConfigManageService" />
+		<property name="serviceInterface" value="com.nali.spreader.remote.ILoginConfigManageService" />
 	</bean>
-
+	
 	<!-- remote end -->
-
+	
 	<!-- redisTemplate -->
-	<bean id="redisTemplate"
-		class="org.springframework.data.keyvalue.redis.core.RedisTemplate">
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
 		<constructor-arg>
 			<bean class="com.nali.lwtmq.core.connection.JedisConnectionPoolFactory">
 				<property name="hostName" value="#{redis['redis.host']}"></property>
@@ -142,12 +137,11 @@
 				</property>
 			</bean>
 		</constructor-arg>
-		<property name="keySerializer">
-			<bean
-				class="org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer" />
+		<property name="keySerializer" >
+			<bean class="org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer" />
 		</property>
 	</bean>
-
+	
 	<bean id="identityService"
 		class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
 		<property name="serviceUrl"
@@ -155,6 +149,6 @@
 		<property name="serviceInterface" value="com.nali.center.service.IIdentityService" />
 	</bean>
 
-	<import resource="classpath:application-lwtmq-context.xml" />
-	<import resource="classpath:application-lts-context.xml" />
+	<import resource="classpath:application-lwtmq-context.xml"/>
+	<import resource="classpath:application-lts-context.xml"/>
 </beans>

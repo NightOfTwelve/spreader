@@ -69,7 +69,7 @@
 		<property name="dataSource" ref="dbDataSource" />
 	</bean>
 
-	<!-- 用@transactional注解设置事务 ，在需要事务的类和方法上添加-->
+	<!-- 用@transactional注解设置事务 ，在需要事务的类和方法上添加 -->
 	<tx:annotation-driven transaction-manager="txManager" />
 
 	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
@@ -90,7 +90,8 @@
 		</property>
 	</bean>
 	<!-- autowire -->
-	<bean id="productLineAnnotationResolver" class="com.nali.spreader.factory.passive.ProductLinePostAnnotationResolver" />
+	<bean id="productLineAnnotationResolver"
+		class="com.nali.spreader.factory.passive.ProductLinePostAnnotationResolver" />
 	<bean id="postAutowireProcessor" class="com.nali.spreader.util.autowire.PostAutowireProcessor">
 		<property name="annotationResolvers">
 			<list>
@@ -99,18 +100,21 @@
 		</property>
 	</bean>
 	<!-- end autowire -->
-	
+
 	<!-- remote -->
-	<bean id="loginConfigManageService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
-		<property name="serviceUrl" value="${front.hessian}/internal/hessian/loginConfigManageService" />
-		<property name="serviceInterface" value="com.nali.spreader.remote.ILoginConfigManageService" />
+	<bean id="loginConfigManageService"
+		class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+		<property name="serviceUrl"
+			value="${front.hessian}/internal/hessian/loginConfigManageService" />
+		<property name="serviceInterface"
+			value="com.nali.spreader.remote.ILoginConfigManageService" />
 	</bean>
-	
+
 	<!-- remote end -->
-	
+
 	<!-- redisTemplate -->
-	<bean id="redisTemplate" class="org.springframework.data.keyvalue.redis.core.RedisTemplate">
-		<constructor-arg>
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory">
 			<bean class="com.nali.lwtmq.core.connection.JedisConnectionPoolFactory">
 				<property name="hostName" value="#{redis['redis.host']}"></property>
 				<property name="password" value="#{redis['redis.password']}"></property>
@@ -125,14 +129,48 @@
 					</bean>
 				</property>
 			</bean>
-		</constructor-arg>
-		<property name="keySerializer" >
-			<bean class="org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer" />
+		</property>
+		<property name="keySerializer">
+			<bean
+				class="org.springframework.data.redis.serializer.StringRedisSerializer" />
 		</property>
 	</bean>
-	
-	<import resource="classpath:application-lwtmq-context.xml"/>
-	<import resource="classpath:application-lts-context.xml"/>
-	
+
+	<!-- redisTemplate -->
+	<bean id="stringRedisSerializer"
+		class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+	<bean id="collecterTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory">
+			<bean class="com.nali.lwtmq.core.connection.JedisConnectionPoolFactory">
+				<property name="hostName" value="#{redis['redis.host']}"></property>
+				<property name="password" value="#{redis['redis.password']}"></property>
+				<property name="port" value="#{redis['redis.port']}"></property>
+				<property name="databaseIndex" value="#{redis['redis.database']}"></property>
+				<property name="timeout" value="#{redis['redis.timeout']}"></property>
+				<property name="poolConfig">
+					<bean class="redis.clients.jedis.JedisPoolConfig">
+						<property name="maxActive" value="#{redis['redis.connectionCount']}"></property>
+						<property name="minIdle" value="#{redis['redis.connectionCount']}"></property>
+						<property name="maxIdle" value="#{redis['redis.connectionCount']}"></property>
+					</bean>
+				</property>
+			</bean>
+		</property>
+		<property name="keySerializer" ref="stringRedisSerializer">
+		</property>
+		<property name="valueSerializer" ref="stringRedisSerializer">
+		</property>
+		<property name="hashValueSerializer" ref="stringRedisSerializer">
+		</property>
+	</bean>
+
+	<import resource="classpath:application-lwtmq-context.xml" />
+	<import resource="classpath:application-lts-context.xml" />
+
 	<bean id="identityService" class="com.nali.spreader.test.identity.MockIdentityService"></bean>
+
+	<bean id="redisHashSimpleCountCollecter"
+		class="com.nali.stat.dc.collecter.RedisHashSimpleCountCollecter">
+		<property name="moduleName" value="spreader"></property>
+	</bean>
 </beans>

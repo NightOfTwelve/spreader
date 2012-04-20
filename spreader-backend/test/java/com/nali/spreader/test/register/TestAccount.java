@@ -2,15 +2,15 @@ package com.nali.spreader.test.register;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.keyvalue.redis.connection.RedisConnectionFactory;
-import org.springframework.data.keyvalue.redis.core.RedisTemplate;
-import org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -26,7 +26,8 @@ public class TestAccount {
 	ICrudRobotRegisterDao crudRobotRegisterDao;
 	@Test
 	public void getAccont() {
-    	RedisTemplate<String, Integer> redisTemplate = new RedisTemplate<String, Integer>(connectionFactory);
+    	RedisTemplate<String, Integer> redisTemplate = new RedisTemplate<String, Integer>();
+    	redisTemplate.setConnectionFactory(connectionFactory);
     	redisTemplate.setKeySerializer(new StringRedisSerializer());
     	Map<Object, Object> entries = redisTemplate.opsForHash().entries("RegisteringAccount_1");
     	Set<Entry<Object, Object>> entrySet = entries.entrySet();
