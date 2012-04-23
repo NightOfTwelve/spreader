@@ -1,5 +1,6 @@
 package com.nali.spreader.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -12,15 +13,12 @@ public abstract class MemoryRandomDataIterator<T, E> extends DataIterator<E>{
 	public MemoryRandomDataIterator (long upperCount, int batchSize, List<T> ids, Set<T>  excludeIds) {
 		super(0, batchSize);
 		
-		int excludeSize = 0;
-		if(excludeIds != null) {
-			excludeSize = excludeIds.size();
-		}
-		int tempCount = ids.size() - excludeSize;
+		
+		Set<T> diffSet = CollectionUtils.diffset(ids, excludeIds);
+		int tempCount = ids.size() - diffSet.size();
 		if(tempCount <= upperCount || upperCount < 0) {
 			this.count = tempCount;
-			ids = CollectionUtils.exclude(ids, excludeIds);
-			Collections.shuffle(ids);
+			Collections.shuffle(new ArrayList<T>(diffSet));
 		}else{
 			this.count = upperCount;
 			ids = RandomUtil.randomItemsUnmodify(ids, excludeIds, (int)upperCount);
