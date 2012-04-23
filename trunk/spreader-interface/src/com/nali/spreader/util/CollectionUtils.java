@@ -30,6 +30,27 @@ public class CollectionUtils {
 		return left;
 	}
 	
+	public static <T> Set<T> intersection(Collection<T> t1, Collection<T> t2) {
+		Set<T> set = new HashSet<T>();
+		set.addAll(t1);
+		set.retainAll(t2);
+		return set;
+	}
+	
+	public static <T> Set<T> union(Collection<T> t1, Collection<T> t2) {
+		Set<T> set = new HashSet<T>();
+		set.addAll(t1);
+		set.addAll(t2);
+		return set;
+	}
+	
+	public static <T> Set<T> diffset(Collection<T> t1, Collection<T> t2) {
+		Set<T> set = new HashSet<T>();
+		set.addAll(t1);
+		set.removeAll(t2);
+		return set;
+	}
+	
 	public static <T> Set<T> mergeAsSet(Collection<T> a, Collection<T> b) {
 		int size = (a == null ? 0 : a.size()) + (b == null ? 0 : b.size());
 		if(size > 0) {
