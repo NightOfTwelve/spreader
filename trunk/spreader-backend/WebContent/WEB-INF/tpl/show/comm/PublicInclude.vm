@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/extgridselect.css')" />
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/extjs3/resources/css/ext-all.css')" />
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/ext_icon.css')" />
 <script>
@@ -12,6 +13,7 @@
 #else
 	<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all.js')" ></script>							
 #end
+<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/gridselect.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-lang-zh_CN.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/pubjs/includeinit.js')"></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/ux/ProgressBarPager.js')"></script>
