@@ -2,6 +2,7 @@ package com.nali.spreader.service;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.spreader.data.Category;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserGroup;
 
@@ -30,4 +31,12 @@ public interface IExtjsComponentsUtilService {
 	 */
 	PageResult<UserGroup> findUserGroupByName(String name, Limit limit);
 
+	/**
+	 * 根据名称模糊查询分类信息
+	 * 
+	 * @param name
+	 * @param limit
+	 * @return
+	 */
+	PageResult<Category> findCategoryByName(String name, Limit limit);
 }

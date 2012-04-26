@@ -89,7 +89,7 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "客户端任务详细信息",
 									leaf : true,
 									url : '../taskstatdtl/init'
-								},{
+								}, {
 									id : 'clientTaskStatReport',
 									text : "报表查询",
 									leaf : true,
@@ -148,6 +148,40 @@ var menuTree_ContentLibQuery = new Ext.tree.TreePanel({
 				}
 			}
 		});
+/**
+ * 关键字分类管理
+ */
+var menuTree_CategoryKeywordQuery = new Ext.tree.TreePanel({
+			id : 'menuTree_CategoryKeywordQuery',
+			// autoScroll : true,
+			// autoHeight : true,
+			expanded : true,
+			singleExpand : true,
+			useArrows : true,
+			rootVisible : true,
+			root : new Ext.tree.AsyncTreeNode({
+						id : '-1',
+						text : '关键字与分类',
+						children : [{
+									id : 'keywordmng',
+									text : "关键字管理",
+									leaf : true,
+									url : '../keyword/init'
+								}]
+					}),
+			// 添加监听事件
+			listeners : {
+				'click' : function(view, rec) {
+					var nodeurl = view.attributes.url;
+					var nodetext = view.attributes.text;
+					var nodeid = view.attributes.id;
+					var leaf = view.attributes.leaf;
+					if (leaf) {
+						addTabNew(nodeurl, nodetext, nodeid, nodetext, '');
+					}
+				}
+			}
+		});
 // 左侧菜单，可以收缩的模式
 var accordPanel = new Ext.Panel({
 			id : 'accordPanel',
@@ -182,6 +216,12 @@ var accordPanel = new Ext.Panel({
 						title : '微博内容库',
 						iconCls : 'folder_cameraIcon',
 						items : [menuTree_ContentLibQuery]
+					}, {
+						autoScroll : true,
+						border : false,
+						title : '关键字与分类',
+						iconCls : 'folder_cameraIcon',
+						items : [menuTree_CategoryKeywordQuery]
 					}]
 		});
 

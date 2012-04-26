@@ -704,7 +704,7 @@ Ext.onReady(function() {
 					iconCls : 'tbar_synchronizeIcon', // 按钮图标
 					handler : function() { // 按钮响应函数
 						GUSERGROUPID = null;
-						var addForm = addGroupCmbForm.getForm()
+						var addForm = addGroupCmbForm.getForm();
 						// 分组类型
 						var gtype = gtypeCombo.getValue();
 						// 网站类型
@@ -713,7 +713,7 @@ Ext.onReady(function() {
 						var gname = addForm.findField('gname').getValue();
 						// 分组说明
 						var description = addForm.findField('description')
-								.getValue();;
+								.getValue();
 						editstgWindow.title = gname;
 						Ext.Ajax.request({
 									url : '../usergroup/createusergroup',
@@ -1073,6 +1073,25 @@ Ext.onReady(function() {
 			handler : function() {
 				selectUserStore.setBaseParam('gid', GUSERGROUPID);
 				selectUserStore.reload();
+			}
+		}, '-', new Ext.form.TextField({
+					id : 'queryDelUserForm',
+					name : 'queryDelUserForm',
+					emptyText : '请输入昵称',
+					enableKeyEvents : true,
+					listeners : {
+						specialkey : function(field, e) {
+							if (e.getKey() == Ext.EventObject.ENTER) {
+								// queryRoleItem();
+							}
+						}
+					},
+					width : 130
+				}), {
+			text : '查询',
+			iconCls : 'previewIcon',
+			handler : function() {
+				// queryRoleItem();
 			}
 		}],
 		bbar : selectbbar
