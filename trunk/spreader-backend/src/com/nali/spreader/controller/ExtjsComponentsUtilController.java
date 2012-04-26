@@ -14,6 +14,7 @@ import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
+import com.nali.spreader.data.Category;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserGroup;
 import com.nali.spreader.model.StrategyGroup;
@@ -35,8 +36,7 @@ public class ExtjsComponentsUtilController {
 	@Autowired
 	private IExtjsComponentsUtilService extjsService;
 	@SuppressWarnings("unused")
-	private static final MessageLogger logger = LoggerFactory
-			.getLogger(ExtjsComponentsUtilController.class);
+	private static final MessageLogger logger = LoggerFactory.getLogger(ExtjsComponentsUtilController.class);
 
 	/**
 	 * 分组列表的Store
@@ -52,17 +52,15 @@ public class ExtjsComponentsUtilController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategygroupcombo")
-	public String testComboBoxStore(String groupName, Integer groupType,
-			Long id, String query, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String testComboBoxStore(String groupName, Integer groupType, Long id, String query,
+			Integer start, Integer limit) throws JsonGenerationException, JsonMappingException, IOException {
 		if (start == null)
 			start = 0;
 		StrategyGroup sg = new StrategyGroup();
 		sg.setId(id);
 		sg.setGroupName(query);
 		sg.setGroupType(groupType);
-		PageResult<StrategyGroup> pr = groupService
-				.findStrategyGroupPageResult(sg, start, limit);
+		PageResult<StrategyGroup> pr = groupService.findStrategyGroupPageResult(sg, start, limit);
 		return json.writeValueAsString(pr);
 	}
 
@@ -79,8 +77,8 @@ public class ExtjsComponentsUtilController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/usercombo")
-	public String userComboxStore(String query, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String userComboxStore(String query, Integer start, Integer limit) throws JsonGenerationException,
+			JsonMappingException, IOException {
 		if (start == null)
 			start = 0;
 		if (limit == null)
@@ -103,16 +101,38 @@ public class ExtjsComponentsUtilController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/usergroupcombo")
-	public String userGroupComboxStore(String query, Integer start,
-			Integer limit) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String userGroupComboxStore(String query, Integer start, Integer limit)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		if (start == null)
 			start = 0;
 		if (limit == null)
 			limit = 20;
 		Limit lit = Limit.newInstanceForLimit(start, limit);
-		PageResult<UserGroup> pr = this.extjsService.findUserGroupByName(query,
-				lit);
+		PageResult<UserGroup> pr = this.extjsService.findUserGroupByName(query, lit);
+		return json.writeValueAsString(pr);
+	}
+
+	/**
+	 * 筛选分类
+	 * 
+	 * @param query
+	 * @param start
+	 * @param limit
+	 * @return
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/categorycombo")
+	public String categoryComboxStore(String query, Integer start, Integer limit)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		if (start == null)
+			start = 0;
+		if (limit == null)
+			limit = 20;
+		Limit lit = Limit.newInstanceForLimit(start, limit);
+		PageResult<Category> pr = this.extjsService.findCategoryByName(query, lit);
 		return json.writeValueAsString(pr);
 	}
 }
