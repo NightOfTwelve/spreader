@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="spreader_keyword">
+	<resultMap class="com.nali.spreader.config.KeywordInfoQueryDto"
+		id="keywordinfo_resultmap">
+		<result column="keyword_id" jdbcType="BIGINT" property="keywordId" />
+		<result column="keyword_name" jdbcType="VARCHAR" property="keywordName" />
+		<result column="category_id" jdbcType="BIGINT" property="categoryId" />
+		<result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+		<result column="description" jdbcType="VARCHAR" property="description" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="tag" jdbcType="BIT" property="tag" />
+	</resultMap>
+	<sql id="selectKeywordInfoCondition">
+		<isNotNull prepend="and" property="keywordName">
+			a.name like concat('%',
+			#keywordName#, '%')
+		</isNotNull>
+		<isNotNull prepend="and" property="categoryName">
+			b.name like concat('%',
+			#categoryName#, '%')
+		</isNotNull>
+		<isNotNull prepend="and" property="isManual">
+			a.tag = #isManual#
+		</isNotNull>
+		<isNotNull prepend="and" property="startTime">
+			<![CDATA[a.create_time >= #startTime#]]>
+		</isNotNull>
+		<isNotNull prepend="and" property="endTime">
+			<![CDATA[a.create_time <= #endTime#]]>
+		</isNotNull>
+	</sql>
+	<select id="selectKeywordInfo" parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
+		resultMap="keywordinfo_resultmap">
+		select a.id as keyword_id,a.name as keyword_name,a.category_id,b.name as
+		category_name,b.description,a.create_time,a.tag
+		from tb_keyword a
+		left
+		join tb_category b on a.category_id = b.id
+		<dynamic prepend="where">
+			<include refid="selectKeywordInfoCondition" />
+		</dynamic>
+		<isNotNull property="lit">
+			limit $lit.offset$,$lit.maxRows$
+		</isNotNull>
+	</select>
+	<select id="selectKeywordInfoCount" parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
+		resultMap="keywordinfo_resultmap">
+		select count(a.id) as cnt
+		from tb_keyword a
+		left join tb_category b on
+		a.category_id = b.id
+		<dynamic prepend="where">
+			<include refid="selectKeywordInfoCondition" />
+		</dynamic>
+	</select>
+</sqlMap>
