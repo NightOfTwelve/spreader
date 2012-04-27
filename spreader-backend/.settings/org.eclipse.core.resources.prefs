@@ -1,5 +1,11 @@
-#Mon Nov 21 16:23:07 CST 2011
 eclipse.preferences.version=1
 encoding//db/LTS.sql=gbk
 encoding//db/spreader.sql=gbk
 encoding//db/spreader_data.sql=gbk
+encoding//env/base=UTF-8
+encoding//test/java=UTF-8
+encoding//test/resource=UTF-8
+encoding/<project>=UTF-8
+encoding/resource=UTF-8
+encoding/src=UTF-8
+encoding/test=UTF-8
