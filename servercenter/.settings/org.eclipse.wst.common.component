@@ -4,6 +4,7 @@
         <wb-resource deploy-path="/" source-path="/WebContent"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/config"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/conf/base"/>
         <dependent-module archiveName="servercenter-api.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/servercenter-api/servercenter-api">
             <dependency-type>uses</dependency-type>
         </dependent-module>
