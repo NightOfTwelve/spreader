@@ -317,6 +317,13 @@
   	   <isNotNull prepend="and" property="websiteId">
   	   		u.website_id = #websiteId#
   	   </isNotNull>
+  	   
+  	   <isNotEmpty prepend="and" property="excludeUids"> 
+  	   		u.id not in
+  	   		<iterate open="(" close=")" property="excludeUids" conjunction=",">
+  	   			#excludeUids[]#,
+  	   		</iterate>
+  	   </isNotEmpty>
   </sql>
   
   <select id="countByProperties" parameterClass="java.util.HashMap" resultClass="int">
