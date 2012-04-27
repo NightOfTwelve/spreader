@@ -121,7 +121,7 @@
 	
 	<!-- redisTemplate -->
 	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
-		<constructor-arg>
+		<property name="connectionFactory">
 			<bean class="com.nali.lwtmq.core.connection.JedisConnectionPoolFactory">
 				<property name="hostName" value="#{redis['redis.host']}"></property>
 				<property name="password" value="#{redis['redis.password']}"></property>
@@ -136,9 +136,38 @@
 					</bean>
 				</property>
 			</bean>
-		</constructor-arg>
-		<property name="keySerializer" >
-			<bean class="org.springframework.data.keyvalue.redis.serializer.StringRedisSerializer" />
+		</property>
+		<property name="keySerializer">
+			<bean
+				class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+		</property>
+	</bean>
+
+	<!-- redisTemplate -->
+	<bean id="stringRedisSerializer"
+		class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+	<bean id="collecterTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory">
+			<bean class="com.nali.lwtmq.core.connection.JedisConnectionPoolFactory">
+				<property name="hostName" value="#{redis['redis.host']}"></property>
+				<property name="password" value="#{redis['redis.password']}"></property>
+				<property name="port" value="#{redis['redis.port']}"></property>
+				<property name="databaseIndex" value="#{redis['redis.database']}"></property>
+				<property name="timeout" value="#{redis['redis.timeout']}"></property>
+				<property name="poolConfig">
+					<bean class="redis.clients.jedis.JedisPoolConfig">
+						<property name="maxActive" value="#{redis['redis.connectionCount']}"></property>
+						<property name="minIdle" value="#{redis['redis.connectionCount']}"></property>
+						<property name="maxIdle" value="#{redis['redis.connectionCount']}"></property>
+					</bean>
+				</property>
+			</bean>
+		</property>
+		<property name="keySerializer" ref="stringRedisSerializer">
+		</property>
+		<property name="valueSerializer" ref="stringRedisSerializer">
+		</property>
+		<property name="hashValueSerializer" ref="stringRedisSerializer">
 		</property>
 	</bean>
 	
@@ -147,6 +176,11 @@
 		<property name="serviceUrl"
 			value="${server.center.hessian}/hessian/identityService" />
 		<property name="serviceInterface" value="com.nali.center.service.IIdentityService" />
+	</bean>
+	
+	<bean id="redisHashSimpleCountCollecter"
+		class="com.nali.stat.dc.collecter.RedisHashSimpleCountCollecter">
+		<property name="moduleName" value="spreader"></property>
 	</bean>
 
 	<import resource="classpath:application-lwtmq-context.xml"/>
