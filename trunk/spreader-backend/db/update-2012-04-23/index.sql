@@ -1,0 +1,1 @@
+alter table spreader.tb_user_relation add index (to_uid,type,is_robot_user);

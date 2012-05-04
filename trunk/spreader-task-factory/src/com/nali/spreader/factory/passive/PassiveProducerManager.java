@@ -4,15 +4,21 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.base.TaskMeta;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableListener;
+import com.nali.spreader.factory.config.LazyConfigableListener;
 import com.nali.spreader.factory.exporter.ClientTaskExporterFactory;
 import com.nali.spreader.factory.exporter.Exporter;
 import com.nali.spreader.factory.exporter.ExporterProvider;
@@ -21,69 +27,57 @@ import com.nali.spreader.util.AnnotatedMethodIterator;
 import com.nali.spreader.util.reflect.GenericInfo;
 
 @Service
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class PassiveProducerManager {
 	private static Logger logger = Logger.getLogger(PassiveProducerManager.class);
+	@Autowired
+	private ApplicationContext context;
 	@Autowired
 	private PassiveConfigService passiveConfigService;
 	@Autowired
 	private ClientTaskExporterFactory passiveTaskExporterFactory;
 	@Autowired
 	private ThreadLocalResultInfo threadLocalResultInfo;
+	
+	@PostConstruct
+	public void init() {
+		Map<String, PassiveObject> beans = context.getBeansOfType(PassiveObject.class);
+		for (Entry<String, PassiveObject> entry : beans.entrySet()) {
+			PassiveObject passive = entry.getValue();
+			String beanName = entry.getKey();
+			if (passive instanceof Configable) {
+				Configable<?> configable = (Configable<?>) passive;
+				passiveConfigService.registerConfigableInfo(beanName, configable);
+			}
+		}
+	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public TaskProduceLine<?> getProduceLine(String beanName, PassiveObject passive, Type paramType) {
-		if (passive instanceof PassiveAnalyzer) {
-			AnalyzerProduceLine produceLine = new AnalyzerProduceLine((PassiveAnalyzer)passive, paramType);
-			if (passive instanceof Configable) {
-				Configable<?> configable = (Configable<?>) passive;
-				registerAndListen(beanName, configable, new AnalyzerProduceLineReplace(produceLine));
-			}
-			return new ResultInfoWrappedProduceLine(produceLine, beanName);
-		} else if (passive instanceof PassiveTaskProducer) {
-			PassiveTaskProducer passiveTaskProducer = (PassiveTaskProducer) passive;
-			TaskProducerProduceLine produceLine = new TaskProducerProduceLine(passiveTaskProducer, passiveTaskExporterFactory, paramType);
-			if (passive instanceof Configable) {
-				Configable<?> configable = (Configable<?>) passive;
-				registerAndListen(beanName, configable, new TaskProducerProduceLineReplace(produceLine));
-			}
-			return new ResultInfoWrappedProduceLine(produceLine, beanName);
+	public TaskProduceLine<?> getProduceLine(String beanName, Type type) {
+		if (type instanceof Class) {
+			throw new IllegalArgumentException("ProductLine must be parameterized");
+		}
+		ParameterizedType pt = (ParameterizedType) type;
+		Type paramType = pt.getActualTypeArguments()[0];
+		
+		PassiveObject passive = context.getBean(beanName, PassiveObject.class);
+		if (passive instanceof Configable) {
+			LazyProduceLine lazyProduceLine = new LazyProduceLine(beanName, paramType);
+			passiveConfigService.listen(beanName, lazyProduceLine);
+			return lazyProduceLine;
 		} else {
-			throw new IllegalArgumentException("illegal bean type:" + passive.getClass());
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void registerAndListen(String beanName, Configable<?> configable, ConfigableListener<?> listener) {
-		passiveConfigService.registerConfigableInfo(beanName, configable);
-		passiveConfigService.listen(beanName, listener);
-	}
-
-	public static class TaskProducerProduceLineReplace implements ConfigableListener<Configable<?>> {
-		private TaskProducerProduceLine<?, ?, ?> produceLine;
-		public TaskProducerProduceLineReplace(TaskProducerProduceLine<?, ?, ?> produceLine) {
-			super();
-			this.produceLine = produceLine;
-		}
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		@Override
-		public void onchange(Configable<?> newObj, Configable<?> oldObj) {
-			produceLine.passiveTaskProducer=(PassiveTaskProducer) newObj;
+			if (passive instanceof PassiveAnalyzer) {
+				AnalyzerProduceLine produceLine = new AnalyzerProduceLine((PassiveAnalyzer)passive, paramType);
+				return new ResultInfoWrappedProduceLine(produceLine, beanName);
+			} else if (passive instanceof PassiveTaskProducer) {
+				PassiveTaskProducer passiveTaskProducer = (PassiveTaskProducer) passive;
+				TaskProducerProduceLine produceLine = new TaskProducerProduceLine(passiveTaskProducer, passiveTaskExporterFactory, paramType);
+				return new ResultInfoWrappedProduceLine(produceLine, beanName);
+			} else {
+				throw new IllegalArgumentException("illegal bean type:" + passive.getClass());
+			}
 		}
 	}
 
-	public static class AnalyzerProduceLineReplace implements ConfigableListener<Configable<?>> {
-		private AnalyzerProduceLine<?> produceLine;
-		public AnalyzerProduceLineReplace(AnalyzerProduceLine<?> produceLine) {
-			super();
-			this.produceLine = produceLine;
-		}
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		@Override
-		public void onchange(Configable<?> newObj, Configable<?> oldObj) {
-			produceLine.passiveAnalyzer=(PassiveAnalyzer) newObj;
-		}
-	}
-	
 	private static Method iterateAnnotatedMethod(Class<?> clazz, Type paramType, MethodFilter filter) {
 		Iterator<Method> methods = new AnnotatedMethodIterator<Input>(clazz, Input.class);
 		while (methods.hasNext()) {
@@ -100,7 +94,6 @@ public class PassiveProducerManager {
 		throw new IllegalArgumentException(clazz + " has not method match paramType [" + paramType + "]");
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Type resolveTypeArgument(Class target, Class parent, int idx) {
 		return GenericInfo.get(target).getGeneric(parent.getTypeParameters()[idx]);
 	}
@@ -110,7 +103,7 @@ public class PassiveProducerManager {
 		Boolean check(Method method);
 	}
 	
-	private class ResultInfoWrappedProduceLine<T> implements TaskProduceLine<T> {
+	private class ResultInfoWrappedProduceLine<T> implements TaskProduceLine<T> {//记录日志
 		private TaskProduceLine<T> inner;
 		private String name;
 		
@@ -128,7 +121,43 @@ public class PassiveProducerManager {
 		}
 	}
 	
-	public static class AnalyzerProduceLine<T> implements TaskProduceLine<T> {
+	private class LazyProduceLine<T> implements TaskProduceLine<T>, LazyConfigableListener<Configable<?>> {
+		private TaskProduceLine<T> innerProduceLine;
+		private ConfigableListener<Configable<?>> innerListener;
+		private final String name;
+		private final Type paramType;
+		
+		public LazyProduceLine(String name, Type paramType) {
+			super();
+			this.name = name;
+			this.paramType = paramType;
+		}
+		@Override
+		public void onbind(Configable<?> obj) {
+			if (obj instanceof PassiveAnalyzer) {
+				AnalyzerProduceLine produceLine = new AnalyzerProduceLine((PassiveAnalyzer)obj, paramType);
+				innerProduceLine = new ResultInfoWrappedProduceLine(produceLine, name);
+				innerListener = produceLine;
+			} else if (obj instanceof PassiveTaskProducer) {
+				TaskProducerProduceLine produceLine = new TaskProducerProduceLine((PassiveTaskProducer)obj, passiveTaskExporterFactory, paramType);
+				innerProduceLine = new ResultInfoWrappedProduceLine(produceLine, name);
+				innerListener = produceLine;
+			} else {
+				throw new IllegalArgumentException("illegal bean type:" + obj.getClass());
+			}
+		}
+
+		@Override
+		public void onchange(Configable<?> newObj, Configable<?> oldObj) {
+			innerListener.onchange(newObj, oldObj);			
+		}
+		@Override
+		public void send(T data) {
+			innerProduceLine.send(data);
+		}
+	}
+	
+	public static class AnalyzerProduceLine<T> implements TaskProduceLine<T>, ConfigableListener<Configable<?>> {
 		private PassiveAnalyzer<T> passiveAnalyzer;
 		private Method method;
 		public AnalyzerProduceLine(PassiveAnalyzer<T> passiveAnalyzer, final Type paramType) {
@@ -154,6 +183,10 @@ public class PassiveProducerManager {
 			}
 		}
 		@Override
+		public void onchange(Configable<?> newObj, Configable<?> oldObj) {
+			passiveAnalyzer=(PassiveAnalyzer) newObj;
+		}
+		@Override
 		public void send(T data) {
 			try {
 				method.invoke(passiveAnalyzer, data);
@@ -163,16 +196,15 @@ public class PassiveProducerManager {
 		}
 	}
 	
-	public static class TaskProducerProduceLine<T, TM extends TaskMeta, E extends Exporter<TM>> implements TaskProduceLine<T> {
+	public static class TaskProducerProduceLine<T, TM extends TaskMeta, E extends Exporter<TM>> implements TaskProduceLine<T>, ConfigableListener<Configable<?>> {
 		private PassiveTaskProducer<T, TM, E> passiveTaskProducer;
 		private Method method;
 		private boolean reverseArgument;
 		private ExporterProvider<TM, E> exporterProvider;
-		@SuppressWarnings("rawtypes")
 		public TaskProducerProduceLine(final PassiveTaskProducer<T, TM, E> passiveTaskProducer, final ClientTaskExporterFactory exporterFactory, final Type paramType) {
 			this.passiveTaskProducer = passiveTaskProducer;
 			final TM tm = passiveTaskProducer.getTaskMeta();
-
+			
 			GenericInfo<? extends PassiveTaskProducer> genericInfo = GenericInfo.get(passiveTaskProducer.getClass());
 			Type baseParamType = genericInfo.getGeneric(PassiveTaskProducer.class.getTypeParameters()[0]);
 			if(baseParamType.equals(paramType)) {
@@ -211,7 +243,6 @@ public class PassiveProducerManager {
 				});
 			}
 		}
-		@SuppressWarnings("unchecked")
 		private void setExporterProvider(TM tm, Type exporterType, ClientTaskExporterFactory exporterFactory) {
 			Class<E> exporterClass;
 			if (exporterType instanceof Class) {
@@ -223,6 +254,10 @@ public class PassiveProducerManager {
 			}
 			
 			exporterProvider = exporterFactory.getExporterProvider(tm, exporterClass);
+		}
+		@Override
+		public void onchange(Configable<?> newObj, Configable<?> oldObj) {
+			passiveTaskProducer=(PassiveTaskProducer) newObj;
 		}
 		
 		@Override

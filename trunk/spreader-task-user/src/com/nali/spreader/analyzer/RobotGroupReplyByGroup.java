@@ -30,7 +30,7 @@ import com.nali.spreader.util.random.Randomer;
  * 
  */
 @Component
-@ClassDescription("分组·机器人分组回复微博")
+@ClassDescription("分组·机器人回复微博")
 public class RobotGroupReplyByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
 		Configable<RobotGroupReplyDto> {
 	@Autowired

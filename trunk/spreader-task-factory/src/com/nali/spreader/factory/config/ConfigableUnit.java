@@ -1,5 +1,7 @@
 package com.nali.spreader.factory.config;
 
+import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,7 +14,7 @@ import com.nali.spreader.factory.config.desc.DescriptionResolve;
 @SuppressWarnings("rawtypes")
 public class ConfigableUnit<T extends Configable> {
 	private T configable;
-	private List<ConfigableListener> listeners = new LinkedList<ConfigableListener>();
+	private List<WeakReference<ConfigableListener>> listeners = new LinkedList<WeakReference<ConfigableListener>>();
 	private AutowireCapableBeanFactory beanFactory;
 	private ConfigDefinition configDefinition;
 
@@ -28,16 +30,37 @@ public class ConfigableUnit<T extends Configable> {
 		return configable;
 	}
 	
-	public void addListener(ConfigableListener listener) {
-		listeners.add(listener);
+	@SuppressWarnings("unchecked")
+	public synchronized void addListener(ConfigableListener listener) {//synchronized method
+		if (listener instanceof LazyConfigableListener) {
+			LazyConfigableListener<T> lazyConfigableListener = (LazyConfigableListener<T>) listener;
+			lazyConfigableListener.onbind(configable);
+		}
+		listeners.add(new WeakReference<ConfigableListener>(listener));
+		if(listeners.size()%10==8) {//check empty
+			Iterator<WeakReference<ConfigableListener>> it = listeners.iterator();
+			while (it.hasNext()) {
+				WeakReference<ConfigableListener> ref = it.next();
+				if(ref.get()==null) {
+					it.remove();
+				}
+			}
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	public T reload(Object config) {
+	public synchronized T reload(Object config) {//synchronized method
 		T configable = getFromPrototype(config);
 		T oldConfigable = this.configable;
-		for (ConfigableListener listener : listeners) {
-			listener.onchange(configable, oldConfigable);
+		Iterator<WeakReference<ConfigableListener>> it = listeners.iterator();
+		while (it.hasNext()) {
+			WeakReference<ConfigableListener> ref = it.next();
+			ConfigableListener listener = ref.get();
+			if(listener!=null) {
+				listener.onchange(configable, oldConfigable);
+			} else {
+				it.remove();
+			}
 		}
 		this.configable=configable;
 		return this.configable;
