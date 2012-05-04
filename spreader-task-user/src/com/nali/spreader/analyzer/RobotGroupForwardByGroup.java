@@ -30,7 +30,7 @@ import com.nali.spreader.util.random.Randomer;
  * 
  */
 @Component
-@ClassDescription("分组·机器人分组转发微博")
+@ClassDescription("分组·机器人转发微博")
 public class RobotGroupForwardByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
 		Configable<RobotGroupForwardDto> {
 //	private static final MessageLogger logger = LoggerFactory.getLogger(RobotGroupForwardByGroup.class);
