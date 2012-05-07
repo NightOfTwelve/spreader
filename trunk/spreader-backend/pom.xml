@@ -156,7 +156,7 @@
 			<properties>
 				<envcfg.dir>base</envcfg.dir>
 				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-				<spring.version>3.0.5.RELEASE</spring.version>
+				<spring.version>3.1.0.RELEASE</spring.version>
 			</properties>
 		</profile>
 		<profile>
@@ -164,7 +164,7 @@
 			<properties>
 				<envcfg.dir>test</envcfg.dir>
 				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-				<spring.version>3.0.5.RELEASE</spring.version>
+				<spring.version>3.1.0.RELEASE</spring.version>
 			</properties>
 		</profile>
 		<profile>
@@ -172,7 +172,7 @@
 			<properties>
 				<envcfg.dir>dev-test</envcfg.dir>
 				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-				<spring.version>3.0.5.RELEASE</spring.version>
+				<spring.version>3.1.0.RELEASE</spring.version>
 			</properties>
 		</profile>
 		<profile>
@@ -180,7 +180,7 @@
 			<properties>
 				<envcfg.dir>product</envcfg.dir>
 				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-				<spring.version>3.0.5.RELEASE</spring.version>
+				<spring.version>3.1.0.RELEASE</spring.version>
 			</properties>
 		</profile>
 	</profiles>
