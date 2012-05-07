@@ -61,7 +61,6 @@ public class CheckAccountStatusFilter implements Filter, InitializingBean {
 				return true;
 			}
 		}
-		logger.debug("未通过验证的URL:" + path);
 		return false;
 	}
 
