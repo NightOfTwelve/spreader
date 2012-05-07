@@ -101,14 +101,6 @@ Ext.onReady(function() {
 													fieldLabel : "分类名称",
 													name : 'categoryName'
 												}]
-									}, {
-										columnWidth : .3,
-										layout : "form",
-										items : [{
-													xtype : "textfield",
-													fieldLabel : "关键字",
-													name : 'keywordName'
-												}]
 									}]
 						}],
 				buttonAlign : "center",
@@ -118,12 +110,18 @@ Ext.onReady(function() {
 						var tform = keywordQueryForm.getForm();
 						var startTime = tform.findField("startTime").getValue();
 						var endTime = tform.findField("endTime").getValue();
-						var cid = tform.findField("cid").getValue();
+						var isManual = tform.findField("isManual").getValue();
+						var keywordName = tform.findField("keywordName")
+								.getValue();
+						var categoryName = tform.findField("categoryName")
+								.getValue();
 						keywordStore.setBaseParam('startTime',
 								renderDateHis(startTime));
 						keywordStore.setBaseParam('endTime',
 								renderDateHis(endTime));
-						keywordStore.setBaseParam('cid', cid);
+						keywordStore.setBaseParam('categoryName', categoryName);
+						keywordStore.setBaseParam('keywordName', keywordName);
+						keywordStore.setBaseParam('isManual', isManual);
 						keywordStore.load();
 					}
 				}, {
@@ -137,7 +135,7 @@ Ext.onReady(function() {
 	var addKeywordCmbForm = new Ext.form.FormPanel({
 				id : 'addKeywordCmbForm',
 				name : 'addKeywordCmbForm',
-				labelWidth : 100, // 标签宽度
+				labelWidth : 120, // 标签宽度
 				frame : true, // 是否渲染表单面板背景色
 				defaultType : 'textfield', // 表单元素默认类型
 				labelAlign : 'left', // 标签对齐方式
@@ -147,29 +145,30 @@ Ext.onReady(function() {
 					fieldLabel : "标签名称",
 					name : 'keywordName',
 					allowBlank : false,
-					width : 100,
+					width : 120,
 					listeners : {
 						'blur' : function(foc) {
-							var tname = foc.getValue();
+							var keywordName = foc.getValue();
 							var tform = addKeywordCmbForm.getForm();
 							Ext.Ajax.request({
-										url : '../usergroup/checkname',
+										url : '../keyword/checkname',
 										params : {
-											'gname' : tname
+											'keywordName' : keywordName
 										},
 										scope : addKeywordCmbForm,
 										success : function(response) {
 											var result = Ext
 													.decode(response.responseText);
-											if (result.success) {
+											if (result.isPresence) {
 												Ext.Msg.alert("提示",
-														"已存在相同组名,请重新输入");
-												tform.findField('gname')
+														"已存在相同关键字,请重新输入");
+												tform.findField('keywordName')
 														.setValue("");
+												return;
 											}
 										},
 										failure : function() {
-											Ext.Msg.alert("提示", "分组名检查失败");
+											Ext.Msg.alert("提示", "关键字失败");
 											return;
 										}
 									});
@@ -198,49 +197,34 @@ Ext.onReady(function() {
 					iconCls : 'tbar_synchronizeIcon', // 按钮图标
 					handler : function() { // 按钮响应函数
 						var addForm = addKeywordCmbForm.getForm();
-						// 分组类型
-						var gtype = gtypeCombo.getValue();
-						// 网站类型
-						var websiteid = websiteCombo.getValue();
-						// 分组名称
-						var gname = addForm.findField('gname').getValue();
-						// 分组说明
-						var description = addForm.findField('description')
+						// 分类ID
+						var categoryId = selectCategoryComboUtil.getValue();
+						// 关键字
+						var keywordName = addForm.findField('keywordName')
 								.getValue();
-						editstgWindow.title = gname;
 						Ext.Ajax.request({
-									url : '../usergroup/createusergroup',
+									url : '../keyword/create',
 									params : {
-										'gname' : gname,
-										'gtype' : gtype,
-										'websiteid' : websiteid,
-										'description' : description
+										'keywordName' : keywordName,
+										'categoryId' : categoryId
 									},
 									scope : addKeywordCmbForm,
 									success : function(response) {
 										var result = Ext
 												.decode(response.responseText);
 										if (result.success) {
-											GUSERGROUPID = result.gid;
-											// 如果是手工分组不弹出属性编辑
-											if (gtype != 2) {
-												editstgWindow.show();
-											} else {
-												Ext.MessageBox.alert("提示",
-														"创建成功");
-												store.reload();
-											}
+											Ext.MessageBox.alert("提示", "创建成功");
+											keywordStore.reload();
 										} else {
-											Ext.Msg.alert("提示", "用户分组创建失败");
+											Ext.Msg.alert("提示", "创建失败");
 											return;
 										}
 									},
 									failure : function() {
-										Ext.Msg.alert("提示", "用户分组创建失败");
+										Ext.Msg.alert("提示", "创建失败");
 										return;
 									}
 								});
-						// editstgWindow.show();
 						addKeywordWindow.hide();
 					}
 				}, {	// 窗口底部按钮配置
@@ -256,6 +240,9 @@ Ext.onReady(function() {
 								addKeywordWindow.hide();
 							}
 						}]
+			});
+	addKeywordWindow.on('show', function() {
+				addKeywordCmbForm.form.reset();
 			});
 	// 定义表格数据源
 	var keywordStore = new Ext.data.Store({
@@ -279,6 +266,8 @@ Ext.onReady(function() {
 									name : 'createTime'
 								}, {
 									name : 'description'
+								}, {
+									name : 'executable'
 								}]),
 				autoLoad : true
 			});
@@ -287,14 +276,21 @@ Ext.onReady(function() {
 	var sm = new Ext.grid.CheckboxSelectionModel({
 				singleSelect : true,
 				listeners : {
-	// 选择事件
-				// rowselect : function(model, rowIndex, record) {
-				// var resultId = record.get('id');
-				// taskDtlStore.setBaseParam('resultId', resultId);
-				// taskDtlStore.reload();
-				// }
+					"beforerowselect" : function(sm, rowIndex, keepExisting,
+							record) {
+						var executag = record.data.executable;
+						var keywordId = record.data.keywordId;
+						var keywordName = record.data.keywordName;
+						if (!executag) {
+							Ext.MessageBox.alert('提示', '关键字:【' + keywordName
+											+ '】,编号:' + keywordId
+											+ ',正在更新中，请稍后再试');
+							return false;
+						}
+					}
 				}
 			});
+
 	// 定义自动当前页行号
 	var rownum = new Ext.grid.RowNumberer({
 				header : 'NO.',
@@ -305,23 +301,24 @@ Ext.onReady(function() {
 	// 定义锁定列模型
 	var cm = new Ext.grid.ColumnModel([sm, rownum, {
 				header : '编号',
-				dataIndex : 'id',
+				dataIndex : 'keywordId',
 				// locked : true,
 				width : 80
 			}, {
 				header : '关键字',
-				dataIndex : 'name',
+				dataIndex : 'keywordName',
 				// locked : true,
 				width : 100
 			}, {
 				header : '分类ID',
 				dataIndex : 'categoryId',
+				renderer : renderNobind,
 				// locked : true,
 				width : 100
 			}, {
 				header : '分类名称',
 				dataIndex : 'categoryName',
-				renderer : renderRed,
+				renderer : renderNobind,
 				width : 100
 			}, {
 				header : '分类说明',
@@ -330,13 +327,18 @@ Ext.onReady(function() {
 			}, {
 				header : '是否手动',
 				dataIndex : 'tag',
-				renderer : renderRed,
+				renderer : rendIsRobot,
+				width : 100
+			}, {
+				header : '更新状态',
+				dataIndex : 'executable',
+				renderer : renderStatus,
 				width : 100
 			}, {
 				header : '创建时间',
 				dataIndex : 'createTime',
-				renderer : renderRed,
-				width : 100
+				renderer : renderDateHis,
+				width : 120
 			}]);
 	// // 分页菜单
 	var bbar = new Ext.PagingToolbar({
@@ -351,44 +353,67 @@ Ext.onReady(function() {
 
 	// 定义grid表格
 	var keywordGrid = new Ext.grid.GridPanel({
-		region : 'center',
-		id : 'keywordGrid',
-		height : 500,
-		stripeRows : true, // 斑马线
-		frame : true,
-		// autoWidth : true,
-		autoScroll : true,
-		store : keywordStore,
-		loadMask : {
-			msg : '正在加载表格数据,请稍等...'
-		},
-		bbar : bbar,
-		sm : sm,
-		colModel : cm,
-		tbar : [{
-					text : '新增',
-					iconCls : 'comments_addIcon',
-					handler : function() {
-						addKeywordWindow.show();
-					}
-				}, {
-					text : '刷新',
-					iconCls : 'arrow_refreshIcon',
-					handler : function() {
-						keywordStore.reload();
-					}
-				}]
-			// ,
-			// onCellClick : function(grid, rowIndex, columnIndex, e) {
-			// var selesm = grid.getSelectionModel().getSelections();
-			// // var userid = selesm[0].data.id;
-			// var cont = selesm[0].data.content;
-			// var contentcol = grid.getColumnModel()
-			// .getDataIndex(columnIndex);
-			// if (contentcol == 'showdtl') {
-			// }
-			// }
-		});
+				region : 'center',
+				id : 'keywordGrid',
+				height : 500,
+				stripeRows : true, // 斑马线
+				frame : true,
+				// autoWidth : true,
+				autoScroll : true,
+				store : keywordStore,
+				loadMask : {
+					msg : '正在加载表格数据,请稍等...'
+				},
+				bbar : bbar,
+				sm : sm,
+				colModel : cm,
+				tbar : [{
+							text : '新增',
+							iconCls : 'comments_addIcon',
+							handler : function() {
+								addKeywordWindow.show();
+							}
+						}, {
+							text : '刷新',
+							iconCls : 'arrow_refreshIcon',
+							handler : function() {
+								keywordStore.reload();
+							}
+						}, {
+							text : "取消绑定",
+							iconCls : 'deleteIcon',
+							handler : function() { // 按钮响应函数
+								var rows = keywordGrid.getSelectionModel()
+										.getSelections();
+								if (rows.length > 0) {
+									var rowdata = rows[0].data;
+									var keyid = rowdata.keywordId;
+									var isUpdate = checkUpdateStatus(keyid);
+									if (isUpdate) {
+										Ext.Msg.show({
+													title : '提示',
+													msg : '确认取消？',
+													buttons : Ext.Msg.YESNO,
+													fn : function(ans) {
+														if (ans == 'yes') {
+															rowdata.executable = false;
+															// 修改后提交，用于改变内存中的值
+															rows[0].commit();
+															unBinding(keyid);
+														}
+													}
+												});
+									} else {
+										Ext.Msg.alert("提示", "不能进行该操作，可能任务进行中");
+										return;
+									}
+								} else {
+									Ext.Msg.alert("提示", "请至少选择一条记录");
+									return;
+								}
+							}
+						}]
+			});
 
 	// 注册事件
 	// keywordGrid.on('cellclick', keywordGrid.onCellClick, taskGrid);
@@ -398,4 +423,57 @@ Ext.onReady(function() {
 				layout : 'border',
 				items : [keywordQueryForm, keywordGrid]
 			});
+
+	/**
+	 * 取消绑定关系
+	 */
+	function unBinding(keywordId, oldCategoryId) {
+		if (Ext.isEmpty(keywordId)) {
+			Ext.Msg.alert("提示", "关键字ID不能为空");
+			return;
+		} else {
+			Ext.Ajax.request({
+						url : '../keyword/unbind',
+						params : {
+							'keywordId' : keywordId,
+							'oldCategoryId' : oldCategoryId
+						},
+						success : function(response) {
+							var result = Ext.decode(response.responseText);
+							var cnt = result.count;
+							if (cnt > 0) {
+								Ext.Msg.alert('提示', '解绑任务已进行，请稍后查看');
+							} else {
+								Ext.Msg.alert('提示', '解除绑定失败');
+							}
+							return;
+						},
+						failure : function() {
+							Ext.Msg.alert('提示', '解除绑定失败');
+							return;
+						}
+					});
+		}
+	}
+	/**
+	 * 检查更新状态
+	 */
+	function checkUpdateStatus(keywordId) {
+		var tag = false;
+		Ext.Ajax.request({
+					url : '../keyword/updatestatus',
+					params : {
+						'keywordId' : keywordId
+					},
+					async : false,
+					success : function(response) {
+						var result = Ext.decode(response.responseText);
+						tag = result.isUpdate;
+
+					},
+					failure : function() {
+					}
+				});
+		return tag;
+	}
 });

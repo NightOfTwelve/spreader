@@ -20,6 +20,16 @@ public class KeywordInfoQueryDto implements Serializable {
 	private Boolean tag;
 	private Date createTime;
 	private String description;
+	// 是否可以更新
+	private Boolean executable;
+
+	public Boolean getExecutable() {
+		return executable;
+	}
+
+	public void setExecutable(Boolean executable) {
+		this.executable = executable;
+	}
 
 	public Long getKeywordId() {
 		return keywordId;

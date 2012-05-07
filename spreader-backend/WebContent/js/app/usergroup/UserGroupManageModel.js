@@ -498,7 +498,7 @@ Ext.onReady(function() {
 								.getSelections();
 						if (rows.length > 0) {
 							for (var i = 0; i < rows.length; i++) {
-								var gid = rows[i].data.gid
+								var gid = rows[i].data.gid;
 								delGroupArray.push(gid);
 							}
 						} else {
