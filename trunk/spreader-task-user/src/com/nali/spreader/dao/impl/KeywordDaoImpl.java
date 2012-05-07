@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
 import com.nali.spreader.dao.IKeywordDao;
+import com.nali.spreader.data.Keyword;
 
 /**
  * 实现类
@@ -28,6 +29,24 @@ public class KeywordDaoImpl implements IKeywordDao {
 
 	@Override
 	public int countKeywordInfoQueryDto(KeywordQueryParamsDto params) {
-		return (Integer) this.sqlMap.queryForObject("spreader_keyword.selectKeywordInfoCount", params);
+		return (Integer) this.sqlMap.queryForObject("spreader_keyword.selectKeywordInfoCount",
+				params);
+	}
+
+	@Override
+	public Long insertKeyword(Keyword keyword) {
+		return (Long) this.sqlMap.insert("spreader_keyword.insertKeyword", keyword);
+	}
+
+	@Override
+	public int updateCategory(Keyword keyword) {
+		int rows = this.sqlMap.update("spreader_keyword.updateCategoryByPrimaryKey", keyword);
+		return rows;
+	}
+
+	@Override
+	public int updateKeywordStatus(Keyword keyword) {
+		int rows = this.sqlMap.update("spreader_keyword.updateKeywordStatus", keyword);
+		return rows;
 	}
 }

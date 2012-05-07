@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
+import com.nali.spreader.data.Keyword;
 
 /**
  * keyword自定义DAO
@@ -28,5 +29,29 @@ public interface IKeywordDao {
 	 * @return
 	 */
 	int countKeywordInfoQueryDto(KeywordQueryParamsDto params);
+
+	/**
+	 * 保存一条记录并且返回它的ID
+	 * 
+	 * @param param
+	 * @return
+	 */
+	Long insertKeyword(Keyword keyword);
+
+	/**
+	 * 更新分类字段
+	 * 
+	 * @param keyword
+	 * @return
+	 */
+	int updateCategory(Keyword keyword);
+
+	/**
+	 * 更新修改状态
+	 * 
+	 * @param keyword
+	 * @return
+	 */
+	int updateKeywordStatus(Keyword keyword);
 
 }

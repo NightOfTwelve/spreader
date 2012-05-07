@@ -15,6 +15,8 @@ public class KeywordQueryParamsDto implements Serializable {
 	private static final long serialVersionUID = -1147996054226925010L;
 
 	private String keywordName;
+	private Long categoryId;
+	private Date createTime;
 	private String categoryName;
 	private Boolean isManual;
 	private Date startTime;
@@ -33,6 +35,22 @@ public class KeywordQueryParamsDto implements Serializable {
 
 	public String getKeywordName() {
 		return keywordName;
+	}
+
+	public Long getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 
 	public void setKeywordName(String keywordName) {

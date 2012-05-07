@@ -10,6 +10,7 @@
 		<result column="description" jdbcType="VARCHAR" property="description" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="tag" jdbcType="BIT" property="tag" />
+		<result column="executable" jdbcType="BIT" property="executable" />
 	</resultMap>
 	<sql id="selectKeywordInfoCondition">
 		<isNotNull prepend="and" property="keywordName">
@@ -32,8 +33,9 @@
 	</sql>
 	<select id="selectKeywordInfo" parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
 		resultMap="keywordinfo_resultmap">
-		select a.id as keyword_id,a.name as keyword_name,a.category_id,b.name as
-		category_name,b.description,a.create_time,a.tag
+		select a.id as keyword_id,a.name as keyword_name,a.category_id,b.name
+		as
+		category_name,b.description,a.create_time,a.tag,a.executable
 		from tb_keyword a
 		left
 		join tb_category b on a.category_id = b.id
@@ -45,7 +47,7 @@
 		</isNotNull>
 	</select>
 	<select id="selectKeywordInfoCount" parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
-		resultMap="keywordinfo_resultmap">
+		resultClass="java.lang.Integer">
 		select count(a.id) as cnt
 		from tb_keyword a
 		left join tb_category b on
@@ -54,4 +56,35 @@
 			<include refid="selectKeywordInfoCondition" />
 		</dynamic>
 	</select>
+	<insert id="insertKeyword" parameterClass="com.nali.spreader.data.Keyword">
+		insert into spreader.tb_keyword(
+		name,
+		category_id,
+		tag,
+		create_time
+		)
+		values(
+		#name#,
+		#categoryId#,
+		#tag#,,
+		#createTime#
+		)
+		<selectKey resultClass="long" type="post" keyProperty="id">
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+	<update id="updateCategoryByPrimaryKey" parameterClass="com.nali.spreader.data.Keyword">
+		update
+		spreader$shard.databaseSuffix$.tb_keyword$shard.tableSuffix$
+		set
+		category_id = #categoryId:BIGINT#
+		where id = #id:BIGINT#
+	</update>
+	<update id="updateKeywordStatus" parameterClass="com.nali.spreader.data.Keyword">
+		update
+		spreader$shard.databaseSuffix$.tb_keyword$shard.tableSuffix$
+		set
+		executable = #executable:BIT#
+		where id = #id:BIGINT# and executable = true
+	</update>
 </sqlMap>

@@ -26,3 +26,5 @@ ALTER TABLE tb_user_tag ADD tag_id bigint;
 
 update tb_user_tag
 set tag_id = category_id;
+
+alter table tb_keyword add column executable bit(0) not null default true ;

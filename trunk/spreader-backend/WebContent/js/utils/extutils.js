@@ -246,6 +246,33 @@ function renderRed(value) {
 	return value;
 }
 /**
+ * 渲染更新状态
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderStatus(value) {
+	if (value) {
+		return '<span style="color:green;">可更新</span>';
+	} else {
+		return '<span style="color:red;">正在更新中</span>';
+	}
+}
+/**
+ * NULL值渲染为红色
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderNobind(value) {
+	if (value === null) {
+		return '<span style="color:red;">未绑定分类</span>';
+	}
+	return value;
+}
+/**
  * 渲染颜色
  * 
  * @param {}

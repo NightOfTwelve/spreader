@@ -24,6 +24,7 @@
 				<value>classpath:jdbc.properties</value>
 				<value>classpath:urls.properties</value>
 				<value>classpath:env.properties</value>
+				<value>classpath:userTagThreadPool.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -75,12 +76,26 @@
 			</list>
 		</property>
 	</bean>
+	<bean id="updateUserTagThreadPoolParams" class="com.nali.spreader.job.thread.ThreadPoolModel">
+		<property name="corePoolSize">
+			<value>${tagpool.corePoolSize}</value>
+		</property>
+		<property name="maximumPoolSize">
+			<value>${tagpool.maximumPoolSize}</value>
+		</property>
+		<property name="keepAliveTime">
+			<value>${tagpool.keepAliveTime}</value>
+		</property>
+		<property name="capacity">
+			<value>${tagpool.capacity}</value>
+		</property>
+	</bean>
 	<bean id="txManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dbDataSource" />
 	</bean>
 
-	<!-- 用@transactional注解设置事务 ，在需要事务的类和方法上添加-->
+	<!-- 用@transactional注解设置事务 ，在需要事务的类和方法上添加 -->
 	<tx:annotation-driven transaction-manager="txManager" />
 
 	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
@@ -101,7 +116,8 @@
 		</property>
 	</bean>
 	<!-- autowire -->
-	<bean id="productLineAnnotationResolver" class="com.nali.spreader.factory.passive.ProductLinePostAnnotationResolver" />
+	<bean id="productLineAnnotationResolver"
+		class="com.nali.spreader.factory.passive.ProductLinePostAnnotationResolver" />
 	<bean id="postAutowireProcessor" class="com.nali.spreader.util.autowire.PostAutowireProcessor">
 		<property name="annotationResolvers">
 			<list>
@@ -110,15 +126,18 @@
 		</property>
 	</bean>
 	<!-- end autowire -->
-	
+
 	<!-- remote -->
-	<bean id="loginConfigManageService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
-		<property name="serviceUrl" value="${front.hessian}/internal/hessian/loginConfigManageService" />
-		<property name="serviceInterface" value="com.nali.spreader.remote.ILoginConfigManageService" />
+	<bean id="loginConfigManageService"
+		class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+		<property name="serviceUrl"
+			value="${front.hessian}/internal/hessian/loginConfigManageService" />
+		<property name="serviceInterface"
+			value="com.nali.spreader.remote.ILoginConfigManageService" />
 	</bean>
-	
+
 	<!-- remote end -->
-	
+
 	<!-- redisTemplate -->
 	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
 		<property name="connectionFactory">
@@ -170,19 +189,19 @@
 		<property name="hashValueSerializer" ref="stringRedisSerializer">
 		</property>
 	</bean>
-	
+
 	<bean id="identityService"
 		class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
 		<property name="serviceUrl"
 			value="${server.center.hessian}/hessian/identityService" />
 		<property name="serviceInterface" value="com.nali.center.service.IIdentityService" />
 	</bean>
-	
+
 	<bean id="redisHashSimpleCountCollecter"
 		class="com.nali.stat.dc.collecter.RedisHashSimpleCountCollecter">
 		<property name="moduleName" value="spreader"></property>
 	</bean>
 
-	<import resource="classpath:application-lwtmq-context.xml"/>
-	<import resource="classpath:application-lts-context.xml"/>
+	<import resource="classpath:application-lwtmq-context.xml" />
+	<import resource="classpath:application-lts-context.xml" />
 </beans>
