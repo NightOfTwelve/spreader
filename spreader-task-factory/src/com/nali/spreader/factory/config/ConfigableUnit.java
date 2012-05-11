@@ -33,7 +33,7 @@ public class ConfigableUnit<T extends Configable> {
 	@SuppressWarnings("unchecked")
 	public synchronized void addListener(ConfigableListener listener) {//synchronized method
 		if (listener instanceof LazyConfigableListener) {
-			LazyConfigableListener<T> lazyConfigableListener = (LazyConfigableListener<T>) listener;
+			LazyConfigableListener<T> lazyConfigableListener = (LazyConfigableListener) listener;
 			lazyConfigableListener.onbind(configable);
 		}
 		listeners.add(new WeakReference<ConfigableListener>(listener));
