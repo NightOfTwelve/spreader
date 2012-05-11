@@ -23,6 +23,23 @@ public interface IKeywordDao {
 	List<KeywordInfoQueryDto> getKeywordInfoQueryDtoList(KeywordQueryParamsDto params);
 
 	/**
+	 * 排除条件查询KeywordInfoQueryDto
+	 * 
+	 * @param params
+	 * @return
+	 */
+	List<KeywordInfoQueryDto> getKeywordInfoQueryDtoListIsNotEqualCategoryId(
+			KeywordQueryParamsDto params);
+
+	/**
+	 * 统计记录数
+	 * 
+	 * @param params
+	 * @return
+	 */
+	int countKeywordInfoQueryDtoIsNotEqualCategoryId(KeywordQueryParamsDto params);
+
+	/**
 	 * 统计总数
 	 * 
 	 * @param params

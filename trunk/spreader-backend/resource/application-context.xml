@@ -76,20 +76,6 @@
 			</list>
 		</property>
 	</bean>
-	<bean id="updateUserTagThreadPoolParams" class="com.nali.spreader.job.thread.ThreadPoolModel">
-		<property name="corePoolSize">
-			<value>${tagpool.corePoolSize}</value>
-		</property>
-		<property name="maximumPoolSize">
-			<value>${tagpool.maximumPoolSize}</value>
-		</property>
-		<property name="keepAliveTime">
-			<value>${tagpool.keepAliveTime}</value>
-		</property>
-		<property name="capacity">
-			<value>${tagpool.capacity}</value>
-		</property>
-	</bean>
 	<bean id="txManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dbDataSource" />

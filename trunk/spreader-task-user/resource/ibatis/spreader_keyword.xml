@@ -8,21 +8,29 @@
 		<result column="category_id" jdbcType="BIGINT" property="categoryId" />
 		<result column="category_name" jdbcType="VARCHAR" property="categoryName" />
 		<result column="description" jdbcType="VARCHAR" property="description" />
+		<result column="fromgrid" jdbcType="VARCHAR" property="fromGrid" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="tag" jdbcType="BIT" property="tag" />
 		<result column="executable" jdbcType="BIT" property="executable" />
 	</resultMap>
 	<sql id="selectKeywordInfoCondition">
-		<isNotNull prepend="and" property="keywordName">
+		<isNotNull prepend="and" property="keywordId">
+			a.id = #keywordId#
+		</isNotNull>
+		<isNotEmpty prepend="and" property="keywordName">
 			a.name like concat('%',
 			#keywordName#, '%')
-		</isNotNull>
-		<isNotNull prepend="and" property="categoryName">
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="categoryName">
 			b.name like concat('%',
 			#categoryName#, '%')
-		</isNotNull>
+		</isNotEmpty>
 		<isNotNull prepend="and" property="isManual">
 			a.tag = #isManual#
+		</isNotNull>
+		<isNotNull prepend="and" property="categoryId">
+			a.category_id =
+			#categoryId#
 		</isNotNull>
 		<isNotNull prepend="and" property="startTime">
 			<![CDATA[a.create_time >= #startTime#]]>
@@ -35,16 +43,59 @@
 		resultMap="keywordinfo_resultmap">
 		select a.id as keyword_id,a.name as keyword_name,a.category_id,b.name
 		as
-		category_name,b.description,a.create_time,a.tag,a.executable
-		from tb_keyword a
+		category_name,b.description,a.create_time,a.tag,a.executable,'cagegoryTagGrid'
+		as fromgrid
+		from
+		tb_keyword a
 		left
-		join tb_category b on a.category_id = b.id
+		join tb_category b on a.category_id =
+		b.id
 		<dynamic prepend="where">
 			<include refid="selectKeywordInfoCondition" />
 		</dynamic>
+		order by a.create_time desc
 		<isNotNull property="lit">
 			limit $lit.offset$,$lit.maxRows$
 		</isNotNull>
+	</select>
+	<select id="selectKeywordInfoNotEqualToCategoryId"
+		parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
+		resultMap="keywordinfo_resultmap">
+		select a.id as keyword_id,a.name as keyword_name,a.category_id,b.name
+		as
+		category_name,b.description,a.create_time,a.tag,a.executable,'cagegoryNotTagGrid'
+		as fromgrid
+		from
+		tb_keyword a
+		left
+		join tb_category b on a.category_id =
+		b.id
+		where <![CDATA[a.category_id <> #categoryId#]]>
+		<isNotEmpty prepend="and" property="keywordName">
+			a.name like
+			CONCAT('%',#keywordName#,'%')
+		</isNotEmpty>
+		and a.executable = true
+		order by a.create_time desc
+		<isNotNull property="lit">
+			limit $lit.offset$,$lit.maxRows$
+		</isNotNull>
+	</select>
+	<select id="selectKeywordInfoNotEqualToCategoryIdCount"
+		parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
+		resultClass="java.lang.Integer">
+		select count(a.id) as cnt
+		from
+		tb_keyword a
+		left
+		join tb_category b on
+		a.category_id = b.id
+		where <![CDATA[a.category_id <> #categoryId#]]>
+		<isNotEmpty prepend="and" property="keywordName">
+			a.name like
+			CONCAT('%',#keywordName#,'%')
+		</isNotEmpty>
+		and a.executable = true
 	</select>
 	<select id="selectKeywordInfoCount" parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
 		resultClass="java.lang.Integer">
@@ -85,6 +136,7 @@
 		spreader$shard.databaseSuffix$.tb_keyword$shard.tableSuffix$
 		set
 		executable = #executable:BIT#
-		where id = #id:BIGINT# and executable = true
+		where id = #id:BIGINT# and executable =
+		true
 	</update>
 </sqlMap>

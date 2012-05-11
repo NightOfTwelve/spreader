@@ -22,7 +22,7 @@ public class UpdateUserTagParam implements Serializable {
 	public Long getKeywordId() {
 		return keywordId;
 	}
-
+	
 	public void setKeywordId(Long keywordId) {
 		this.keywordId = keywordId;
 	}

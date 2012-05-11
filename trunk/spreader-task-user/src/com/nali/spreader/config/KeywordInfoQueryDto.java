@@ -20,6 +20,17 @@ public class KeywordInfoQueryDto implements Serializable {
 	private Boolean tag;
 	private Date createTime;
 	private String description;
+	// 原始表格标记
+	private String fromGrid;
+
+	public String getFromGrid() {
+		return fromGrid;
+	}
+
+	public void setFromGrid(String fromGrid) {
+		this.fromGrid = fromGrid;
+	}
+
 	// 是否可以更新
 	private Boolean executable;
 

@@ -246,6 +246,20 @@ function renderRed(value) {
 	return value;
 }
 /**
+ * 渲染新增状态
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderAddStatus(value) {
+	if (value) {
+		return renderRed('新增记录');
+	} else {
+		return renderGreen('原始记录');
+	}
+}
+/**
  * 渲染更新状态
  * 
  * @param {}
@@ -299,13 +313,13 @@ function renderGender(value) {
 	}
 }
 /**
- * 渲染是否位机器人
+ * 渲染是否
  * 
  * @param {}
  *            value
  * @return {}
  */
-function rendIsRobot(value) {
+function rendTrueFalse(value) {
 	if (value) {
 		return '是';
 	} else {

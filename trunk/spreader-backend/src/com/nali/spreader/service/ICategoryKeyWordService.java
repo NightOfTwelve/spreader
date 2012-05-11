@@ -3,6 +3,7 @@ package com.nali.spreader.service;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
+import com.nali.spreader.data.Category;
 
 /**
  * 分类与关键字服务接口
@@ -21,12 +22,27 @@ public interface ICategoryKeyWordService {
 	PageResult<KeywordInfoQueryDto> findKeywordByParams(KeywordQueryParamsDto param);
 
 	/**
+	 * 分页查询不属于该分类的关键字列表
+	 * 
+	 * @param param
+	 * @return
+	 */
+	PageResult<KeywordInfoQueryDto> findKeywordByNotEqualParams(KeywordQueryParamsDto param);
+
+	/**
 	 * 创建一个新关键字
 	 * 
 	 * @param keywordName
 	 * @param categoryId
 	 */
 	void createKeyword(String keywordName, Long categoryId);
+
+	/**
+	 * 创建一个分类
+	 * 
+	 * @param c
+	 */
+	void createCategory(Category c);
 
 	/**
 	 * 检查关键字是否已经存在
@@ -63,6 +79,14 @@ public interface ICategoryKeyWordService {
 	int updateKeywordExecutable(Long keywordId, boolean status);
 
 	/**
+	 * 回滚时更新Keyword的状态
+	 * 
+	 * @param keywordId
+	 * @return
+	 */
+	int updateKeywordExecutableByRollback(Long keywordId);
+
+	/**
 	 * 变更关键字与分类的绑定关系 categoryId 为 null表示取消绑定
 	 * 
 	 * @param keywordId
@@ -79,4 +103,30 @@ public interface ICategoryKeyWordService {
 	 */
 	boolean checkKeywordUpdateStatus(Long keywordId);
 
+	/**
+	 * 查询分类的分页信息
+	 * 
+	 * @param categoryName
+	 * @param start
+	 * @param limit
+	 * @return
+	 */
+	PageResult<Category> findCategoryPageData(KeywordQueryParamsDto param);
+
+	/**
+	 * 更新关键字表和分类表后的相关回滚动作
+	 * 
+	 * @param keywordId
+	 * @param oldCategoryId
+	 * @return
+	 */
+	String keywordAndCategoryRollBackInfo(Long keywordId, Long oldCategoryId);
+
+	/**
+	 * 检查分类是否重名
+	 * 
+	 * @param name
+	 * @return
+	 */
+	boolean checkCategoryName(String name);
 }

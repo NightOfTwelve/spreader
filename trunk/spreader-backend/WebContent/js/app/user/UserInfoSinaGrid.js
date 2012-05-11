@@ -258,7 +258,7 @@ var cm = new Ext.ux.grid.LockingColumnModel([rownums, {
 			header : '机器人',
 			dataIndex : 'isRobot',
 			locked : true,
-			renderer : rendIsRobot,
+			renderer : rendTrueFalse,
 			width : 80
 		}, {
 			header : '昵称',

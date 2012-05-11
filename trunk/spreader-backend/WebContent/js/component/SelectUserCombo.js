@@ -1,9 +1,9 @@
 /**
- * 筛选分类
+ * 筛选用户
  */
-var categoryStore = new Ext.data.Store({
+var addUserStore = new Ext.data.Store({
 			proxy : new Ext.data.HttpProxy({
-						url : '../extutil/categorycombo'
+						url : '../extutil/usercombo'
 					}),
 			reader : new Ext.data.JsonReader({
 						totalProperty : 'totalCount',
@@ -11,20 +11,20 @@ var categoryStore = new Ext.data.Store({
 					}, [{
 								name : 'id'
 							}, {
-								name : 'name'
+								name : 'nickName'
 							}])
 		});
 // 用户筛选模版
-var resultTpl = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{id}({name})</span></div></tpl>');
-// 筛选的Combo
-var selectCategoryComboUtil = new Ext.form.ComboBox({
+var resultTpl = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{id}({nickName})</span></div></tpl>');
+// 用户筛选的Combo
+var selectComboUtil = new Ext.form.ComboBox({
 			hiddenName : 'id',
-			id : 'selectCategoryComboUtil',
-			fieldLabel : '选择分类',
-			emptyText : '请选择分类...',
+			id : 'selectComboUtil',
+			fieldLabel : '选择人员',
+			emptyText : '请选择人员...',
 			triggerAction : 'all',
-			store : categoryStore,
-			displayField : 'name',
+			store : addUserStore,
+			displayField : 'nickName',
 			valueField : 'id',
 			loadingText : '正在加载数据...',
 			mode : 'remote', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取

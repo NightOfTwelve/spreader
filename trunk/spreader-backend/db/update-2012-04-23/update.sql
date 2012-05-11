@@ -28,3 +28,9 @@ update tb_user_tag
 set tag_id = category_id;
 
 alter table tb_keyword add column executable bit(0) not null default true ;
+
+DROP INDEX index_name ON talbe_name
+
+DROP INDEX uk_category_user ON tb_user_tag;
+
+ALTER TABLE tb_user_tag ADD INDEX idx_tag_user (uid,tag_id);

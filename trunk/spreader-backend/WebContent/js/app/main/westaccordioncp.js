@@ -161,12 +161,17 @@ var menuTree_CategoryKeywordQuery = new Ext.tree.TreePanel({
 			rootVisible : true,
 			root : new Ext.tree.AsyncTreeNode({
 						id : '-1',
-						text : '关键字与分类',
+						text : '关键字与分类管理',
 						children : [{
 									id : 'keywordmng',
 									text : "关键字管理",
 									leaf : true,
 									url : '../keyword/init'
+								}, {
+									id : 'categorymng',
+									text : "分类管理",
+									leaf : true,
+									url : '../category/init'
 								}]
 					}),
 			// 添加监听事件

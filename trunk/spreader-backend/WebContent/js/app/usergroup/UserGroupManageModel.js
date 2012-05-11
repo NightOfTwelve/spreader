@@ -952,12 +952,12 @@ Ext.onReady(function() {
 			}, {
 				header : '机器人',
 				dataIndex : 'user.isRobot',
-				renderer : rendIsRobot,
+				renderer : rendTrueFalse,
 				width : 80
 			}, {
 				header : '手工添加',
 				dataIndex : 'manual',
-				renderer : rendIsRobot,
+				renderer : rendTrueFalse,
 				width : 80
 			}, {
 				header : '真名',
@@ -1152,12 +1152,12 @@ Ext.onReady(function() {
 			}, {
 				header : '机器人',
 				dataIndex : 'user.isRobot',
-				renderer : rendIsRobot,
+				renderer : rendTrueFalse,
 				width : 80
 			}, {
 				header : '手工添加',
 				dataIndex : 'manual',
-				renderer : rendIsRobot,
+				renderer : rendTrueFalse,
 				width : 80
 			}, {
 				header : '真名',
