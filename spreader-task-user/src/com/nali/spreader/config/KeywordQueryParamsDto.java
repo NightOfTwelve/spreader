@@ -16,6 +16,7 @@ public class KeywordQueryParamsDto implements Serializable {
 
 	private String keywordName;
 	private Long categoryId;
+	private Long keywordId;
 	private Date createTime;
 	private String categoryName;
 	private Boolean isManual;
@@ -24,6 +25,14 @@ public class KeywordQueryParamsDto implements Serializable {
 	private Integer start;
 	private Integer limit;
 	private Limit lit;
+
+	public Long getKeywordId() {
+		return keywordId;
+	}
+
+	public void setKeywordId(Long keywordId) {
+		this.keywordId = keywordId;
+	}
 
 	public String getCategoryName() {
 		return categoryName;

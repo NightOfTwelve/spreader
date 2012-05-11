@@ -91,7 +91,7 @@ var fanscm = new Ext.ux.grid.LockingColumnModel([{
 		}, {
 			header : '机器人',
 			dataIndex : 'isRobot',
-			renderer : rendIsRobot,
+			renderer : rendTrueFalse,
 			locked : true,
 			width : 80
 		}, {

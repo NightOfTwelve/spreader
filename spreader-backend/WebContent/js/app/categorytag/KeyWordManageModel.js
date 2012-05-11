@@ -101,6 +101,14 @@ Ext.onReady(function() {
 													fieldLabel : "分类名称",
 													name : 'categoryName'
 												}]
+									}, {
+										columnWidth : .33,
+										layout : "form",
+										items : [{
+													xtype : "textfield",
+													fieldLabel : "关键字ID",
+													name : 'keywordId'
+												}]
 									}]
 						}],
 				buttonAlign : "center",
@@ -113,6 +121,7 @@ Ext.onReady(function() {
 						var isManual = tform.findField("isManual").getValue();
 						var keywordName = tform.findField("keywordName")
 								.getValue();
+						var keywordId = tform.findField("keywordId").getValue();
 						var categoryName = tform.findField("categoryName")
 								.getValue();
 						keywordStore.setBaseParam('startTime',
@@ -122,6 +131,7 @@ Ext.onReady(function() {
 						keywordStore.setBaseParam('categoryName', categoryName);
 						keywordStore.setBaseParam('keywordName', keywordName);
 						keywordStore.setBaseParam('isManual', isManual);
+						keywordStore.setBaseParam('keywordId', keywordId);
 						keywordStore.load();
 					}
 				}, {
@@ -327,7 +337,7 @@ Ext.onReady(function() {
 			}, {
 				header : '是否手动',
 				dataIndex : 'tag',
-				renderer : rendIsRobot,
+				renderer : rendTrueFalse,
 				width : 100
 			}, {
 				header : '更新状态',
@@ -388,6 +398,7 @@ Ext.onReady(function() {
 								if (rows.length > 0) {
 									var rowdata = rows[0].data;
 									var keyid = rowdata.keywordId;
+									var oldCategoryId = rowdata.categoryId;
 									var isUpdate = checkUpdateStatus(keyid);
 									if (isUpdate) {
 										Ext.Msg.show({
@@ -399,7 +410,8 @@ Ext.onReady(function() {
 															rowdata.executable = false;
 															// 修改后提交，用于改变内存中的值
 															rows[0].commit();
-															unBinding(keyid);
+															unBinding(keyid,
+																	oldCategoryId);
 														}
 													}
 												});
@@ -461,7 +473,8 @@ Ext.onReady(function() {
 	function checkUpdateStatus(keywordId) {
 		var tag = false;
 		Ext.Ajax.request({
-					url : '../keyword/updatestatus',
+					url : '../keyword/updatestatus?_time='
+							+ new Date().getTime(),
 					params : {
 						'keywordId' : keywordId
 					},
@@ -469,7 +482,6 @@ Ext.onReady(function() {
 					success : function(response) {
 						var result = Ext.decode(response.responseText);
 						tag = result.isUpdate;
-
 					},
 					failure : function() {
 					}

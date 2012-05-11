@@ -32,10 +32,12 @@ import com.nali.spreader.service.ICategoryKeyWordService;
 @Controller
 @RequestMapping(value = "/keyword")
 public class KeywordManageController {
-	private Logger logger = Logger.getLogger(KeywordManageController.class);
 	private static ObjectMapper json = new ObjectMapper();
+	private final static Logger logger = Logger.getLogger(KeywordManageController.class);
 	@Autowired
 	private ICategoryKeyWordService ckService;
+	@Autowired
+	private ThreadPoolModel pool;
 
 	@RequestMapping(value = "/init")
 	public String init() {
@@ -130,14 +132,23 @@ public class KeywordManageController {
 			JsonMappingException, IOException {
 		Map<String, Integer> m = CollectionUtils.newHashMap(1);
 		int count = 0;
-		if (keywordId != null) {
-			count = this.ckService.updateKeywordExecutable(keywordId, false);
-			UpdateUserTagParam params = new UpdateUserTagParam();
-			params.setKeywordId(keywordId);
-			params.setNewCategoryId(null);
-			params.setOldCategoryId(oldCategoryId);
-			SyncUpdateUserTagThread t = new SyncUpdateUserTagThread(params);
-			ThreadPoolModel.getInstance().execute(t);
+		try {
+			if (keywordId != null) {
+				count = this.ckService.updateKeywordExecutable(keywordId, false);
+				UpdateUserTagParam params = new UpdateUserTagParam();
+				params.setKeywordId(keywordId);
+				params.setNewCategoryId(null);
+				params.setOldCategoryId(oldCategoryId);
+				SyncUpdateUserTagThread t = new SyncUpdateUserTagThread(params, ckService);
+				pool.getExecutor().execute(t);
+			}
+		} catch (Exception e) {
+			// 发生异常，执行回滚操作
+			String error = this.ckService.keywordAndCategoryRollBackInfo(keywordId, oldCategoryId);
+			logger.error(error, e);
+		} finally {
+			// 最终需要更改状态为可用
+			this.ckService.updateKeywordExecutableByRollback(keywordId);
 		}
 		m.put("count", count);
 		return json.writeValueAsString(m);
