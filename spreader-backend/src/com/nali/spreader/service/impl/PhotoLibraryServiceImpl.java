@@ -22,9 +22,8 @@ public class PhotoLibraryServiceImpl implements IPhotoLibraryService {
 	private ICrudPhotoDao crudPhotoDao;
 
 	@Override
-	public PageResult<Photo> findPhotoLibraryList(String picType,
-			Boolean avatarflg, Boolean photolibflg, Integer page,
-			Integer pageSize) {
+	public PageResult<Photo> findPhotoLibraryList(String picType, Boolean avatarflg,
+			Boolean photolibflg, Limit lit) {
 		PhotoExample pe = new PhotoExample();
 		Criteria cr = pe.createCriteria();
 		if (StringUtils.isNotEmpty(picType)) {
@@ -36,8 +35,7 @@ public class PhotoLibraryServiceImpl implements IPhotoLibraryService {
 		if (photolibflg != null) {
 			cr.andPhotolibflgEqualTo(photolibflg);
 		}
-		Limit limit = Limit.newInstanceForLimit(page, pageSize);
-		pe.setLimit(limit);
+		pe.setLimit(lit);
 		List<Photo> list = crudPhotoDao.selectByExampleWithoutBLOBs(pe);
 		if (list.size() > 0) {
 			String serviceUri = getFileServiceUrl(PhotoHelper.WEBDAV_FILE);
@@ -50,7 +48,7 @@ public class PhotoLibraryServiceImpl implements IPhotoLibraryService {
 			}
 		}
 		int count = crudPhotoDao.countByExample(pe);
-		return new PageResult<Photo>(list, limit, count);
+		return new PageResult<Photo>(list, lit, count);
 	}
 
 	/**

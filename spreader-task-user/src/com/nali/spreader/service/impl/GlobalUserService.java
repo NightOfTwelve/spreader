@@ -21,13 +21,12 @@ import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserExample;
 import com.nali.spreader.data.UserRelation;
 import com.nali.spreader.data.UserRelationExample;
+import com.nali.spreader.data.UserRelationExample.Criteria;
 import com.nali.spreader.data.UserTag;
 import com.nali.spreader.data.UserTagExample;
-import com.nali.spreader.data.UserRelationExample.Criteria;
 import com.nali.spreader.data.WeiboAppeal;
 import com.nali.spreader.data.WeiboAppealExample;
 import com.nali.spreader.model.RobotUser;
-import com.nali.spreader.service.ICategoryService;
 import com.nali.spreader.service.IGlobalUserService;
 
 @Service
@@ -44,8 +43,6 @@ public class GlobalUserService implements IGlobalUserService {
 	private ICrudUserRelationDao crudUserRelationDao;
 	@Autowired
 	private ICrudUserTagDao crudUserTagDao;
-	@Autowired
-	private ICategoryService categoryService;
 	@Autowired
 	private ICrudWeiboAppealDao crudWeiboAppealDao;
 	
@@ -131,10 +128,6 @@ public class GlobalUserService implements IGlobalUserService {
 		crudUserTagDao.deleteByExample(example);
 		for (UserTag userTag : tags) {
 			userTag.setUid(uid);
-			if (userTag.getCategoryId() == null) {
-				Long cid = categoryService.getIdByName(userTag.getTag());
-				userTag.setCategoryId(cid);
-			}
 			crudUserTagDao.insertSelective(userTag);
 		}
 	}

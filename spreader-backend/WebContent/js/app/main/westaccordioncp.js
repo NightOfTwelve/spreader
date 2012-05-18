@@ -14,7 +14,7 @@ var menuTree_Stg = new Ext.tree.TreePanel({
 									id : 'cfgmenu1',
 									text : "策略配置",
 									leaf : true,
-									url : '../strategy/showlist'
+									url : '../strategy/init'
 								}, {
 									id : 'cfgmenu2',
 									text : "系统策略配置",
@@ -24,7 +24,7 @@ var menuTree_Stg = new Ext.tree.TreePanel({
 									id : 'cfgmenu3',
 									text : "系统调度配置",
 									leaf : true,
-									url : '../dispsys/dispatchlist'
+									url : '../dispsys/init'
 								}, {
 									id : 'cfgmenu4',
 									text : "策略分组配置",

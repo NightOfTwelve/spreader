@@ -1,13 +1,8 @@
 package com.nali.spreader.controller;
 
-import java.io.IOException;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +13,8 @@ import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
+import com.nali.spreader.controller.basectrl.BaseController;
+import com.nali.spreader.data.Keyword;
 import com.nali.spreader.dto.UpdateUserTagParam;
 import com.nali.spreader.job.thread.SyncUpdateUserTagThread;
 import com.nali.spreader.job.thread.ThreadPoolModel;
@@ -31,15 +28,13 @@ import com.nali.spreader.service.ICategoryKeyWordService;
  */
 @Controller
 @RequestMapping(value = "/keyword")
-public class KeywordManageController {
-	private static ObjectMapper json = new ObjectMapper();
+public class KeywordManageController extends BaseController {
 	private final static Logger logger = Logger.getLogger(KeywordManageController.class);
 	@Autowired
 	private ICategoryKeyWordService ckService;
 	@Autowired
 	private ThreadPoolModel pool;
 
-	@RequestMapping(value = "/init")
 	public String init() {
 		return "/show/main/KeywordManageShow";
 	}
@@ -49,27 +44,19 @@ public class KeywordManageController {
 	 * 
 	 * @param params
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/keywordgrid")
-	public String queryKeyword(KeywordQueryParamsDto param) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String queryKeyword(KeywordQueryParamsDto param) {
 		if (param == null) {
 			param = new KeywordQueryParamsDto();
 		}
 		Integer start = param.getStart();
 		Integer limit = param.getLimit();
-		if (start == null)
-			start = 0;
-		if (limit == null)
-			limit = 20;
-		Limit lit = Limit.newInstanceForLimit(start, limit);
+		Limit lit = this.initLimit(start, limit);
 		param.setLit(lit);
 		PageResult<KeywordInfoQueryDto> result = ckService.findKeywordByParams(param);
-		return json.writeValueAsString(result);
+		return this.write(result);
 	}
 
 	/**
@@ -78,23 +65,21 @@ public class KeywordManageController {
 	 * @param keywordName
 	 * @param categoryId
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/create")
-	public String create(String keywordName, Long categoryId) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String create(Keyword kw) {
 		Map<String, Boolean> m = CollectionUtils.newHashMap(1);
 		m.put("success", false);
-		if (StringUtils.isEmpty(keywordName)) {
-			throw new IllegalArgumentException("关键字为空，不能保存");
-		} else {
-			this.ckService.createKeyword(keywordName, categoryId);
-			m.put("success", true);
+		if (kw != null) {
+			try {
+				this.ckService.createKeyword(kw);
+				m.put("success", true);
+			} catch (Exception e) {
+				logger.error("创建关键字异常", e);
+			}
 		}
-		return json.writeValueAsString(m);
+		return this.write(m);
 	}
 
 	/**
@@ -102,34 +87,26 @@ public class KeywordManageController {
 	 * 
 	 * @param keywordName
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/checkname")
-	public String checkKeywordName(String keywordName) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String checkKeywordName(String keywordName) {
 		Map<String, Boolean> m = CollectionUtils.newHashMap(1);
 		boolean tag = this.ckService.checkKeywordNameIsPresence(keywordName);
 		m.put("isPresence", tag);
-		return json.writeValueAsString(m);
+		return this.write(m);
 	}
 
 	/**
 	 * 取消绑定
-	 * 
+	 * 无需分类
 	 * @param keywordId
 	 * @param oldCategoryId
 	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/unbind")
-	public String unBinding(Long keywordId, Long oldCategoryId) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String unBinding(Long keywordId, Long oldCategoryId) {
 		Map<String, Integer> m = CollectionUtils.newHashMap(1);
 		int count = 0;
 		try {
@@ -137,7 +114,7 @@ public class KeywordManageController {
 				count = this.ckService.updateKeywordExecutable(keywordId, false);
 				UpdateUserTagParam params = new UpdateUserTagParam();
 				params.setKeywordId(keywordId);
-				params.setNewCategoryId(null);
+				params.setNewCategoryId(UpdateUserTagParam.NOCATEGORY);
 				params.setOldCategoryId(oldCategoryId);
 				SyncUpdateUserTagThread t = new SyncUpdateUserTagThread(params, ckService);
 				pool.getExecutor().execute(t);
@@ -151,7 +128,7 @@ public class KeywordManageController {
 			this.ckService.updateKeywordExecutableByRollback(keywordId);
 		}
 		m.put("count", count);
-		return json.writeValueAsString(m);
+		return this.write(m);
 	}
 
 	/**
@@ -159,17 +136,13 @@ public class KeywordManageController {
 	 * 
 	 * @param keywordId
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/updatestatus")
-	public String checkExecuStatus(Long keywordId) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String checkExecuStatus(Long keywordId) {
 		Map<String, Boolean> m = CollectionUtils.newHashMap(1);
 		Boolean status = this.ckService.checkKeywordUpdateStatus(keywordId);
 		m.put("isUpdate", status);
-		return json.writeValueAsString(m);
+		return this.write(m);
 	}
 }

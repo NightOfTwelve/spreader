@@ -71,4 +71,19 @@ public interface IKeywordDao {
 	 */
 	int updateKeywordStatus(Keyword keyword);
 
+	/**
+	 * 根据分类集合查询所有的关键字
+	 * 
+	 * @param param
+	 * @return
+	 */
+	List<Keyword> selectKeywordByCategories(KeywordQueryParamsDto param);
+
+	/**
+	 * 根据关键字查询所有分类
+	 * 
+	 * @param param
+	 * @return
+	 */
+	List<Long> selectCategoryIdsByKeywordIds(KeywordQueryParamsDto param);
 }

@@ -84,7 +84,7 @@ Ext.onReady(function() {
 								success : function(form, action) {
 									var result = action.result;
 									if (result.success) {
-										window.location.href = '../index/showinit';
+										window.location.href = '../index/init';
 									} else {
 										Ext.Msg.alert('提示', '验证失败');
 										return;

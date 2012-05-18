@@ -34,3 +34,7 @@ DROP INDEX index_name ON talbe_name
 DROP INDEX uk_category_user ON tb_user_tag;
 
 ALTER TABLE tb_user_tag ADD INDEX idx_tag_user (uid,tag_id);
+
+alter table tb_user_tag drop column category_id;
+
+alter table tb_keyword add column allowtag bit(0) default true ;

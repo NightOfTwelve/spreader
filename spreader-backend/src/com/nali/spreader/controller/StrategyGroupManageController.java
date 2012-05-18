@@ -1,13 +1,9 @@
 package com.nali.spreader.controller;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +13,7 @@ import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
+import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.factory.config.IConfigService;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
@@ -31,8 +28,7 @@ import com.nali.spreader.service.IStrategyGroupService;
  */
 @Controller
 @RequestMapping(value = "/stggroup")
-public class StrategyGroupManageController {
-	private static ObjectMapper json = new ObjectMapper();
+public class StrategyGroupManageController extends BaseController {
 	@Autowired
 	private IStrategyGroupService groupService;
 	@Autowired
@@ -47,7 +43,6 @@ public class StrategyGroupManageController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/init")
 	public String init() {
 		return "/show/main/StrategyGroupManageShow";
 	}
@@ -60,32 +55,25 @@ public class StrategyGroupManageController {
 	 * @param start
 	 * @param limit
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/groupgrid")
-	public String groupGridStore(String groupName, Integer groupType,
-			Integer start, Integer limit) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String groupGridStore(String groupName, Integer groupType, Integer start, Integer limit) {
 		if (start == null)
 			start = 0;
 		StrategyGroup sg = new StrategyGroup();
 		sg.setGroupName(groupName);
 		sg.setGroupType(groupType);
-		PageResult<StrategyGroup> pr = groupService
-				.findStrategyGroupPageResult(sg, start, limit);
+		PageResult<StrategyGroup> pr = groupService.findStrategyGroupPageResult(sg, start, limit);
 		int totalCount = pr.getTotalCount();
 		List<ConfigableInfo> dispnamelist = regularConfigService
 				.listConfigableInfo(ConfigableType.normal);
-		List<StrategyGroup> sgList = transformGroupStore(pr.getList(),
-				dispnamelist);
+		List<StrategyGroup> sgList = transformGroupStore(pr.getList(), dispnamelist);
 		Map<String, Object> dataMap = CollectionUtils.newHashMap(3);
 		dataMap.put("totalCount", totalCount);
 		dataMap.put("list", sgList);
 		// dataMap.put("dispname", dispnamelist);
-		return json.writeValueAsString(dataMap);
+		return this.write(dataMap);
 	}
 
 	/**
@@ -95,8 +83,8 @@ public class StrategyGroupManageController {
 	 * @param dispnamelist
 	 * @return
 	 */
-	private List<StrategyGroup> transformGroupStore(
-			List<StrategyGroup> groupList, List<ConfigableInfo> dispnamelist) {
+	private List<StrategyGroup> transformGroupStore(List<StrategyGroup> groupList,
+			List<ConfigableInfo> dispnamelist) {
 		if (groupList.size() > 0 && dispnamelist.size() > 0) {
 			for (StrategyGroup sg : groupList) {
 				Integer gType = sg.getGroupType();
@@ -125,14 +113,10 @@ public class StrategyGroupManageController {
 	 * 
 	 * @param gids
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/deletegroup")
-	public String deleteStrategyGroup(Long[] gids)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String deleteStrategyGroup(Long[] gids) {
 		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
 		if (gids.length > 0) {
@@ -143,6 +127,6 @@ public class StrategyGroupManageController {
 				logger.debug("删除失败", e);
 			}
 		}
-		return json.writeValueAsString(result);
+		return this.write(result);
 	}
 }

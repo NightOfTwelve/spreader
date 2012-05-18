@@ -1,10 +1,5 @@
 package com.nali.spreader.controller;
 
-import java.io.IOException;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +9,7 @@ import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
+import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.Category;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserGroup;
@@ -29,14 +25,14 @@ import com.nali.spreader.service.IStrategyGroupService;
  */
 @Controller
 @RequestMapping(value = "/extutil")
-public class ExtjsComponentsUtilController {
-	private static ObjectMapper json = new ObjectMapper();
+public class ExtjsComponentsUtilController extends BaseController {
 	@Autowired
 	private IStrategyGroupService groupService;
 	@Autowired
 	private IExtjsComponentsUtilService extjsService;
 	@SuppressWarnings("unused")
-	private static final MessageLogger logger = LoggerFactory.getLogger(ExtjsComponentsUtilController.class);
+	private static final MessageLogger logger = LoggerFactory
+			.getLogger(ExtjsComponentsUtilController.class);
 
 	/**
 	 * 分组列表的Store
@@ -46,14 +42,11 @@ public class ExtjsComponentsUtilController {
 	 * @param start
 	 * @param limit
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategygroupcombo")
 	public String testComboBoxStore(String groupName, Integer groupType, Long id, String query,
-			Integer start, Integer limit) throws JsonGenerationException, JsonMappingException, IOException {
+			Integer start, Integer limit) {
 		if (start == null)
 			start = 0;
 		StrategyGroup sg = new StrategyGroup();
@@ -61,7 +54,7 @@ public class ExtjsComponentsUtilController {
 		sg.setGroupName(query);
 		sg.setGroupType(groupType);
 		PageResult<StrategyGroup> pr = groupService.findStrategyGroupPageResult(sg, start, limit);
-		return json.writeValueAsString(pr);
+		return this.write(pr);
 	}
 
 	/**
@@ -71,21 +64,17 @@ public class ExtjsComponentsUtilController {
 	 * @param start
 	 * @param limit
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/usercombo")
-	public String userComboxStore(String query, Integer start, Integer limit) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String userComboxStore(String query, Integer start, Integer limit) {
 		if (start == null)
 			start = 0;
 		if (limit == null)
 			limit = 20;
 		Limit lit = Limit.newInstanceForLimit(start, limit);
 		PageResult<User> pr = this.extjsService.findUserByName(query, lit);
-		return json.writeValueAsString(pr);
+		return this.write(pr);
 	}
 
 	/**
@@ -95,21 +84,17 @@ public class ExtjsComponentsUtilController {
 	 * @param start
 	 * @param limit
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/usergroupcombo")
-	public String userGroupComboxStore(String query, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String userGroupComboxStore(String query, Integer start, Integer limit) {
 		if (start == null)
 			start = 0;
 		if (limit == null)
 			limit = 20;
 		Limit lit = Limit.newInstanceForLimit(start, limit);
 		PageResult<UserGroup> pr = this.extjsService.findUserGroupByName(query, lit);
-		return json.writeValueAsString(pr);
+		return this.write(pr);
 	}
 
 	/**
@@ -119,20 +104,21 @@ public class ExtjsComponentsUtilController {
 	 * @param start
 	 * @param limit
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/categorycombo")
-	public String categoryComboxStore(String query, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String categoryComboxStore(String query, Integer start, Integer limit) {
 		if (start == null)
 			start = 0;
 		if (limit == null)
 			limit = 20;
 		Limit lit = Limit.newInstanceForLimit(start, limit);
 		PageResult<Category> pr = this.extjsService.findCategoryByName(query, lit);
-		return json.writeValueAsString(pr);
+		return this.write(pr);
+	}
+
+	@Override
+	public String init() {
+		return null;
 	}
 }

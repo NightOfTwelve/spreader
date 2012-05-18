@@ -22,6 +22,15 @@ public class KeywordInfoQueryDto implements Serializable {
 	private String description;
 	// 原始表格标记
 	private String fromGrid;
+	private Boolean allowtag;
+
+	public Boolean getAllowtag() {
+		return allowtag;
+	}
+
+	public void setAllowtag(Boolean allowtag) {
+		this.allowtag = allowtag;
+	}
 
 	public String getFromGrid() {
 		return fromGrid;

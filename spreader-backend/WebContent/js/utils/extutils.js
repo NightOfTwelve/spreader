@@ -281,8 +281,11 @@ function renderStatus(value) {
  * @return {}
  */
 function renderNobind(value) {
-	if (value === null) {
+	if (Ext.isEmpty(value)) {
 		return '<span style="color:red;">未绑定分类</span>';
+	}
+	if (value == -1) {
+		return '<span style="color:blue;">无需分类</span>';
 	}
 	return value;
 }

@@ -1,14 +1,10 @@
 package com.nali.spreader.controller;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.util.CollectionUtils;
 import com.nali.common.util.DateUtils;
+import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.stat.IStatService;
 import com.nali.spreader.stat.StatMetaDisplayData;
 import com.nali.spreader.stat.TimeRange;
@@ -29,13 +26,11 @@ import com.nali.spreader.util.KeyValuePair;
  */
 @Controller
 @RequestMapping(value = "/taskreport")
-public class ClientTaskReportController {
-	private static ObjectMapper json = new ObjectMapper();
+public class ClientTaskReportController extends BaseController {
 	private static final String EXTCODE = "time";
 	@Autowired
 	private IStatService statService;
 
-	@RequestMapping(value = "/init")
 	public String init() {
 		return "/show/main/ClientTaskReportShow";
 	}
@@ -44,18 +39,15 @@ public class ClientTaskReportController {
 	 * 获取报表列表
 	 * 
 	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/replist")
-	public String queryReportList() throws JsonGenerationException, JsonMappingException, IOException {
+	public String queryReportList() {
 		List<KeyValuePair<String, String>> list = statService.listStatNames();
 		Map<String, Object> m = CollectionUtils.newHashMap(2);
 		m.put("totalCount", list.size());
 		m.put("list", list);
-		return json.writeValueAsString(m);
+		return this.write(m);
 	}
 
 	/**
@@ -63,16 +55,12 @@ public class ClientTaskReportController {
 	 * 
 	 * @param repName
 	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/repprop")
-	public String queryReportProperties(String repName) throws JsonGenerationException, JsonMappingException,
-			IOException {
+	public String queryReportProperties(String repName) {
 		StatMetaDisplayData data = statService.getStatMetaDisplayData(repName);
-		return json.writeValueAsString(data);
+		return this.write(data);
 	}
 
 	/**
@@ -83,14 +71,10 @@ public class ClientTaskReportController {
 	 * @param startTime
 	 * @param endTime
 	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/repinfo")
-	public String queryReportInfo(String repName, String extCode, Date startTime, Date endTime)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String queryReportInfo(String repName, String extCode, Date startTime, Date endTime) {
 		List<Map<String, Object>> data = Collections.emptyList();
 		if (EXTCODE.equals(extCode)) {
 			// 默认初始化时间
@@ -108,6 +92,6 @@ public class ClientTaskReportController {
 		Map<String, Object> m = CollectionUtils.newHashMap(2);
 		m.put("totalCount", data.size());
 		m.put("list", data);
-		return json.writeValueAsString(m);
+		return this.write(m);
 	}
 }

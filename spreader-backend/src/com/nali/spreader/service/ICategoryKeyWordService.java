@@ -4,6 +4,7 @@ import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
 import com.nali.spreader.data.Category;
+import com.nali.spreader.data.Keyword;
 
 /**
  * 分类与关键字服务接口
@@ -32,10 +33,9 @@ public interface ICategoryKeyWordService {
 	/**
 	 * 创建一个新关键字
 	 * 
-	 * @param keywordName
-	 * @param categoryId
+	 * @param Keyword
 	 */
-	void createKeyword(String keywordName, Long categoryId);
+	void createKeyword(Keyword kw);
 
 	/**
 	 * 创建一个分类
@@ -59,15 +59,6 @@ public interface ICategoryKeyWordService {
 	 * @return
 	 */
 	int unBinding(Long... keywordIds);
-
-	/**
-	 * 更新tb_user_tag中的CategoryId CategoryId可以为null，表示取消了Category与Tag的绑定关系
-	 * 
-	 * @param tagId
-	 * @param categoryId
-	 * @return
-	 */
-	int updateUserTagCategory(Long tagId, Long categoryId);
 
 	/**
 	 * 更新Keyword的状态

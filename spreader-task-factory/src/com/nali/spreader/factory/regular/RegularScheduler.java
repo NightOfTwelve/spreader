@@ -1,5 +1,6 @@
 package com.nali.spreader.factory.regular;
 
+import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.model.RegularJob;
@@ -12,7 +13,7 @@ public interface RegularScheduler {
 	 * 查看已有调度
 	 */
 	PageResult<RegularJob> findRegularJob(String name, Integer triggerType,
-			Long groupId, ConfigableType configableType, int page, int pageSize);
+			Long groupId, ConfigableType configableType, Limit lit);
 
 	/**
 	 * 取消调度

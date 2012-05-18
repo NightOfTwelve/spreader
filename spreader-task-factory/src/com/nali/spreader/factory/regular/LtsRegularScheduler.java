@@ -65,7 +65,7 @@ public class LtsRegularScheduler extends AbstractTask implements
 	@Override
 	public PageResult<RegularJob> findRegularJob(String name,
 			Integer triggerType, Long groupId, ConfigableType configableType,
-			int page, int pageSize) {
+			Limit lit) {
 		RegularJobExample example = new RegularJobExample();
 		Criteria c = example.createCriteria().andJobTypeEqualTo(
 				configableType.jobType);
@@ -78,12 +78,11 @@ public class LtsRegularScheduler extends AbstractTask implements
 		if (groupId != null) {
 			c.andGidEqualTo(groupId);
 		}
-		Limit limit = Limit.newInstanceForLimit(page, pageSize);
-		example.setLimit(limit);
+		example.setLimit(lit);
 		List<RegularJob> list = crudRegularJobDao
 				.selectByExampleWithoutBLOBs(example);
 		int count = crudRegularJobDao.countByExample(example);
-		return new PageResult<RegularJob>(list, limit, count);
+		return new PageResult<RegularJob>(list, lit, count);
 	}
 
 	@Override

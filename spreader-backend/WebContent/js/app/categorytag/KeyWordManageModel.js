@@ -5,6 +5,11 @@ Ext.onReady(function() {
 				fields : ['ID', 'NAME'],
 				data : [[true, '是'], [false, '否']]
 			});
+	// 是否可做标签
+	var allowtagStore = new Ext.data.ArrayStore({
+				fields : ['ID', 'NAME'],
+				data : [[true, '是'], [false, '否']]
+			});
 	// 页数
 	var number = 20;
 	var numtext = new Ext.form.TextField({
@@ -184,6 +189,21 @@ Ext.onReady(function() {
 									});
 						}
 					}
+				}, {
+					fieldLabel : '可做标签',
+					name : 'allowtagCmp',
+					xtype : 'combo',
+					width : 100,
+					store : allowtagStore,
+					id : 'allowtag',
+					hiddenName : 'allowtag',
+					valueField : 'ID',
+					editable : false,
+					displayField : 'NAME',
+					mode : 'local',
+					forceSelection : false,// 必须选择一项
+					emptyText : '...',// 默认值
+					triggerAction : 'all'
 				}]
 			});
 	// 添加新关键字
@@ -212,11 +232,13 @@ Ext.onReady(function() {
 						// 关键字
 						var keywordName = addForm.findField('keywordName')
 								.getValue();
+						var allowtag = addForm.findField('allowtag').getValue();
 						Ext.Ajax.request({
 									url : '../keyword/create',
 									params : {
-										'keywordName' : keywordName,
-										'categoryId' : categoryId
+										'name' : keywordName,
+										'categoryId' : categoryId,
+										'allowtag' : allowtag
 									},
 									scope : addKeywordCmbForm,
 									success : function(response) {
@@ -278,6 +300,8 @@ Ext.onReady(function() {
 									name : 'description'
 								}, {
 									name : 'executable'
+								}, {
+									name : 'allowtag'
 								}]),
 				autoLoad : true
 			});
@@ -340,6 +364,11 @@ Ext.onReady(function() {
 				renderer : rendTrueFalse,
 				width : 100
 			}, {
+				header : '可做标签',
+				dataIndex : 'allowtag',
+				renderer : rendTrueFalse,
+				width : 100
+			}, {
 				header : '更新状态',
 				dataIndex : 'executable',
 				renderer : renderStatus,
@@ -390,7 +419,7 @@ Ext.onReady(function() {
 								keywordStore.reload();
 							}
 						}, {
-							text : "取消绑定",
+							text : "无需分类",
 							iconCls : 'deleteIcon',
 							handler : function() { // 按钮响应函数
 								var rows = keywordGrid.getSelectionModel()
@@ -403,7 +432,7 @@ Ext.onReady(function() {
 									if (isUpdate) {
 										Ext.Msg.show({
 													title : '提示',
-													msg : '确认取消？',
+													msg : '确认操作？',
 													buttons : Ext.Msg.YESNO,
 													fn : function(ans) {
 														if (ans == 'yes') {

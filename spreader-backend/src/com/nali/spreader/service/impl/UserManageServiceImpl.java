@@ -24,8 +24,7 @@ import com.nali.spreader.utils.PhotoHelper;
 
 @Service
 public class UserManageServiceImpl implements IUserManageService {
-	private static final Logger LOGGER = Logger
-			.getLogger(UserManageServiceImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(UserManageServiceImpl.class);
 	@Autowired
 	private IUserDao userDao;
 	@Autowired
@@ -34,9 +33,7 @@ public class UserManageServiceImpl implements IUserManageService {
 	private ICrudPhotoDao photoDao;
 
 	@Override
-	public PageResult<User> findUserInfo(UserTagParamsDto utp, Integer start,
-			Integer limit) {
-		Limit lit = Limit.newInstanceForLimit(start, limit);
+	public PageResult<User> findUserInfo(UserTagParamsDto utp, Limit lit) {
 		utp.setLimit(lit);
 		List<User> uList = userDao.findUserAndTagInfoList(utp);
 		for (User u : uList) {
@@ -66,9 +63,7 @@ public class UserManageServiceImpl implements IUserManageService {
 	}
 
 	@Override
-	public PageResult<User> findUserFansInfo(UserTagParamsDto utp,
-			Integer start, Integer limit) {
-		Limit lit = Limit.newInstanceForPage(start, limit);
+	public PageResult<User> findUserFansInfo(UserTagParamsDto utp, Limit lit) {
 		utp.setLimit(lit);
 		List<User> uList = userDao.findUserFansInfoList(utp);
 		for (User u : uList) {
@@ -98,8 +93,8 @@ public class UserManageServiceImpl implements IUserManageService {
 	}
 
 	@Override
-	public PageResult<RobotRegister> findRobotRegisterInfo(String nickName,
-			String province, Integer start, Integer limit) {
+	public PageResult<RobotRegister> findRobotRegisterInfo(String nickName, String province,
+			Limit lit) {
 		RobotRegisterExample exp = new RobotRegisterExample();
 		Criteria cr = exp.createCriteria();
 		if (StringUtils.isNotEmpty(nickName)) {
@@ -108,7 +103,6 @@ public class UserManageServiceImpl implements IUserManageService {
 		if (StringUtils.isNotEmpty(province)) {
 			cr.andProvinceEqualTo(province);
 		}
-		Limit lit = Limit.newInstanceForLimit(start, limit);
 		exp.setLimit(lit);
 		List<RobotRegister> list = regDao.selectByExample(exp);
 		int count = regDao.countByExample(exp);

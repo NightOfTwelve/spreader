@@ -29,7 +29,7 @@ public class SyncUpdateUserTagThread implements Runnable {
 	public void run() {
 		try {
 			// 首先执行UserTag表的更新
-			this.ckService.updateUserTagCategory(keywordId, newCategoryId);
+//			this.ckService.updateUserTagCategory(keywordId, newCategoryId);
 			// 完成后更新Keyword为新分类
 			this.ckService.changeBinding(keywordId, newCategoryId);
 		} catch (Exception e) {
