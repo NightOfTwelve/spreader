@@ -21,9 +21,7 @@ public class ContentLibManageServiceImpl implements IContentLibManageService {
 	private IContentLibDao conDao;
 
 	@Override
-	public PageResult<Content> findContentPageResult(ContentQueryParamsDto cqd,
-			Integer start, Integer limit) {
-		Limit lit = Limit.newInstanceForLimit(start, limit);
+	public PageResult<Content> findContentPageResult(ContentQueryParamsDto cqd, Limit lit) {
 		cqd.setLimit(lit);
 		List<Content> cList = conDao.findContentListByParamsDto(cqd);
 		if (cList.size() > 0) {

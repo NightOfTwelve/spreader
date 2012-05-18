@@ -271,7 +271,7 @@ function strategyGroupSubmitTreeData(stgdisptree, triggerDispForm, radioForm,
 		tparam['cron'] = cron;
 	}
 	Ext.Ajax.request({
-				url : '../strategy/dispsave',
+				url : '../strategydisp/dispsave',
 				params : tparam,
 				scope : stgdisptree,
 				success : function(response) {

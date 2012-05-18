@@ -18,7 +18,7 @@ Ext.onReady(function() {
 		rootVisible : true,
 		root : stgroot,
 		loader : new Ext.tree.TreeLoader({
-			dataUrl : '../strategy/createdisptree?time=' + new Date().getTime(),
+			dataUrl : '../strategydisp/createdisptree?time=' + new Date().getTime(),
 			processResponse : function(response, node, callback, scope) {
 				toSelectUserGroupCombo.hide();
 				var json = response.responseText;
@@ -795,7 +795,7 @@ Ext.onReady(function() {
 	var stgCmbStore = new Ext.data.Store({
 				// 代理模式
 				proxy : new Ext.data.HttpProxy({
-							url : '../strategy/combstore'
+							url : '../strategydisp/combstore'
 						}),
 				// 读取模式
 				reader : new Ext.data.JsonReader({}, [{
@@ -990,7 +990,7 @@ Ext.onReady(function() {
 	// 定义表格数据源
 	var store = new Ext.data.Store({
 		proxy : new Ext.data.HttpProxy({
-					url : '../strategy/stgdispgridstore'
+					url : '../strategydisp/stgdispgridstore'
 				}),
 		reader : new Ext.data.JsonReader({
 					totalProperty : 'cnt',
@@ -1286,7 +1286,7 @@ Ext.onReady(function() {
 	 */
 	function settingCreateTrigger(trgid, isGroup) {
 		Ext.Ajax.request({
-			url : '../strategy/settgrparam',
+			url : '../strategydisp/settgrparam',
 			params : {
 				'id' : trgid,
 				'isGroup' : isGroup
@@ -1346,7 +1346,7 @@ Ext.onReady(function() {
 	 */
 	function settingGroupCreateTrigger(gid) {
 		Ext.Ajax.request({
-					url : '../strategy/setgroupparam',
+					url : '../settgrparam/setgroupparam',
 					params : {
 						'gid' : gid
 					},
@@ -1513,7 +1513,7 @@ Ext.onReady(function() {
 		params['groupName'] = groupName;
 		params['groupNote'] = groupNote;
 		Ext.Ajax.request({
-					url : '../strategy/newgroupid',
+					url : '../strategydisp/newgroupid',
 					success : function(response, opts) {
 						var result = Ext.util.JSON
 								.decode(response.responseText);

@@ -5,28 +5,26 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.UserTagParamsDto;
+import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.User;
 import com.nali.spreader.service.IUserManageService;
 
 @Controller
 @RequestMapping(value = "/userinfo")
-public class UserInfoManageController {
-	private static final Logger LOGGER = Logger
-			.getLogger(UserInfoManageController.class);
-	private static ObjectMapper jacksonMapper = new ObjectMapper();
+public class UserInfoManageController extends BaseController {
+	private static final Logger LOGGER = Logger.getLogger(UserInfoManageController.class);
 	@Autowired
 	private IUserManageService userService;
 
-	@RequestMapping(value = "/init")
-	public String showInit() {
+	public String init() {
 		return "/show/main/UserInfoManageShow";
 	}
 
@@ -38,18 +36,12 @@ public class UserInfoManageController {
 	 * @param start
 	 * @param limit
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/userlist")
-	public String userInfoDtl(Long id, String nickName, Integer minFans,
-			Integer maxFans, Integer minRobotFans, Integer maxRobotFans,
-			String tag, Boolean isRobot, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		if (start == null)
-			start = 0;
+	public String userInfoDtl(Long id, String nickName, Integer minFans, Integer maxFans,
+			Integer minRobotFans, Integer maxRobotFans, String tag, Boolean isRobot, Integer start,
+			Integer limit) throws JsonGenerationException, JsonMappingException, IOException {
 		UserTagParamsDto utp = new UserTagParamsDto();
 		utp.setMinFans(minFans);
 		utp.setMaxFans(maxFans);
@@ -59,8 +51,9 @@ public class UserInfoManageController {
 		utp.setNickName(nickName);
 		utp.setTag(tag);
 		utp.setIsRobot(isRobot);
-		PageResult<User> result = userService.findUserInfo(utp, start, limit);
-		return jacksonMapper.writeValueAsString(result);
+		Limit lit = this.initLimit(start, limit);
+		PageResult<User> result = userService.findUserInfo(utp, lit);
+		return this.write(result);
 	}
 
 	/**
@@ -70,25 +63,17 @@ public class UserInfoManageController {
 	 * @param start
 	 * @param limit
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/realfansinfo")
-	public String userRealFansInfo(Long id, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		if (start == null || start < 1)
-			start = 1;
-		if (limit == null || limit < 1)
-			limit = 25;
+	public String userRealFansInfo(Long id, Integer start, Integer limit) {
+		Limit lit = this.initLimit(start, limit);
 		if (id != null) {
 			UserTagParamsDto utp = new UserTagParamsDto();
 			utp.setId(id);
 			utp.setIsRobot(false);
-			PageResult<User> result = userService.findUserFansInfo(utp, start,
-					limit);
-			return jacksonMapper.writeValueAsString(result);
+			PageResult<User> result = userService.findUserFansInfo(utp, lit);
+			return this.write(result);
 		} else {
 			LOGGER.info("id不能为空");
 			return null;
@@ -102,25 +87,17 @@ public class UserInfoManageController {
 	 * @param start
 	 * @param limit
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/robotfansinfo")
-	public String userRobotFansInfo(Long id, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		if (start == null || start < 1)
-			start = 1;
-		if (limit == null || limit < 1)
-			limit = 25;
+	public String userRobotFansInfo(Long id, Integer start, Integer limit) {
+		Limit lit = this.initLimit(start, limit);
 		if (id != null) {
 			UserTagParamsDto utp = new UserTagParamsDto();
 			utp.setId(id);
 			utp.setIsRobot(true);
-			PageResult<User> result = userService.findUserFansInfo(utp, start,
-					limit);
-			return jacksonMapper.writeValueAsString(result);
+			PageResult<User> result = userService.findUserFansInfo(utp, lit);
+			return this.write(result);
 		} else {
 			LOGGER.info("id不能为空");
 			return null;

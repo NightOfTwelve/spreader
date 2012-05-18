@@ -129,6 +129,7 @@ public class CategoryManageController extends BaseController {
 	@RequestMapping(value = "/updaterela")
 	public String updateCategoryTagRelation(String param) throws JsonParseException,
 			JsonMappingException, IOException {
+		@SuppressWarnings("deprecation")
 		List<UpdateUserTagParam> list = this.getObjectMapper().readValue(param,
 				TypeFactory.collectionType(ArrayList.class, UpdateUserTagParam.class));
 		Map<String, Boolean> m = CollectionUtils.newHashMap(1);

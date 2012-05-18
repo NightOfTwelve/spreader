@@ -4,7 +4,7 @@
 // 定义表格数据源
 var store = new Ext.data.Store({
 			proxy : new Ext.data.HttpProxy({
-						url : '../strategy/stgdispgridstore?start=0&limit=20'
+						url : '../strategydisp/stgdispgridstore?start=0&limit=20'
 					}),
 			reader : new Ext.data.JsonReader({
 						totalProperty : 'cnt',
@@ -166,7 +166,7 @@ stgdisplistgrid.on('cellclick', stgdisplistgrid.onCellClick, stgdisplistgrid);
 var stgCmbStore = new Ext.data.Store({
 			// 代理模式
 			proxy : new Ext.data.HttpProxy({
-						url : '../strategy/combstore'
+						url : '../strategydisp/combstore'
 					}),
 			// 读取模式
 			reader : new Ext.data.JsonReader({}, [{
@@ -501,7 +501,7 @@ editstgWindow.on('show', function() {
  */
 function settingCreateTrigger(trgid) {
 	Ext.Ajax.request({
-				url : '../strategy/settgrparam',
+				url : '../strategydisp/settgrparam',
 				params : {
 					'id' : trgid
 				},
@@ -583,7 +583,7 @@ function deleteData() {
 						btn, text) {
 					if (btn == 'yes') {
 						Ext.Ajax.request({
-									url : '../strategy/deletetrg',
+									url : '../strategydisp/deletetrg',
 									params : {
 										'idstr' : idstr
 									},

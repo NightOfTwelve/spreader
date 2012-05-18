@@ -1,26 +1,22 @@
 package com.nali.spreader.controller;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.util.CollectionUtils;
+import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.dto.TaskQueueInfoDto;
 import com.nali.spreader.service.ITaskQueueMonitorService;
 
 @Controller
 @RequestMapping(value = "/queuemoitor")
-public class TaskQueueMonitorController {
-	private static ObjectMapper json = new ObjectMapper();
+public class TaskQueueMonitorController extends BaseController {
 	@Autowired
 	private ITaskQueueMonitorService service;
 
@@ -29,7 +25,6 @@ public class TaskQueueMonitorController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/init")
 	public String init() {
 		return "/show/main/TaskQueueShow";
 	}
@@ -38,18 +33,14 @@ public class TaskQueueMonitorController {
 	 * 队列信息
 	 * 
 	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/grid")
-	public String gridStore() throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String gridStore() {
 		List<TaskQueueInfoDto> list = service.findQueueSizeList();
 		Map<String, List<TaskQueueInfoDto>> map = new HashMap<String, List<TaskQueueInfoDto>>();
 		map.put("list", list);
-		return json.writeValueAsString(map);
+		return this.write(map);
 	}
 
 	/**
@@ -57,14 +48,10 @@ public class TaskQueueMonitorController {
 	 * 
 	 * @param qtype
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/remove")
-	public String removeQueue(String qtype) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String removeQueue(String qtype) {
 		Map<String, Boolean> m = CollectionUtils.newHashMap(1);
 		m.put("success", false);
 		try {
@@ -73,6 +60,6 @@ public class TaskQueueMonitorController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return json.writeValueAsString(m);
+		return this.write(m);
 	}
 }

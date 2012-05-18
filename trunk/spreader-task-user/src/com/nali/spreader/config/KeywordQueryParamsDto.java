@@ -2,6 +2,7 @@ package com.nali.spreader.config;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.nali.common.model.Limit;
 
@@ -25,6 +26,26 @@ public class KeywordQueryParamsDto implements Serializable {
 	private Integer start;
 	private Integer limit;
 	private Limit lit;
+	// 分类ID集合
+	private List<Long> categories;
+	// 关键字ID
+	private List<Long> keywordIds;
+
+	public List<Long> getKeywordIds() {
+		return keywordIds;
+	}
+
+	public void setKeywordIds(List<Long> keywordIds) {
+		this.keywordIds = keywordIds;
+	}
+
+	public List<Long> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<Long> categories) {
+		this.categories = categories;
+	}
 
 	public Long getKeywordId() {
 		return keywordId;

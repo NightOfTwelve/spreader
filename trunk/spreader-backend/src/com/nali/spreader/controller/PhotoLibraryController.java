@@ -1,23 +1,19 @@
 package com.nali.spreader.controller;
 
-import java.io.IOException;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.Photo;
 import com.nali.spreader.service.IPhotoLibraryService;
 
 @Controller
 @RequestMapping(value = "/photolib")
-public class PhotoLibraryController {
-	private static ObjectMapper json = new ObjectMapper();
+public class PhotoLibraryController extends BaseController {
 	@Autowired
 	private IPhotoLibraryService photoService;
 
@@ -26,8 +22,7 @@ public class PhotoLibraryController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/init")
-	public String inti() {
+	public String init() {
 		return "/show/main/PhotoLibShow";
 	}
 
@@ -40,21 +35,14 @@ public class PhotoLibraryController {
 	 * @param start
 	 * @param limit
 	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/gridstore")
-	public String photoLibgridStore(String picType, Boolean avatarflg,
-			Boolean photolibflg, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		if (start == null)
-			start = 0;
-		if (limit == null || limit <= 0)
-			limit = 20;
-		PageResult<Photo> pr = photoService.findPhotoLibraryList(picType,
-				avatarflg, photolibflg, start, limit);
-		return json.writeValueAsString(pr);
+	public String photoLibgridStore(String picType, Boolean avatarflg, Boolean photolibflg,
+			Integer start, Integer limit) {
+		Limit lit = this.initLimit(start, limit);
+		PageResult<Photo> pr = photoService.findPhotoLibraryList(picType, avatarflg, photolibflg,
+				lit);
+		return this.write(pr);
 	}
 }

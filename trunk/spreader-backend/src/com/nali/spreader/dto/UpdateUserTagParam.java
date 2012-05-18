@@ -12,6 +12,11 @@ public class UpdateUserTagParam implements Serializable {
 
 	private static final long serialVersionUID = 3679385116973407517L;
 
+	/**
+	 * 无需分类的特殊值
+	 */
+	public static final long NOCATEGORY = -1L;
+
 	// 关键字ID
 	private Long keywordId;
 	// 更新的分类ID
@@ -22,7 +27,7 @@ public class UpdateUserTagParam implements Serializable {
 	public Long getKeywordId() {
 		return keywordId;
 	}
-	
+
 	public void setKeywordId(Long keywordId) {
 		this.keywordId = keywordId;
 	}

@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +17,7 @@ import com.nali.common.util.CollectionUtils;
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
 import com.nali.spreader.constants.Website;
+import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.UserGroup;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
@@ -40,9 +40,9 @@ import com.nali.spreader.model.GrouppedUser;
  */
 @Controller
 @RequestMapping(value = "/usergroup")
-public class UserGroupManageController {
-	private static ObjectMapper json = new ObjectMapper();
-	private static final MessageLogger logger = LoggerFactory.getLogger(UserGroupManageController.class);
+public class UserGroupManageController extends BaseController {
+	private static final MessageLogger logger = LoggerFactory
+			.getLogger(UserGroupManageController.class);
 	@Autowired
 	private IUserGroupService userGroupService;
 	@Autowired
@@ -57,7 +57,6 @@ public class UserGroupManageController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/init")
 	public String init() {
 		return "/show/main/UserGroupManageShow";
 	}
@@ -71,21 +70,12 @@ public class UserGroupManageController {
 	 * @param start
 	 * @param limit
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/grouplist")
-	public String queryAllUserGroup(Integer websiteid, String gname, Integer gtype, Integer propVal,
-			Date fromModifiedTime, Date toModifiedTime, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		if (limit == null) {
-			limit = 20;
-		}
-		if (start == null) {
-			start = 0;
-		}
+	public String queryAllUserGroup(Integer websiteid, String gname, Integer gtype,
+			Integer propVal, Date fromModifiedTime, Date toModifiedTime, Integer start,
+			Integer limit) {
 		Website website = null;
 		if (websiteid != null) {
 			website = Website.valueOf(websiteid);
@@ -97,10 +87,10 @@ public class UserGroupManageController {
 		if (propVal == null) {
 			propVal = 0;
 		}
-		Limit lit = Limit.newInstanceForLimit(start, limit);
-		PageResult<UserGroup> result = userGroupService.queryUserGroups(website, gname, userGroupType,
-				propVal, fromModifiedTime, toModifiedTime, lit);
-		return json.writeValueAsString(result);
+		Limit lit = this.initLimit(start, limit);
+		PageResult<UserGroup> result = userGroupService.queryUserGroups(website, gname,
+				userGroupType, propVal, fromModifiedTime, toModifiedTime, lit);
+		return this.write(result);
 	}
 
 	/**
@@ -112,21 +102,18 @@ public class UserGroupManageController {
 	 * @param description
 	 * @return
 	 * @throws AssembleException
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/createusergroup")
 	public String addNewUserGroup(String gname, Integer gtype, Integer websiteid, String description)
-			throws AssembleException, JsonGenerationException, JsonMappingException, IOException {
+			throws AssembleException {
 		Map<String, Object> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
 		result.put("gid", null);
 		if (gtype != null && websiteid != null) {
 			PropertyExpressionDTO dto = new PropertyExpressionDTO();
-			UserGroup group = userGroupAssembler.assembleUserGroup(Website.valueOf(websiteid), gname,
-					description, UserGroupType.valueOf(gtype), dto);
+			UserGroup group = userGroupAssembler.assembleUserGroup(Website.valueOf(websiteid),
+					gname, description, UserGroupType.valueOf(gtype), dto);
 			// 如果是手动分组propVale=-1
 			if (group != null && GROUPTYPE_MANUAL.equals(gtype)) {
 				group.setPropVal(-1);
@@ -144,7 +131,7 @@ public class UserGroupManageController {
 		} else {
 			logger.error("gtype或websiteid为null,不能创建");
 		}
-		return json.writeValueAsString(result);
+		return this.write(result);
 	}
 
 	/**
@@ -152,18 +139,14 @@ public class UserGroupManageController {
 	 * 
 	 * @param gname
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/checkname")
-	public String checkGroupName(String gname) throws JsonGenerationException, JsonMappingException,
-			IOException {
+	public String checkGroupName(String gname) {
 		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
 		Boolean flg = userGroupService.checkUserGroupUniqueByName(gname);
 		result.put("success", flg);
-		return json.writeValueAsString(result);
+		return this.write(result);
 	}
 
 	/**
@@ -172,14 +155,10 @@ public class UserGroupManageController {
 	 * @param gid
 	 * @return
 	 * @throws AssembleException
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/genpropexp")
-	public String generatePropExp(Long gid) throws AssembleException, JsonGenerationException,
-			JsonMappingException, IOException {
+	public String generatePropExp(Long gid) throws AssembleException {
 		ConfigDefinition def = null;
 		ConfigableInfo configableInfo = null;
 		Object data = null;
@@ -194,7 +173,7 @@ public class UserGroupManageController {
 						usergroup.getGname());
 			}
 		}
-		return json.writeValueAsString(new UserGroupExpTreeDto(configableInfo, def, data));
+		return this.write(new UserGroupExpTreeDto(configableInfo, def, data));
 	}
 
 	/**
@@ -203,20 +182,21 @@ public class UserGroupManageController {
 	 * @param gid
 	 * @param propexp
 	 * @return
+	 * @throws AssembleException
 	 * @throws IOException
 	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
-	 * @throws AssembleException
+	 * @throws JsonParseException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/updategroup")
-	public String updateGroupData(Long gid, String propexp) throws JsonGenerationException,
-			JsonMappingException, IOException, AssembleException {
+	public String updateGroupData(Long gid, String propexp) throws AssembleException,
+			JsonParseException, JsonMappingException, IOException {
 		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
 		if (gid != null && gid > 0) {
 			UserGroup group = userGroupService.queryUserGroup(gid);
-			PropertyExpressionDTO dto = json.readValue(propexp, PropertyExpressionDTO.class);
+			PropertyExpressionDTO dto = this.getObjectMapper().readValue(propexp,
+					PropertyExpressionDTO.class);
 			PropertyExpression pexp = new PropertyExpression(dto);
 			String jsonPexp = this.userGroupAssembler.toJson(pexp);
 			group.setPropExp(jsonPexp);
@@ -225,7 +205,7 @@ public class UserGroupManageController {
 			userGroupService.updateUserGroup(group);
 			result.put("success", true);
 		}
-		return json.writeValueAsString(result);
+		return this.write(result);
 	}
 
 	/**
@@ -235,26 +215,16 @@ public class UserGroupManageController {
 	 * @param start
 	 * @param limit
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/selectuserlist")
-	public String queryGrouppedUserList(Long gid, Integer start, Integer limit)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String queryGrouppedUserList(Long gid, Integer start, Integer limit) {
 		PageResult<GrouppedUser> pr = null;
-		if (limit == null) {
-			limit = 20;
-		}
-		if (start == null) {
-			start = 0;
-		}
 		if (gid != null && gid > 0) {
-			Limit lit = Limit.newInstanceForLimit(start, limit);
+			Limit lit = this.initLimit(start, limit);
 			pr = this.userGroupService.queryGrouppedUsers(gid, lit);
 		}
-		return json.writeValueAsString(pr);
+		return this.write(pr);
 	}
 
 	/**
@@ -264,26 +234,17 @@ public class UserGroupManageController {
 	 * @param start
 	 * @param Limit
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/deleteuserlist")
-	public String queryDeleteUserList(Long gid, Integer start, Integer limit) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String queryDeleteUserList(Long gid, Integer start, Integer limit) {
 		PageResult<GrouppedUser> pr = null;
-		if (limit == null) {
-			limit = 20;
-		}
-		if (start == null) {
-			start = 0;
-		}
+
 		if (gid != null && gid > 0) {
-			Limit lit = Limit.newInstanceForLimit(start, limit);
+			Limit lit = this.initLimit(start, limit);
 			pr = this.userGroupService.queryExcludeUsers(gid, lit);
 		}
-		return json.writeValueAsString(pr);
+		return this.write(pr);
 	}
 
 	/**
@@ -292,14 +253,10 @@ public class UserGroupManageController {
 	 * @param gid
 	 * @param uids
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/adduser")
-	public String addGrouppedUser(Long gid, long[] uids) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String addGrouppedUser(Long gid, long[] uids) {
 		Map<String, Object> result = CollectionUtils.newHashMap(2);
 		result.put("success", false);
 		if (gid != null && uids.length > 0) {
@@ -314,7 +271,7 @@ public class UserGroupManageController {
 		} else {
 			result.put("message", "gid为空不能添加用户,添加失败");
 		}
-		return json.writeValueAsString(result);
+		return this.write(result);
 	}
 
 	/**
@@ -323,14 +280,10 @@ public class UserGroupManageController {
 	 * @param gid
 	 * @param uids
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/deleteuser")
-	public String deleteGrouppedUser(Long gid, long[] uids) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String deleteGrouppedUser(Long gid, long[] uids) {
 		Map<String, Object> result = CollectionUtils.newHashMap(2);
 		result.put("success", false);
 		if (gid != null && uids.length > 0) {
@@ -345,7 +298,7 @@ public class UserGroupManageController {
 		} else {
 			result.put("message", "gid为空不能删除用户,删除失败");
 		}
-		return json.writeValueAsString(result);
+		return this.write(result);
 	}
 
 	/**
@@ -354,14 +307,10 @@ public class UserGroupManageController {
 	 * @param gid
 	 * @param uids
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/rollbackuser")
-	public String rollbackDeleteUser(Long gid, long[] uids) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String rollbackDeleteUser(Long gid, long[] uids) {
 		Map<String, Object> result = CollectionUtils.newHashMap(2);
 		result.put("success", false);
 		if (gid != null && uids.length > 0) {
@@ -376,7 +325,7 @@ public class UserGroupManageController {
 		} else {
 			result.put("message", "gid为空不能还原用户,还原失败");
 		}
-		return json.writeValueAsString(result);
+		return this.write(result);
 	}
 
 	/**
@@ -384,14 +333,10 @@ public class UserGroupManageController {
 	 * 
 	 * @param gids
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/removegroup")
-	public String deleteUserGroup(long[] gids) throws JsonGenerationException, JsonMappingException,
-			IOException {
+	public String deleteUserGroup(long[] gids) {
 		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
 		if (gids != null && gids.length > 0) {
@@ -400,7 +345,7 @@ public class UserGroupManageController {
 			}
 			result.put("success", true);
 		}
-		return json.writeValueAsString(result);
+		return this.write(result);
 	}
 
 	/**

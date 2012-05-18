@@ -6,17 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.lang.StringUtils;
 import com.nali.lts.exceptions.SchedulerException;
+import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.factory.config.IConfigService;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
@@ -27,10 +28,8 @@ import com.nali.spreader.model.RegularJob.TriggerDto;
 
 @Controller
 @RequestMapping(value = "/dispsys")
-public class StrategySystemDispatchController {
-	private static final Logger LOGGER = Logger
-			.getLogger(StrategySystemDispatchController.class);
-	private static ObjectMapper jacksonMapper = new ObjectMapper();
+public class StrategySystemDispatchController extends BaseController {
+	private static final Logger LOGGER = Logger.getLogger(StrategySystemDispatchController.class);
 	@Autowired
 	private RegularScheduler cfgService;
 	@Autowired
@@ -41,7 +40,6 @@ public class StrategySystemDispatchController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/dispatchlist")
 	public String init() {
 		return "/show/main/StrategySystemDispatchShow";
 	}
@@ -50,21 +48,13 @@ public class StrategySystemDispatchController {
 	 * 构造GRID的STROE
 	 * 
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/stgdispgridstore")
-	public String stgGridStore(String dispname, Integer triggerType, int start,
-			int limit) throws JsonGenerationException, JsonMappingException,
-			IOException {
-		if (limit <= 0) {
-			limit = 20;
-		}
-		start = start / limit + 1;
-		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname,
-				triggerType, null, ConfigableType.system, start, limit);
+	public String stgGridStore(String dispname, Integer triggerType, int start, int limit) {
+		Limit lit = this.initLimit(start, limit);
+		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname, triggerType, null,
+				ConfigableType.system, lit);
 		List<RegularJob> list = pr.getList();
 		List<ConfigableInfo> dispnamelist = regularConfigService
 				.listConfigableInfo(ConfigableType.system);
@@ -73,7 +63,7 @@ public class StrategySystemDispatchController {
 		jsonMap.put("cnt", rowcount);
 		jsonMap.put("data", list);
 		jsonMap.put("dispname", dispnamelist);
-		return jacksonMapper.writeValueAsString(jsonMap);
+		return this.write(jsonMap);
 	}
 
 	/**
@@ -83,20 +73,13 @@ public class StrategySystemDispatchController {
 	 * @param disname
 	 *            用于显示的名称
 	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/createdisptree")
-	public String createStgTreeData(String name, Long id)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		return jacksonMapper
-				.writeValueAsString(new DispatchData(null, regularConfigService
-						.getConfigableInfo(name).getDisplayName(),
-						regularConfigService.getConfigDefinition(name),
-						id != null && id > 0 ? cfgService.getRegularJobObject(id)
-								.getConfigObject() : null));
+	public String createStgTreeData(String name, Long id) {
+		return this.write(new DispatchData(null, regularConfigService.getConfigableInfo(name)
+				.getDisplayName(), regularConfigService.getConfigDefinition(name), id != null
+				&& id > 0 ? cfgService.getRegularJobObject(id).getConfigObject() : null));
 	}
 
 	/**
@@ -104,20 +87,16 @@ public class StrategySystemDispatchController {
 	 * 
 	 * @param id
 	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
 	 * @throws SchedulerException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/settgrparam")
-	public String settingTriggerParam(Long id) throws JsonGenerationException,
-			JsonMappingException, IOException, SchedulerException {
+	public String settingTriggerParam(Long id) throws SchedulerException {
 		RegularJob job = cfgService.getRegularJobObject(id);
 		TriggerDto triggerObject = job.getTriggerObject();
 		triggerObject.setDescription(job.getDescription());
 		triggerObject.setTriggerType(job.getTriggerType());
-		return jacksonMapper.writeValueAsString(triggerObject);
+		return this.write(triggerObject);
 	}
 
 	/**
@@ -128,18 +107,18 @@ public class StrategySystemDispatchController {
 	 * @return
 	 * @throws IOException
 	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
+	 * @throws JsonParseException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/dispsave")
 	public String saveStrategyConfig(RegularJob regularJob, TriggerDto triggerDto)
-			throws JsonGenerationException, JsonMappingException, IOException {
+			throws JsonParseException, JsonMappingException, IOException {
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
 		message.put("success", false);
 		Class<?> dataClass = regularConfigService.getConfigableInfo(regularJob.getName())
 				.getDataClass();
-		if(regularJob.getConfig()!=null) {
-			Object configObj = jacksonMapper.readValue(regularJob.getConfig(), dataClass);
+		if (regularJob.getConfig() != null) {
+			Object configObj = this.getObjectMapper().readValue(regularJob.getConfig(), dataClass);
 			regularJob.setConfigObject(configObj);
 		}
 		regularJob.setTriggerObject(triggerDto);
@@ -150,7 +129,7 @@ public class StrategySystemDispatchController {
 		} catch (Exception e) {
 			LOGGER.error("保存Trigger失败", e);
 		}
-		return jacksonMapper.writeValueAsString(message);
+		return this.write(message);
 	}
 
 	/**
@@ -158,14 +137,10 @@ public class StrategySystemDispatchController {
 	 * 
 	 * @param idstr
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/deletetrg")
-	public String deleteTrigger(String idstr) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String deleteTrigger(String idstr) {
 		// 操作记录数
 		int count = 0;
 		// 返回消息
@@ -186,24 +161,19 @@ public class StrategySystemDispatchController {
 			map.put("message", "删除失败");
 		}
 		map.put("message", "成功删除" + count + "条记录");
-		return jacksonMapper.writeValueAsString(map);
+		return this.write(map);
 	}
 
 	/**
 	 * 构造ComboBox的数据源
 	 * 
 	 * @return
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonGenerationException
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/combstore")
-	public String createStgCombStore() throws JsonGenerationException,
-			JsonMappingException, IOException {
-		List<ConfigableInfo> list = regularConfigService
-				.listConfigableInfo(ConfigableType.system);
-		return jacksonMapper.writeValueAsString(list);
+	public String createStgCombStore() {
+		List<ConfigableInfo> list = regularConfigService.listConfigableInfo(ConfigableType.system);
+		return this.write(list);
 	}
 
 	/**
@@ -221,8 +191,7 @@ public class StrategySystemDispatchController {
 		// 节点数据
 		private Object data;
 
-		public DispatchData(String treeid, String treename,
-				ConfigDefinition def, Object data) {
+		public DispatchData(String treeid, String treename, ConfigDefinition def, Object data) {
 			this.treeid = treeid;
 			this.treename = treename;
 			this.def = def;

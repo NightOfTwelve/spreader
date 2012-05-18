@@ -29,7 +29,7 @@ var stgdisptree = new Ext.tree.TreePanel({
 			// }],
 			root : stgroot,
 			loader : new Ext.tree.TreeLoader({
-						dataUrl : '../strategy/createdisptree?time='
+						dataUrl : '../strategydisp/createdisptree?time='
 								+ new Date().getTime(),
 						processResponse : function(response, node, callback,
 								scope) {

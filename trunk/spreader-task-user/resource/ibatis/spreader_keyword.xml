@@ -12,6 +12,7 @@
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="tag" jdbcType="BIT" property="tag" />
 		<result column="executable" jdbcType="BIT" property="executable" />
+		<result column="allowtag" jdbcType="BIT" property="allowtag" />
 	</resultMap>
 	<sql id="selectKeywordInfoCondition">
 		<isNotNull prepend="and" property="keywordId">
@@ -44,11 +45,12 @@
 		select a.id as keyword_id,a.name as keyword_name,a.category_id,b.name
 		as
 		category_name,b.description,a.create_time,a.tag,a.executable,'cagegoryTagGrid'
-		as fromgrid
+		as fromgrid,a.allowtag
 		from
-		tb_keyword a
+		spreader.tb_keyword a
 		left
-		join tb_category b on a.category_id =
+		join
+		spreader.tb_category b on a.category_id =
 		b.id
 		<dynamic prepend="where">
 			<include refid="selectKeywordInfoCondition" />
@@ -64,19 +66,23 @@
 		select a.id as keyword_id,a.name as keyword_name,a.category_id,b.name
 		as
 		category_name,b.description,a.create_time,a.tag,a.executable,'cagegoryNotTagGrid'
-		as fromgrid
+		as fromgrid,a.allowtag
 		from
-		tb_keyword a
+		spreader.tb_keyword a
 		left
-		join tb_category b on a.category_id =
+		join
+		spreader.tb_category b on a.category_id =
 		b.id
-		where <![CDATA[a.category_id <> #categoryId#]]>
+		where <![CDATA[a.category_id <> -1]]>
+		and <![CDATA[a.category_id <> #categoryId#]]>
 		<isNotEmpty prepend="and" property="keywordName">
 			a.name like
 			CONCAT('%',#keywordName#,'%')
 		</isNotEmpty>
 		and a.executable = true
-		order by a.create_time desc
+		and a.allowtag = true
+		order by a.create_time
+		desc
 		<isNotNull property="lit">
 			limit $lit.offset$,$lit.maxRows$
 		</isNotNull>
@@ -90,22 +96,41 @@
 		left
 		join tb_category b on
 		a.category_id = b.id
-		where <![CDATA[a.category_id <> #categoryId#]]>
+		where <![CDATA[a.category_id <> -1]]>
+		and <![CDATA[a.category_id <> #categoryId#]]>
 		<isNotEmpty prepend="and" property="keywordName">
 			a.name like
 			CONCAT('%',#keywordName#,'%')
 		</isNotEmpty>
 		and a.executable = true
+		and a.allowtag = true
 	</select>
 	<select id="selectKeywordInfoCount" parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
 		resultClass="java.lang.Integer">
 		select count(a.id) as cnt
-		from tb_keyword a
-		left join tb_category b on
+		from spreader.tb_keyword a
+		left join
+		spreader.tb_category b on
 		a.category_id = b.id
 		<dynamic prepend="where">
 			<include refid="selectKeywordInfoCondition" />
 		</dynamic>
+	</select>
+	<select id="selectKeywordByCategories" parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
+		resultMap="spreader_tb_keyword.ibatorgenerated_BaseResultMap">
+		select id,name,category_id,tag,create_time,executable,allowtag from
+		spreader.tb_keyword where
+		category_id in
+		<iterate property="categories" open="(" close=")" conjunction=",">
+			#categories[]#
+		</iterate>
+	</select>
+	<select id="selectCategoryIdsByKeywordIds" parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
+		resultClass="java.lang.Long">
+		select distinct category_id from spreader.tb_keyword where id in
+		<iterate property="keywordIds" open="(" close=")" conjunction=",">
+			#keywordIds[]#
+		</iterate>
 	</select>
 	<insert id="insertKeyword" parameterClass="com.nali.spreader.data.Keyword">
 		insert into spreader.tb_keyword(

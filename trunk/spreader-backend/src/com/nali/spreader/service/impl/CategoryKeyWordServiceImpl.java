@@ -14,13 +14,11 @@ import com.nali.spreader.config.KeywordQueryParamsDto;
 import com.nali.spreader.dao.ICrudCategoryDao;
 import com.nali.spreader.dao.ICrudKeywordDao;
 import com.nali.spreader.dao.IKeywordDao;
-import com.nali.spreader.dao.IUserTagDao;
 import com.nali.spreader.data.Category;
 import com.nali.spreader.data.CategoryExample;
 import com.nali.spreader.data.Keyword;
 import com.nali.spreader.data.KeywordExample;
 import com.nali.spreader.data.KeywordExample.Criteria;
-import com.nali.spreader.data.UserTag;
 import com.nali.spreader.service.ICategoryKeyWordService;
 
 /**
@@ -35,8 +33,6 @@ public class CategoryKeyWordServiceImpl implements ICategoryKeyWordService {
 	private IKeywordDao keywordDao;
 	@Autowired
 	private ICrudKeywordDao curdKeywordDao;
-	@Autowired
-	private IUserTagDao userTagDao;
 	@Autowired
 	private ICrudCategoryDao crudCategoryDao;
 	private static final Boolean isManual = true;
@@ -54,21 +50,18 @@ public class CategoryKeyWordServiceImpl implements ICategoryKeyWordService {
 	}
 
 	@Override
-	public void createKeyword(String keywordName, Long categoryId) {
-		Keyword kw = new Keyword();
-		kw.setName(keywordName);
-		kw.setTag(isManual);
-		// if (categoryId == null) {
-		// Long keyId = this.keywordDao.insertKeyword(kw);
-		// kw.setId(keyId);
-		// kw.setCategoryId(keyId);
-		// kw.setCreateTime(new Date());
-		// curdKeywordDao.insertSelective(kw);
-		// } else {
-		kw.setCategoryId(categoryId);
-		kw.setCreateTime(new Date());
-		this.curdKeywordDao.insertSelective(kw);
-		// }
+	public void createKeyword(Keyword kw) {
+		if (kw == null) {
+			throw new IllegalArgumentException("创建关键字传入参数为null");
+		} else {
+			if (StringUtils.isEmpty(kw.getName())) {
+				throw new IllegalArgumentException("关键字名称为null");
+			}
+			// 手工创建
+			kw.setTag(isManual);
+			kw.setCreateTime(new Date());
+			this.curdKeywordDao.insertSelective(kw);
+		}
 	}
 
 	@Override
@@ -98,7 +91,7 @@ public class CategoryKeyWordServiceImpl implements ICategoryKeyWordService {
 		if (keywordId != null) {
 			Keyword k = new Keyword();
 			k.setId(keywordId);
-			// categoryId为null表示取消绑定
+			// categoryId为-1L表示无需绑定
 			k.setCategoryId(categoryId);
 			int i = this.keywordDao.updateCategory(k);
 			if (i > 0) {
@@ -120,20 +113,6 @@ public class CategoryKeyWordServiceImpl implements ICategoryKeyWordService {
 			}
 		}
 		return count;
-	}
-
-	@Override
-	public int updateUserTagCategory(Long tagId, Long categoryId) {
-		int rownum = 0;
-		if (tagId == null) {
-			throw new IllegalArgumentException("更新失败,tagId不能为null");
-		} else {
-			UserTag ut = new UserTag();
-			ut.setTagId(tagId);
-			ut.setCategoryId(categoryId);
-			rownum = this.userTagDao.updateCategoryIdByTagId(ut);
-		}
-		return rownum;
 	}
 
 	@Override
@@ -203,14 +182,16 @@ public class CategoryKeyWordServiceImpl implements ICategoryKeyWordService {
 
 	@Override
 	public String keywordAndCategoryRollBackInfo(Long keywordId, Long oldCategoryId) {
-		String log = "关键字取消绑定回滚信息--->";
+		String log = "<------关键字取消绑定回滚信息";
 		StringBuffer buff = new StringBuffer(log);
 		buff.append("关键字编号:").append(keywordId);
-		int userTagRows = this.updateUserTagCategory(keywordId, oldCategoryId);
-		buff.append(";tb_user_tag表回滚:").append(userTagRows).append("条数据;")
-				.append("tb_keyword表回滚状态:");
+		// int userTagRows = this.updateUserTagCategory(keywordId,
+		// oldCategoryId);
+		// buff.append(";tb_user_tag表回滚:").append(userTagRows).append("条数据;")
+		buff.append(",tb_keyword表回滚状态:");
 		boolean isSuccess = this.changeBinding(keywordId, oldCategoryId);
 		buff.append(isSuccess);
+		buff.append(",信息结束------>");
 		return buff.toString();
 	}
 

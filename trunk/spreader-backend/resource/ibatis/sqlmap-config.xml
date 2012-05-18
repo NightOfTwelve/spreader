@@ -42,6 +42,5 @@
   <sqlMap resource="ibatis/spreader_regular_job_result.xml"/>
   <sqlMap resource="ibatis/spreader_client_task_stat.xml"/>
   <sqlMap resource="ibatis/spreader_keyword.xml"/>
-  <sqlMap resource="ibatis/spreader_user_tag.xml"/>
 </sqlMapConfig>
 

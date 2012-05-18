@@ -62,4 +62,14 @@ public class KeywordDaoImpl implements IKeywordDao {
 		return (Integer) this.sqlMap.queryForObject(
 				"spreader_keyword.selectKeywordInfoNotEqualToCategoryIdCount", params);
 	}
+
+	@Override
+	public List<Keyword> selectKeywordByCategories(KeywordQueryParamsDto param) {
+		return this.sqlMap.queryForList("spreader_keyword.selectKeywordByCategories", param);
+	}
+
+	@Override
+	public List<Long> selectCategoryIdsByKeywordIds(KeywordQueryParamsDto param) {
+		return this.sqlMap.queryForList("spreader_keyword.selectCategoryIdsByKeywordIds", param);
+	}
 }
