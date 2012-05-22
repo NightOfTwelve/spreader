@@ -34,9 +34,14 @@ public class GlobalRobotUserService implements IGlobalRobotUserService {
 
 	@Override
 	public void disableAccount(Long uid) {
+		changeAccountStatus(uid, RobotUser.ACCOUNT_STATE_DISABLE);
+	}
+	
+	@Override
+	public void changeAccountStatus(Long uid, Integer status) {
 		RobotUser record = new RobotUser();
 		record.setUid(uid);
-		record.setAccountState(RobotUser.ACCOUNT_STATE_DISABLE);
+		record.setAccountState(status);
 		crudRobotUserDao.updateByPrimaryKeySelective(record);
 	}
 	
@@ -65,4 +70,5 @@ public class GlobalRobotUserService implements IGlobalRobotUserService {
 	public RobotUser getRobotUser(Long uid) {
 		return crudRobotUserDao.selectByPrimaryKey(uid);
 	}
+
 }

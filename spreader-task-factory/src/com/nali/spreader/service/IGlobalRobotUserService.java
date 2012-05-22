@@ -14,5 +14,7 @@ public interface IGlobalRobotUserService {
 	RobotUser getRobotUser(Long uid);
 
 	void resumeAccount(Long uid);
+	
+	void changeAccountStatus(Long uid, Integer status);
 
 }

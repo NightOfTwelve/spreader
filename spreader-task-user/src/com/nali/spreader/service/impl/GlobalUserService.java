@@ -27,12 +27,15 @@ import com.nali.spreader.data.UserTagExample;
 import com.nali.spreader.data.WeiboAppeal;
 import com.nali.spreader.data.WeiboAppealExample;
 import com.nali.spreader.model.RobotUser;
+import com.nali.spreader.service.IGlobalRobotUserService;
 import com.nali.spreader.service.IGlobalUserService;
 
 @Service
 public class GlobalUserService implements IGlobalUserService {
 	private static Logger logger = Logger.getLogger(GlobalUserService.class);
 	private static final Shard BAK_USER_SHARD;
+	private static final Shard BAK_USER_EXPORT;
+	//dao
 	@Autowired
 	private ICrudRobotUserDao crudRobotUserDao;
 	@Autowired
@@ -46,10 +49,16 @@ public class GlobalUserService implements IGlobalUserService {
 	@Autowired
 	private ICrudWeiboAppealDao crudWeiboAppealDao;
 	
+	//service
+	private IGlobalRobotUserService globalRobotUserService;
+	
 	static {
 		BAK_USER_SHARD = new Shard();
 		BAK_USER_SHARD.setTableSuffix("_delete");
 		BAK_USER_SHARD.setDatabaseSuffix("");
+		BAK_USER_EXPORT = new Shard();
+		BAK_USER_EXPORT.setTableSuffix("_export");
+		BAK_USER_EXPORT.setDatabaseSuffix("");
 	}
 
 	@Override
@@ -143,8 +152,12 @@ public class GlobalUserService implements IGlobalUserService {
 
 	@Override
 	public User getDeletedUser(Long uid) {
+		return getBakUser(uid, BAK_USER_SHARD);
+	}
+
+	private User getBakUser(Long uid, Shard userShard) {
 		UserExample userExample = new UserExample();
-		userExample.setShard(BAK_USER_SHARD);
+		userExample.setShard(userShard);
 		userExample.createCriteria().andIdEqualTo(uid);
 		List<User> rlt = crudUserDao.selectByExample(userExample);
 		if(rlt.size()==0) {
@@ -244,5 +257,26 @@ public class GlobalUserService implements IGlobalUserService {
 			criteria.andStartTimeLessThan(startDate);
 		}
 		return crudWeiboAppealDao.selectByExample(example);
+	}
+
+	@Transactional
+	@Override
+	public RobotUser exportUser(Long uid) {
+		User user = crudUserDao.selectByPrimaryKey(uid);
+		if(user!=null) {
+			user.setShard(BAK_USER_EXPORT);
+			try {
+				crudUserDao.insertSelective(user);
+			} catch (DuplicateKeyException e) {
+				logger.debug("double insert");
+				user = null;
+			}
+			crudUserDao.deleteByPrimaryKey(uid);
+		}
+		if(user==null) {
+			return null;
+		}
+		globalRobotUserService.changeAccountStatus(uid, RobotUser.ACCOUNT_STATE_EXPORT);
+		return globalRobotUserService.getRobotUser(uid);
 	}
 }
