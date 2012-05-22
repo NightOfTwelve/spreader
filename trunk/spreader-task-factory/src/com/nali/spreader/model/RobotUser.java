@@ -7,6 +7,7 @@ public class RobotUser extends BaseModel implements Serializable {
     private static final long serialVersionUID = -1233874741469235880L;
     public static final Integer ACCOUNT_STATE_NORMAL=1;
     public static final Integer ACCOUNT_STATE_DISABLE=2;
+    public static final Integer ACCOUNT_STATE_EXPORT=3;
     
     private Integer gender;
     

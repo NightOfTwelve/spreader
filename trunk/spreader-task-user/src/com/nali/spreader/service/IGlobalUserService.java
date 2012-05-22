@@ -21,6 +21,8 @@ public interface IGlobalUserService {
 	Long registerRobotUser(RobotUser robotUser,User user);
 
 	void removeUser(Long id);
+	
+	RobotUser exportUser(Long id);
 
 	Long getOrAssignUid(Integer websiteId, Long websiteUid);
 
