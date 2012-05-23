@@ -112,7 +112,7 @@ public class ReplyWeiboByGroup extends UserGroupExtendedBeanImpl implements Regu
 			needForwardPercent=Math.max(0, needForwardPercent);
 			needForwardPercent=Math.min(100, needForwardPercent);
 		}
-		if(config.getWords()==null) {
+		if(config.getWords()==null || config.getWords().size()==0) {
 			replyWords = defaultReplyWords;
 		} else {
 			List<String> words = config.getWords();
