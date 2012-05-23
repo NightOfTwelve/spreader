@@ -34,4 +34,20 @@ public interface IUserManageService {
 	 * @return
 	 */
 	PageResult<User> findUserFansInfo(UserTagParamsDto utp, Limit lit);
+
+	/**
+	 * 更新用户信息
+	 * 
+	 * @param user
+	 * @return
+	 */
+	int updateUserProprietor(User user);
+
+	/**
+	 * 根据Uid获取密码
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	String findUserRegisterPassword(Long uid);
 }

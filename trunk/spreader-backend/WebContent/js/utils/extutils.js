@@ -35,13 +35,13 @@ function addTabNew(url, name, menuid, pathCh, icon) {
 			// document.getElementById('endIeStatus').click();//解决Iframe
 			// IE加载不完全的问题
 			// 兼容IE和FF触发.click()函数
-			// var endIeStatus = document.getElementById("endIeStatus");
-			// if(document.createEvent){
-			// var ev = document.createEvent('HTMLEvents');
-			// ev.initEvent('click', false, true);
-			// endIeStatus.dispatchEvent(ev);
-			// }
-			// else endIeStatus.click();
+//			var endIeStatus = document.getElementById("endIeStatus");
+//			if (document.createEvent) {
+//				var ev = document.createEvent('HTMLEvents');
+//				ev.initEvent('click', false, true);
+//				endIeStatus.dispatchEvent(ev);
+//			} else
+//				endIeStatus.click();
 			n = mainTabPanel.add({
 				id : id,
 				// title:"<img align='top' class='IEPNG'
@@ -51,7 +51,7 @@ function addTabNew(url, name, menuid, pathCh, icon) {
 				layout : 'fit',
 				listeners : {
 					activate : function() {
-						Ext.getCmp('centerPanel').setTitle(pathCh)
+						Ext.getCmp('centerPanel').setTitle(pathCh);
 					}
 				},
 				// html:'<iframe scrolling="auto" frameborder="0" width="100%"
