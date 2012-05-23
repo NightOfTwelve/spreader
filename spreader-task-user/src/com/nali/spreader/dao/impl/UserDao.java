@@ -137,4 +137,9 @@ public class UserDao implements IUserDao {
 		}
 		return Collections.emptyMap();
 	}
+
+	@Override
+	public String getUserPassword(User user) {
+		return (String) this.sqlMap.queryForObject("spreader_user.queryUserPassword", user);
+	}
 }

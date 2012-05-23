@@ -206,6 +206,12 @@ var sinaUserStore = new Ext.data.Store({
 								name : 'avatarUrl'
 							}, {
 								name : 'websiteUid'
+							}, {
+								name : 'nationality'
+							}, {
+								name : 'province'
+							}, {
+								name : 'city'
 							}]),
 			autoLoad : {
 				params : {
@@ -243,35 +249,37 @@ var rownums = new Ext.grid.RowNumberer({
 			header : 'NO',
 			locked : true
 		})
-// 定义表格列CM
-var cm = new Ext.ux.grid.LockingColumnModel([rownums, {
+// 定义表格列CM LockingColumnModel
+var cm = new Ext.grid.ColumnModel([rownums, sm, {
 			header : '编号',
 			dataIndex : 'id',
-			locked : true,
+			// locked : true,
 			width : 80
 		}, {
 			header : '网站编号',
 			dataIndex : 'websiteUid',
-			locked : true,
+			// locked : true,
 			width : 80
 		}, {
 			header : '机器人',
 			dataIndex : 'isRobot',
-			locked : true,
+			// locked : true,
 			renderer : rendTrueFalse,
 			width : 80
 		}, {
 			header : '昵称',
 			dataIndex : 'nickName',
-			locked : true,
+			// locked : true,
 			width : 100
-		}, {
-			header : '头像',
-			dataIndex : 'avatarUrl',
-			renderer : renderImage,
-			locked : true,
-			width : 0
-		}, {
+		}
+		// , {
+		// header : '头像',
+		// dataIndex : 'avatarUrl',
+		// renderer : renderImage,
+		// locked : true,
+		// width : 0
+		// }
+		, {
 			header : '头像',
 			dataIndex : 'avatarUrl',
 			renderer : renderImage,
@@ -314,6 +322,18 @@ var cm = new Ext.ux.grid.LockingColumnModel([rownums, {
 			dataIndex : 'region',
 			width : 100
 		}, {
+			header : '国家',
+			dataIndex : 'nationality',
+			width : 100
+		}, {
+			header : '省份',
+			dataIndex : 'province',
+			width : 100
+		}, {
+			header : '城市',
+			dataIndex : 'city',
+			width : 100
+		}, {
 			header : '个人主页',
 			dataIndex : 'spaceEntry',
 			width : 100
@@ -353,22 +373,30 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 			height : 440,
 			stripeRows : true, // 斑马线
 			frame : true,
-			// autoWidth : true,
 			autoScroll : true,
 			store : sinaUserStore,
 			loadMask : {
 				msg : '正在加载表格数据,请稍等...'
 			},
 			bbar : bbar,
-			// sm : sm,
+			sm : sm,
 			cm : cm,
-			view : new Ext.ux.grid.LockingGridView(), // 锁定列视图
+			// view : new Ext.ux.grid.LockingGridView(), // 锁定列视图
 			tbar : [{
 						text : '刷新',
 						iconCls : 'arrow_refreshIcon',
 						handler : function() {
 							sinaUserStore.reload();
 						}
+					}, {
+						text : '导出用户',
+						iconCls : 'arrow_refreshIcon',
+						handler : expUserInfo
+					}, {
+						id : 'updateremind',
+						name : 'updateremind',
+						xtype : 'tbtext',
+						text : '<font color = "red">双击行可修改用户信息</font>'
 					}],
 			onCellClick : function(grid, rowIndex, columnIndex, e) {
 				var selesm = grid.getSelectionModel().getSelections();
@@ -390,26 +418,206 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 					userRobotFansStore.load();
 				}
 			}
-
 		});
-
-// 定义右键菜单
-var rightMenu = new Ext.menu.Menu({
-			id : 'rightMenu',
+// 性别
+var genderStore = new Ext.data.ArrayStore({
+			fields : ['ID', 'NAME'],
+			data : [['1', '男'], ['2', '女']]
+		});
+// 嵌入的FORM
+var addUserCmbForm = new Ext.form.FormPanel({
+			id : 'addUserCmbForm',
+			name : 'addUserCmbForm',
+			labelWidth : 90, // 标签宽度
+			frame : true, // 是否渲染表单面板背景色
+			defaultType : 'textfield', // 表单元素默认类型
+			labelAlign : 'right', // 标签对齐方式
+			bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
 			items : [{
-						text : '复制',
+						xtype : "displayfield",
+						fieldLabel : "用户ID",
+						id : 'uid',
+						anchor : '100%'
+					}, {
+						fieldLabel : "昵称",
+						name : 'nickName',
+						allowBlank : false,
+						anchor : '100%'
+					}, {
+						fieldLabel : '性别',
+						name : 'genderCmp',
+						xtype : 'combo',
+						width : 100,
+						store : genderStore,
+						id : 'gender',
+						hiddenName : 'gender',
+						valueField : 'ID',
+						editable : false,
+						displayField : 'NAME',
+						mode : 'local',
+						forceSelection : false,// 必须选择一项
+						emptyText : '...',// 默认值
+						triggerAction : 'all'
+					}, {
+						fieldLabel : "国家",
+						name : 'nationality',
+						anchor : '100%'
+					}, {
+						fieldLabel : "省份",
+						name : 'province',
+						anchor : '100%'
+					}, {
+						fieldLabel : "城市",
+						name : 'city',
+						anchor : '100%'
+					}, {
+						xtype : "textarea",
+						fieldLabel : "个人简介",
+						name : 'introduction',
+						anchor : '100%'
+					}]
+		});
+var addUserWindow = new Ext.Window({
+			title : '<span class="commoncss">用户信息修改</span>', // 窗口标题
+			id : 'addUserWindow',
+			closeAction : 'hide',
+			layout : 'fit', // 设置窗口布局模式
+			width : 400, // 窗口宽度
+			height : 350, // 窗口高度
+			// closable : true, // 是否可关闭
+			collapsible : true, // 是否可收缩
+			maximizable : true, // 设置是否可以最大化
+			border : false, // 边框线设置
+			constrain : true, // 设置窗口是否可以溢出父容器
+			pageY : 20, // 页面定位Y坐标
+			pageX : document.documentElement.clientWidth / 2 - 300 / 2, // 页面定位X坐标
+			items : [addUserCmbForm], // 嵌入的表单面板
+			buttons : [{ // 窗口底部按钮配置
+				text : '确定', // 按钮文本
+				iconCls : 'tbar_synchronizeIcon', // 按钮图标
+				handler : function() { // 按钮响应函数
+					var addForm = addUserCmbForm.getForm();
+					var uid = addForm.findField('uid').getValue();
+					var nickName = addForm.findField('nickName').getValue();
+					var nationality = addForm.findField('nationality')
+							.getValue();
+					var province = addForm.findField('province').getValue();
+					var city = addForm.findField('city').getValue();
+					var gender = addForm.findField('gender').getValue();
+					var introduction = addForm.findField('introduction')
+							.getValue();
+					var updateForm = addUserCmbForm.getForm();
+					Ext.Ajax.request({
+								url : '../userinfo/updateuser',
+								params : {
+									'id' : uid,
+									'nickName' : nickName,
+									'nationality' : nationality,
+									'province' : province,
+									'city' : city,
+									'gender' : gender,
+									'introduction' : introduction
+								},
+								scope : addUserCmbForm,
+								success : function(response) {
+									var result = Ext
+											.decode(response.responseText);
+									if (result.success) {
+										Ext.MessageBox.alert("提示", "修改成功");
+										addUserWindow.hide();
+										sinaUserStore.reload();
+									} else {
+										Ext.Msg.alert("提示", "修改失败");
+										return;
+									}
+								},
+								failure : function() {
+									Ext.Msg.alert("提示", "修改失败");
+									return;
+								}
+							});
+					addKeywordWindow.hide();
+				}
+			}, {	// 窗口底部按钮配置
+						text : '重置', // 按钮文本
+						iconCls : 'tbar_synchronizeIcon', // 按钮图标
+						handler : function() { // 按钮响应函数
+							addKeywordCmbForm.form.reset();
+						}
+					}, {
+						text : '关闭',
+						iconCls : 'deleteIcon',
 						handler : function() {
+							addUserWindow.hide();
 						}
 					}]
 		});
-sinaUserGrid.on("cellcontextmenu", function(grid, rowIndex, cellIndex, e) {
+addUserWindow.on('show', function() {
+		});
+// 定义右键菜单
+var rightMenu = new Ext.menu.Menu({
+	id : 'rightMenu',
+	items : [{
+		text : '查看密码',
+		handler : function() {
+			var grid = sinaUserGrid.selModel.selections.items[0].data;
+			var robot = grid.isRobot;
+			var uid = grid.id;
+			if (robot) {
+				if (Ext.isEmpty(uid)) {
+					Ext.Msg.alert("提示", "uid为空无法查看密码");
+					return;
+				} else {
+					Ext.Ajax.request({
+								url : '../userinfo/querypwd',
+								params : {
+									'uid' : uid
+								},
+								success : function(response) {
+									var result = Ext
+											.decode(response.responseText);
+									Ext.MessageBox.alert("密码", result.password);
+								},
+								failure : function() {
+									Ext.Msg.alert("提示", "获取密码失败");
+									return;
+								}
+							});
+				}
+			} else {
+				Ext.Msg.alert("提示", "该用户不是机器人无法查看密码");
+				return;
+			}
+		}
+	}]
+});
+sinaUserGrid.on("rowcontextmenu", function(grid, rowIndex, e) {
 			e.preventDefault();
-			var cell = sinaUserGrid.getSelectionModel().getSelected();
-//			alert(cell);
+			grid.getSelectionModel().selectRow(rowIndex);
 			rightMenu.showAt(e.getXY());
 		});
 // 注册事件
 sinaUserGrid.on('cellclick', sinaUserGrid.onCellClick, sinaUserGrid);
+
+sinaUserGrid.on('celldblclick', function(grid, rowIndex, columnIndex, e) {
+			var selectData = grid.selModel.selections.items[0].data;
+			var uid = selectData.id;
+			var nickName = selectData.nickName;
+			var nationality = selectData.nationality;
+			var province = selectData.province;
+			var city = selectData.city;
+			var gender = selectData.gender;
+			var intriduction = selectData.intriduction;
+			var updateForm = addUserCmbForm.getForm();
+			updateForm.findField("uid").setValue(uid);
+			updateForm.findField("nickName").setValue(nickName);
+			updateForm.findField("nationality").setValue(nationality);
+			updateForm.findField("province").setValue(province);
+			updateForm.findField("gender").setValue(gender);
+			updateForm.findField("city").setValue(city);
+			updateForm.findField("intriduction").setValue(intriduction);
+			addUserWindow.show();
+		});
 
 // 粉丝信息列表
 var realFansDtlWin = new Ext.Window({
@@ -467,3 +675,100 @@ var robotFansDtlWin = new Ext.Window({
 						}
 					}]
 		});
+var expUserStore = new Ext.data.Store({
+			proxy : new Ext.data.HttpProxy({
+						url : '../userinfo/expuser'
+					}),
+			reader : new Ext.data.JsonReader({
+						totalProperty : 'totalCount',
+						root : 'list'
+					}, [{
+								name : 'uid'
+							}, {
+								name : 'websiteUid'
+							}, {
+								name : 'loginName'
+							}, {
+								name : 'loginPwd'
+							}])
+		});
+var expcm = new Ext.ux.grid.LockingColumnModel([{
+			header : '编号',
+			dataIndex : 'uid',
+			locked : true,
+			width : 80
+		}, {
+			header : '网站编号',
+			dataIndex : 'websiteUid',
+			width : 100
+		}, {
+			header : '用户名',
+			dataIndex : 'loginName',
+			width : 120
+		}, {
+			header : '密码',
+			dataIndex : 'loginPwd',
+			width : 100
+		}]);
+var expUserGrid = new Ext.grid.GridPanel({
+			id : 'expUserGrid',
+			height : 440,
+			stripeRows : true, // 斑马线
+			frame : true,
+			autoScroll : true,
+			store : expUserStore,
+			loadMask : {
+				msg : '正在加载表格数据,请稍等...'
+			},
+			cm : expcm
+		});
+var expUserWin = new Ext.Window({
+			title : '<span class="commoncss">导出用户信息</span>', // 窗口标题
+			iconCls : 'imageIcon',
+			layout : 'fit', // 设置窗口布局模式
+			width : 600, // 窗口宽度
+			height : 500, // 窗口高度
+			// tbar : tb, // 工具栏
+			closable : false, // 是否可关闭
+			closeAction : 'hide', // 关闭策略
+			collapsible : true, // 是否可收缩
+			maximizable : false, // 设置是否可以最大化
+			modal : true,
+			border : false, // 边框线设置
+			pageY : 120, // 页面定位Y坐标
+			pageX : document.documentElement.clientWidth / 2 - 400 / 2, // 页面定位X坐标
+			constrain : true,
+			items : [expUserGrid],
+			// 设置窗口是否可以溢出父容器
+			buttonAlign : 'center',
+			buttons : [{
+						text : '关闭',
+						iconCls : 'deleteIcon',
+						handler : function() {
+							expUserWin.hide();
+						}
+					}]
+		});
+expUserWin.on('show', function() {
+			// 清除store缓存
+			expUserStore.clearData();
+		});
+/**
+ * 导出用户信息
+ */
+function expUserInfo() {
+	var expArray = [];
+	var rows = sinaUserGrid.getSelectionModel().getSelections();
+	if (rows.length > 0) {
+		for (var i = 0; i < rows.length; i++) {
+			var uid = rows[i].data.id;
+			expArray.push(uid);
+		}
+	} else {
+		Ext.Msg.alert("提示", "请至少选择一个分组");
+		return;
+	}
+	expUserStore.setBaseParam('uids', expArray);
+	expUserStore.load();
+	expUserWin.show();
+}

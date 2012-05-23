@@ -50,6 +50,7 @@ public class GlobalUserService implements IGlobalUserService {
 	private ICrudWeiboAppealDao crudWeiboAppealDao;
 	
 	//service
+	@Autowired
 	private IGlobalRobotUserService globalRobotUserService;
 	
 	static {

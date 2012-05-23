@@ -12,6 +12,7 @@ import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.dao.ICrudPhotoDao;
 import com.nali.spreader.dao.ICrudRobotRegisterDao;
+import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.IUserDao;
 import com.nali.spreader.data.Photo;
 import com.nali.spreader.data.RobotRegister;
@@ -31,6 +32,8 @@ public class UserManageServiceImpl implements IUserManageService {
 	private ICrudRobotRegisterDao regDao;
 	@Autowired
 	private ICrudPhotoDao photoDao;
+	@Autowired
+	private ICrudUserDao crudUserDao;
 
 	@Override
 	public PageResult<User> findUserInfo(UserTagParamsDto utp, Limit lit) {
@@ -107,5 +110,24 @@ public class UserManageServiceImpl implements IUserManageService {
 		List<RobotRegister> list = regDao.selectByExample(exp);
 		int count = regDao.countByExample(exp);
 		return new PageResult<RobotRegister>(list, lit, count);
+	}
+
+	@Override
+	public int updateUserProprietor(User user) {
+		int rows = this.crudUserDao.updateByPrimaryKeySelective(user);
+		return rows;
+	}
+
+	@Override
+	public String findUserRegisterPassword(Long uid) {
+		String pwd = "";
+		if (uid == null) {
+			throw new IllegalArgumentException("参数为空，无法获取用户密码");
+		} else {
+			User u = new User();
+			u.setId(uid);
+			pwd = this.userDao.getUserPassword(u);
+		}
+		return pwd;
 	}
 }

@@ -385,4 +385,14 @@
   	 	</iterate>
   	 </dynamic>
   </select>
+  <select id="queryUserPassword" parameterClass="com.nali.spreader.data.User"
+	resultClass="java.lang.String">
+	select a.pwd from spreader.tb_robot_register a
+	join
+	spreader.tb_robot_user b on b.robot_register_id = a.id
+	join
+	spreader.tb_user c on c.id = b.uid
+	where c.id = #id# and c.is_robot =
+	true
+  </select>
 </sqlMap>

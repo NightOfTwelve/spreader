@@ -44,7 +44,7 @@ public interface IUserDao {
 	Integer countUserAndTagNumer(UserTagParamsDto utp);
 
 	Long insertContent(Content content);
-	
+
 	List<Long> findContentIdByDto(ContentDto dto);
 
 	/**
@@ -64,19 +64,27 @@ public interface IUserDao {
 	Integer countUserFansNumer(UserTagParamsDto utp);
 
 	List<Long> queryUidsByProperties(Map<String, Object> properties, Limit limit);
-	
+
 	List<Long> queryUidsByProperties(Map<String, Object> properties);
-	
+
 	int countByProperties(Map<String, Object> properties);
-	
+
 	/**
 	 * 获取无头像的机器人用户
+	 * 
 	 * @return
 	 */
 	List<User> queryNoAvatarRobotUser();
-	
-	
+
 	boolean updateCtrlGid(long uid, long gid);
-	
+
 	Map<Long, Long> queryGids(List<Long> uids);
+
+	/**
+	 * 获取用户的密码，必须是机器人
+	 * 
+	 * @param user
+	 * @return
+	 */
+	String getUserPassword(User user);
 }
