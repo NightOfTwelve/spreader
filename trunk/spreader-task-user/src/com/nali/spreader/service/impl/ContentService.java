@@ -3,6 +3,7 @@ package com.nali.spreader.service.impl;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -63,7 +64,7 @@ public class ContentService implements IContentService {
 		example.createCriteria().andUidEqualTo(uid);
 		List<UserTag> userTags = crudUserTagDao.selectByExample(example);
 		Collections.shuffle(userTags);
-		Set<Long> categorySet = Collections.emptySet();
+		Set<Long> categorySet = new HashSet<Long>();
 		Long contentId = null;
 		for (UserTag userTag : userTags) {
 			Long keywordId = userTag.getTagId();
