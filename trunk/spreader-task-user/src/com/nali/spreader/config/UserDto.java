@@ -6,7 +6,7 @@ import com.nali.spreader.factory.config.desc.PropertyDescription;
 
 public class UserDto extends WebsiteUserDto {
 	private static final long serialVersionUID = -3118856576195136494L;
-	@PropertyDescription("分类")
+	@PropertyDescription("标签")
 	private List<String> categories;
 	@PropertyDescription("网站id")
 	private Integer websiteId;

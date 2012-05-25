@@ -4,7 +4,7 @@ import com.nali.spreader.factory.config.desc.PropertyDescription;
 
 public class RobotForwardDto extends WebsiteUserDto {
 	private static final long serialVersionUID = 4096803530255853612L;
-	@PropertyDescription("分类")
+	@PropertyDescription("标签")
 	private String category;
 	@PropertyDescription("需转发次数")
     private Integer count;

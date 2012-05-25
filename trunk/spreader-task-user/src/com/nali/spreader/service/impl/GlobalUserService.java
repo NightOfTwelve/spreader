@@ -29,13 +29,14 @@ import com.nali.spreader.data.WeiboAppealExample;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IGlobalRobotUserService;
 import com.nali.spreader.service.IGlobalUserService;
+import com.nali.spreader.service.IKeywordService;
 
 @Service
 public class GlobalUserService implements IGlobalUserService {
 	private static Logger logger = Logger.getLogger(GlobalUserService.class);
 	private static final Shard BAK_USER_SHARD;
 	private static final Shard BAK_USER_EXPORT;
-	//dao
+	// dao
 	@Autowired
 	private ICrudRobotUserDao crudRobotUserDao;
 	@Autowired
@@ -48,11 +49,13 @@ public class GlobalUserService implements IGlobalUserService {
 	private ICrudUserTagDao crudUserTagDao;
 	@Autowired
 	private ICrudWeiboAppealDao crudWeiboAppealDao;
-	
-	//service
+
+	// service
 	@Autowired
 	private IGlobalRobotUserService globalRobotUserService;
-	
+	@Autowired
+	private IKeywordService keywordService;
+
 	static {
 		BAK_USER_SHARD = new Shard();
 		BAK_USER_SHARD.setTableSuffix("_delete");
@@ -65,7 +68,7 @@ public class GlobalUserService implements IGlobalUserService {
 	@Override
 	public Long getOrAssignUid(Integer websiteId, Long websiteUid) {
 		User user = findByUniqueKey(websiteId, websiteUid);
-		if (user!=null) {
+		if (user != null) {
 			return user.getId();
 		}
 		user = new User();
@@ -77,14 +80,13 @@ public class GlobalUserService implements IGlobalUserService {
 		} catch (DuplicateKeyException e) {
 			return getOrAssignUid(websiteId, websiteUid);
 		}
-	
+
 	}
 
 	@Override
 	public User findByUniqueKey(Integer websiteId, Long websiteUid) {
 		UserExample example = new UserExample();
-		example.createCriteria().andWebsiteIdEqualTo(websiteId)
-				.andWebsiteUidEqualTo(websiteUid);
+		example.createCriteria().andWebsiteIdEqualTo(websiteId).andWebsiteUidEqualTo(websiteUid);
 		List<User> existUsers = crudUserDao.selectByExample(example);
 		if (existUsers.size() != 0) {
 			return existUsers.get(0);
@@ -92,18 +94,16 @@ public class GlobalUserService implements IGlobalUserService {
 			return null;
 		}
 	}
-	
+
 	@Override
-	public List<Long> findRelationUserId(Long toUid, Integer attentionType,
-			Boolean isRobot) {
+	public List<Long> findRelationUserId(Long toUid, Integer attentionType, Boolean isRobot) {
 		UserRelationExample example = new UserRelationExample();
 		Criteria criteria = example.createCriteria().andToUidEqualTo(toUid)
 				.andTypeEqualTo(attentionType);
 		if (isRobot != null) {
 			criteria.andIsRobotUserEqualTo(isRobot);
 		}
-		List<UserRelation> relations = crudUserRelationDao
-				.selectByExample(example);
+		List<UserRelation> relations = crudUserRelationDao.selectByExample(example);
 		List<Long> rlt = new ArrayList<Long>(relations.size());
 		for (UserRelation relation : relations) {
 			rlt.add(relation.getUid());
@@ -115,12 +115,12 @@ public class GlobalUserService implements IGlobalUserService {
 	public User getUserById(Long id) {
 		return crudUserDao.selectByPrimaryKey(id);
 	}
-	
+
 	@Override
 	@Transactional
 	public void removeUser(Long id) {
 		User user = crudUserDao.selectByPrimaryKey(id);
-		if(user!=null) {
+		if (user != null) {
 			user.setShard(BAK_USER_SHARD);
 			try {
 				crudUserDao.insertSelective(user);
@@ -138,6 +138,12 @@ public class GlobalUserService implements IGlobalUserService {
 		crudUserTagDao.deleteByExample(example);
 		for (UserTag userTag : tags) {
 			userTag.setUid(uid);
+			// tagId如果为null需根据名称查找keyword
+			if (userTag.getTagId() == null) {
+				String keywordName = userTag.getTag();
+				Long keywordId = this.keywordService.getOrAssignKeywordIdByName(keywordName);
+				userTag.setTagId(keywordId);
+			}
 			crudUserTagDao.insertSelective(userTag);
 		}
 	}
@@ -145,7 +151,7 @@ public class GlobalUserService implements IGlobalUserService {
 	@Override
 	public Long getWebsiteUid(Long uid) {// TODO cache
 		User user = crudUserDao.selectByPrimaryKey(uid);
-		if(user==null) {
+		if (user == null) {
 			user = getDeletedUser(uid);
 		}
 		return user == null ? null : user.getWebsiteUid();
@@ -161,7 +167,7 @@ public class GlobalUserService implements IGlobalUserService {
 		userExample.setShard(userShard);
 		userExample.createCriteria().andIdEqualTo(uid);
 		List<User> rlt = crudUserDao.selectByExample(userExample);
-		if(rlt.size()==0) {
+		if (rlt.size() == 0) {
 			return null;
 		} else {
 			return rlt.get(0);
@@ -179,7 +185,7 @@ public class GlobalUserService implements IGlobalUserService {
 
 		User existUser = findByUniqueKey(websiteId, websiteUid);
 		Long uid;
-		if (existUser!=null) {
+		if (existUser != null) {
 			// 可能被其他爬取任务爬到了
 			uid = existUser.getId();
 			user.setId(uid);
@@ -197,11 +203,11 @@ public class GlobalUserService implements IGlobalUserService {
 	@Override
 	public void mergeWeiboAppeal(WeiboAppeal weiboAppeal) {
 		int updateCount = crudWeiboAppealDao.updateByPrimaryKeySelective(weiboAppeal);
-		if(updateCount==0) {
+		if (updateCount == 0) {
 			try {
 				crudWeiboAppealDao.insertSelective(weiboAppeal);
 			} catch (DuplicateKeyException e) {
-				logger.error("duplicate insert weiboAppeal, uid:"+weiboAppeal.getUid());
+				logger.error("duplicate insert weiboAppeal, uid:" + weiboAppeal.getUid());
 				mergeWeiboAppeal(weiboAppeal);
 			}
 		}
@@ -209,7 +215,7 @@ public class GlobalUserService implements IGlobalUserService {
 
 	@Override
 	public void removeWeiboAppeal(Long uid) {
-		crudWeiboAppealDao.deleteByPrimaryKey(uid);		
+		crudWeiboAppealDao.deleteByPrimaryKey(uid);
 	}
 
 	@Override
@@ -217,7 +223,7 @@ public class GlobalUserService implements IGlobalUserService {
 		WeiboAppeal weiboAppeal = new WeiboAppeal();
 		weiboAppeal.setUid(uid);
 		weiboAppeal.setStatus(WeiboAppeal.STATUS_INIT);
-		if(forceMerge) {
+		if (forceMerge) {
 			mergeWeiboAppeal(weiboAppeal);
 			return true;
 		} else {
@@ -233,14 +239,14 @@ public class GlobalUserService implements IGlobalUserService {
 	@Override
 	public User recoverDeletedUser(Long uid) {
 		User user = getDeletedUser(uid);
-		if(user==null) {
+		if (user == null) {
 			return getUserById(uid);
 		} else {
 			user.setShard(null);
 			try {
 				crudUserDao.insertSelective(user);
 			} catch (DuplicateKeyException e) {
-				logger.error("double insert on recoverDeletedUser, uid:"+uid);
+				logger.error("double insert on recoverDeletedUser, uid:" + uid);
 			}
 			UserExample example = new UserExample();
 			example.setShard(BAK_USER_SHARD);
@@ -253,8 +259,9 @@ public class GlobalUserService implements IGlobalUserService {
 	@Override
 	public List<WeiboAppeal> findUncheckedWeiboAppeal(Date startDate) {
 		WeiboAppealExample example = new WeiboAppealExample();
-		com.nali.spreader.data.WeiboAppealExample.Criteria criteria = example.createCriteria().andStatusEqualTo(WeiboAppeal.STATUS_START);
-		if(startDate!=null) {
+		com.nali.spreader.data.WeiboAppealExample.Criteria criteria = example.createCriteria()
+				.andStatusEqualTo(WeiboAppeal.STATUS_START);
+		if (startDate != null) {
 			criteria.andStartTimeLessThan(startDate);
 		}
 		return crudWeiboAppealDao.selectByExample(example);
@@ -264,7 +271,7 @@ public class GlobalUserService implements IGlobalUserService {
 	@Override
 	public RobotUser exportUser(Long uid) {
 		User user = crudUserDao.selectByPrimaryKey(uid);
-		if(user!=null) {
+		if (user != null) {
 			user.setShard(BAK_USER_EXPORT);
 			try {
 				crudUserDao.insertSelective(user);
@@ -274,7 +281,7 @@ public class GlobalUserService implements IGlobalUserService {
 			}
 			crudUserDao.deleteByPrimaryKey(uid);
 		}
-		if(user==null) {
+		if (user == null) {
 			return null;
 		}
 		globalRobotUserService.changeAccountStatus(uid, RobotUser.ACCOUNT_STATE_EXPORT);

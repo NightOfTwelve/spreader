@@ -11,7 +11,6 @@ import com.nali.spreader.config.ContentQueryParamsDto;
 import com.nali.spreader.constants.WebTypeEnum;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.dao.IContentLibDao;
-import com.nali.spreader.data.Category;
 import com.nali.spreader.data.Content;
 import com.nali.spreader.service.IContentLibManageService;
 
@@ -36,12 +35,6 @@ public class ContentLibManageServiceImpl implements IContentLibManageService {
 				// 处理类型
 				String wtype = findWebTypeName(webType);
 				c.setTypeName(wtype);
-				// 处理网站分类
-				List<Category> cateList = c.getCategorys();
-				if (cateList.size() > 0) {
-					String tmp = createCategoryNames(cateList);
-					c.setCategoryNames(tmp);
-				}
 			}
 		}
 		int cnt = conDao.getContentCountByParamsDto(cqd);
@@ -59,15 +52,6 @@ public class ContentLibManageServiceImpl implements IContentLibManageService {
 			}
 		}
 		return webName;
-	}
-
-	private String createCategoryNames(List<Category> list) {
-		StringBuffer buff = new StringBuffer();
-		for (Category ca : list) {
-			buff.append(ca.getName());
-			buff.append(",");
-		}
-		return buff.toString();
 	}
 
 	@Override

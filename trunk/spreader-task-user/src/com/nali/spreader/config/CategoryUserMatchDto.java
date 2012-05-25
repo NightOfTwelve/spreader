@@ -10,7 +10,7 @@ public class CategoryUserMatchDto implements Serializable {
 	private WebsiteUserDto robot;
 	@PropertyDescription("用户")
 	private WebsiteUserDto user;
-	@PropertyDescription("分类")
+	@PropertyDescription("标签")
 	private String category;
 	@PropertyDescription("网站Id")
 	private Integer websiteId;

@@ -66,8 +66,8 @@
 	<dynamic prepend="where">
 		<isNotEmpty prepend="and" property="categories">
 			id in (
-				select uid from spreader.tb_user_tag where category_id in (
-					select id from spreader.tb_category where name in
+				select uid from spreader.tb_user_tag where tag_id in (
+					select id from spreader.tb_keyword where name in
 					<iterate property="categories" open="(" close=")" conjunction=",">
 						#categories[]#
 					</iterate>
@@ -95,8 +95,8 @@
 	<dynamic prepend="where">
 		<isNotEmpty prepend="and" property="categories">
 			id in (
-				select uid from spreader.tb_user_tag where category_id in (
-					select id from spreader.tb_category where name in
+				select uid from spreader.tb_user_tag where tag_id in (
+					select id from spreader.tb_keyword where name in
 					<iterate property="categories" open="(" close=")" conjunction=",">
 						#categories[]#
 					</iterate>
@@ -245,8 +245,8 @@
   		</isNotNull>
   		
   		<!-- 用户分类 -->
-  		<isNotNull prepend="and" property="categoryId">
-  	   		u.id = c.uid and c.category_id = #categoryId#
+  		<isNotNull prepend="and" property="tagId">
+  	   		u.id = ut.uid and ut.tag_id = #tagId#
   	   </isNotNull>
   	   
   	   <!-- 城市 -->
@@ -330,8 +330,8 @@
   	select count(u.id) from spreader.tb_user as u
   	<dynamic prepend=",">
   	   <!-- 用户分类  -->
-  	   <isNotNull property="categoryId">
-  	   		spreader.tb_user_tag as c
+  	   <isNotNull property="tagId">
+  	   		spreader.tb_user_tag as ut
   	   </isNotNull>
   	</dynamic> 
   	<dynamic prepend="where">
@@ -343,8 +343,8 @@
   	select u.id from spreader.tb_user as u
   	<dynamic prepend=",">
   	   <!-- 用户分类  -->
-  	   <isNotNull property="categoryId">
-  	   		spreader.tb_user_tag as c
+  	   <isNotNull property="tagId">
+  	   		spreader.tb_user_tag as ut
   	   </isNotNull>
   	</dynamic> 
   	<dynamic prepend="where">
@@ -360,8 +360,8 @@
 		  	select u.id from spreader.tb_user as u
 		  	<dynamic prepend=",">
 		  	   <!-- 用户分类  -->
-		  	   <isNotNull property="categoryId">
-		  	   		spreader.tb_user_tag as c
+		  	   <isNotNull property="tagId">
+		  	   		spreader.tb_user_tag as ut
 		  	   </isNotNull>
 		  	</dynamic> 
 		  	<dynamic prepend="where">
