@@ -753,6 +753,9 @@ expUserWin.on('show', function() {
 			// 清除store缓存
 			expUserStore.clearData();
 		});
+expUserWin.on('hide', function() {
+			sinaUserStore.load();
+		});
 /**
  * 导出用户信息
  */
