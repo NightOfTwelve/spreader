@@ -73,8 +73,8 @@
 		join
 		spreader.tb_category b on a.category_id =
 		b.id
-		where <![CDATA[a.category_id <> -1]]>
-		and <![CDATA[a.category_id <> #categoryId#]]>
+		where <![CDATA[ ifnull(a.category_id,0) <> -1 
+		and ifnull(a.category_id,0) <> #categoryId# ]]>
 		<isNotEmpty prepend="and" property="keywordName">
 			a.name like
 			CONCAT('%',#keywordName#,'%')
@@ -96,8 +96,8 @@
 		left
 		join tb_category b on
 		a.category_id = b.id
-		where <![CDATA[a.category_id <> -1]]>
-		and <![CDATA[a.category_id <> #categoryId#]]>
+		where <![CDATA[ ifnull(a.category_id,0) <> -1 
+		and ifnull(a.category_id,0) <> #categoryId# ]]>
 		<isNotEmpty prepend="and" property="keywordName">
 			a.name like
 			CONCAT('%',#keywordName#,'%')

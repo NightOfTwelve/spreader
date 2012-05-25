@@ -12,7 +12,7 @@ public class UserRelatedDto implements Serializable {
 	@PropertyDescription("是否机器人")
 	private Boolean isRobot;
 	
-	@PropertyDescription("分类")
+	@PropertyDescription("标签")
 	private List<String> categories;
 	
 	@PropertyDescription("关注了用户（uid）")

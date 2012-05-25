@@ -5,8 +5,6 @@
 		extends="spreader_tb_content.ibatorgenerated_ResultMapWithBLOBs">
 		<result property="nickName" column="uid"
 			select="spreader_content.contentUser" />
-		<result property="categorys" column="id"
-			select="spreader_content.getCategoryList" />
 	</resultMap>
 	<sql id="contentPubCondition">
 		<isNotEmpty prepend="and" property="categoryName">
@@ -36,13 +34,6 @@
 			tb_user u where u.nick_name like CONCAT('%',#userName#,'%'))
 		</isNotEmpty>
 	</sql>
-	<select id="getCategoryList" parameterClass="int"
-		resultMap="spreader_tb_category.ibatorgenerated_BaseResultMap">
-		select c.* from tb_content_category cc
-		inner join tb_category
-		c on cc.category_id = c.id
-		where cc.content_id = #id#
-	</select>
 	<select id="contentUser" parameterClass="int" resultClass="java.lang.String">
 		select u.nick_name nickName from tb_user u where u.id = #uid#
 	</select>
@@ -274,9 +265,9 @@
 					</isNotNull>
 				</isNotNull>
 				<isNotEmpty prepend="union" property="userRelated.categories">
-					select uid from spreader.tb_user_tag where category_id in (
+					select uid from spreader.tb_user_tag where tag_id in (
 					select
-					id from spreader.tb_category where name in
+					id from spreader.tb_keyword where name in
 					<iterate property="userRelated.categories" open="(" close=")"
 						conjunction=",">
 						#userRelated.categories[]#

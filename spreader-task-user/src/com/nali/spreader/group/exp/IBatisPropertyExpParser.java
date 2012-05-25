@@ -10,14 +10,15 @@ import org.springframework.stereotype.Component;
 
 import com.nali.lang.StringUtils;
 import com.nali.spreader.config.Range;
+import com.nali.spreader.data.Keyword;
 import com.nali.spreader.group.exception.GroupUserQueryException;
-import com.nali.spreader.service.ICategoryService;
+import com.nali.spreader.service.IKeywordService;
 
 @Component
 public class IBatisPropertyExpParser implements PropertyExpParser{
 	
 	@Autowired
-	private ICategoryService categoryService;
+	private IKeywordService keywordService;
 	
 	@Override
 	public Map<String, Object> parseQuery(PropertyExpression expression) {
@@ -62,13 +63,13 @@ public class IBatisPropertyExpParser implements PropertyExpParser{
 		}
 		
 		
-		String categoryStr = expression.getCategory();
-		if(StringUtils.isNotEmptyNoOffset(categoryStr)) {
-			Long cid = this.categoryService.getIdByName(categoryStr);
-			if(cid != null) {
-				propertiesMap.put("categoryId", cid);
+		String keywordStr = expression.getCategory();
+		if(StringUtils.isNotEmptyNoOffset(keywordStr)) {
+			Keyword keyword = keywordService.findKeywordByKeywordName(keywordStr);
+			if(keyword != null) {
+				propertiesMap.put("tagId", keyword.getId());
 			}else{
-				throw new GroupUserQueryException("Not exist category name: " + categoryStr);
+				throw new GroupUserQueryException("Not exist tag name: " + keywordStr);
 			}
 		}
 		

@@ -27,4 +27,20 @@ public interface IKeywordService {
 	 * @return
 	 */
 	List<Long> fingCategoryIdsByKeywordIds(List<Long> keywordIds);
+
+	/**
+	 * 通过关键字查询Keyword对象
+	 * 
+	 * @param keywordName
+	 * @return
+	 */
+	Keyword findKeywordByKeywordName(String keywordName);
+
+	/**
+	 * 插入一条新关键字并返回ID
+	 * 
+	 * @param keywordName
+	 * @return
+	 */
+	Long getOrAssignKeywordIdByName(String keywordName);
 }

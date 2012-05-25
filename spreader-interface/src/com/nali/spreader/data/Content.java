@@ -1,10 +1,10 @@
 package com.nali.spreader.data;
 
-import com.nali.common.model.BaseModel;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 import java.math.BigDecimal;
+import java.util.Date;
+
+import com.nali.common.model.BaseModel;
 
 public class Content extends BaseModel implements Serializable {
 
@@ -22,13 +22,6 @@ public class Content extends BaseModel implements Serializable {
 	 */
     private String webSiteName;
 
-    /**
-	 * 网站分类标签
-	 */
-    private String categoryNames;
-
-    private List<Category> categorys;
-
     private String typeName;
 
     public String getTypeName() {
@@ -45,22 +38,6 @@ public class Content extends BaseModel implements Serializable {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
-    }
-
-    public String getCategoryNames() {
-        return categoryNames;
-    }
-
-    public void setCategoryNames(String categoryNames) {
-        this.categoryNames = categoryNames;
-    }
-
-    public List<Category> getCategorys() {
-        return categorys;
-    }
-
-    public void setCategorys(List<Category> categorys) {
-        this.categorys = categorys;
     }
 
     public String getWebSiteName() {
