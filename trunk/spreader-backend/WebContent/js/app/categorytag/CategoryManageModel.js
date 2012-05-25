@@ -728,8 +728,17 @@ Ext.onReady(function() {
 			Ext.MessageBox.alert('提示', '分类ID为空，不能提交数据');
 			return;
 		} else {
+			// 待更新的数据
+			var submitData = [];
+			// 添加的新关联关系
 			var gridData = cagegoryTagGrid.store.data.items;
-			var submitData = createSubmitData(gridData, newCategoryId);
+			// 从cagegoryTagGrid中删除的数据，也需一起提交
+			var deleteGridData = cagegoryNotTagGrid.store.data.items;
+			var newKeywordData = createSubmitData(gridData, newCategoryId);
+			// 取消关联的关键字，categoryId为null
+			var delKeywordData = createSubmitData(deleteGridData, null);
+			// 合并数组
+			submitData = newKeywordData.concat(delKeywordData);
 			var submitDataLen = submitData.length;
 			if (submitDataLen > 0) {
 				Ext.Msg.show({
@@ -778,6 +787,7 @@ Ext.onReady(function() {
 	function createSubmitData(gridData, newCategoryId) {
 		var submitData = [];
 		var dataLen = gridData.length;
+		// 先处理需要新增的关系
 		if (dataLen > 0) {
 			for (var i = 0; i < dataLen; i++) {
 				var row = gridData[i].data;
