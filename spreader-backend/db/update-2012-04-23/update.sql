@@ -34,4 +34,7 @@ ALTER TABLE tb_user_tag ADD tag_id bigint;
 
 ALTER TABLE tb_user_tag ADD INDEX idx_tag_user (uid,tag_id);
 
+update tb_user_tag ut
+set tag_id = (select id from tb_keyword k where ut.tag = k.name);
+
 drop table tb_content_category;
