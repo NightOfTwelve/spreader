@@ -9,6 +9,8 @@ public interface IConfigableCenter {
 	<T> boolean register(String name, Configable<T> configable);
 	
 	<T extends Configable<?>> void listen(String name, ConfigableListener<T>... listeners);
+	
+	<T extends Configable<?>> boolean listenAndRegisterIfNeeded(String name, T configable, ConfigableListener<T>... listeners);
 
 	/**
 	 * 获取一份拷贝

@@ -29,6 +29,14 @@ public class ConfigableUnit<T extends Configable> {
 	public T getConfigable() {
 		return configable;
 	}
+
+	@SuppressWarnings("unchecked")
+	public synchronized void syncListener(ConfigableListener listener) {//synchronized method
+		if (listener instanceof LazyConfigableListener == false) {
+			listener.onchange(configable, null);//TODO change null
+		}
+		addListener(listener);
+	}
 	
 	@SuppressWarnings("unchecked")
 	public synchronized void addListener(ConfigableListener listener) {//synchronized method

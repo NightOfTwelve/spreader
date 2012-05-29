@@ -23,19 +23,32 @@ public class PassiveConfigService extends AbstractConfigService<String> {
 	public void registerConfigableInfo(String name, Configable obj) {
 		boolean newRegister = configableCenter.register(name, obj);
 		if (newRegister) {
-			Class<?> clazz = obj.getClass();
-			super.registerConfigableInfo(name, clazz);
-			Object config = passiveConfigDao.getConfig(name);
-			if(config!=null) {
-				obj.init(config);
-			} else {
-				logger.warn("configable object has not config:" + name);
-			}
+			handleNewRegister(name, obj);
 		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void handleNewRegister(String name, Configable obj) {
+		Class<?> clazz = obj.getClass();
+		super.registerConfigableInfo(name, clazz);
+		Object config = passiveConfigDao.getConfig(name);
+		if(config!=null) {
+			obj.init(config);
+		} else {
+			logger.warn("configable object has not config:" + name);
+		}
+	
 	}
 
 	public <T extends Configable<?>> void listen(String name, ConfigableListener<T>... listeners) {
 		configableCenter.listen(name, listeners);
+	}
+	
+	public <T extends Configable<?>> void listenAndRegisterIfNeeded(String name, T configable, ConfigableListener<T>... listeners) {
+		boolean newRegister = configableCenter.listenAndRegisterIfNeeded(name, configable, listeners);
+		if (newRegister) {
+			handleNewRegister(name, configable);
+		}
 	}
 
 	@Override

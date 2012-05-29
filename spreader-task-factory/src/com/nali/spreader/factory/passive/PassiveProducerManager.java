@@ -4,10 +4,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,19 +34,6 @@ public class PassiveProducerManager {
 	private ClientTaskExporterFactory passiveTaskExporterFactory;
 	@Autowired
 	private ThreadLocalResultInfo threadLocalResultInfo;
-	
-	@PostConstruct
-	public void init() {
-		Map<String, PassiveObject> beans = context.getBeansOfType(PassiveObject.class);
-		for (Entry<String, PassiveObject> entry : beans.entrySet()) {
-			PassiveObject passive = entry.getValue();
-			String beanName = entry.getKey();
-			if (passive instanceof Configable) {
-				Configable<?> configable = (Configable<?>) passive;
-				passiveConfigService.registerConfigableInfo(beanName, configable);
-			}
-		}
-	}
 
 	public TaskProduceLine<?> getProduceLine(String beanName, Type type) {
 		if (type instanceof Class) {
@@ -62,9 +45,10 @@ public class PassiveProducerManager {
 		PassiveObject passive = context.getBean(beanName, PassiveObject.class);
 		if (passive instanceof Configable) {
 			LazyProduceLine lazyProduceLine = new LazyProduceLine(beanName, paramType);
-			passiveConfigService.listen(beanName, lazyProduceLine);
+			passiveConfigService.listenAndRegisterIfNeeded(beanName, (Configable)passive, lazyProduceLine);
 			return lazyProduceLine;
 		} else {
+			//TODO 需合并(1) 和 (2)代码合并
 			if (passive instanceof PassiveAnalyzer) {
 				AnalyzerProduceLine produceLine = new AnalyzerProduceLine((PassiveAnalyzer)passive, paramType);
 				return new ResultInfoWrappedProduceLine(produceLine, beanName);
@@ -134,6 +118,7 @@ public class PassiveProducerManager {
 		}
 		@Override
 		public void onbind(Configable<?> obj) {
+			//TODO 需合并(2) 和 (1)代码合并
 			if (obj instanceof PassiveAnalyzer) {
 				AnalyzerProduceLine produceLine = new AnalyzerProduceLine((PassiveAnalyzer)obj, paramType);
 				innerProduceLine = new ResultInfoWrappedProduceLine(produceLine, name);
