@@ -24,8 +24,8 @@ public class TaskService implements ITaskService {
 	}
 
 	@Override
-	public void saveContext(Long taskId, TaskContext taskContext) {
-		taskDao.saveContext(taskId, taskContext);
+	public void saveContext(Long taskId, TaskContext taskContext, Date expiredTime) {
+		taskDao.saveContext(taskId, taskContext, expiredTime);
 	}
 
 	@Override

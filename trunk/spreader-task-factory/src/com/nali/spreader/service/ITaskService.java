@@ -9,7 +9,7 @@ public interface ITaskService {
 	
 	Long saveTask(Task task);
 
-	void saveContext(Long taskId, TaskContext taskContext);
+	void saveContext(Long taskId, TaskContext taskContext, Date expiredTime);
 
 	TaskContext popContext(Long taskId);
 

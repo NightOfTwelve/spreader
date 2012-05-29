@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
 import com.nali.spreader.factory.base.TaskMeta;
@@ -13,6 +14,7 @@ import com.nali.spreader.model.Task;
 import com.nali.spreader.model.TaskContext;
 
 public abstract class BaseExporterImpl<TM extends TaskMeta> implements Exporter<TM> {
+	private static final int CONTEXT_ADDITIONAL_EXPIRED_DAYS = 10;
 	private static final int DEFAULT_PRIORITY = 0;
 	private static Logger logger = Logger.getLogger(BaseExporterImpl.class);
 	private static final ContentSerializer DEFAULT_CONTENT_SERIALIZER=new JacksonSerializer();
@@ -122,7 +124,7 @@ public abstract class BaseExporterImpl<TM extends TaskMeta> implements Exporter<
 					throw new IllegalArgumentException("this exporter doesnot support context setting," +
 							" make sure the producer's taskMeta have provide a contextMeta");
 				}
-				saveContext(taskId, new TaskContext(uid, context));
+				saveContext(taskId, new TaskContext(uid, context), DateUtils.addDays(expiredTime, CONTEXT_ADDITIONAL_EXPIRED_DAYS));
 			}
 			ClientTask clientTask = new ClientTask();
 			clientTask.setActionId(getActionId());
@@ -163,7 +165,7 @@ public abstract class BaseExporterImpl<TM extends TaskMeta> implements Exporter<
 
 	protected abstract Long save(Task task);
 
-	protected abstract void saveContext(Long taskId, TaskContext taskContext);
+	protected abstract void saveContext(Long taskId, TaskContext taskContext, Date expiredTime);
 	
 	protected abstract Long getActionId();
 

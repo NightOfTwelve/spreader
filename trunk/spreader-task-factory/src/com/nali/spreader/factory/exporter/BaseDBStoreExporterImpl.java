@@ -1,6 +1,7 @@
 package com.nali.spreader.factory.exporter;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 import com.nali.spreader.factory.base.TaskMeta;
@@ -30,8 +31,8 @@ public abstract class BaseDBStoreExporterImpl<TM extends TaskMeta> extends BaseE
 	}
 
 	@Override
-	protected void saveContext(Long taskId, TaskContext taskContext) {
-		taskService.saveContext(taskId, taskContext);
+	protected void saveContext(Long taskId, TaskContext taskContext, Date expiredTime) {
+		taskService.saveContext(taskId, taskContext, expiredTime);
 	}
 
 }
