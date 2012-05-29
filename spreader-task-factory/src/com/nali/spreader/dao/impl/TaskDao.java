@@ -1,6 +1,7 @@
 package com.nali.spreader.dao.impl;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,8 +36,10 @@ public class TaskDao implements ITaskDao {
 	}
 
 	@Override
-	public void saveContext(Long taskId, TaskContext taskContext) {
-		redisTemplate.opsForValue().set(taskContextKey(taskId), taskContext);
+	public void saveContext(Long taskId, TaskContext taskContext, Date expiredTime) {
+		String key = taskContextKey(taskId);
+		redisTemplate.opsForValue().set(key, taskContext);
+		redisTemplate.expireAt(key, expiredTime);
 	}
 	
 	@Override
