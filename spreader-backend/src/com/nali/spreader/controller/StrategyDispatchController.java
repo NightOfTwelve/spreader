@@ -138,7 +138,7 @@ public class StrategyDispatchController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/strategy/dispsave")
+	@RequestMapping(value = "/dispsave")
 	public String saveStrategyConfig(String groupName, Long groupId, Integer groupType,
 			Long fromGroupId, Long toGroupId, RegularJob regularJob, TriggerDto triggerDto) {
 		// 检查参数
@@ -228,7 +228,7 @@ public class StrategyDispatchController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/strategy/deletetrg")
+	@RequestMapping(value = "/deletetrg")
 	public String deleteTrigger(String idstr) {
 		// 操作记录数
 		int count = 0;
@@ -274,7 +274,7 @@ public class StrategyDispatchController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/strategy/newgroupid")
+	@RequestMapping(value = "/newgroupid")
 	public String createNewGroupId(Integer groupType, String groupName, String groupNote) {
 		Long gid = this.getNewGroupId(groupType, groupName, groupNote);
 		Map<String, Long> m = CollectionUtils.newHashMap(1);
