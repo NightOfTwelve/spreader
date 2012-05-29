@@ -37,7 +37,7 @@ public class ConfigableCenter implements IConfigableCenter {
 	}
 
 	@Override
-	public <T> boolean register(String name, Configable<T> configable) {
+	public synchronized <T> boolean register(String name, Configable<T> configable) {
 		ConfigableUnit<?> existsConfigable = configables.get(name);
 		if(existsConfigable==null) {
 			ConfigableUnit<Configable<T>> configableUnit = new ConfigableUnit<Configable<T>>(name, configable, context.getAutowireCapableBeanFactory());
@@ -56,6 +56,22 @@ public class ConfigableCenter implements IConfigableCenter {
 		} else {
 			if(existsConfigable.getConfigable()!=configable) {
 				throw new IllegalArgumentException("there is already a configable object, named:" + name);
+			}
+			return false;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public synchronized <T extends Configable<?>> boolean listenAndRegisterIfNeeded(String name, T configable, ConfigableListener<T>... listeners) {
+		ConfigableUnit<?> existsConfigable = configables.get(name);
+		if(existsConfigable==null) {
+			register(name, (Configable)configable);
+			listen(name, listeners);
+			return true;
+		} else {
+			for (ConfigableListener<T> listener : listeners) {
+				existsConfigable.syncListener(listener);
 			}
 			return false;
 		}
