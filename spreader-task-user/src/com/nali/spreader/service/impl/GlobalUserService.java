@@ -10,6 +10,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nali.common.model.Limit;
 import com.nali.common.model.Shard;
 import com.nali.spreader.dao.ICrudRobotUserDao;
 import com.nali.spreader.dao.ICrudUserDao;
@@ -264,6 +265,14 @@ public class GlobalUserService implements IGlobalUserService {
 		if (startDate != null) {
 			criteria.andStartTimeLessThan(startDate);
 		}
+		return crudWeiboAppealDao.selectByExample(example);
+	}
+	
+	@Override
+	public List<WeiboAppeal> findInitedWeiboAppeal(int limit) {
+		WeiboAppealExample example = new WeiboAppealExample();
+		example.createCriteria().andStatusEqualTo(WeiboAppeal.STATUS_INIT);
+		example.setLimit(Limit.newInstanceForLimit(0, limit));
 		return crudWeiboAppealDao.selectByExample(example);
 	}
 

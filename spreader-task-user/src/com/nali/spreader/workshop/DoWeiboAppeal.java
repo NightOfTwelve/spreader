@@ -21,6 +21,7 @@ import com.nali.spreader.factory.base.ContextMeta;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.base.SingleTaskMeta;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
+import com.nali.spreader.factory.passive.Input;
 import com.nali.spreader.factory.passive.SinglePassiveTaskProducer;
 import com.nali.spreader.factory.result.ContextedResultProcessor;
 import com.nali.spreader.model.ClientTask;
@@ -78,6 +79,25 @@ public class DoWeiboAppeal extends SingleTaskMachineImpl implements SinglePassiv
 	
 	@Override
 	public void work(Long uid, SingleTaskExporter exporter) {
+		work(null, uid, exporter);
+	}
+	
+	@Input
+	public void work(WeiboAppeal appeal, SingleTaskExporter exporter) {
+		work(appeal, null, exporter);
+	}
+	
+	private void work(WeiboAppeal appeal, Long uid, SingleTaskExporter exporter) {
+		if(appeal!=null) {
+			if(uid!=null && !uid.equals(appeal.getUid())) {
+				throw new IllegalArgumentException("uid mismatch uid:"+uid+", appeal's uid:" + appeal.getUid());
+			} else {
+				if(appeal.getUid()==null) {
+					throw new IllegalArgumentException("appeal.getUid()==null");
+				}
+				uid=appeal.getUid();
+			}
+		}
 		RobotUser robotUser = globalRobotUserService.getRobotUser(uid);
 		if(robotUser==null) {
 			throw new IllegalArgumentException("not a robotUser:"+uid);
@@ -87,10 +107,16 @@ public class DoWeiboAppeal extends SingleTaskMachineImpl implements SinglePassiv
 			logger.warn("missing nickname:"+uid);
 			return;
 		}
-		boolean initWeiboAppeal = globalUserService.initWeiboAppeal(uid, false);//force merge
-		if(initWeiboAppeal==false) {
-			logger.warn("initWeiboAppeal fail, uid:"+uid);
-			return;
+		if(appeal!=null) {
+			appeal.setCreateTime(new Date());
+			appeal.setStatus(WeiboAppeal.STATUS_INIT);
+			globalUserService.mergeWeiboAppeal(appeal);
+		} else {
+			boolean initWeiboAppeal = globalUserService.initWeiboAppeal(uid, false);//force merge
+			if(initWeiboAppeal==false) {
+				logger.warn("initWeiboAppeal fail, uid:"+uid);
+				return;
+			}
 		}
 		exporter.setBasePriority(basePriority);
 		exporter.setProperty("uid", uid);

@@ -34,7 +34,7 @@ import com.nali.spreader.util.random.Randomer;
 import com.nali.spreader.util.random.WeightRandomer;
 
 @Component
-@ClassDescription("分组·回复微博")
+@ClassDescription("分组·回转指定微博")
 public class ReplyWeiboByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,Configable<RobotReplyListDto> {
 	private static final String FILE_REPLY_WORDS = "txt/reply.txt";
 	private static Logger logger = Logger.getLogger(ReplyWeiboByGroup.class);

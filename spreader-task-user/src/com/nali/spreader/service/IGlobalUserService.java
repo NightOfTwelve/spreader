@@ -42,4 +42,6 @@ public interface IGlobalUserService {
 	User getDeletedUser(Long uid);
 	
 	User recoverDeletedUser(Long uid);
+
+	List<WeiboAppeal> findInitedWeiboAppeal(int limit);
 }
