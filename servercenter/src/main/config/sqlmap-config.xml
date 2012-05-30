@@ -8,5 +8,5 @@
 	<settings useStatementNamespaces="true" enhancementEnabled="true"
 		errorTracingEnabled="true" lazyLoadingEnabled="false" />
 		
-    <sqlMap resource="com/nali/center/ibatis/identityDAO.xml" />    
+    <sqlMap resource="ibatis/identityDAO.xml" />    
 </sqlMapConfig>
