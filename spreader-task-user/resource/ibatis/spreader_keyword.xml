@@ -142,7 +142,7 @@
 		values(
 		#name#,
 		#categoryId#,
-		#tag#,,
+		#tag#,
 		#createTime#
 		)
 		<selectKey resultClass="long" type="post" keyProperty="id">
