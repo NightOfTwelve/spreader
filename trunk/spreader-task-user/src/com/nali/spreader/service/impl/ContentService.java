@@ -1,5 +1,6 @@
 package com.nali.spreader.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -134,7 +135,7 @@ public class ContentService implements IContentService {
 		UserTagExample example = new UserTagExample();
 		example.createCriteria().andUidEqualTo(contentUid);
 		List<UserTag> userTags = crudUserTagDao.selectByExample(example);
-		List<Long> tagIds = Collections.emptyList();
+		List<Long> tagIds = new ArrayList<Long>();
 		if (userTags.size() == 0) {
 			categoryIds = Arrays.asList(DEFAULT_CATEGORY_ID);
 		} else {
