@@ -134,7 +134,7 @@
 			u.is_robot = #isRobot#
 		</isNotNull>
 		<isNotEmpty prepend="and" property="nickName">
-			u.nick_name like CONCAT('%', #nickName#, '%')
+			u.nick_name like CONCAT(#nickName#, '%')
 		</isNotEmpty>
 		<isNotNull prepend="and" property="minFans">
 			<![CDATA[u.fans >= #minFans#]]>
@@ -149,7 +149,7 @@
 			<![CDATA[u.robot_fans <= #maxRobotFans#]]>
 		</isNotNull>
 		<isNotEmpty prepend="and" property="tag">
-			u.id in(select uid from tb_user_tag where tag like CONCAT('%', #tag#, '%'))
+			u.id in(select uid from tb_user_tag where tag like CONCAT(#tag#, '%'))
 		</isNotEmpty>
 		<isNotNull prepend="and" property="isRobot">
 			u.is_robot = #isRobot#
@@ -175,7 +175,7 @@
 			u.id = #id#
 		</isNotNull>
 		<isNotEmpty prepend="and" property="nickName">
-			u.nick_name like CONCAT('%', #nickName#, '%')
+			u.nick_name like CONCAT(#nickName#, '%')
 		</isNotEmpty>
 		<isNotNull prepend="and" property="minFans">
 			<![CDATA[u.fans >= #minFans#]]>
@@ -190,7 +190,7 @@
 			<![CDATA[u.robot_fans <= #maxRobotFans#]]>
 		</isNotNull>
 		<isNotEmpty prepend="and" property="tag">
-			u.id in(select uid from tb_user_tag where tag like CONCAT('%', #tag#, '%'))
+			u.id in(select uid from tb_user_tag where tag like CONCAT(#tag#, '%'))
 		</isNotEmpty>
 		<isNotNull prepend="and" property="isRobot">
 			u.is_robot = #isRobot#

@@ -18,6 +18,8 @@ public enum SimpleActionConfig {
 	firstTimeGuide(19L),
 	weiboAppeal(21L),
 	confirmWeiboAppeal(22L),
+	fetchKeywordEntrance(23L),
+	fetchKeyword(24L),
 	;
 	private Long actionId;
 	private String taskCode;
