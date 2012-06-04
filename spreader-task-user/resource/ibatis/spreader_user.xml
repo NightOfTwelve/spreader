@@ -350,7 +350,6 @@
   	<dynamic prepend="where">
   	    <include refid="propertiesWhere"/>
   	</dynamic>
-    order by score desc
      <isNotNull property="limit">
         limit $limit.offset$,$limit.maxRows$
     </isNotNull>
