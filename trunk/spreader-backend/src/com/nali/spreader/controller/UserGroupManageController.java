@@ -19,6 +19,7 @@ import com.nali.log.impl.LoggerFactory;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.UserGroup;
+import com.nali.spreader.dto.GroupUserDto;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.config.desc.DescriptionResolve;
@@ -219,12 +220,13 @@ public class UserGroupManageController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/selectuserlist")
 	public String queryGrouppedUserList(Long gid, Integer start, Integer limit) {
-		PageResult<GrouppedUser> pr = null;
+		PageResult<GroupUserDto> result = null;
 		if (gid != null && gid > 0) {
 			Limit lit = this.initLimit(start, limit);
-			pr = this.userGroupService.queryGrouppedUsers(gid, lit);
+			PageResult<GrouppedUser> gu = this.userGroupService.queryGrouppedUsers(gid, lit);
+			result = this.userGroupService.queryGroupUserDtoData(gu, lit);
 		}
-		return this.write(pr);
+		return this.write(result);
 	}
 
 	/**

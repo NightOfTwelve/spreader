@@ -180,8 +180,7 @@ public class StrategyDispatchController extends BaseController {
 						dataClass);
 				regularJob.setConfigObject(configObj);
 			} catch (Exception e) {
-				groupService.rollBackStrategyGroupByGid(groupId);
-				return returnError("获取configObj异常,回滚分组：" + groupId, e);
+				return returnError("获取configObj异常" + groupId, e);
 			}
 		}
 
@@ -204,8 +203,8 @@ public class StrategyDispatchController extends BaseController {
 			message.put("success", true);
 			return this.write(message);
 		} catch (Exception e) {
-			groupService.rollBackStrategyGroupByGid(groupId);
-			return returnError("保存失败,请检查数据重新填写,数据已回滚", e);
+			LOGGER.error("策略保存失败",e);
+			return returnError("保存失败,请检查数据重新填写", e);
 		}
 	}
 
