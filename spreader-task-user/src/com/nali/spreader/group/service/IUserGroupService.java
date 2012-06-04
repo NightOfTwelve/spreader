@@ -10,6 +10,7 @@ import com.nali.common.pagination.PageResult;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserGroup;
+import com.nali.spreader.dto.GroupUserDto;
 import com.nali.spreader.group.exception.GroupUserQueryException;
 import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
@@ -228,6 +229,14 @@ public interface IUserGroupService {
 	 * @return
 	 */
 	boolean checkUserGroupUniqueByName(String gname);
+
+	/**
+	 * 封装用户与分组的关系数据
+	 * 
+	 * @param pr
+	 * @return
+	 */
+	PageResult<GroupUserDto> queryGroupUserDtoData(PageResult<GrouppedUser> pr,Limit lit);
 	
 	public static class UidCollection {
 		private Set<Long> manualUids;
