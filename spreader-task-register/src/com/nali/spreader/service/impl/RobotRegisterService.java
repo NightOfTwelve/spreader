@@ -37,6 +37,7 @@ public class RobotRegisterService implements IRobotRegisterService {
 		RobotRegister record = new RobotRegister();
 		record.setId(id);
 		record.setEmail(email);
+		record.setUpdateTime(new Date());
 		crudRobotRegisterDao.updateByPrimaryKeySelective(record);
 	}
 
