@@ -86,4 +86,20 @@ public interface IKeywordDao {
 	 * @return
 	 */
 	List<Long> selectCategoryIdsByKeywordIds(KeywordQueryParamsDto param);
+
+	/**
+	 * 根据分类获取关键字列表
+	 * 
+	 * @param categoryName
+	 * @return
+	 */
+	List<String> selectKeywordNameByCategory(String categoryName);
+
+	/**
+	 * 通过UID查找关键字
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	List<String> selectKeywordByUserId(Long uid);
 }

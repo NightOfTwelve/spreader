@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
-<sqlMap namespace="spreader_task" >
+<sqlMap namespace="spreader_task">
 	<insert id="save" parameterClass="com.nali.spreader.model.Task">
 		insert into spreader$shard.databaseSuffix$.tb_task$shard.tableSuffix$
 		<dynamic prepend="(">
@@ -124,4 +124,10 @@
 			select LAST_INSERT_ID() as value
 		</selectKey>
 	</insert>
+	<select id="countTaskStatus" parameterClass="java.lang.Long"
+		resultClass="com.nali.spreader.model.TaskStatusCountDto">
+		select status,count(id) cnt from tb_task where result_id =
+		#resultId#
+		group by status;
+	</select>
 </sqlMap>

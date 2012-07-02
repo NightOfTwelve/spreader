@@ -18,4 +18,12 @@ public interface IRobotContentDao {
 	 * @return
 	 */
 	List<Long> queryRobotIdByContentAndType(KeyValue<Long, Integer> params);
+
+	/**
+	 * 根据UID和类型获取contentID
+	 * 
+	 * @param params
+	 * @return
+	 */
+	List<Long> queryContentIdByUid(KeyValue<Long, Integer> params);
 }

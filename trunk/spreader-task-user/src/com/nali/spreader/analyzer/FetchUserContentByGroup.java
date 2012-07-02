@@ -9,8 +9,9 @@ import org.springframework.stereotype.Component;
 
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
+import com.nali.spreader.config.UserDto;
 import com.nali.spreader.config.UserGroupContentDto;
-import com.nali.spreader.data.KeyValue;
+import com.nali.spreader.dto.FetchUserWeiboDto;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
@@ -19,18 +20,26 @@ import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
 import com.nali.spreader.group.service.IUserGroupService;
 import com.nali.spreader.model.GrouppedUser;
+import com.nali.spreader.service.IKeywordService;
 import com.nali.spreader.util.DataIterator;
+import com.nali.spreader.util.random.RandomUtil;
+import com.nali.spreader.util.random.Randomer;
 
 @Component
 @ClassDescription("分组·用户内容爬取")
 public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
 		Configable<UserGroupContentDto> {
-	private static final MessageLogger logger = LoggerFactory.getLogger(FetchUserContentByGroup.class);
+	private static final MessageLogger logger = LoggerFactory
+			.getLogger(FetchUserContentByGroup.class);
 	private Date lastFetchTime;
 	@Autowired
 	private IUserGroupService userGroupService;
+	@Autowired
+	private IKeywordService keywordService;
 	@AutowireProductLine
-	private TaskProduceLine<KeyValue<Long, Date>> fetchWeiboContent;
+	private TaskProduceLine<FetchUserWeiboDto> fetchWeiboContent;
+	private Randomer<Integer> keywordRandom;
+	private UserGroupContentDto config;
 
 	public FetchUserContentByGroup() {
 		super("爬取${fromGroup}的内容");
@@ -38,6 +47,7 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 
 	@Override
 	public void init(UserGroupContentDto config) {
+		this.config = config;
 		Long minute = config.getLastFetchTime();
 		Date time = null;
 		if (minute != null) {
@@ -47,20 +57,30 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 			time = new Date();
 		}
 		this.lastFetchTime = time;
+		this.keywordRandom = this.keywordService.createRandomer(config.getRandomRange(),
+				UserDto.DEFAULT_RANDOM_GTE, UserDto.DEFAULT_RANDOM_LTE + 1);
 	}
 
 	@Override
 	public String work() {
 		Long gid = this.getFromUserGroup();
 		if (gid != null) {
-			DataIterator<GrouppedUser> data = this.userGroupService.queryGrouppedUserIterator(gid, 100);
+			DataIterator<GrouppedUser> data = this.userGroupService.queryGrouppedUserIterator(gid,
+					100);
+			List<String> randomList = RandomUtil.randomItems(config.getRandomKeywords(),
+					this.keywordRandom.get());
 			if (data.hasNext()) {
 				List<GrouppedUser> list = data.next();
 				if (list.size() > 0) {
 					for (GrouppedUser gu : list) {
 						if (gu != null) {
 							Long uid = gu.getUid();
-							fetchWeiboContent.send(new KeyValue<Long, Date>(uid, lastFetchTime));
+							FetchUserWeiboDto sendDto = new FetchUserWeiboDto();
+							sendDto.setUid(uid);
+							sendDto.setKeywords(config.getKeywords());
+							sendDto.setRandomkeywords(randomList);
+							sendDto.setLastFetchTime(lastFetchTime);
+							fetchWeiboContent.send(sendDto);
 						}
 					}
 				}

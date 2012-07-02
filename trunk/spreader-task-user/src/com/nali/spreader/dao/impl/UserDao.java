@@ -16,9 +16,9 @@ import com.nali.spreader.config.ContentDto;
 import com.nali.spreader.config.UserDto;
 import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.dao.IUserDao;
-import com.nali.spreader.data.Content;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
+import com.nali.spreader.dto.PostWeiboContentDto;
 
 @Repository
 public class UserDao implements IUserDao {
@@ -68,11 +68,6 @@ public class UserDao implements IUserDao {
 	public Integer countUserAndTagNumer(UserTagParamsDto utp) {
 		return (Integer) sqlMap.queryForObject(
 				"spreader_user.getUserAndTagCountByDto", utp);
-	}
-
-	@Override
-	public Long insertContent(Content content) {
-		return (Long) sqlMap.insert("spreader_content.insertContent", content);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -141,5 +136,10 @@ public class UserDao implements IUserDao {
 	@Override
 	public String getUserPassword(User user) {
 		return (String) this.sqlMap.queryForObject("spreader_user.queryUserPassword", user);
+	}
+
+	@Override
+	public List<Long> queryContentIdByPostContentDto(PostWeiboContentDto dto) {
+		return this.sqlMap.queryForList("spreader_content.findContentIdByPostContentDto", dto);
 	}
 }

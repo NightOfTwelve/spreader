@@ -8,9 +8,9 @@ import com.nali.common.model.Limit;
 import com.nali.spreader.config.ContentDto;
 import com.nali.spreader.config.UserDto;
 import com.nali.spreader.config.UserTagParamsDto;
-import com.nali.spreader.data.Content;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
+import com.nali.spreader.dto.PostWeiboContentDto;
 
 public interface IUserDao {
 
@@ -43,9 +43,16 @@ public interface IUserDao {
 	 */
 	Integer countUserAndTagNumer(UserTagParamsDto utp);
 
-	Long insertContent(Content content);
-
 	List<Long> findContentIdByDto(ContentDto dto);
+
+	/**
+	 * 查询content
+	 * 
+	 * @param dto
+	 * @return
+	 */
+
+	List<Long> queryContentIdByPostContentDto(PostWeiboContentDto dto);
 
 	/**
 	 * 获取粉丝信息

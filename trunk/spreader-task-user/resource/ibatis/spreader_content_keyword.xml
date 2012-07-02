@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="spreader_content_keyword">
+	<select id="queryContentKeyword"
+		resultMap="spreader_tb_content_keyword.ibatorgenerated_BaseResultMap"
+		parameterClass="com.nali.spreader.data.ContentKeyword">
+		select id,content_id,keyword_id from
+		spreader.tb_content_keyword
+		where content_id=#contentId# and
+		keyword_id=#keywordId#
+	</select>
+	<insert id="insertContentKeyword" parameterClass="com.nali.spreader.data.ContentKeyword">
+		insert into spreader.tb_content_keyword(
+		content_id,
+		keyword_id
+		)
+		values(
+		#contentId#,
+		#keywordId#
+		)
+		<selectKey resultClass="long" type="post" keyProperty="id">
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+</sqlMap>

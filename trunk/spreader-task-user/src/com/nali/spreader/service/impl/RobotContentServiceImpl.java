@@ -72,4 +72,12 @@ public class RobotContentServiceImpl implements IRobotContentService {
 		}
 		return authorId;
 	}
+
+	@Override
+	public List<Long> findRelatedContentId(Long uid, Integer type) {
+		KeyValue<Long, Integer> kv = new KeyValue<Long, Integer>();
+		kv.setKey(uid);
+		kv.setValue(type);
+		return this.robotContentDao.queryContentIdByUid(kv);
+	}
 }

@@ -54,4 +54,6 @@ public interface IUserService {
 	Map<Long, Long> queryGids(List<Long> uids);
 	
 	void forceUpdateGids(Map<Long, List<Long>> gidRelation);
+	
+	User findUserById(Long uid);
 }
