@@ -32,9 +32,9 @@ var resultgridsm = new Ext.grid.CheckboxSelectionModel({
 				rowselect : function(model, rowIndex, record) {
 					var resultId = record.get('id');
 					// 先清除缓存
-					taskDtlStore.removeAll();
-					taskDtlStore.setBaseParam('resultId', resultId);
-					taskDtlStore.reload();
+					statusCountStore.removeAll();
+					statusCountStore.setBaseParam('resultId', resultId);
+					statusCountStore.reload();
 				}
 			}
 		});
@@ -119,35 +119,52 @@ var jobResultGrid = new Ext.grid.GridPanel({
 			bbar : jobResultBbar
 		})
 // 统计任务明细的store
-var taskDtlStore = new Ext.data.GroupingStore({
+// var taskDtlStore = new Ext.data.GroupingStore({
+// proxy : new Ext.data.HttpProxy({
+// url : '../taskresult/resultdtl?_time='
+// + new Date().getTime()
+// }),
+// reader : new Ext.data.JsonReader({
+// root : 'list'
+// }, [{
+// name : 'id'
+// }, {
+// name : 'taskCode'
+// }, {
+// name : 'bid'
+// }, {
+// name : 'startTime'
+// }, {
+// name : 'handleTime'
+// }, {
+// name : 'status'
+// }, {
+// name : 'uid'
+// }, {
+// name : 'createTime'
+// }, {
+// name : 'resultId'
+// }, {
+// name : 'traceLink'
+// }]),
+// groupField : 'status',
+// autoLoad : true
+// });
+/**
+ * 统计任务状态
+ */
+var statusCountStore = new Ext.data.Store({
 			proxy : new Ext.data.HttpProxy({
-						url : '../taskresult/resultdtl?_time='
+						url : '../taskresult/statuscount?_time='
 								+ new Date().getTime()
 					}),
 			reader : new Ext.data.JsonReader({
 						root : 'list'
 					}, [{
-								name : 'id'
-							}, {
-								name : 'taskCode'
-							}, {
-								name : 'bid'
-							}, {
-								name : 'startTime'
-							}, {
-								name : 'handleTime'
-							}, {
 								name : 'status'
 							}, {
-								name : 'uid'
-							}, {
-								name : 'createTime'
-							}, {
-								name : 'resultId'
-							}, {
-								name : 'traceLink'
+								name : 'cnt'
 							}]),
-			groupField : 'status',
 			autoLoad : true
 		});
 // TASK CM
@@ -185,26 +202,39 @@ var taskgridcm = new Ext.grid.ColumnModel([{
 			width : 80
 		}]);
 
-var taskBbar = new Ext.PagingToolbar({
-			pageSize : 20,
-			store : taskDtlStore,
-			displayInfo : true,
-			displayMsg : '显示{0}条到{1}条,共{2}条',
-			emptyMsg : "没有符合条件的记录"
-		});
+var taskgridcm2 = new Ext.grid.ColumnModel([{
+			header : '任务状态',
+			dataIndex : 'status',
+			renderer : renderTaskStatus,
+			width : 80
+		}, {
+			header : '数量',
+			dataIndex : 'cnt',
+			width : 100
+		}]);
+
+// var taskBbar = new Ext.PagingToolbar({
+// pageSize : 20,
+// store : taskDtlStore,
+// displayInfo : true,
+// displayMsg : '显示{0}条到{1}条,共{2}条',
+// emptyMsg : "没有符合条件的记录"
+// });
 // Task统计列表
 var taskGrid = new Ext.grid.GridPanel({
 	region : 'center',
 	split : true,
 	id : 'taskGrid',
-	store : taskDtlStore,
-	cm : taskgridcm,
-	view : new Ext.grid.GroupingView({
-		forceFit : true,
-		startCollapsed : true, // 默认收起
-		groupTextTpl : '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Task"]})'
-	}),
-	bbar : taskBbar
+	store : statusCountStore,
+	cm : taskgridcm2
+		// ,
+		// view : new Ext.grid.GroupingView({
+		// forceFit : true,
+		// startCollapsed : true, // 默认收起
+		// groupTextTpl : '{text} ({[values.rs.length]} {[values.rs.length > 1 ?
+		// "Items" : "Task"]})'
+		// }),
+		// bbar : taskBbar
 		// ,
 		// fbar : ['->', {
 		// text : 'Clear Grouping',
@@ -213,7 +243,7 @@ var taskGrid = new Ext.grid.GridPanel({
 		// taskDtlStore.clearGrouping();
 		// }
 		// }]
-})
+	})
 // task
 var taskWindow = new Ext.Window({
 	title : '<span class="commoncss">执行情况查询</span>', // 窗口标题
@@ -236,5 +266,5 @@ var taskWindow = new Ext.Window({
 taskWindow.on('show', function() {
 			jobResultStore.removeAll();
 			jobResultStore.reload();
-			taskDtlStore.removeAll();
+			statusCountStore.removeAll();
 		});

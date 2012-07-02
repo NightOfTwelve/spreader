@@ -17,6 +17,7 @@ import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.factory.config.RegularJobResultDto;
 import com.nali.spreader.factory.regular.RegularScheduler;
 import com.nali.spreader.model.Task;
+import com.nali.spreader.model.TaskStatusCountDto;
 import com.nali.spreader.service.IRegularJobExecutionService;
 
 @Controller
@@ -89,6 +90,25 @@ public class TaskJobResultManageController extends BaseController {
 		Map<String, List<Task>> m = CollectionUtils.newHashMap(1);
 		m.put("list", list);
 		return this.write(m);
+	}
+
+	/**
+	 * 统计任务状态
+	 * 
+	 * @param resultId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/statuscount")
+	public String queryStatusCount(Long resultId) {
+		if (resultId == null) {
+			return null;
+		} else {
+			List<TaskStatusCountDto> list = this.execuService.queryTaskStatusCount(resultId);
+			Map<String, List<TaskStatusCountDto>> m = CollectionUtils.newHashMap(1);
+			m.put("list", list);
+			return this.write(m);
+		}
 	}
 
 	@Override

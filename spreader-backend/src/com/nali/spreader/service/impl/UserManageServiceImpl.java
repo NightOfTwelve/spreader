@@ -1,5 +1,7 @@
 package com.nali.spreader.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.common.util.CollectionUtils;
+import com.nali.spreader.config.Range;
+import com.nali.spreader.config.UserDto;
 import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.dao.ICrudPhotoDao;
 import com.nali.spreader.dao.ICrudRobotRegisterDao;
@@ -21,6 +26,9 @@ import com.nali.spreader.data.RobotRegisterExample.Criteria;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserTag;
 import com.nali.spreader.service.IUserManageService;
+import com.nali.spreader.util.random.NumberRandomer;
+import com.nali.spreader.util.random.RandomUtil;
+import com.nali.spreader.util.random.Randomer;
 import com.nali.spreader.utils.PhotoHelper;
 
 @Service
@@ -129,5 +137,36 @@ public class UserManageServiceImpl implements IUserManageService {
 			pwd = this.userDao.getUserPassword(u);
 		}
 		return pwd;
+	}
+
+	@Override
+	public <T> List<T> getRandomList(List<T> list, Range<Integer> range) {
+		Randomer<Integer> randomer;
+		if (range.checkNotNull()) {
+			randomer = new NumberRandomer(range.getGte(), range.getLte() + 1);
+		} else {
+			randomer = new NumberRandomer(UserDto.DEFAULT_RANDOM_GTE,
+					UserDto.DEFAULT_RANDOM_LTE + 1);
+		}
+		List<T> result;
+		if (!CollectionUtils.isEmpty(list)) {
+			result = RandomUtil.randomItems(list, randomer.get());
+			return result;
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public List<UserTag> createUserTags(List<String> keywordList) {
+		List<UserTag> tagList = new ArrayList<UserTag>();
+		if (!CollectionUtils.isEmpty(keywordList)) {
+			for (String tag : keywordList) {
+				UserTag ut = new UserTag();
+				ut.setTag(tag);
+				tagList.add(ut);
+			}
+		}
+		return tagList;
 	}
 }

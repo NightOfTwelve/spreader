@@ -10,6 +10,7 @@ var menuTree_Stg = new Ext.tree.TreePanel({
 			root : new Ext.tree.AsyncTreeNode({
 						id : '-1',
 						text : '相关配置',
+						expanded:true,
 						children : [{
 									id : 'cfgmenu1',
 									text : "策略配置",
@@ -64,6 +65,7 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 			root : new Ext.tree.AsyncTreeNode({
 						id : '-1',
 						text : '信息查询',
+						expanded:true,
 						children : [{
 									id : 'querymenu1',
 									text : "用户查询",
@@ -123,6 +125,7 @@ var menuTree_ContentLibQuery = new Ext.tree.TreePanel({
 			root : new Ext.tree.AsyncTreeNode({
 						id : '-1',
 						text : '基础信息',
+						expanded:true,
 						children : [{
 									id : 'contentLib',
 									text : "微博内容库检索",
@@ -162,6 +165,7 @@ var menuTree_CategoryKeywordQuery = new Ext.tree.TreePanel({
 			root : new Ext.tree.AsyncTreeNode({
 						id : '-1',
 						text : '关键字与分类管理',
+						expanded:true,
 						children : [{
 									id : 'keywordmng',
 									text : "关键字管理",

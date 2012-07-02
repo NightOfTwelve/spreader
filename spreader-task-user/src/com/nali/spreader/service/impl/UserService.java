@@ -267,4 +267,12 @@ public class UserService extends WebsiteBaseService implements IUserService {
 			this.crudUserDao.updateByExampleSelective(user, example);
 		}
 	}
+
+	@Override
+	public User findUserById(Long uid) {
+		if (uid == null) {
+			return null;
+		}
+		return this.crudUserDao.selectByPrimaryKey(uid);
+	}
 }

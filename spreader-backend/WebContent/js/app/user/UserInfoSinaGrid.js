@@ -282,7 +282,8 @@ var cm = new Ext.grid.ColumnModel([rownums, sm, {
 		, {
 			header : '头像',
 			dataIndex : 'avatarUrl',
-			renderer : renderImage,
+			// TODO
+			// renderer : renderImage,
 			width : 80
 		}, {
 			header : '性别',
@@ -397,6 +398,13 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 						name : 'updateremind',
 						xtype : 'tbtext',
 						text : '<font color = "red">双击行可修改用户信息</font>'
+					}, {
+						text : '批量修改用户标签',
+						iconCls : 'arrow_refreshIcon',
+						// TODO
+						handler : function() {
+							updateUserTagWin.show();
+						}
 					}],
 			onCellClick : function(grid, rowIndex, columnIndex, e) {
 				var selesm = grid.getSelectionModel().getSelections();
@@ -607,7 +615,7 @@ sinaUserGrid.on('celldblclick', function(grid, rowIndex, columnIndex, e) {
 			var province = selectData.province;
 			var city = selectData.city;
 			var gender = selectData.gender;
-			var intriduction = selectData.intriduction;
+			var introduction = selectData.introduction;
 			var updateForm = addUserCmbForm.getForm();
 			updateForm.findField("uid").setValue(uid);
 			updateForm.findField("nickName").setValue(nickName);
@@ -615,7 +623,7 @@ sinaUserGrid.on('celldblclick', function(grid, rowIndex, columnIndex, e) {
 			updateForm.findField("province").setValue(province);
 			updateForm.findField("gender").setValue(gender);
 			updateForm.findField("city").setValue(city);
-			updateForm.findField("intriduction").setValue(intriduction);
+			updateForm.findField("introduction").setValue(introduction);
 			addUserWindow.show();
 		});
 
@@ -756,10 +764,140 @@ expUserWin.on('show', function() {
 expUserWin.on('hide', function() {
 			sinaUserStore.load();
 		});
+
+// 嵌入的FORM
+var updateUserTagForm = new Ext.form.FormPanel({
+			id : 'updateUserTagForm',
+			name : 'updateUserTagForm',
+			labelWidth : 90, // 标签宽度
+			frame : true, // 是否渲染表单面板背景色
+			defaultType : 'textfield', // 表单元素默认类型
+			labelAlign : 'right', // 标签对齐方式
+			bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
+			items : [{
+						xtype : "textarea",
+						fieldLabel : "核心关键字",
+						name : 'corekeyword',
+						allowBlank : false,
+						anchor : '100%'
+					}, {
+						xtype : "textarea",
+						fieldLabel : "随机关键字",
+						name : 'randomkeyword',
+						anchor : '100%'
+					}, {
+						xtype : "numberfield",
+						fieldLabel : "随机下限",
+						name : 'rangegte',
+						anchor : '90%'
+					}, {
+						xtype : "numberfield",
+						fieldLabel : "随机上限",
+						name : 'rangelte',
+						anchor : '90%'
+					}]
+		});
+
+/**
+ * 修改用户标签win
+ */
+// TODO
+var updateUserTagWin = new Ext.Window({
+			title : '<span class="commoncss">更新用户标签</span>', // 窗口标题
+			iconCls : 'imageIcon',
+			layout : 'fit', // 设置窗口布局模式
+			width : 600, // 窗口宽度
+			height : 500, // 窗口高度
+			// tbar : tb, // 工具栏
+			closable : false, // 是否可关闭
+			closeAction : 'hide', // 关闭策略
+			collapsible : true, // 是否可收缩
+			maximizable : false, // 设置是否可以最大化
+			modal : true,
+			border : false, // 边框线设置
+			pageY : 120, // 页面定位Y坐标
+			pageX : document.documentElement.clientWidth / 2 - 400 / 2, // 页面定位X坐标
+			constrain : true,
+			items : [updateUserTagForm],
+			// 设置窗口是否可以溢出父容器
+			buttonAlign : 'center',
+			buttons : [{
+						text : '保存',
+						iconCls : 'addIcon',
+						handler : updateUserTag
+					}, {
+						text : '关闭',
+						iconCls : 'deleteIcon',
+						handler : function() {
+							updateUserTagWin.hide();
+						}
+					}]
+		});
 /**
  * 导出用户信息
  */
 function expUserInfo() {
+	var expArray = getSelectUsers();
+	if (expArray.length > 0) {
+		for (var i = 0; i < rows.length; i++) {
+			var uid = rows[i].data.id;
+			expArray.push(uid);
+		}
+	} else {
+		Ext.Msg.alert("提示", "请至少选择一个用户");
+		return;
+	}
+	expUserStore.setBaseParam('uids', expArray);
+	expUserStore.load();
+	expUserWin.show();
+}
+
+/**
+ * 更新用户标签
+ */
+function updateUserTag() {
+	var expArray = getSelectUsers();
+	var tagForm = updateUserTagForm.getForm();
+	var corekeyword = tagForm.findField("corekeyword").getValue();
+	var randomkeyword = tagForm.findField("randomkeyword").getValue();
+	var rangegte = tagForm.findField("rangegte").getValue();
+	var rangelte = tagForm.findField("rangelte").getValue();
+
+	Ext.Msg.show({
+				title : '确认信息',
+				msg : '确定更新?',
+				buttons : Ext.Msg.YESNO,
+				fn : function(ans) {
+					if (ans == 'yes') {
+						Ext.Ajax.request({
+									url : '../userinfo/updatetag?_time'
+											+ new Date().getTime(),
+									params : {
+										uids : expArray,
+										corekeyword : corekeyword,
+										randomkeyword : randomkeyword,
+										rangegte : rangegte,
+										rangelte : rangelte
+									},
+									success : function(response) {
+										var result = Ext
+												.decode(response.responseText);
+										var count = result.count;
+										Ext.Msg.alert("提示", "已更新" + count
+														+ "条记录");
+									},
+									failure : function() {
+										Ext.Msg.alert("提示", "更新失败");
+									}
+								});
+					}
+				}
+			});
+}
+/**
+ * 获取选中的用户
+ */
+function getSelectUsers() {
 	var expArray = [];
 	var rows = sinaUserGrid.getSelectionModel().getSelections();
 	if (rows.length > 0) {
@@ -767,11 +905,6 @@ function expUserInfo() {
 			var uid = rows[i].data.id;
 			expArray.push(uid);
 		}
-	} else {
-		Ext.Msg.alert("提示", "请至少选择一个分组");
-		return;
 	}
-	expUserStore.setBaseParam('uids', expArray);
-	expUserStore.load();
-	expUserWin.show();
+	return expArray;
 }

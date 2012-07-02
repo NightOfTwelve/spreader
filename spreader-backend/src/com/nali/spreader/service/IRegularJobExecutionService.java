@@ -7,6 +7,7 @@ import com.nali.common.pagination.PageResult;
 import com.nali.spreader.factory.config.RegularJobResultDto;
 import com.nali.spreader.factory.config.TaskResultInfoQueryDto;
 import com.nali.spreader.model.Task;
+import com.nali.spreader.model.TaskStatusCountDto;
 
 /**
  * 调度任务执行结果查询服务
@@ -48,5 +49,13 @@ public interface IRegularJobExecutionService {
 	 * @param limit
 	 * @return
 	 */
-	PageResult<Task> findPageResultTaskByResultId(Long resultId,Limit limit);
+	PageResult<Task> findPageResultTaskByResultId(Long resultId, Limit limit);
+
+	/**
+	 * 查询任务执行状态统计
+	 * 
+	 * @param resultId
+	 * @return
+	 */
+	List<TaskStatusCountDto> queryTaskStatusCount(Long resultId);
 }

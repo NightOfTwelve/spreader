@@ -2,6 +2,7 @@ package com.nali.spreader.dao.impl;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,6 +13,7 @@ import com.nali.spreader.dao.ITaskDao;
 import com.nali.spreader.model.RegularJobResult;
 import com.nali.spreader.model.Task;
 import com.nali.spreader.model.TaskContext;
+import com.nali.spreader.model.TaskStatusCountDto;
 
 @Repository
 public class TaskDao implements ITaskDao {
@@ -48,6 +50,11 @@ public class TaskDao implements ITaskDao {
 		TaskContext rlt = redisTemplate.opsForValue().get(key);
 		redisTemplate.delete(Arrays.asList(key));
 		return rlt;
+	}
+
+	@Override
+	public List<TaskStatusCountDto> selectTaskStatusCount(Long resultId) {
+		return this.sqlMap.queryForList("spreader_task.countTaskStatus",resultId);
 	}
 
 }

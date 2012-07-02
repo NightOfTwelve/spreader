@@ -12,12 +12,14 @@ import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.dao.ICrudTaskDao;
 import com.nali.spreader.dao.IRegularJobResultDao;
+import com.nali.spreader.dao.ITaskDao;
 import com.nali.spreader.dao.ITaskResultQueryDao;
 import com.nali.spreader.factory.config.RegularJobResultDto;
 import com.nali.spreader.factory.config.TaskResultInfoQueryDto;
 import com.nali.spreader.model.Task;
 import com.nali.spreader.model.TaskExample;
 import com.nali.spreader.model.TaskExample.Criteria;
+import com.nali.spreader.model.TaskStatusCountDto;
 import com.nali.spreader.service.IRegularJobExecutionService;
 
 /**
@@ -34,6 +36,8 @@ public class RegularJobExecutionServiceImpl implements IRegularJobExecutionServi
 	private ITaskResultQueryDao taskResultDao;
 	@Autowired
 	private ICrudTaskDao curdTaskDao;
+	@Autowired
+	private ITaskDao taskDao;
 
 	@Override
 	public PageResult<RegularJobResultDto> findRegularJobResultByJobId(Long jobId, Limit limit) {
@@ -79,5 +83,14 @@ public class RegularJobExecutionServiceImpl implements IRegularJobExecutionServi
 			return new PageResult<Task>(list, limit, count);
 		}
 		return null;
+	}
+
+	@Override
+	public List<TaskStatusCountDto> queryTaskStatusCount(Long resultId) {
+		if (resultId == null) {
+			return Collections.emptyList();
+		} else {
+			return this.taskDao.selectTaskStatusCount(resultId);
+		}
 	}
 }

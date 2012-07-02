@@ -29,6 +29,7 @@ public class ContentDto implements Serializable {
     private Range<Integer> contentLength;
 	@PropertyDescription("发帖人筛选条件")
     private UserRelatedDto userRelated;
+	
 	public Integer getType() {
 		return type;
 	}

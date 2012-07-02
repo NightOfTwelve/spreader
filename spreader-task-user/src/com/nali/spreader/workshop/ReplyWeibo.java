@@ -9,6 +9,7 @@ import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.Content;
 import com.nali.spreader.data.KeyValue;
+import com.nali.spreader.dto.ReplyWeiboDto;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
@@ -40,6 +41,15 @@ public class ReplyWeibo extends SingleTaskMachineImpl implements PassiveWorkshop
 		String text = data.getValue();
 		Long robotUid = weiboRobotUserHolder.getRobotUid();
 		work(robotUid, contentId, text, false, exporter);
+	}
+	
+	@Input
+	public void work(ReplyWeiboDto dto, SingleTaskExporter exporter) {
+		Long contentId = dto.getContentId();
+		String text = dto.getText();
+		Long robotUid = dto.getUid();
+		Boolean needForward = dto.getNeedForward();
+		work(robotUid, contentId, text, needForward, exporter);
 	}
 
 	@Override

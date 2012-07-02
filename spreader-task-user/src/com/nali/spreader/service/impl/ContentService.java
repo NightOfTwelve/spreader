@@ -11,13 +11,17 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.ContentDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
+import com.nali.spreader.config.PostWeiboConfig;
+import com.nali.spreader.config.Range;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.dao.ICrudContentDao;
 import com.nali.spreader.dao.ICrudKeywordDao;
@@ -32,8 +36,10 @@ import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserExample;
 import com.nali.spreader.data.UserTag;
 import com.nali.spreader.data.UserTagExample;
+import com.nali.spreader.dto.PostWeiboContentDto;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IGlobalUserService;
+import com.nali.spreader.service.IKeywordService;
 
 @Service
 public class ContentService implements IContentService {
@@ -58,6 +64,8 @@ public class ContentService implements IContentService {
 	private IKeywordDao keywordDao;
 	@Autowired
 	private ICrudKeywordDao crudKeywordDao;
+	@Autowired
+	private IKeywordService keywordService;
 
 	@Override
 	public Content getMatchedContent(Long uid) {
@@ -126,7 +134,7 @@ public class ContentService implements IContentService {
 			}
 			content.setUid(users.get(0).getId());
 		}
-		Long contentId = userDao.insertContent(content);
+		Long contentId = crudContentDao.insertSelective(content);
 		registerRecommandContent(contentId, content.getUid());
 	}
 
@@ -218,5 +226,90 @@ public class ContentService implements IContentService {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public Long assignContentId(Content content) {
+		if (content == null) {
+			throw new IllegalArgumentException("Content is null");
+		} else {
+			Content tmp = this.findByUniqueKey(content.getType(), content.getWebsiteId(),
+					content.getWebsiteUid(), content.getEntry());
+			if (tmp != null) {
+				content.setId(tmp.getId());
+				crudContentDao.updateByPrimaryKeySelective(content);
+				return tmp.getId();
+			} else {
+				try {
+					return crudContentDao.insertSelective(content);
+				} catch (DuplicateKeyException e) {
+					return assignContentId(content);
+				}
+			}
+		}
+	}
+
+	@Override
+	public List<Long> findContentIdByPostContentDto(PostWeiboContentDto dto) {
+		return this.userDao.queryContentIdByPostContentDto(dto);
+	}
+
+	@Override
+	public List<Long> findContentIdByConfig(PostWeiboConfig cfg, List<String> allKeywords, Long uid) {
+		if (cfg == null) {
+			return null;
+		}
+		List<String> sendKeywords;
+		// 如果设置的关键字列表无内容则查找用户本身的标签列表
+		if (CollectionUtils.isEmpty(allKeywords)) {
+			sendKeywords = this.keywordService.findKeywordByUserId(uid);
+			// 如果用户本身没有标签，则取默认列表
+			if (CollectionUtils.isEmpty(sendKeywords)) {
+				sendKeywords = this.keywordService.findDefaultKeywords();
+			}
+		} else {
+			sendKeywords = allKeywords;
+		}
+		PostWeiboContentDto query = new PostWeiboContentDto();
+		// 设置关键字列表
+		query.setSendKeywords(sendKeywords);
+		/**
+		 * 筛选微博条件
+		 */
+		// 是否图片
+		query.setIsPic(cfg.getIsPic());
+		// 是否音频
+		query.setIsAudio(cfg.getIsAudio());
+		// 是否视频
+		query.setIsVideo(cfg.getIsVideo());
+		// 内容长度
+		query.setContentLength(cfg.getContentLength());
+		// 处理内容的新鲜度,发布时间
+		Integer effTime = cfg.getEffective();
+		if (effTime == null) {
+			effTime = PostWeiboConfig.DEFAULT_EFFTIME;
+		}
+		Range<Date> pubDate = new Range<Date>();
+		pubDate.setGte(DateUtils.addMinutes(new Date(), -1 * effTime));
+		query.setPubDate(pubDate);
+		/**
+		 * 处理筛选用户
+		 */
+		// 加V类型
+		Integer vType = cfg.getvType();
+		// 粉丝数
+		Range<Long> fans = cfg.getFans();
+		// 文章数
+		Range<Long> articles = cfg.getArticles();
+		if (vType != null || fans.checkNotNull() || articles.checkNotNull()) {
+			query.setUserCondition(true);
+		}
+		query.setvType(vType);
+		query.setFans(fans);
+		query.setArticles(articles);
+
+		// 获取所有的微博内容
+		List<Long> allContent = this.findContentIdByPostContentDto(query);
+		return allContent;
 	}
 }

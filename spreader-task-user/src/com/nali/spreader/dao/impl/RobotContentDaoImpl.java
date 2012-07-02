@@ -19,4 +19,9 @@ public class RobotContentDaoImpl implements IRobotContentDao {
 	public List<Long> queryRobotIdByContentAndType(KeyValue<Long, Integer> params) {
 		return sqlMap.queryForList("spreader_robot_content.selectRobotIdByContentId", params);
 	}
+
+	@Override
+	public List<Long> queryContentIdByUid(KeyValue<Long, Integer> params) {
+		return sqlMap.queryForList("spreader_robot_content.selectContentIdByUid", params);
+	}
 }

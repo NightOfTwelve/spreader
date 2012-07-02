@@ -2,9 +2,11 @@ package com.nali.spreader.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -16,9 +18,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
+import com.nali.spreader.config.Range;
 import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.User;
+import com.nali.spreader.data.UserTag;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserManageService;
@@ -172,5 +176,52 @@ public class UserInfoManageController extends BaseController {
 		}
 		data.put("list", list);
 		return this.write(data);
+	}
+
+	/**
+	 * 批量修改用户标签
+	 * 
+	 * @param uids
+	 * @param rangegte
+	 * @param rangelte
+	 * @param corekeyword
+	 * @param randomkeyword
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/updatetag")
+	public String updateUserTags(Long[] uids, Integer rangegte, Integer rangelte,
+			String corekeyword, String randomkeyword) {
+		if (uids == null || uids.length == 0) {
+			throw new IllegalArgumentException("uid is null");
+		}
+		// 核心关键字不能为空
+		if (StringUtils.isEmpty(corekeyword)) {
+			throw new IllegalArgumentException("corekeyword is null");
+		}
+		String[] coreArray = corekeyword.split("[;]");
+		List<String> coreList = new ArrayList<String>(Arrays.asList(coreArray));
+		if (StringUtils.isNotEmpty(randomkeyword)) {
+			String[] randomArray = randomkeyword.split("[;]");
+			Range<Integer> range = new Range<Integer>();
+			range.setGte(rangegte);
+			range.setLte(rangelte);
+			List<String> randomList = this.userService.getRandomList(Arrays.asList(randomArray),
+					range);
+			coreList.addAll(randomList);
+		}
+		List<UserTag> tagList = this.userService.createUserTags(coreList);
+		int count = 0;
+		for (Long uid : uids) {
+			try {
+				this.globaUserService.updateUserTags(uid, tagList);
+				count++;
+			} catch (Exception e) {
+				LOGGER.debug("修改UserTag出错", e);
+			}
+		}
+		Map<String, Integer> m = CollectionUtils.newHashMap(1);
+		m.put("count", count);
+		return this.write(m);
 	}
 }

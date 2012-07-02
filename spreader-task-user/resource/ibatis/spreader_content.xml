@@ -54,104 +54,6 @@
 			<include refid="contentPubCondition" />
 		</dynamic>
 	</select>
-	<insert id="insertContent" parameterClass="com.nali.spreader.data.Content">
-		insert into
-		spreader$shard.databaseSuffix$.tb_content$shard.tableSuffix$
-		<dynamic prepend="(">
-			<isNotNull prepend="," property="id">
-				id
-			</isNotNull>
-			<isNotNull prepend="," property="type">
-				type
-			</isNotNull>
-			<isNotNull prepend="," property="websiteId">
-				website_id
-			</isNotNull>
-			<isNotNull prepend="," property="websiteContentId">
-				website_content_id
-			</isNotNull>
-			<isNotNull prepend="," property="websiteRefId">
-				website_ref_id
-			</isNotNull>
-			<isNotNull prepend="," property="websiteUid">
-				website_uid
-			</isNotNull>
-			<isNotNull prepend="," property="uid">
-				uid
-			</isNotNull>
-			<isNotNull prepend="," property="title">
-				title
-			</isNotNull>
-			<isNotNull prepend="," property="pubDate">
-				pub_date
-			</isNotNull>
-			<isNotNull prepend="," property="syncDate">
-				sync_date
-			</isNotNull>
-			<isNotNull prepend="," property="refCount">
-				ref_count
-			</isNotNull>
-			<isNotNull prepend="," property="replyCount">
-				reply_count
-			</isNotNull>
-			<isNotNull prepend="," property="entry">
-				entry
-			</isNotNull>
-			<isNotNull prepend="," property="content">
-				content
-			</isNotNull>
-			)
-		</dynamic>
-		values
-		<dynamic prepend="(">
-			<isNotNull prepend="," property="id">
-				#id:BIGINT#
-			</isNotNull>
-			<isNotNull prepend="," property="type">
-				#type:INTEGER#
-			</isNotNull>
-			<isNotNull prepend="," property="websiteId">
-				#websiteId:INTEGER#
-			</isNotNull>
-			<isNotNull prepend="," property="websiteContentId">
-				#websiteContentId:BIGINT#
-			</isNotNull>
-			<isNotNull prepend="," property="websiteRefId">
-				#websiteRefId:BIGINT#
-			</isNotNull>
-			<isNotNull prepend="," property="websiteUid">
-				#websiteUid:BIGINT#
-			</isNotNull>
-			<isNotNull prepend="," property="uid">
-				#uid:BIGINT#
-			</isNotNull>
-			<isNotNull prepend="," property="title">
-				#title:VARCHAR#
-			</isNotNull>
-			<isNotNull prepend="," property="pubDate">
-				#pubDate:TIMESTAMP#
-			</isNotNull>
-			<isNotNull prepend="," property="syncDate">
-				#syncDate:TIMESTAMP#
-			</isNotNull>
-			<isNotNull prepend="," property="refCount">
-				#refCount:INTEGER#
-			</isNotNull>
-			<isNotNull prepend="," property="replyCount">
-				#replyCount:INTEGER#
-			</isNotNull>
-			<isNotNull prepend="," property="entry">
-				#entry:VARCHAR#
-			</isNotNull>
-			<isNotNull prepend="," property="content">
-				#content:LONGVARCHAR#
-			</isNotNull>
-			)
-		</dynamic>
-		<selectKey resultClass="long" type="post" keyProperty="id">
-			select LAST_INSERT_ID() as value
-		</selectKey>
-	</insert>
 
 	<sql id="baseUserCondition">
 		<isNotNull prepend="and" property="userRelated.baseInfo.gender">
@@ -197,98 +99,183 @@
 			#articles.lte#
 		</isNotNull>
 	</sql>
+	<sql id="baseContentCondition">
+		<isNotNull prepend="and" property="type">
+			type = #type#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteId">
+			website_id = #websiteId#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteContentId">
+			website_content_id =
+			#websiteContentId#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteRefId">
+			website_ref_id =
+			#websiteRefId#
+		</isNotNull>
+		<isNotNull prepend="and" property="websiteUid">
+			website_uid =
+			#websiteUid#
+		</isNotNull>
+		<isNotNull prepend="and" property="uid">
+			uid = #uid#
+		</isNotNull>
+		<isNotNull prepend="and" property="pubDate.gte">
+			pub_date &gt;=
+			#pubDate.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="pubDate.lte">
+			pub_date &lt;=
+			#pubDate.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="refCount.gte">
+			ref_count &gt;=
+			#refCount.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="refCount.lte">
+			ref_count &lt;=
+			#refCount.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="replyCount.gte">
+			reply_count &gt;=
+			#replyCount.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="replyCount.lte">
+			reply_count &lt;=
+			#replyCount.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="contentLength.gte">
+			content_length &gt;=
+			#contentLength.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="contentLength.lte">
+			content_length &lt;=
+			#contentLength.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="userRelated">
+			uid in (
+			select 0
+			<isNotNull prepend="union" property="userRelated.baseInfo">
+				select id
+				from spreader.tb_user
+				where 1=1
+				<include refid="baseUserCondition" />
+				<isNotNull prepend="and" property="userRelated.isRobot">
+					is_robot =
+					#userRelated.isRobot#
+				</isNotNull>
+			</isNotNull>
+			<isNotEmpty prepend="union" property="userRelated.categories">
+				select uid from spreader.tb_user_tag where tag_id in (
+				select
+				id from
+				spreader.tb_keyword where name in
+				<iterate property="userRelated.categories" open="(" close=")"
+					conjunction=",">
+					#userRelated.categories[]#
+				</iterate>
+				)
+			</isNotEmpty>
+			<isNotNull prepend="union" property="userRelated.attentionToUid">
+				select uid
+				from
+				spreader.tb_user_relation
+				where to_uid=#userRelated.attentionToUid#
+				and type=1
+			</isNotNull>
+			<isNotNull prepend="union" property="userRelated.fansUid">
+				select to_uid
+				from
+				spreader.tb_user_relation
+				where uid=#userRelated.fansUid# and type=1
+			</isNotNull>
+			)
+		</isNotNull>
+	</sql>
 	<select id="findContentIdByDto" resultClass="long"
 		parameterClass="com.nali.spreader.config.ContentDto">
 		select id from spreader.tb_content
 		<dynamic prepend="where">
-			<isNotNull prepend="and" property="type">
-				type = #type#
+			<include refid="baseContentCondition" />
+		</dynamic>
+	</select>
+	<sql id="basePostContentCondition">
+		<isNotNull prepend="and" property="pubDate.gte">
+			pub_date &gt;=
+			#pubDate.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="pubDate.lte">
+			pub_date &lt;=
+			#pubDate.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="atCount.gte">
+			at_count &gt;=
+			#atCount.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="atCount.lte">
+			at_count &lt;=
+			#atCount.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="contentLength.gte">
+			content_length &gt;=
+			#contentLength.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="contentLength.lte">
+			content_length &lt;=
+			#contentLength.lte#
+		</isNotNull>
+		<isEqual prepend="and" property="isPic" compareValue="true">
+			pic_url
+			is not null
+		</isEqual>
+		<isEqual prepend="and" property="isAudio" compareValue="true">
+			audio_url is not null
+		</isEqual>
+		<isEqual prepend="and" property="isVideo" compareValue="true">
+			video_url is not null
+		</isEqual>
+		<isEqual prepend="and" compareValue="true" property="userCondition">
+			uid in (
+			select id from tb_user u
+			where 1 = 1
+			<isNotNull prepend="and" property="vType">
+				u.v_type = #vType#
 			</isNotNull>
-			<isNotNull prepend="and" property="websiteId">
-				website_id = #websiteId#
+			<isNotNull prepend="and" property="fans.gte">
+				u.fans &gt;= #fans.gte#
 			</isNotNull>
-			<isNotNull prepend="and" property="websiteContentId">
-				website_content_id =
-				#websiteContentId#
+			<isNotNull prepend="and" property="fans.lte">
+				u.fans &lt;= #fans.lte#
 			</isNotNull>
-			<isNotNull prepend="and" property="websiteRefId">
-				website_ref_id =
-				#websiteRefId#
+			<isNotNull prepend="and" property="articles.gte">
+				u.articles &gt;=
+				#articles.gte#
 			</isNotNull>
-			<isNotNull prepend="and" property="websiteUid">
-				website_uid =
-				#websiteUid#
+			<isNotNull prepend="and" property="articles.lte">
+				u.articles &lt;=
+				#articles.lte#
 			</isNotNull>
-			<isNotNull prepend="and" property="uid">
-				uid = #uid#
-			</isNotNull>
-			<isNotNull prepend="and" property="pubDate.gte">
-				pub_date &gt;=
-				#pubDate.gte#
-			</isNotNull>
-			<isNotNull prepend="and" property="pubDate.lte">
-				pub_date &lt;=
-				#pubDate.lte#
-			</isNotNull>
-			<isNotNull prepend="and" property="refCount.gte">
-				ref_count &gt;=
-				#refCount.gte#
-			</isNotNull>
-			<isNotNull prepend="and" property="refCount.lte">
-				ref_count &lt;=
-				#refCount.lte#
-			</isNotNull>
-			<isNotNull prepend="and" property="replyCount.gte">
-				reply_count &gt;=
-				#replyCount.gte#
-			</isNotNull>
-			<isNotNull prepend="and" property="replyCount.lte">
-				reply_count &lt;=
-				#replyCount.lte#
-			</isNotNull>
-			<isNotNull prepend="and" property="contentLength.gte">
-				(length(content)+char_length(content))/2 &gt;= #contentLength.gte#
-			</isNotNull>
-			<isNotNull prepend="and" property="contentLength.lte">
-				(length(content)+char_length(content))/2 &lt;= #contentLength.lte#
-			</isNotNull>
-			<isNotNull prepend="and" property="userRelated">
-				uid in (
-				select 0
-				<isNotNull prepend="union" property="userRelated.baseInfo">
-					select id
-					from spreader.tb_user
-					where 1=1
-					<include refid="baseUserCondition" />
-					<isNotNull prepend="and" property="userRelated.isRobot">
-						is_robot = #userRelated.isRobot#
-					</isNotNull>
-				</isNotNull>
-				<isNotEmpty prepend="union" property="userRelated.categories">
-					select uid from spreader.tb_user_tag where tag_id in (
-					select
-					id from spreader.tb_keyword where name in
-					<iterate property="userRelated.categories" open="(" close=")"
-						conjunction=",">
-						#userRelated.categories[]#
-					</iterate>
-					)
-				</isNotEmpty>
-				<isNotNull prepend="union" property="userRelated.attentionToUid">
-					select uid
-					from
-					spreader.tb_user_relation
-					where to_uid=#userRelated.attentionToUid#
-					and type=1
-				</isNotNull>
-				<isNotNull prepend="union" property="userRelated.fansUid">
-					select to_uid
-					from
-					spreader.tb_user_relation
-					where uid=#userRelated.fansUid# and type=1
-				</isNotNull>
+			)
+		</isEqual>
+	</sql>
+	<select id="findContentIdByPostContentDto" resultClass="java.lang.Long"
+		parameterClass="com.nali.spreader.dto.PostWeiboContentDto">
+		select id from spreader.tb_content
+		<dynamic prepend="where">
+			<include refid="basePostContentCondition" />
+			<isNotEmpty prepend="and" property="sendKeywords">
+				id in (
+				select content_id from tb_content_keyword ck
+				join
+				tb_keyword k on ck.keyword_id = k.id
+				where k.name in
+				<iterate property="sendKeywords" open="(" close=")"
+					conjunction=",">
+					#sendKeywords[]#
+				</iterate>
 				)
-			</isNotNull>
+			</isNotEmpty>
 		</dynamic>
 	</select>
 </sqlMap>

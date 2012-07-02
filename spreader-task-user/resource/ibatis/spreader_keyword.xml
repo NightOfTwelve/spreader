@@ -132,6 +132,19 @@
 			#keywordIds[]#
 		</iterate>
 	</select>
+	<select id="selectKeywordNameByCategoryName" parameterClass="java.lang.String"
+		resultClass="java.lang.String">
+		select kw.name from tb_keyword kw
+		inner join tb_category ca
+		on kw.category_id = ca.id
+		where ca.name = #categoryName#
+	</select>
+	<select id="selectKeywordByUserId" parameterClass="java.lang.Long"
+		resultClass="java.lang.String">
+		select kw.name from tb_user_tag ut
+		join tb_keyword kw on ut.tag_id = kw.id
+		where ut.uid = #uid#
+	</select>
 	<insert id="insertKeyword" parameterClass="com.nali.spreader.data.Keyword">
 		insert into spreader.tb_keyword(
 		name,
