@@ -17,6 +17,9 @@ public class NumberRandomer implements Randomer<Integer>,Cloneable {
 	 * start包括，end不包括
 	 */
 	public NumberRandomer(int start, int end) {
+		if(end<=start) {
+			throw new IllegalArgumentException("end<=start, start:"+start+", end:"+end);
+		}
 		this.base = start;
 		this.range = end - start;
 	}

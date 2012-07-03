@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
-
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.TaskType;
 import com.nali.spreader.data.User;
@@ -17,7 +15,7 @@ import com.nali.spreader.util.avg.Average;
 import com.nali.spreader.util.avg.ItemCount;
 
 public abstract class AbstractUidPool {
-	private static Logger logger = Logger.getLogger(AbstractUidPool.class);
+	private static UidPoolLogger logger = new UidPoolLogger();
 	protected Map<Long, List<ItemCount<Long>>> priorityTasks = new HashMap<Long, List<ItemCount<Long>>>();
 	protected Map<Long, List<ItemCount<Long>>> tasks = new HashMap<Long, List<ItemCount<Long>>>();
 	protected TaskType taskType;
@@ -27,7 +25,6 @@ public abstract class AbstractUidPool {
 	protected Average<Long> priorityNotLoginAverage;
 	protected int priorityNormalSize;
 	protected int normalSize;
-
 
 	public void assignPriorityTasks(List<UserTaskCount> userTaskList, Long uid) {
 		List<ItemCount<Long>> actionCounts = new ArrayList<ItemCount<Long>>(userTaskList.size());
@@ -80,19 +77,8 @@ public abstract class AbstractUidPool {
 		notLoginAverage = normalCount.notLoginAverage;
 		anyoneAverage = normalCount.anyoneAverage;
 		normalSize = normalCount.normalSize;
-		if(logger.isInfoEnabled()) {
-			logger.info("pool[" + taskType.getId() + "]:" +
-					"\r\n\t\t\tpriorityTasks---size:"+priorityTasks.size() +
-					", normalSize:"+priorityNormalSize +
-					", anyoneActionCount:"+priorityCount.anyoneActionCount +
-					", notLoginActionCount:"+priorityCount.notLoginActionCount +
-					", normalActionCount:"+priorityCount.normalActionCount +
-					"\r\n\t\t\ttasks---size:"+tasks.size() +
-					", normalSize:"+normalSize +
-					", anyoneActionCount:"+normalCount.anyoneActionCount +
-					", notLoginActionCount:"+normalCount.notLoginActionCount +
-					", normalActionCount:"+normalCount.normalActionCount
-					);
+		if(logger.isLoggerEnabled()) {
+			logger.log(taskType.getId(), priorityTasks.size(), priorityCount, tasks.size(), normalCount);
 		}
 		init();
 	}
@@ -100,7 +86,7 @@ public abstract class AbstractUidPool {
 	protected void init() {
 	}
 
-	private static class CountTask {
+	static class CountTask {
 		public Average<Long> anyoneAverage;
 		public Average<Long> notLoginAverage;
 		public int normalSize;
