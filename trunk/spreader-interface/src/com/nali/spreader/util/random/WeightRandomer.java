@@ -22,9 +22,20 @@ public class WeightRandomer<T> implements Randomer<T>,Cloneable {
 	}
 
 	public void add(T data, int weight) {
+		if(weight==0) {
+			return;
+		}
+		if(weight<0) {
+			throw new IllegalArgumentException("weight<0:"+weight);
+		}
 		totalWeight += weight;
 		ranges.setBorder(totalWeight, data);
 		size++;
+	}
+	
+	public WeightRandomer<T> a(T data, int weight) {
+		add(data, weight);
+		return this;
 	}
 
 	public T get() {

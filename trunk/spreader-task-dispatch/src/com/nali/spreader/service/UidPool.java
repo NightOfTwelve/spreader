@@ -36,6 +36,8 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 	private InnerPool currentInnerPool;
 	private InnerPool nextInnderPool;
 	
+	private boolean sayEnd;//是否log过任务结束了，避免大量日志出现
+	
 	@Override
 	protected void init() {
 		super.init();
@@ -147,7 +149,14 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 //			bindUidToClient(clientUid);
 		} else {
 			//TODO to the end
-			logger.info("normal task pools are empty now:"+taskType.getId());
+			if(sayEnd==false) {
+				synchronized (this) {
+					if(sayEnd==false) {
+						logger.info("normal task pools are empty now:"+taskType.getId());//notlogin&anyone task maybe not empty
+						sayEnd=true;
+					}
+				}
+			}
 		}
 	}
 	

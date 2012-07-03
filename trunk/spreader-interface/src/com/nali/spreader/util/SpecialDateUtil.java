@@ -3,6 +3,8 @@ package com.nali.spreader.util;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import com.nali.common.cache.RefreshableObject;
 
 public class SpecialDateUtil {
@@ -10,6 +12,11 @@ public class SpecialDateUtil {
 		@Override
 		protected Integer load() throws Exception {
 			return getExactThisYear();
+		}};
+	private static RefreshableObject<Date> cachedToday = new RefreshableObject<Date>(10) {
+		@Override
+		protected Date load() throws Exception {
+			return DateUtils.truncate(new Date(), Calendar.DATE);
 		}};
 
 	public static Date afterToday(int count) {
@@ -34,6 +41,10 @@ public class SpecialDateUtil {
 	
 	public static int getCachedThisYear() {
 		return cachedYear.get();
+	}
+	
+	public static Date getCachedToday() {
+		return cachedToday.get();
 	}
 	
 	public static int getExactThisYear() {
