@@ -95,18 +95,25 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Mult
 
 	private List<String> makeAccounts(RobotRegister robot) {
 		List<String> rlt = new LinkedList<String>();
-		rlt.add(robot.getFirstNamePinyinLower()+"_"+robot.getBirthdayYear());
-		rlt.add(robot.getFirstNamePinyinLower()+robot.getBirthdayFull());
-		rlt.add(robot.getFullNamePinyinLower()+robot.getBirthdayFull());
-		rlt.add(robot.getFullNamePinyinLower()+robot.getBirthdayYear());
-		rlt.add(robot.getEnNameLower()+robot.getBirthdayFull());
-		rlt.add(robot.getEnNameLower()+robot.getBirthdayYear());
-		rlt.add(robot.getEnNameLower()+"_"+robot.getFirstNamePinyinLower());
-		rlt.add(robot.getLastNamePinyinLower()+"_"+(robot.getBirthdayMonth()*100+robot.getBirthdayDay()));
-		rlt.add(robot.getFirstNamePinyinLower()+"_"+robot.getLastNamePinyinLower());
+		add(rlt, robot.getFirstNamePinyinLower()+"_"+robot.getBirthdayYear());
+		add(rlt, robot.getFirstNamePinyinLower()+robot.getBirthdayFull());
+		add(rlt, robot.getFullNamePinyinLower()+robot.getBirthdayFull());
+		add(rlt, robot.getFullNamePinyinLower()+robot.getBirthdayYear());
+		add(rlt, robot.getEnNameLower()+robot.getBirthdayFull());
+		add(rlt, robot.getEnNameLower()+robot.getBirthdayYear());
+		add(rlt, robot.getEnNameLower()+"_"+robot.getFirstNamePinyinLower());
+		add(rlt, robot.getLastNamePinyinLower()+"_"+(robot.getBirthdayMonth()*100+robot.getBirthdayDay()));
+		add(rlt, robot.getFirstNamePinyinLower()+"_"+robot.getLastNamePinyinLower());
 		rlt.remove(robot.getPwd());
 		rlt = new ArrayList<String>(rlt);
 		Collections.shuffle(rlt);
 		return rlt;
+	}
+
+	private void add(List<String> names, String roughName) {
+		if(roughName.length()>18) {
+			roughName = roughName.substring(0, 18);
+		}
+		names.add(roughName);
 	}
 }
