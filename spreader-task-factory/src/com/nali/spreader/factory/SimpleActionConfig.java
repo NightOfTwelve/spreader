@@ -21,6 +21,7 @@ public enum SimpleActionConfig {
 	fetchKeywordEntrance(23L),
 	fetchKeyword(24L),
 	fetchKeywordContent(25L),
+	fetchNotice(26L),
 	;
 	private Long actionId;
 	private String taskCode;
