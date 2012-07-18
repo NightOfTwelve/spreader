@@ -10,9 +10,9 @@ import com.nali.spreader.factory.config.desc.PropertyDescription;
  */
 public class RobotGroupPostWeiboDto extends BaseRobotGroupContent {
 	private static final long serialVersionUID = -4258663802804916797L;
-	@PropertyDescription("发送微博分组")
+	@PropertyDescription("每条微博被发送次数")
 	private Range<Integer> fromPostGroup;
-	@PropertyDescription("获取微博内容分组")
+	@PropertyDescription("每次内容来源者的人数")
 	private Range<Integer> toPostGroup;
 
 	public Range<Integer> getFromPostGroup() {

@@ -22,6 +22,14 @@ public enum SimpleActionConfig {
 	fetchKeyword(24L),
 	fetchKeywordContent(25L),
 	fetchNotice(26L),
+	
+	//apple
+	registerApple(2001L),
+	activeApp(2002L),
+	//2003 是apple登录actionId
+	downloadApp(2004L),
+	registerWebApple(2005L),
+	registerCnApple(2006L),
 	;
 	private Long actionId;
 	private String taskCode;

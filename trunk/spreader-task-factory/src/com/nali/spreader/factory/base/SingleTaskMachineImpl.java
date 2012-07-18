@@ -1,5 +1,8 @@
 package com.nali.spreader.factory.base;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.factory.SimpleActionConfig;
@@ -21,5 +24,17 @@ public class SingleTaskMachineImpl implements TaskMachine<SingleTaskMeta> {
 
 	protected void setContextMeta(ContextMeta contextMeta) {
 		taskMeta.setContextMeta(contextMeta);
+	}
+	
+	protected void setContextMeta(String... systemOnlyProperties) {
+		taskMeta.setContextMeta(new ContextMeta(systemOnlyProperties));
+	}
+	
+	protected void setContextMeta(List<String> systemOnlyProperties, List<String> systemProperties) {
+		taskMeta.setContextMeta(new ContextMeta(systemOnlyProperties, systemProperties));
+	}
+	
+	protected void setContextMeta(List<String> systemOnlyProperties, String... systemProperties) {
+		taskMeta.setContextMeta(new ContextMeta(systemOnlyProperties, Arrays.asList(systemProperties)));
 	}
 }

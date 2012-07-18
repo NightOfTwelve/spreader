@@ -2,9 +2,11 @@ package com.nali.spreader.constants;
 
 public enum TaskType {//TODO @see Channel
 	weiboNormal(101, 20),
-	weiboRegister(102, 1, 200),
+	weiboRegister(102, 1, 50),
 	weiboInstant(103, 1),
 	weiboFetch(104, 10),
+	
+	appNormal(201, 1, 50),
 	;
 	private Integer id;
 	//front
@@ -13,7 +15,7 @@ public enum TaskType {//TODO @see Channel
 	//backend
 	
 	private TaskType(Integer id, int passiveFetchSize) {
-		this(id, passiveFetchSize, 1000);
+		this(id, passiveFetchSize, 300);
 	}
 
 	private TaskType(Integer id, int passiveFetchSize, int minPriorityTaskCount) {

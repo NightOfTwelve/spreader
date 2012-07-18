@@ -3,7 +3,6 @@ package com.nali.spreader.workshop;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,13 +28,14 @@ import com.nali.spreader.util.random.RandomUtil;
 import com.nali.spreader.util.random.Randomer;
 import com.nali.spreader.util.random.WeightRandomer;
 import com.nali.spreader.words.Area;
+import com.nali.spreader.words.CnCities;
 import com.nali.spreader.words.IDGenerator;
 import com.nali.spreader.words.StudentIDGenerator;
 import com.nali.spreader.words.Txt;
+import com.nali.spreader.words.TxtCfgUtil;
 
 @Component
 public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
-	private static final String DIRECT_WORD = "直辖";
 	private static final String FILE_TOP_FIRST_NAME = "txt/top-first.txt";
 //	private static final String FILE_PROVINCE = "txt/province.txt";
 	private static final String FILE_YEAR = "txt/year.txt";
@@ -46,7 +46,7 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 	private IRobotRegisterService robotRegisterService;
 	// Randomers
 	private Randomer<Integer> genderRandomer;
-	private Randomer<List<String>> firstNameRandomer;
+	private Randomer<String> firstNameRandomer;
 	private Randomer<String> maleLastNameRandomer;
 	private Randomer<String> maleEnNameRandomer;
 	private Randomer<String> femaleLastNameRandomer;
@@ -65,8 +65,8 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 
 	@AutowireProductLine
 	private TaskProduceLine<RobotRegister> registerRobotUserEmail;
-	private Randomer<Area> directAreas;
-	private Randomer<Area> provinceAreas;
+	private Randomer<Area> directAreas = new AvgRandomer<Area>(CnCities.getDirectAreas());
+	private Randomer<Area> provinceAreas = new AvgRandomer<Area>(CnCities.getProvinceAreas());
 	private double directRate = 0.25;
 
 	public GenerateRobotUserInfo() throws IOException {
@@ -85,23 +85,6 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 		initCommonPinyinMap();
 		
 		initConstellation();
-		initCities();
-	}
-	
-	private void initCities() throws IOException {
-		List<Area> list = Area.load(Txt.getUrl("txt/city.txt"));
-		for (Iterator<Area> iterator = list.iterator(); iterator.hasNext();) {
-			Area area = iterator.next();
-			if(DIRECT_WORD.equals(area.getName())) {
-				directAreas = new AvgRandomer<Area>(area.getSubAreas());
-				iterator.remove();
-				provinceAreas = new AvgRandomer<Area>(list);
-				return;
-			}
-		}
-		//when not found direct cities
-		provinceAreas = new AvgRandomer<Area>(list);
-		logger.error("not found direct cities.");
 	}
 
 	private void initCommonPinyinMap() throws IOException {
@@ -135,15 +118,7 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 	}
 
 	private void initFirstNameRandomer() throws IOException {
-		WeightRandomer<List<String>> tmpRandomer = new WeightRandomer<List<String>>();
-		List<Entry<String, List<String>>> properties = TxtFileUtil.readKeyList(Txt.getUrl(FILE_TOP_FIRST_NAME));
-		for (Entry<String, List<String>> entry : properties) {
-			String key = entry.getKey();
-			List<String> names = entry.getValue();
-			Integer count = Integer.valueOf(key);
-			tmpRandomer.add(names, count);
-		}
-		firstNameRandomer=tmpRandomer;
+		firstNameRandomer=TxtCfgUtil.loadWeightWords(FILE_TOP_FIRST_NAME);
 	}
 	
 	private void initYearRandomer() throws IOException {
@@ -185,7 +160,7 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 
 	public RobotRegister createRobot() {
 		RobotRegister robot = new RobotRegister();
-		robot.setFirstName(RandomUtil.randomItem(firstNameRandomer.get(), random));
+		robot.setFirstName(firstNameRandomer.get());
 
 		Integer gender = genderRandomer.get();
 		robot.setGender(gender);

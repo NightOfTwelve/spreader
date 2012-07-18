@@ -33,7 +33,11 @@ public class PassiveConfigService extends AbstractConfigService<String> {
 		super.registerConfigableInfo(name, clazz);
 		Object config = passiveConfigDao.getConfig(name);
 		if(config!=null) {
-			obj.init(config);
+			try {
+				obj.init(config);
+			} catch (Exception e) {
+				logger.error("configable object has a error config:" + name, e);
+			}
 		} else {
 			logger.warn("configable object has not config:" + name);
 		}

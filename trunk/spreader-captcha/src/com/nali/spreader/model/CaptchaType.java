@@ -6,6 +6,7 @@ public enum CaptchaType {
 	chinaCN,
 	netEase,
 	weiboAppeal,
+	appleReg,
 	;
 	public final int type;
 	
