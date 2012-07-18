@@ -1,5 +1,7 @@
 package com.nali.spreader.factory.config.desc;
 
+import com.nali.spreader.factory.config.ConfigableType;
+
 public class ConfigableInfo {
 	String displayName;
 	String description;
@@ -7,6 +9,7 @@ public class ConfigableInfo {
 	Class<?> dataClass;
 	String extendType;
 	Object extendMeta;
+	ConfigableType configableType;
 	public Class<?> getDataClass() {
 		return dataClass;
 	}
@@ -42,5 +45,11 @@ public class ConfigableInfo {
 	}
 	public void setExtendMeta(Object extendMeta) {
 		this.extendMeta = extendMeta;
+	}
+	public ConfigableType getConfigableType() {
+		return configableType;
+	}
+	public void setConfigableType(ConfigableType configableType) {
+		this.configableType = configableType;
 	}
 }

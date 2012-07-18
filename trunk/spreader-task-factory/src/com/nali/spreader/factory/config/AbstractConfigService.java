@@ -20,7 +20,9 @@ public abstract class AbstractConfigService<K> implements IConfigService<K> {
 			configableInfo.setExtendType(extendBinder.getExtenderName());
 			configableInfo.setExtendMeta(extendBinder.getExtendMeta());
 		}
-		typeInfos.put(getConfigableType(clazz), configableInfo);
+		ConfigableType configableType = getConfigableType(clazz);
+		configableInfo.setConfigableType(configableType);
+		typeInfos.put(configableType, configableInfo);
 		configableInfos.put(name, configableInfo);
 	}
 	
