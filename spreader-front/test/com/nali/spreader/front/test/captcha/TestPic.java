@@ -16,17 +16,17 @@ import com.nali.spreader.model.CaptchaExample;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context.xml")
+@ContextConfiguration("test_captcha.xml")
 public class TestPic {
 	@Autowired
 	private ICrudCaptchaDao captchaDao;
 
 	@Test
 	public void testClientIdOut() throws Exception {
-		Long clientId = 21L;
+		Long clientId = 22L;
 		CaptchaExample example = new CaptchaExample();
 		example.createCriteria().andHandleClientEqualTo(clientId).andTypeEqualTo(0)
-			.andExpireTimeGreaterThan(SpecialDateUtil.afterToday(-1)).andExpireTimeLessThan(SpecialDateUtil.afterToday(0));
+			.andExpireTimeGreaterThan(SpecialDateUtil.afterToday(0)).andExpireTimeLessThan(SpecialDateUtil.afterToday(1));
 		out("C:\\Documents and Settings\\sam\\桌面\\captcha-out\\", example);
 	}
 	
@@ -41,7 +41,7 @@ public class TestPic {
 	@Test
 	public void testTaskIdOut() throws Exception {
 		CaptchaExample example = new CaptchaExample();
-		example.createCriteria().andTaskIdEqualTo(11871385L);
+		example.createCriteria().andTaskIdEqualTo(13054554L);
 		out("C:\\Documents and Settings\\sam\\桌面\\captcha-out2\\", example);
 	}
 	

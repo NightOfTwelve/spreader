@@ -23,10 +23,12 @@ public class GlobalRobotUserService implements IGlobalRobotUserService {
 	@Autowired
 	private ICrudRobotUserDao crudRobotUserDao;
 
-	//TODO temp
+	//TODO temp code
 	private Long getLoginActionId(Integer websiteId) {
 		if(Website.weibo.getId().equals(websiteId)) {
 			return 3L;
+		} else if(Website.apple.getId().equals(websiteId)) {
+			return 2003L;
 		} else {
 			throw new IllegalArgumentException();
 		}
@@ -55,12 +57,24 @@ public class GlobalRobotUserService implements IGlobalRobotUserService {
 	
 	@Override
 	public void syncLoginConfig(RobotUser robotUser) {
-		try {
-			Map<String, Object> contentObjects = CollectionUtils.newHashMap(2);
-			contentObjects.put("name", robotUser.getLoginName());
-			contentObjects.put("password", robotUser.getLoginPwd());
-			String contents = objectMapper.writeValueAsString(contentObjects);
-			loginConfigManageService.mergeLoginConfigByUid(robotUser.getUid(), getLoginActionId(robotUser.getWebsiteId()), contents);
+		try {//TODO delete "if else if" statement...
+			if(Website.weibo.getId().equals(robotUser.getWebsiteId())) {
+				Map<String, Object> contentObjects = CollectionUtils.newHashMap(2);
+				contentObjects.put("name", robotUser.getLoginName());
+				contentObjects.put("password", robotUser.getLoginPwd());
+				String contents = objectMapper.writeValueAsString(contentObjects);
+				loginConfigManageService.mergeLoginConfigByUid(robotUser.getUid(), getLoginActionId(robotUser.getWebsiteId()), contents);
+			} else if(Website.apple.getId().equals(robotUser.getWebsiteId())) {
+				Map<String, Object> contentObjects = CollectionUtils.newHashMap(2);
+				String[] loginNames = robotUser.getLoginName().split("\\#");
+				contentObjects.put("name", loginNames[0]);
+				contentObjects.put("udid", loginNames[1]);
+				contentObjects.put("password", robotUser.getLoginPwd());
+				String contents = objectMapper.writeValueAsString(contentObjects);
+				loginConfigManageService.mergeLoginConfigByUid(robotUser.getUid(), getLoginActionId(robotUser.getWebsiteId()), contents);
+			} else {
+				throw new IllegalArgumentException("unknown website id:"+robotUser.getWebsiteId());
+			}
 		} catch (Exception e) {
 			logger.error(e, e);
 		}

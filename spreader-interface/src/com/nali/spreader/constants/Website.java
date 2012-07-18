@@ -7,6 +7,7 @@ import com.nali.spreader.util.EnumUtils;
 
 public enum Website {
 	weibo(1, "weibo.com", "微博", "新浪微博", "新浪weibo"),
+	apple(2, "apple.com", "苹果"),
 	
 	;
 
