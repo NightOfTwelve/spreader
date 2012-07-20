@@ -20,6 +20,7 @@ import com.nali.spreader.data.AppUdid;
 import com.nali.spreader.data.RegAddress;
 import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.data.RobotRegisterExample;
+import com.nali.spreader.data.RobotRegisterExample.Criteria;
 import com.nali.spreader.service.IAppRegisterService;
 import com.nali.spreader.util.KeyValuePair;
 
@@ -47,7 +48,8 @@ public class AppRegisterService implements IAppRegisterService {
 			example.setLimit(Limit.newInstanceForLimit(0, count));
 			if(lastEndPoint!=null) {
 				example.createCriteria().andEmailIsNotNull().andUpdateTimeGreaterThan(lastEndPoint.getKey());
-				example.createCriteria().andEmailIsNotNull().andUpdateTimeEqualTo(lastEndPoint.getKey()).andIdGreaterThan(lastEndPoint.getValue());
+				Criteria or = example.createCriteria().andEmailIsNotNull().andUpdateTimeEqualTo(lastEndPoint.getKey()).andIdGreaterThan(lastEndPoint.getValue());
+				example.or(or);
 			} else {
 				example.createCriteria().andEmailIsNotNull();
 			}
