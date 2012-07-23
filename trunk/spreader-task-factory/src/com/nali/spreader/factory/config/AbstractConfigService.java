@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.core.annotation.AnnotationUtils;
+
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.config.desc.DescriptionResolve;
@@ -27,8 +29,12 @@ public abstract class AbstractConfigService<K> implements IConfigService<K> {
 	}
 	
 	protected ConfigableType getConfigableType(Class<?> clazz) {
-		if (SystemObject.class.isAssignableFrom(clazz)) {
-			return ConfigableType.system;
+		if (SpecialConfigable.class.isAssignableFrom(clazz)) {
+			SpecialConfigableType annotation = AnnotationUtils.findAnnotation(clazz, SpecialConfigableType.class);
+			if(annotation==null) {
+				throw new IllegalArgumentException("@SpecialConfigableType doesnot present at class:" + clazz);
+			}
+			return annotation.value();
 		}
 		return ConfigableType.normal;
 	}

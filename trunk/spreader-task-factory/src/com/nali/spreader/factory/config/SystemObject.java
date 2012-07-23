@@ -1,4 +1,5 @@
 package com.nali.spreader.factory.config;
 
-public interface SystemObject {
+@SpecialConfigableType(ConfigableType.system)
+public interface SystemObject extends SpecialConfigable {
 }

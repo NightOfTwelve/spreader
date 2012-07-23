@@ -19,6 +19,9 @@ public enum TaskErrorCode {
 	targetUserAccountError(10008),//目标用户被封，KeyValue<WebsiteId, WebsiteUid>
 	accountBlock(10009),//帐号无法使用了
 	needAppeal(10010),//需要申诉
+	emailAccountError(10011),//邮箱密码错误
+	emailHasBeenUsed(10012),//邮箱已被使用
+	retryTooMuch(10013),//重试过多放弃
 	;
 	private final String code;
 	private TaskErrorCode(int code) {
