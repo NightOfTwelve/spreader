@@ -8,12 +8,12 @@ import com.nali.spreader.model.RegularJob;
 public interface RegularScheduler {
 
 	Long scheduleRegularJob(RegularJob regularJob);
-	
+
 	/**
 	 * 查看已有调度
 	 */
-	PageResult<RegularJob> findRegularJob(String name, Integer triggerType,
-			Long groupId, ConfigableType configableType, Limit lit);
+	PageResult<RegularJob> findRegularJob(String name, Integer triggerType, Long groupId,
+			ConfigableType configableType, Limit lit);
 
 	/**
 	 * 取消调度
@@ -35,4 +35,21 @@ public interface RegularScheduler {
 
 	Object getExtendConfig(String name, Long sid);
 
+	/**
+	 * 根据job类型获取相应的枚举类型
+	 * 
+	 * @param jobType
+	 * @return
+	 */
+	ConfigableType getConfigableTypeByJobType(String jobType);
+
+	/**
+	 * 获取消息子策略
+	 * 
+	 * @param jobType
+	 * @param noticeId
+	 * @param lit
+	 * @return
+	 */
+	PageResult<RegularJob> findNoticeStrategy(Integer jobType, Long noticeId,Limit lit);
 }

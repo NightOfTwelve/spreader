@@ -32,6 +32,9 @@
 			<isNotNull prepend="," property="config">
 				config
 			</isNotNull>
+			<isNotNull prepend="," property="refId">
+				ref_id
+			</isNotNull>
 			)
 		</dynamic>
 		values
@@ -62,6 +65,9 @@
 			</isNotNull>
 			<isNotNull prepend="," property="config">
 				#config:LONGVARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="refId">
+				#refId:BIGINT#
 			</isNotNull>
 			)
 		</dynamic>

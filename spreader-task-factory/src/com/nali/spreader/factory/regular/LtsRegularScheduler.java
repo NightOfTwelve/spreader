@@ -33,8 +33,7 @@ import com.nali.spreader.model.RegularJobExample;
 import com.nali.spreader.model.RegularJobExample.Criteria;
 
 @Component
-public class LtsRegularScheduler extends AbstractTask implements
-		RegularScheduler, BeanNameAware {
+public class LtsRegularScheduler extends AbstractTask implements RegularScheduler, BeanNameAware {
 	private static Logger logger = Logger.getLogger(LtsRegularScheduler.class);
 	private String beanName;
 	@Autowired
@@ -46,29 +45,25 @@ public class LtsRegularScheduler extends AbstractTask implements
 	private RegularProducerManager regularProducerManager;
 
 	@Override
-	public void execute(TaskExecuteContext taskContext)
-			throws TaskExecuteException {
-		String triggerName = taskContext.getAssociatedTrigger()
-				.getTriggerMetaInfo().getTriggerName();
+	public void execute(TaskExecuteContext taskContext) throws TaskExecuteException {
+		String triggerName = taskContext.getAssociatedTrigger().getTriggerMetaInfo()
+				.getTriggerName();
 		RegularJob regularJob = getRegularJob(triggerName);
 		String name = regularJob.getName();
 		try {
-			Object config = regularProducerManager.unSerializeConfigData(
-					regularJob.getConfig(), name);
+			Object config = regularProducerManager.unSerializeConfigData(regularJob.getConfig(),
+					name);
 			regularProducerManager.invokeRegularObject(name, config, regularJob.getId());
 		} catch (Exception e) {
-			throw new TaskExecuteException("invoke task fail, triggerName:"
-					+ triggerName, e);
+			throw new TaskExecuteException("invoke task fail, triggerName:" + triggerName, e);
 		}
 	}
 
 	@Override
-	public PageResult<RegularJob> findRegularJob(String name,
-			Integer triggerType, Long groupId, ConfigableType configableType,
-			Limit lit) {
+	public PageResult<RegularJob> findRegularJob(String name, Integer triggerType, Long groupId,
+			ConfigableType configableType, Limit lit) {
 		RegularJobExample example = new RegularJobExample();
-		Criteria c = example.createCriteria().andJobTypeEqualTo(
-				configableType.jobType);
+		Criteria c = example.createCriteria().andJobTypeEqualTo(configableType.jobType);
 		if (name != null && !"".equals(name)) {
 			c.andNameEqualTo(name);
 		}
@@ -79,8 +74,7 @@ public class LtsRegularScheduler extends AbstractTask implements
 			c.andGidEqualTo(groupId);
 		}
 		example.setLimit(lit);
-		List<RegularJob> list = crudRegularJobDao
-				.selectByExampleWithoutBLOBs(example);
+		List<RegularJob> list = crudRegularJobDao.selectByExampleWithoutBLOBs(example);
 		int count = crudRegularJobDao.countByExample(example);
 		return new PageResult<RegularJob>(list, lit, count);
 	}
@@ -91,19 +85,20 @@ public class LtsRegularScheduler extends AbstractTask implements
 		TriggerDto triggerObject = regularJob.getTriggerObject();
 		Integer triggerType = triggerObject.getTriggerType();
 		TriggerScheduleInfo scheInfo;
-		if(RegularJob.TRIGGER_TYPE_SIMPLE.equals(triggerType)) {
+		if (RegularJob.TRIGGER_TYPE_SIMPLE.equals(triggerType)) {
 			scheInfo = new TriggerScheduleInfo(triggerObject.getStart(), null,
 					triggerObject.getRepeatTimes(), triggerObject.getRepeatInternal());
-		} else if(RegularJob.TRIGGER_TYPE_CRON.equals(triggerType)) {
+		} else if (RegularJob.TRIGGER_TYPE_CRON.equals(triggerType)) {
 			scheInfo = new TriggerScheduleInfo(triggerObject.getCron());
 		} else {
-			throw new IllegalArgumentException("illegal triggerType:"+triggerType);
+			throw new IllegalArgumentException("illegal triggerType:" + triggerType);
 		}
 		regularJob.setTriggerInfo(triggerDto2String(triggerObject));
-		regularJob.setConfig(regularProducerManager.serializeConfigData(regularJob.getConfigObject()));
-		
+		regularJob.setConfig(regularProducerManager.serializeConfigData(regularJob
+				.getConfigObject()));
+
 		Long id = regularJob.getId();
-		if(id==null) {
+		if (id == null) {
 			id = regularJobDao.insert(regularJob);
 		} else {
 			crudRegularJobDao.updateByPrimaryKeySelective(regularJob);
@@ -141,13 +136,14 @@ public class LtsRegularScheduler extends AbstractTask implements
 	public RegularJob getRegularJobObject(Long id) {
 		try {
 			RegularJob regularJob = getRegularJob(id);
-			Object config = regularProducerManager.unSerializeConfigData(
-					regularJob.getConfig(), regularJob.getName());
+			Object config = regularProducerManager.unSerializeConfigData(regularJob.getConfig(),
+					regularJob.getName());
 			Object extendConfig = getExtendConfig(regularJob.getName(), id);
 			TriggerDto triggerDto = string2TriggerDto(regularJob.getTriggerInfo());
-			String remind = getRemind(getTriggerName(regularJob.getName(), id), regularJob.getName());
+			String remind = getRemind(getTriggerName(regularJob.getName(), id),
+					regularJob.getName());
 			triggerDto.setRemind(remind);
-			
+
 			regularJob.setConfigObject(config);
 			regularJob.setExtendConfigObject(extendConfig);
 			regularJob.setTriggerObject(triggerDto);
@@ -157,12 +153,13 @@ public class LtsRegularScheduler extends AbstractTask implements
 		}
 	}
 
-	//String triggerName = getTriggerName(name, id);
+	// String triggerName = getTriggerName(name, id);
 	private String getRemind(String triggerName, String groupName) throws SchedulerException {
 		String remind = "";
 		// TriggerMetaInfo tm = new TriggerMetaInfo(triggerName, name, name
 		// + "Task", null, TriggerType.INDEPENDENT_TRIGGER);
-		Trigger trigger = SchedulerFactory.getInstance().getScheduler().getTrigger(triggerName, groupName);
+		Trigger trigger = SchedulerFactory.getInstance().getScheduler()
+				.getTrigger(triggerName, groupName);
 		if (trigger != null) {
 			TriggerScheduleInfo scheduleInfo = trigger.getTriggerScheduleInfo();
 			StringBuffer buff = new StringBuffer();
@@ -173,13 +170,13 @@ public class LtsRegularScheduler extends AbstractTask implements
 				// 已完成的次数
 				int times = trigger.getTimesTriggered();
 				int left = times == -1 ? 0 : rcount + 1 - times;
-				
+
 				buff.append("剩余执行次数:");
 				buff.append(left);
 			} else {
 				buff.append("Cron表达式:").append(cronExpression);
 			}
-			
+
 			buff.append(";");
 			Date nextDate = trigger.getNextFireTime();
 			if (nextDate != null) {
@@ -216,9 +213,8 @@ public class LtsRegularScheduler extends AbstractTask implements
 		Long id = Long.parseLong(splitedStr[1]);
 		RegularJob regularJob = getRegularJob(id);
 		if (!name.equals(regularJob.getName())) {
-			throw new IllegalArgumentException(
-					"regularJob's names do not match, name:" + name
-							+ ", triggerName:" + triggerName);
+			throw new IllegalArgumentException("regularJob's names do not match, name:" + name
+					+ ", triggerName:" + triggerName);
 		}
 		return regularJob;
 	}
@@ -238,10 +234,9 @@ public class LtsRegularScheduler extends AbstractTask implements
 
 	private void ltsSchedule(String name, Long id, TriggerScheduleInfo scheInfo) {
 		String triggerName = getTriggerName(name, id);
-		TriggerMetaInfo metaInfo = new TriggerMetaInfo(triggerName, name,
-				beanName + "Task", null, TriggerType.INDEPENDENT_TRIGGER);
-		Trigger trigger = TriggerFactory.getInstance().generateTrigger(
-				metaInfo, scheInfo);
+		TriggerMetaInfo metaInfo = new TriggerMetaInfo(triggerName, name, beanName + "Task", null,
+				TriggerType.INDEPENDENT_TRIGGER);
+		Trigger trigger = TriggerFactory.getInstance().generateTrigger(metaInfo, scheInfo);
 		try {
 			SchedulerFactory.getInstance().getScheduler().scheduleTask(trigger);
 		} catch (SchedulerException e) {
@@ -260,8 +255,7 @@ public class LtsRegularScheduler extends AbstractTask implements
 			RegularJobExample example = new RegularJobExample();
 			Criteria c = example.createCriteria();
 			c.andGidEqualTo(gid);
-			List<RegularJob> list = crudRegularJobDao
-					.selectByExampleWithoutBLOBs(example);
+			List<RegularJob> list = crudRegularJobDao.selectByExampleWithoutBLOBs(example);
 			if (list.size() > 0) {
 				return list.get(0).getId();
 			} else {
@@ -277,5 +271,28 @@ public class LtsRegularScheduler extends AbstractTask implements
 	@Override
 	public Object getExtendConfig(String name, Long sid) {
 		return regularProducerManager.getExtendConfig(name, sid);
+	}
+
+	@Override
+	public ConfigableType getConfigableTypeByJobType(String jobType) {
+		if (RegularJob.SYSTEM_JOBTYPE.equalsIgnoreCase(jobType)) {
+			return ConfigableType.system;
+		}
+		if (RegularJob.NOTICE_JOBTYPE.equalsIgnoreCase(jobType)) {
+			// TODO 暂时用普通策略
+			return ConfigableType.normal;
+		}
+		return ConfigableType.normal;
+	}
+
+	@Override
+	public PageResult<RegularJob> findNoticeStrategy(Integer jobType, Long noticeId, Limit lit) {
+		RegularJobExample example = new RegularJobExample();
+		Criteria c = example.createCriteria();
+		c.andJobTypeEqualTo(jobType).andRefIdEqualTo(noticeId);
+		example.setLimit(lit);
+		List<RegularJob> list = this.crudRegularJobDao.selectByExampleWithBLOBs(example);
+		int count = this.crudRegularJobDao.countByExample(example);
+		return new PageResult<RegularJob>(list, lit, count);
 	}
 }
