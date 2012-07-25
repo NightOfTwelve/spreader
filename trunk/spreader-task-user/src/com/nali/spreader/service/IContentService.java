@@ -30,11 +30,21 @@ public interface IContentService {
 
 	/**
 	 * 分配一个contentID
+	 * content == null return null 
+	 * 
+	 * contentType websiteId websiteUid entry 有一项为空 return null
 	 * 
 	 * @param content
 	 * @return
 	 */
 	Long assignContentId(Content content);
+	
+	/**
+	 * 分配一个content
+	 * @param content
+	 * @return
+	 */
+	Content assignContent(Content content);
 
 	/**
 	 * 获取内容ID集合
@@ -54,4 +64,12 @@ public interface IContentService {
 	 */
 
 	List<Long> findContentIdByConfig(PostWeiboConfig cfg, List<String> allKeywords, Long uid);
+
+	/**
+	 * 获取内容的长度
+	 * 
+	 * @param content
+	 * @return
+	 */
+	int getContentLength(String content);
 }

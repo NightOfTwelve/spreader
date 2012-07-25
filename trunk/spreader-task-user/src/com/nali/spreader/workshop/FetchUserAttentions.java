@@ -45,7 +45,7 @@ public class FetchUserAttentions extends SingleTaskMachineImpl implements Passiv
 		for (UserRelation relation : relations) {
 			Long toWebsiteUid = relation.getToWebsiteUid();
 			Long toUid = userService.assignUser(toWebsiteUid);
-			if(toUid!=null) {
+			if (toUid != null) {
 				fetchWeiboUserMainPage.send(toUid);
 			} else {
 				User toUser = userService.getUserByWebsiteUid(toWebsiteUid);

@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.nali.spreader.config.NoticeReplayWeiboConfig;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.Content;
@@ -61,9 +62,17 @@ public class ReplyWeibo extends SingleTaskMachineImpl implements PassiveWorkshop
 		work(robotUid, contentId, text, false, exporter);
 	}
 	
+	@Input
+	public void work(NoticeReplayWeiboConfig data, SingleTaskExporter exporter) {
+		Long robotUid = data.getToUid();
+		Long contentId = data.getReplayContentId();
+		String text = data.getContent();
+		Boolean needForward = data.getNeedForward();
+		work(robotUid, contentId, text, needForward, exporter);
+	}
+	
 	private void work(Long robotUid, Long contentId, String text, boolean needForward, SingleTaskExporter exporter) {
 		Content content = contentService.getContentById(contentId);
-
 		exporter.setProperty("id", robotUid);
 		exporter.setProperty("contentId", contentId);
 		exporter.setProperty("websiteContentId", content.getWebsiteContentId());
@@ -77,5 +86,4 @@ public class ReplyWeibo extends SingleTaskMachineImpl implements PassiveWorkshop
 	@Override
 	public void handleResult(Date updateTime, KeyValue<Long, KeyValue<Long,Boolean>> data) {
 	}
-	
 }

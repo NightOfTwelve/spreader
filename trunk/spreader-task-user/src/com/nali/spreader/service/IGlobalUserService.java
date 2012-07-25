@@ -25,6 +25,8 @@ public interface IGlobalUserService {
 	RobotUser exportUser(Long id);
 
 	Long getOrAssignUid(Integer websiteId, Long websiteUid);
+	
+	User assignUserByWebsiteUid(Integer websiteId, Long websiteUid);
 
 	User findByUniqueKey(Integer websiteId, Long websiteUid);
 	

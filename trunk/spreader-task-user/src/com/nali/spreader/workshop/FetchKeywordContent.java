@@ -83,7 +83,7 @@ public class FetchKeywordContent extends SingleTaskMachineImpl implements
 				Long websiteUid = c.getWebsiteUid();
 				Long userId = this.userService.assignUser(websiteUid);
 				// 用户不存在爬取用户
-				if (userId == null) {
+				if (userId != null) {
 					fetchWeiboUserMainPage.send(userId);
 				} else {
 					User user = this.userService.getUserByWebsiteUid(websiteUid);
