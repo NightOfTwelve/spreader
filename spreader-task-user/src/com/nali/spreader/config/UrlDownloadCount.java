@@ -10,6 +10,8 @@ public class UrlDownloadCount implements Serializable {
 	private String url;
 	@PropertyDescription("下载次数")
 	private Integer count;
+	@PropertyDescription("预计下载时间（秒）")
+	private Integer secondsWaitBase;
 	public String getUrl() {
 		return url;
 	}
@@ -21,5 +23,11 @@ public class UrlDownloadCount implements Serializable {
 	}
 	public void setCount(Integer count) {
 		this.count = count;
+	}
+	public Integer getSecondsWaitBase() {
+		return secondsWaitBase;
+	}
+	public void setSecondsWaitBase(Integer secondsWaitBase) {
+		this.secondsWaitBase = secondsWaitBase;
 	}
 }

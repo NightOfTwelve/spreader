@@ -4,6 +4,7 @@ public class AppInfo {
 	private String appSource;
 	private Long appId;
 	private String url;
+	private Integer secondsWaitBase;
 	public String getAppSource() {
 		return appSource;
 	}
@@ -21,6 +22,12 @@ public class AppInfo {
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	public Integer getSecondsWaitBase() {
+		return secondsWaitBase;
+	}
+	public void setSecondsWaitBase(Integer secondsWaitBase) {
+		this.secondsWaitBase = secondsWaitBase;
 	}
 
 }
