@@ -36,6 +36,7 @@ public class DownloadApp extends SingleTaskMachineImpl implements ContextedPassi
 		exporter.setProperty("appSource", appInfo.getAppSource());
 		exporter.setProperty("appId", appInfo.getAppId());
 		exporter.setProperty("url", appInfo.getUrl());
+		exporter.setProperty("secondsWaitBase", appInfo.getSecondsWaitBase());
 		exporter.setBasePriority(BASE_PRIORITY);
 		exporter.send(uid, SpecialDateUtil.afterNow(10));
 	}

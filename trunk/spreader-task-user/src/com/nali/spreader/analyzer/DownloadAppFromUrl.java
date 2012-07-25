@@ -40,7 +40,11 @@ public class DownloadAppFromUrl implements RegularAnalyzer,Configable<UrlDownloa
 		if(dto.getUrl()==null || dto.getCount()==null) {
 			throw new IllegalArgumentException("url and count must not be empty");
 		}
+		if(dto.getSecondsWaitBase()==null) {
+			throw new IllegalArgumentException("secondsWaitBase must not be empty");
+		}
 		appInfo = appDownlodService.parseUrl(dto.getUrl());
+		appInfo.setSecondsWaitBase(dto.getSecondsWaitBase());
 		count = dto.getCount();
 	}
 
