@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
 import com.nali.common.model.BaseModel;
 
 public class Content extends BaseModel implements Serializable {
@@ -18,7 +19,7 @@ public class Content extends BaseModel implements Serializable {
     public static final Integer DEFAULT_PAGENUMBER = 5;
 
     /**
-	 * ‘@’符�?
+	 * ‘@’符号
 	 */
     public static final String AT_STR = "@";
 
@@ -35,8 +36,21 @@ public class Content extends BaseModel implements Serializable {
     private String typeName;
 
     private List<String> tags;
+    
+	/**
+	 * 引用的微博
+	 */
+	private Content refContent;
 
-    public List<String> getTags() {
+	public Content getRefContent() {
+		return refContent;
+	}
+
+	public void setRefContent(Content refContent) {
+		this.refContent = refContent;
+	}
+
+	public List<String> getTags() {
         return tags;
     }
 
