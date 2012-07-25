@@ -184,7 +184,8 @@ Ext.onReady(function() {
 				autoLoad : {
 					params : {
 						start : 0,
-						limit : 25
+						limit : 20,
+						jobType : 'system'
 					}
 				}
 			});
@@ -219,6 +220,13 @@ Ext.onReady(function() {
 				header : '相关操作',
 				renderer : function showbutton() {
 					var returnStr = "<input type='button' value='配置'/>";
+					return returnStr;
+				},
+				width : 100
+			}, {
+				header : '执行情况',
+				renderer : function showbutton() {
+					var returnStr = "<input type='button' value='执行情况'/>";
 					return returnStr;
 				},
 				width : 100
@@ -301,10 +309,11 @@ Ext.onReady(function() {
 						}],
 				bbar : bbar,
 				onCellClick : function(grid, rowIndex, columnIndex, e) {
+					var butname = e.target.defaultValue;
+					var record = grid.getStore().getAt(rowIndex);
+					var data = record.data;
 					// 找出表格中‘配置’按钮
-					if (e.target.defaultValue == '配置') {
-						var record = grid.getStore().getAt(rowIndex);
-						var data = record.data;
+					if (butname == '配置') {
 						GDISNAME = data.name;
 						GOBJID = data.name;
 						GDISPID = data.id;
@@ -313,8 +322,14 @@ Ext.onReady(function() {
 						editstgWindow.title = rendDispName(GDISNAME);
 						editstgWindow.show();
 					}
+					if (butname == '执行情况') {
+						var jobId = data.id;
+						jobResultStore.setBaseParam('jobId', jobId);
+						jobResultStore.setBaseParam('groupType', 'simple');
+						jobResultStore.reload();
+						taskWindow.show();
+					}
 				}
-
 			});
 	// 注册事件
 	stgdisplistgrid.on('cellclick', stgdisplistgrid.onCellClick,

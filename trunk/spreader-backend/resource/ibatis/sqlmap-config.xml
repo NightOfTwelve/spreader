@@ -28,6 +28,8 @@
   <sqlMap resource="ibatis/spreader_tb_app_udid_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_reg_address_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_content_keyword_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_notice_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_content_replay_SqlMap.xml" />
   
   <!-- ×Ô¶¨Òå -->
   <sqlMap resource="ibatis/spreader_tb_photo.xml" />
@@ -45,5 +47,6 @@
   <sqlMap resource="ibatis/spreader_client_task_stat.xml"/>
   <sqlMap resource="ibatis/spreader_keyword.xml"/>
   <sqlMap resource="ibatis/spreader_content_keyword.xml"/>
+  <sqlMap resource="ibatis/spreader_notice.xml"/>
 </sqlMapConfig>
 

@@ -35,13 +35,13 @@ function addTabNew(url, name, menuid, pathCh, icon) {
 			// document.getElementById('endIeStatus').click();//解决Iframe
 			// IE加载不完全的问题
 			// 兼容IE和FF触发.click()函数
-//			var endIeStatus = document.getElementById("endIeStatus");
-//			if (document.createEvent) {
-//				var ev = document.createEvent('HTMLEvents');
-//				ev.initEvent('click', false, true);
-//				endIeStatus.dispatchEvent(ev);
-//			} else
-//				endIeStatus.click();
+			// var endIeStatus = document.getElementById("endIeStatus");
+			// if (document.createEvent) {
+			// var ev = document.createEvent('HTMLEvents');
+			// ev.initEvent('click', false, true);
+			// endIeStatus.dispatchEvent(ev);
+			// } else
+			// endIeStatus.click();
 			n = mainTabPanel.add({
 				id : id,
 				// title:"<img align='top' class='IEPNG'
@@ -399,6 +399,40 @@ function renderWebsiteType(value) {
 	} else {
 		return '其它';
 	}
+}
+/**
+ * 渲染消息类型
+ * 
+ * @param {}
+ *            value
+ * @return {String}
+ */
+function renderNoticeType(value) {
+	if (value == 1) {
+		return '评论微博';
+	}
+	if (value == 2) {
+		return '评论回复';
+	}
+	if (value == 3) {
+		return '新增粉丝';
+	}
+	if (value == 4) {
+		return '私信';
+	}
+	if (value == 5) {
+		return '@到我的微博';
+	}
+	if (value == 6) {
+		return '@到的评论';
+	}
+	if (value == 7) {
+		return '群组消息';
+	}
+	if (value == 8) {
+		return '相册消息';
+	}
+	return null;
 }
 /**
  * 自动缩放图片

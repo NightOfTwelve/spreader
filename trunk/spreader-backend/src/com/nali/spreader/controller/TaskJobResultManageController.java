@@ -45,13 +45,7 @@ public class TaskJobResultManageController extends BaseController {
 	@RequestMapping(value = "/queryjobresult")
 	public String seachJobResult(Long jobId, Long gid, String groupType, Integer start,
 			Integer limit) {
-		if (start == null) {
-			start = 0;
-		}
-		if (limit == null) {
-			limit = 20;
-		}
-		Limit lit = Limit.newInstanceForLimit(start, limit);
+		Limit lit = this.initLimit(start, limit);
 		// 复杂分组
 		if (GROUP_TYPE_COMPLEX.equals(groupType)) {
 			PageResult<RegularJobResultDto> result = this.execuService.findRegularJobResultByJobId(
@@ -62,13 +56,13 @@ public class TaskJobResultManageController extends BaseController {
 		else if (GROUP_TYPE_SIMPLE.equals(groupType)) {
 			if (gid != null) {
 				jobId = this.schedulerService.findRegularJobIdBySimpleGroupId(gid);
-				if (jobId != null) {
-					PageResult<RegularJobResultDto> result = this.execuService
-							.findRegularJobResultByJobId(jobId, lit);
-					return this.write(result);
-				} else {
-					logger.error("通过分组ID获取RegularJob失败,gid=" + gid);
-				}
+			}
+			if (jobId != null) {
+				PageResult<RegularJobResultDto> result = this.execuService
+						.findRegularJobResultByJobId(jobId, lit);
+				return this.write(result);
+			} else {
+				logger.error("通过分组ID获取RegularJob失败,gid=" + gid);
 			}
 		}
 		return null;

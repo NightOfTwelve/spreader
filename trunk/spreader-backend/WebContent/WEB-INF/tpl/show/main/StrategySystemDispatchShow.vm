@@ -11,6 +11,7 @@
 #parse("/show/comm/PublicInclude.vm")
 #parse("/show/comm/DateTimeFieldInclude.vm")
 #parse("/show/comm/FunctionsInclude.vm")
+#parse("/show/comm/TaskJobResultQueryInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategy/StrategySystemDispatchModel.js'))"></script>
 </head>
 <body>

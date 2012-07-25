@@ -2,25 +2,6 @@
 <html>
 <head>
 <title>策略分组管理</title>
-<script>
-	// 全局对象ID
-	var GOBJID = null;
-	var GDISNAME = null;
-	//全局调度ID
-	var GDISPID;
-	//全局分组类型
-	var GGROUPTYPE = null;
-	//全局分组ID
-	var GGROUPID = null;
-	//复杂分组名称
-	var GGROUPNAME = null;
-	//复杂分组说明
-	var GGROUPNOTE = null;
-	//是否是分组
-	var GISGROUP = null;
-	//是否新增记录
-	var newtag = false;
-</script>
 #parse("/show/comm/PublicInclude.vm")
 #parse("/show/comm/DateTimeFieldInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/SelectUserGroupCombo.js'))"></script>
