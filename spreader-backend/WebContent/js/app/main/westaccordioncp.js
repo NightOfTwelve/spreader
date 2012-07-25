@@ -10,7 +10,7 @@ var menuTree_Stg = new Ext.tree.TreePanel({
 			root : new Ext.tree.AsyncTreeNode({
 						id : '-1',
 						text : '相关配置',
-						expanded:true,
+						expanded : true,
 						children : [{
 									id : 'cfgmenu1',
 									text : "策略配置",
@@ -65,7 +65,7 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 			root : new Ext.tree.AsyncTreeNode({
 						id : '-1',
 						text : '信息查询',
-						expanded:true,
+						expanded : true,
 						children : [{
 									id : 'querymenu1',
 									text : "用户查询",
@@ -125,7 +125,7 @@ var menuTree_ContentLibQuery = new Ext.tree.TreePanel({
 			root : new Ext.tree.AsyncTreeNode({
 						id : '-1',
 						text : '基础信息',
-						expanded:true,
+						expanded : true,
 						children : [{
 									id : 'contentLib',
 									text : "微博内容库检索",
@@ -165,7 +165,7 @@ var menuTree_CategoryKeywordQuery = new Ext.tree.TreePanel({
 			root : new Ext.tree.AsyncTreeNode({
 						id : '-1',
 						text : '关键字与分类管理',
-						expanded:true,
+						expanded : true,
 						children : [{
 									id : 'keywordmng',
 									text : "关键字管理",
@@ -176,6 +176,41 @@ var menuTree_CategoryKeywordQuery = new Ext.tree.TreePanel({
 									text : "分类管理",
 									leaf : true,
 									url : '../category/init'
+								}]
+					}),
+			// 添加监听事件
+			listeners : {
+				'click' : function(view, rec) {
+					var nodeurl = view.attributes.url;
+					var nodetext = view.attributes.text;
+					var nodeid = view.attributes.id;
+					var leaf = view.attributes.leaf;
+					if (leaf) {
+						addTabNew(nodeurl, nodetext, nodeid, nodetext, '');
+					}
+				}
+			}
+		});
+/**
+ * 消息系统
+ */
+var menuTree_NoticeSystem = new Ext.tree.TreePanel({
+			id : 'menuTree_NoticeSystem',
+			// autoScroll : true,
+			// autoHeight : true,
+			expanded : true,
+			singleExpand : true,
+			useArrows : true,
+			rootVisible : true,
+			root : new Ext.tree.AsyncTreeNode({
+						id : '-1',
+						text : '消息管理',
+						expanded : true,
+						children : [{
+									id : 'noticeList',
+									text : "消息汇总",
+									leaf : true,
+									url : '../notice/init'
 								}]
 					}),
 			// 添加监听事件
@@ -231,6 +266,12 @@ var accordPanel = new Ext.Panel({
 						title : '关键字与分类',
 						iconCls : 'folder_cameraIcon',
 						items : [menuTree_CategoryKeywordQuery]
+					}, {
+						autoScroll : true,
+						border : false,
+						title : '消息管理',
+						iconCls : 'folder_cameraIcon',
+						items : [menuTree_NoticeSystem]
 					}]
 		});
 

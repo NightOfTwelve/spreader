@@ -166,13 +166,13 @@ function userGroupSubmitTreeData(userGroupPropExpTree, store) {
  * 调度提交数据的函数
  */
 function strategyDispatchSubmitTreeData(stgdisptree, triggerDispForm,
-		radioForm, simpleDispForm, editstgWindow, store) {
+		radioForm, simpleDispForm, editstgWindow, store, strategyId, objId) {
 	// 获取ROOT数组
 	var treearray = stgdisptree.root.childNodes;
 	var tparam = {};
-	tparam['name'] = GOBJID;
+	tparam['name'] = strategyId;
 	tparam['_time'] = new Date().getTime();
-	tparam['id'] = GDISPID;
+	tparam['id'] = objId;
 	if (treearray.length > 0) {
 		var arrayobj = treearray[0].attributes;
 		var submitStr = treejson2str(arrayobj);
@@ -202,7 +202,7 @@ function strategyDispatchSubmitTreeData(stgdisptree, triggerDispForm,
 		tparam['cron'] = cron;
 	}
 	Ext.Ajax.request({
-				url : '../dispsys/dispsave',
+				url : '../strategydisp/dispsave',
 				params : tparam,
 				scope : stgdisptree,
 				success : function(response) {
@@ -211,7 +211,9 @@ function strategyDispatchSubmitTreeData(stgdisptree, triggerDispForm,
 						// stgdisptree.getRootNode().reload();
 						Ext.Msg.alert("提示", "保存成功");
 						editstgWindow.hide();
-						store.reload();
+						if (!Ext.isEmpty(store)) {
+							store.reload();
+						}
 					} else {
 						Ext.Msg.alert("提示", "保存失败");
 					}
@@ -226,21 +228,22 @@ function strategyDispatchSubmitTreeData(stgdisptree, triggerDispForm,
  * 策略分组树提交数据的函数
  */
 function strategyGroupSubmitTreeData(stgdisptree, triggerDispForm, radioForm,
-		simpleDispForm, editstgWindow, store, groupStore, fromId, toId) {
+		simpleDispForm, editstgWindow, store, groupStore, fromId, toId,
+		strategyId, groupName, groupNote, groupType, objId, groupId) {
 	// 获取ROOT数组
 	var treearray = stgdisptree.root.childNodes;
 	var tparam = {};
 	// 简单分组名，默认就用调用名
-	tparam['name'] = GOBJID;
+	tparam['name'] = strategyId;
 	// 复杂分组用自定义的组名
-	tparam['groupName'] = GGROUPNAME;
+	tparam['groupName'] = groupName;
 	// 复杂分组的说明
-	tparam['groupNote'] = GGROUPNOTE;
+	tparam['groupNote'] = groupNote;
 	// 分组类型
-	tparam['groupType'] = GGROUPTYPE;
+	tparam['groupType'] = groupType;
 	tparam['_time'] = new Date().getTime();
-	tparam['id'] = GDISPID;
-	tparam['groupId'] = GGROUPID;
+	tparam['id'] = objId;
+	tparam['groupId'] = groupId;
 	// 分组ID
 	tparam['fromGroupId'] = fromId;
 	tparam['toGroupId'] = toId;
@@ -279,13 +282,21 @@ function strategyGroupSubmitTreeData(stgdisptree, triggerDispForm, radioForm,
 					if (result.success) {
 						Ext.Msg.alert("提示", "保存成功");
 						editstgWindow.hide();
-						store.reload();
-						groupStore.reload();
+						if (!Ext.isEmpty(store)) {
+							store.reload();
+						}
+						if (!Ext.isEmpty(groupStore)) {
+							groupStore.reload();
+						}
 					} else {
 						Ext.Msg.alert("提示", result.message);
 						editstgWindow.hide();
-						store.reload();
-						groupStore.reload();
+						if (!Ext.isEmpty(store)) {
+							store.reload();
+						}
+						if (!Ext.isEmpty(groupStore)) {
+							groupStore.reload();
+						}
 					}
 				},
 				failure : function() {

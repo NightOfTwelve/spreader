@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -39,7 +40,9 @@ public class StrategyDispatchController extends BaseController {
 	@Autowired
 	private IStrategyGroupService groupService;
 	// 简单分组
-	private final Integer SIMPLE_GROUP_TYPE = 1;
+	private static final Integer SIMPLE_GROUP_TYPE = 1;
+	// 消息分组用于区分普通和复杂分组，实际上不保存分组操作
+	private static final Integer NOTICE_GROUP_TYPE = 3;
 
 	// 复杂分组
 	// private final Integer COMPLEX_GROUP_TYPE = 2;
@@ -61,13 +64,14 @@ public class StrategyDispatchController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/stgdispgridstore")
 	public String stgGridStore(String dispname, Integer triggerType, Long groupId, Integer start,
-			Integer limit) {
+			Integer limit, String jobType) {
+		Assert.notNull(jobType, "jobType is null");
 		Limit lit = this.initLimit(start, limit);
 		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname, triggerType, groupId,
-				ConfigableType.normal, lit);
+				this.cfgService.getConfigableTypeByJobType(jobType), lit);
 		List<RegularJob> list = pr.getList();
-		List<ConfigableInfo> dispnamelist = regularConfigService
-				.listConfigableInfo(ConfigableType.normal);
+		List<ConfigableInfo> dispnamelist = regularConfigService.listConfigableInfo(this.cfgService
+				.getConfigableTypeByJobType(jobType));
 		int rowcount = pr.getTotalCount();
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("cnt", rowcount);
@@ -77,16 +81,18 @@ public class StrategyDispatchController extends BaseController {
 	}
 
 	/**
-	 * 构建树结构的数据源
+	 * 构建树结构的数据源 支持设定默认值
 	 * 
 	 * @param name
-	 * @param disname
-	 *            用于显示的名称
+	 * @param id
+	 * @param isGroup
+	 * @param data
+	 * @param trigger
 	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/createdisptree")
-	public String createStgTreeData(String name, Long id, Boolean isGroup) {
+	public String createStgTreeData(String name, Long id, Boolean isGroup, String defaultData) {
 		if (Boolean.TRUE.equals(isGroup)) {
 			id = getRegularIdByGid(id);
 		}
@@ -95,12 +101,29 @@ public class StrategyDispatchController extends BaseController {
 		String extendType = cfg.getExtendType();
 		Object meta = cfg.getExtendMeta();
 		ConfigDefinition def = regularConfigService.getConfigDefinition(name);
-		Object data = id != null ? cfgService.getRegularJobObject(id).getConfigObject() : null;
+		Object data;
+		if (id != null) {
+			data = cfgService.getRegularJobObject(id).getConfigObject();
+		} else {
+			Class<?> dataClass = regularConfigService.getConfigableInfo(name).getDataClass();
+			if (!StringUtils.isEmpty(defaultData)) {
+				try {
+					data = this.getObjectMapper().readValue(defaultData, dataClass);
+				} catch (Exception e) {
+					return returnError("获取configObj异常" + name, e);
+				}
+			} else {
+				data = null;
+			}
+		}
+
 		Object sug = null;
 		if (!StringUtils.isEmpty(extendType)) {
 			sug = cfgService.getExtendConfig(name, id);
 		}
-		DispatchData dispatch = new DispatchData(null, dispname, extendType, meta, def, data, sug);
+		TriggerDto trigger = this.getTrigger(id, isGroup);
+		DispatchData dispatch = new DispatchData(null, dispname, extendType, meta, def, data, sug,
+				trigger);
 		return this.write(dispatch);
 	}
 
@@ -131,6 +154,33 @@ public class StrategyDispatchController extends BaseController {
 	}
 
 	/**
+	 * 获取任务Trigger
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private TriggerDto getTrigger(Long id, Boolean isGroup) {
+		TriggerDto triggerObject;
+		if (Boolean.TRUE.equals(isGroup)) {
+			id = getRegularIdByGid(id);
+		}
+		// 默认trigger
+		if (id == null) {
+			triggerObject = new TriggerDto();
+			triggerObject.setRepeatInternal(10000);
+			triggerObject.setRepeatTimes(0);
+			triggerObject.setStart(new Date());
+			triggerObject.setTriggerType(RegularJob.TRIGGER_TYPE_SIMPLE);
+		} else {
+			RegularJob job = cfgService.getRegularJobObject(id);
+			triggerObject = job.getTriggerObject();
+			triggerObject.setDescription(job.getDescription());
+			triggerObject.setTriggerType(job.getTriggerType());
+		}
+		return triggerObject;
+	}
+
+	/**
 	 * 保存前台编辑的配置对象
 	 * 
 	 * @param name
@@ -140,7 +190,8 @@ public class StrategyDispatchController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/dispsave")
 	public String saveStrategyConfig(String groupName, Long groupId, Integer groupType,
-			Long fromGroupId, Long toGroupId, RegularJob regularJob, TriggerDto triggerDto) {
+			Long fromGroupId, Long toGroupId, RegularJob regularJob, TriggerDto triggerDto,
+			Long refId) {
 		// 检查参数
 		if (groupType == null) {
 			return returnError("分组类型为空，不能保存策略配置", null);
@@ -162,6 +213,9 @@ public class StrategyDispatchController extends BaseController {
 				// 否则先保存分组获取分组ID
 				groupId = getNewGroupId(groupType, groupName, regularJob.getDescription());
 			}
+		} else if (NOTICE_GROUP_TYPE.equals(groupType)) {
+			// 如果是消息子策略，需设置refid
+			regularJob.setRefId(refId);
 		} else {
 			// 复杂分组
 			if (groupId == null) {
@@ -171,9 +225,9 @@ public class StrategyDispatchController extends BaseController {
 		regularJob.setGid(groupId);
 		regularJob.setGname(groupName);
 
+		ConfigableInfo cfgInfo = regularConfigService.getConfigableInfo(regularJob.getName());
 		// check config
-		Class<?> dataClass = regularConfigService.getConfigableInfo(regularJob.getName())
-				.getDataClass();
+		Class<?> dataClass = cfgInfo.getDataClass();
 		if (regularJob.getConfig() != null) {
 			try {
 				Object configObj = this.getObjectMapper().readValue(regularJob.getConfig(),
@@ -194,7 +248,7 @@ public class StrategyDispatchController extends BaseController {
 
 		// 设置triggerDto和JobType
 		regularJob.setTriggerObject(triggerDto);
-		regularJob.setJobType(ConfigableType.normal.jobType);
+		regularJob.setJobType(cfgInfo.getConfigableType().jobType);
 
 		// save
 		try {
@@ -203,7 +257,7 @@ public class StrategyDispatchController extends BaseController {
 			message.put("success", true);
 			return this.write(message);
 		} catch (Exception e) {
-			LOGGER.error("策略保存失败",e);
+			LOGGER.error("策略保存失败", e);
 			return returnError("保存失败,请检查数据重新填写", e);
 		}
 	}
@@ -265,6 +319,25 @@ public class StrategyDispatchController extends BaseController {
 	}
 
 	/**
+	 * 获取所有策略中文名
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/alldisplayname")
+	public String renderStrategyDisplayName() {
+		List<ConfigableInfo> normalList = regularConfigService
+				.listConfigableInfo(ConfigableType.normal);
+		List<ConfigableInfo> systemList = regularConfigService
+				.listConfigableInfo(ConfigableType.system);
+		normalList.addAll(systemList);
+		List<ConfigableInfo> noticeList = regularConfigService
+				.listConfigableInfo(ConfigableType.noticeRelated);
+		normalList.addAll(noticeList);
+		return this.write(normalList);
+	}
+
+	/**
 	 * 获取新构建的分组ID
 	 * 
 	 * @param groupType
@@ -279,6 +352,22 @@ public class StrategyDispatchController extends BaseController {
 		Map<String, Long> m = CollectionUtils.newHashMap(1);
 		m.put("groupId", gid);
 		return this.write(m);
+	}
+
+	/**
+	 * 获取消息子策略列表
+	 * 
+	 * @param noticeId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/noticestrategy")
+	public String queryNoticeStrategy(Long noticeId, Integer start, Integer limit) {
+		Assert.notNull(noticeId, "noticeId is null");
+		Limit lit = this.initLimit(start, limit);
+		PageResult<RegularJob> data = this.cfgService.findNoticeStrategy(
+				ConfigableType.noticeRelated.jobType, noticeId, lit);
+		return this.write(data);
 	}
 
 	/**
@@ -326,9 +415,10 @@ public class StrategyDispatchController extends BaseController {
 		private String extendType;
 		private Object extendMeta;
 		private Object sug;
+		private TriggerDto trigger;
 
 		public DispatchData(String treeid, String treename, String extendType, Object extendMeta,
-				ConfigDefinition def, Object data, Object sug) {
+				ConfigDefinition def, Object data, Object sug, TriggerDto trigger) {
 			this.treeid = treeid;
 			this.treename = treename;
 			this.def = def;
@@ -336,6 +426,15 @@ public class StrategyDispatchController extends BaseController {
 			this.extendType = extendType;
 			this.extendMeta = extendMeta;
 			this.sug = sug;
+			this.trigger = trigger;
+		}
+
+		public TriggerDto getTrigger() {
+			return trigger;
+		}
+
+		public void setTrigger(TriggerDto trigger) {
+			this.trigger = trigger;
 		}
 
 		public String getExtendType() {

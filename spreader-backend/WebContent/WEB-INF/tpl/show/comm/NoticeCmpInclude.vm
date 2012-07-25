@@ -1,0 +1,4 @@
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/NoticeCommentCmp.js'))"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/NoticeCommentWeiboCmp.js'))"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/NoticeAtWeiboCmp.js'))"></script>
+<br />

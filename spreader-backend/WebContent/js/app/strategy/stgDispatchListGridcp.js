@@ -23,7 +23,8 @@ var store = new Ext.data.Store({
 			autoLoad : {
 				params : {
 					start : 0,
-					limit : 25
+					limit : 20,
+					jobType : 'normal'
 				}
 			}
 
@@ -175,10 +176,9 @@ var stgCmbStore = new Ext.data.Store({
 								name : 'displayName'
 							}])
 		});
-		
-		
-		/////////////////////////
-		var store2 = new Ext.data.Store({
+
+// ///////////////////////
+var store2 = new Ext.data.Store({
 			proxy : new Ext.data.HttpProxy({
 						url : '../utils/combo'
 					}),
@@ -191,8 +191,8 @@ var stgCmbStore = new Ext.data.Store({
 								name : 'groupName'
 							}])
 		});
-		//TODO
-		var resultTpl = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{id}({groupName})</span></div></tpl>');
+// TODO
+var resultTpl = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{id}({groupName})</span></div></tpl>');
 // 选择策略的COMB
 var stgSelectCombo = new Ext.form.ComboBox({
 			hiddenName : 'id',
@@ -208,10 +208,10 @@ var stgSelectCombo = new Ext.form.ComboBox({
 			forceSelection : true,
 			typeAhead : true,
 			resizable : true,
-			minChars:1,
-        pageSize:10,
-			itemSelector: 'div.x-combo-list-item',
-			tpl:resultTpl,
+			minChars : 1,
+			pageSize : 10,
+			itemSelector : 'div.x-combo-list-item',
+			tpl : resultTpl,
 			editable : true,
 			anchor : '100%'
 		});
