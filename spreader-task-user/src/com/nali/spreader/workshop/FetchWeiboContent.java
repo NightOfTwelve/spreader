@@ -114,6 +114,7 @@ public class FetchWeiboContent extends SingleTaskMachineImpl implements
 			// fetchWeiboUserMainPage.send(uid);
 			// content.setUid(uid);
 			// }
+			content.setContentLength(this.contentService.getContentLength(content.getContent()));
 			Long contentId = contentService.assignContentId(content);
 			if(!CollectionUtils.isEmpty(keywords)){
 				for(String keyword:keywords){

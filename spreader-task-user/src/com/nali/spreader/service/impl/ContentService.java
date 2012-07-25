@@ -11,11 +11,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.ContentDto;
@@ -230,11 +232,29 @@ public class ContentService implements IContentService {
 
 	@Override
 	public Long assignContentId(Content content) {
-		if (content == null) {
-			throw new IllegalArgumentException("Content is null");
-		} else {
-			Content tmp = this.findByUniqueKey(content.getType(), content.getWebsiteId(),
-					content.getWebsiteUid(), content.getEntry());
+		Assert.notNull(content, "content is null");
+		Content refContent = content.getRefContent();
+		Long refContentId = null;
+		if (refContent != null) {
+			refContentId = assignContentId(refContent);
+		}
+		content.setRefId(refContentId);
+		return saveOrassignContentId(content);
+	}
+
+	private Long saveOrassignContentId(Content content) {
+		Integer contentType = content.getType();
+		Integer websiteId = content.getWebsiteId();
+		Long websiteUid = content.getWebsiteUid();
+		String entry = content.getEntry();
+		// 唯一键必须都不为空
+		if (contentType != null && websiteId != null && websiteUid != null
+				&& StringUtils.isNotEmpty(entry)) {
+			if (content.getUid() == null) {
+				Long uid = this.globalUserService.getOrAssignUid(websiteId, websiteUid);
+				content.setUid(uid);
+			}
+			Content tmp = this.findByUniqueKey(contentType, websiteId, websiteUid, entry);
 			if (tmp != null) {
 				content.setId(tmp.getId());
 				crudContentDao.updateByPrimaryKeySelective(content);
@@ -243,9 +263,11 @@ public class ContentService implements IContentService {
 				try {
 					return crudContentDao.insertSelective(content);
 				} catch (DuplicateKeyException e) {
-					return assignContentId(content);
+					return saveOrassignContentId(content);
 				}
 			}
+		} else {
+			throw new IllegalArgumentException("uniqueKey contains null value");
 		}
 	}
 
@@ -311,5 +333,19 @@ public class ContentService implements IContentService {
 		// 获取所有的微博内容
 		List<Long> allContent = this.findContentIdByPostContentDto(query);
 		return allContent;
+	}
+
+	@Override
+	public int getContentLength(String content) {
+		if (StringUtils.isEmpty(content)) {
+			return 0;
+		}
+		return content.length();
+	}
+
+	@Override
+	public Content assignContent(Content content) {
+		Long cid = this.assignContentId(content);
+		return this.getContentById(cid);
 	}
 }

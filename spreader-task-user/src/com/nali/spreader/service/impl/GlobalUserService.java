@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import com.nali.common.model.Limit;
 import com.nali.common.model.Shard;
@@ -81,7 +82,6 @@ public class GlobalUserService implements IGlobalUserService {
 		} catch (DuplicateKeyException e) {
 			return getOrAssignUid(websiteId, websiteUid);
 		}
-
 	}
 
 	@Override
@@ -295,5 +295,13 @@ public class GlobalUserService implements IGlobalUserService {
 		}
 		globalRobotUserService.changeAccountStatus(uid, RobotUser.ACCOUNT_STATE_EXPORT);
 		return globalRobotUserService.getRobotUser(uid);
+	}
+
+	@Override
+	public User assignUserByWebsiteUid(Integer websiteId, Long websiteUid) {
+		Assert.notNull(websiteId, "websiteId is null");
+		Assert.notNull(websiteUid, "websiteUid is null");
+		Long uid = getOrAssignUid(websiteId, websiteUid);
+		return this.getUserById(uid);
 	}
 }

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="spreader_notice">
+	<resultMap class="com.nali.spreader.dto.NoticeView" id="noticeViewResultMap">
+		<result column="id" jdbcType="BIGINT" property="noticeId" />
+		<result column="from_user_name" jdbcType="VARCHAR" property="fromUserName" />
+		<result column="to_user_name" jdbcType="VARCHAR" property="toUserName" />
+		<result column="from_uid" jdbcType="BIGINT" property="fromUserId" />
+		<result column="to_uid" jdbcType="BIGINT" property="toUserId" />
+		<result column="content_id" jdbcType="BIGINT" property="contentId" />
+		<result column="replay_id" jdbcType="BIGINT" property="replayId" />
+		<result column="notice_type" jdbcType="INT" property="noticeType" />
+		<result column="from_website_uid" jdbcType="BIGINT" property="fromWebsiteUid" />
+	</resultMap>
+	<resultMap class="com.nali.spreader.dto.NoticeCommentView"
+		id="noticeCommentReplayResultMap">
+		<result column="replay_id" jdbcType="BIGINT" property="replayId" />
+		<result column="from_uid" jdbcType="BIGINT" property="fromUid" />
+		<result column="to_uid" jdbcType="BIGINT" property="toUid" />
+		<result column="from_user" jdbcType="VARCHAR" property="fromUser" />
+		<result column="to_user" jdbcType="VARCHAR" property="toUser" />
+		<result column="replay_content_id" jdbcType="BIGINT" property="replayContentId" />
+		<result column="replay_content" jdbcType="VARCHAR" property="replayContent" />
+		<result column="ref_replay_content" jdbcType="VARCHAR"
+			property="refReplayContent" />
+		<result column="ref_content" jdbcType="VARCHAR" property="refContent" />
+		<result column="content" jdbcType="VARCHAR" property="content" />
+	</resultMap>
+	<resultMap class="com.nali.spreader.dto.NoticeAtWeiboView"
+		id="noticeAtWeiboReplayResultMap">
+		<result column="notice_id" jdbcType="BIGINT" property="noticeId" />
+		<result column="from_uid" jdbcType="BIGINT" property="fromUid" />
+		<result column="from_user" jdbcType="VARCHAR" property="fromUser" />
+		<result column="to_uid" jdbcType="BIGINT" property="toUid" />
+		<result column="to_user" jdbcType="VARCHAR" property="toUser" />
+		<result column="content_id" jdbcType="BIGINT" property="contentId" />
+		<result column="ref_content" jdbcType="VARCHAR" property="refContent" />
+		<result column="ref_content_id" jdbcType="BIGINT" property="refContentId" />
+		<result column="content" jdbcType="VARCHAR" property="content" />
+	</resultMap>
+	<sql id="selectNoticeInfoCondition">
+		<isNotNull prepend="and" property="noticeId">
+			n.id = #noticeId#
+		</isNotNull>
+		<isNotNull prepend="and" property="noticeType">
+			n.notice_type =
+			#noticeType#
+		</isNotNull>
+		<isNotNull prepend="and" property="toUid">
+			n.to_uid = #toUid#
+		</isNotNull>
+		<isNotNull prepend="and" property="isFromRobot">
+			n.is_from_robot =
+			#isFromRobot#
+		</isNotNull>
+	</sql>
+	<select id="selectNoticeInfo" parameterClass="com.nali.spreader.dto.NoticeQueryParams"
+		resultMap="noticeViewResultMap">
+		select
+		n.id,
+		n.notice_type,
+		n.from_uid,
+		n.to_uid,
+		fromu.nick_name as
+		from_user_name,
+		tou.nick_name as to_user_name,
+		n.from_website_uid,
+		n.replay_id,
+		n.content_id,
+		n.is_from_robot
+		from spreader.tb_notice n
+		left
+		join
+		spreader.tb_user fromu on n.from_uid = fromu.id
+		left join
+		spreader.tb_user tou on n.to_uid = tou.id
+		<dynamic prepend="where">
+			<include refid="selectNoticeInfoCondition" />
+		</dynamic>
+		order by n.id desc
+		<isNotNull property="lit">
+			limit $lit.offset$,$lit.maxRows$
+		</isNotNull>
+	</select>
+	<select id="selectNoticeInfoCount" parameterClass="com.nali.spreader.dto.NoticeQueryParams"
+		resultClass="java.lang.Integer">
+		select count(n.id) cnt from
+		tb_notice n
+		left join tb_user fromu on
+		n.from_uid = fromu.id
+		left join
+		tb_user tou on n.to_uid = tou.id
+		<dynamic prepend="where">
+			<include refid="selectNoticeInfoCondition" />
+		</dynamic>
+	</select>
+	<select id="noticeCommentReplay" parameterClass="java.lang.Long"
+		resultMap="noticeCommentReplayResultMap">
+		select
+		replay_id,
+		fromuser.id from_uid,
+		fromuser.nick_name from_user,
+		touser.id to_uid,
+		touser.nick_name to_user,
+		replay_content_id,
+		replay_content,
+		ref_replay_content,
+		refc.content ref_content,
+		c.content content
+		from
+		(select cr.id
+		replay_id,cr.from_uid,cr.to_uid,cr.id replay_content_id,cr.content
+		replay_content
+		,refcr.content ref_replay_content,cr.content_id
+		cr_content_id,refcr.content_id
+		ref_cr_content_id
+		from
+		spreader.tb_content_replay cr
+		left join
+		spreader.tb_content_replay refcr
+		on cr.ref_id = refcr.id
+		)replay
+		left
+		join spreader.tb_user fromuser on
+		replay.from_uid = fromuser.id
+		left
+		join spreader.tb_user touser on
+		replay.to_uid = touser.id
+		left join
+		spreader.tb_content refc on
+		replay.ref_cr_content_id = refc.id
+		left join spreader.tb_content c on
+		replay.cr_content_id = c.id
+		where
+		replay.replay_id = #replay_id#
+	</select>
+	<select id="noticeAtWeibo" parameterClass="java.lang.Long"
+		resultMap="noticeAtWeiboReplayResultMap">
+		select n.id notice_id,fromuser.id from_uid,fromuser.nick_name
+		from_user,touser.id to_uid,touser.nick_name
+		to_user,nc.id content_id,nc.content,refc.id ref_content_id,refc.content ref_content
+		from spreader.tb_notice n
+		left join spreader.tb_user fromuser on
+		n.from_uid = fromuser.id
+		left join spreader.tb_user touser on n.to_uid
+		= touser.id
+		left join spreader.tb_content nc on n.content_id = nc.id
+		left join spreader.tb_content refc on nc.ref_id = refc.id
+		where n.id =
+		#noticeId#
+	</select>
+</sqlMap>
