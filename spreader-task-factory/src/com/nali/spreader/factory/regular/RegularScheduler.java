@@ -13,7 +13,7 @@ public interface RegularScheduler {
 	 * 查看已有调度
 	 */
 	PageResult<RegularJob> findRegularJob(String name, Integer triggerType, Long groupId,
-			ConfigableType configableType, Limit lit);
+			ConfigableType configableType, Limit lit,Long refId);
 
 	/**
 	 * 取消调度
@@ -34,22 +34,4 @@ public interface RegularScheduler {
 	Long findRegularJobIdBySimpleGroupId(Long gid);
 
 	Object getExtendConfig(String name, Long sid);
-
-	/**
-	 * 根据job类型获取相应的枚举类型
-	 * 
-	 * @param jobType
-	 * @return
-	 */
-	ConfigableType getConfigableTypeByJobType(String jobType);
-
-	/**
-	 * 获取消息子策略
-	 * 
-	 * @param jobType
-	 * @param noticeId
-	 * @param lit
-	 * @return
-	 */
-	PageResult<RegularJob> findNoticeStrategy(Integer jobType, Long noticeId,Limit lit);
 }
