@@ -43,6 +43,12 @@ public class StrategyDispatchController extends BaseController {
 	private static final Integer SIMPLE_GROUP_TYPE = 1;
 	// 消息分组用于区分普通和复杂分组，实际上不保存分组操作
 	private static final Integer NOTICE_GROUP_TYPE = 3;
+	// 普通策略
+	private static final String NORMAL_JOBTYPE = "normal";
+	// 系统策略
+	private static final String SYSTEM_JOBTYPE = "system";
+	// 消息策略
+	private static final String NOTICE_JOBTYPE = "notice";
 
 	// 复杂分组
 	// private final Integer COMPLEX_GROUP_TYPE = 2;
@@ -68,9 +74,9 @@ public class StrategyDispatchController extends BaseController {
 		Assert.notNull(jobType, "jobType is null");
 		Limit lit = this.initLimit(start, limit);
 		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname, triggerType, groupId,
-				this.cfgService.getConfigableTypeByJobType(jobType), lit);
+				this.getConfigableTypeByJobType(jobType), lit, null);
 		List<RegularJob> list = pr.getList();
-		List<ConfigableInfo> dispnamelist = regularConfigService.listConfigableInfo(this.cfgService
+		List<ConfigableInfo> dispnamelist = regularConfigService.listConfigableInfo(this
 				.getConfigableTypeByJobType(jobType));
 		int rowcount = pr.getTotalCount();
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
@@ -78,6 +84,26 @@ public class StrategyDispatchController extends BaseController {
 		jsonMap.put("data", list);
 		jsonMap.put("dispname", dispnamelist);
 		return this.write(jsonMap);
+	}
+
+	/**
+	 * 根据job类型获取相应的枚举类型
+	 * 
+	 * @param jobType
+	 * @return
+	 */
+	private ConfigableType getConfigableTypeByJobType(String jobType) {
+		if (StrategyDispatchController.SYSTEM_JOBTYPE.equalsIgnoreCase(jobType)) {
+			return ConfigableType.system;
+		}
+		if (StrategyDispatchController.NOTICE_JOBTYPE.equalsIgnoreCase(jobType)) {
+			return ConfigableType.noticeRelated;
+		}
+		if (StrategyDispatchController.NORMAL_JOBTYPE.equalsIgnoreCase(jobType)) {
+			return ConfigableType.normal;
+		} else {
+			throw new IllegalArgumentException("not find this jobType:" + jobType);
+		}
 	}
 
 	/**
@@ -365,8 +391,8 @@ public class StrategyDispatchController extends BaseController {
 	public String queryNoticeStrategy(Long noticeId, Integer start, Integer limit) {
 		Assert.notNull(noticeId, "noticeId is null");
 		Limit lit = this.initLimit(start, limit);
-		PageResult<RegularJob> data = this.cfgService.findNoticeStrategy(
-				ConfigableType.noticeRelated.jobType, noticeId, lit);
+		PageResult<RegularJob> data = this.cfgService.findRegularJob(null, null, null,
+				ConfigableType.noticeRelated, lit, noticeId);
 		return this.write(data);
 	}
 
