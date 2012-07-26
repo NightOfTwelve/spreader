@@ -286,7 +286,7 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 	}
 
 	@Override
-	public PageResult<RegularJob> findNoticeStrategy(Integer jobType, Long noticeId, Limit lit) {
+	public PageResult<RegularJob> findNoticeStrategy(Integer jobType, Long noticeId, Limit lit) {//TODO
 		RegularJobExample example = new RegularJobExample();
 		Criteria c = example.createCriteria();
 		c.andJobTypeEqualTo(jobType).andRefIdEqualTo(noticeId);

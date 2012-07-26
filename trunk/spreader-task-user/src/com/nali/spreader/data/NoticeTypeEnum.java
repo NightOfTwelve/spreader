@@ -1,4 +1,4 @@
-package com.nali.spreader.factory;
+package com.nali.spreader.data;
 
 /**
  * 微博消息通知的类型枚举
