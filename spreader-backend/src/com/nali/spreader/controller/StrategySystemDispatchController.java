@@ -54,7 +54,7 @@ public class StrategySystemDispatchController extends BaseController {
 	public String stgGridStore(String dispname, Integer triggerType, int start, int limit) {
 		Limit lit = this.initLimit(start, limit);
 		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname, triggerType, null,
-				ConfigableType.system, lit);
+				ConfigableType.system, lit, null);
 		List<RegularJob> list = pr.getList();
 		List<ConfigableInfo> dispnamelist = regularConfigService
 				.listConfigableInfo(ConfigableType.system);
