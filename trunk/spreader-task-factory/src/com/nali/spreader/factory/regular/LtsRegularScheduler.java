@@ -61,7 +61,7 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 
 	@Override
 	public PageResult<RegularJob> findRegularJob(String name, Integer triggerType, Long groupId,
-			ConfigableType configableType, Limit lit) {
+			ConfigableType configableType, Limit lit, Long refId) {
 		RegularJobExample example = new RegularJobExample();
 		Criteria c = example.createCriteria().andJobTypeEqualTo(configableType.jobType);
 		if (name != null && !"".equals(name)) {
@@ -72,6 +72,9 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 		}
 		if (groupId != null) {
 			c.andGidEqualTo(groupId);
+		}
+		if (refId != null) {
+			c.andRefIdEqualTo(refId);
 		}
 		example.setLimit(lit);
 		List<RegularJob> list = crudRegularJobDao.selectByExampleWithoutBLOBs(example);
@@ -271,28 +274,5 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 	@Override
 	public Object getExtendConfig(String name, Long sid) {
 		return regularProducerManager.getExtendConfig(name, sid);
-	}
-
-	@Override
-	public ConfigableType getConfigableTypeByJobType(String jobType) {
-		if (RegularJob.SYSTEM_JOBTYPE.equalsIgnoreCase(jobType)) {
-			return ConfigableType.system;
-		}
-		if (RegularJob.NOTICE_JOBTYPE.equalsIgnoreCase(jobType)) {
-			// TODO 暂时用普通策略
-			return ConfigableType.normal;
-		}
-		return ConfigableType.normal;
-	}
-
-	@Override
-	public PageResult<RegularJob> findNoticeStrategy(Integer jobType, Long noticeId, Limit lit) {//TODO
-		RegularJobExample example = new RegularJobExample();
-		Criteria c = example.createCriteria();
-		c.andJobTypeEqualTo(jobType).andRefIdEqualTo(noticeId);
-		example.setLimit(lit);
-		List<RegularJob> list = this.crudRegularJobDao.selectByExampleWithBLOBs(example);
-		int count = this.crudRegularJobDao.countByExample(example);
-		return new PageResult<RegularJob>(list, lit, count);
 	}
 }

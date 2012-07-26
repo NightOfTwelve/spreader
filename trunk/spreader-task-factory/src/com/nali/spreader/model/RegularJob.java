@@ -9,12 +9,6 @@ public class RegularJob extends BaseModel implements Serializable {
 	public static final Integer TRIGGER_TYPE_SIMPLE = 1;
 
 	public static final Integer TRIGGER_TYPE_CRON = 2;
-	// 普通策略
-	public static final String NORMAL_JOBTYPE = "normal";
-	// 系统策略
-	public static final String SYSTEM_JOBTYPE = "system";
-	// 消息策略
-	public static final String NOTICE_JOBTYPE = "notice";
 
 	private static final long serialVersionUID = 1340715782719822254L;
 
