@@ -25,7 +25,7 @@ public class DownloadApp extends SingleTaskMachineImpl implements ContextedPassi
 	private IAppDownlodService appDownlodService;
 	
 	public DownloadApp() {
-		super(SimpleActionConfig.downloadApp, Website.apple, Channel.normal);
+		super(SimpleActionConfig.downloadApp, Website.apple, Channel.intervention);
 		setContextMeta("appSource", "appId");
 	}
 
