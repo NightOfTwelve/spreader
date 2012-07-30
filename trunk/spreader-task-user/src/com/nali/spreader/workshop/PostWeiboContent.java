@@ -10,6 +10,7 @@ import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
+import com.nali.spreader.dto.WeiboContentDto;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
@@ -33,7 +34,7 @@ public class PostWeiboContent extends SingleTaskMachineImpl implements
 	public void work(KeyValue<Long, String> data, SingleTaskExporter exporter) {
 		Long uid = data.getKey();
 		String text = data.getValue();
-		work(uid, text, null, exporter);
+		work(uid, text, null, null, null, null, exporter);
 	}
 
 	@Input
@@ -42,12 +43,27 @@ public class PostWeiboContent extends SingleTaskMachineImpl implements
 		Long uid = param.getKey();
 		String text = param.getValue();
 		Date startTime = data.getValue();
-		work(uid, text, startTime, exporter);
+		work(uid, text, null, null, null, startTime, exporter);
 	}
 
-	private void work(Long uid, String text, Date startTime, SingleTaskExporter exporter) {
+	@Input
+	public void work(WeiboContentDto dto, SingleTaskExporter exporter) {
+		String audioUrl = dto.getAudioUrl();
+		String videoUrl = dto.getVideoUrl();
+		String picUrl = dto.getPicUrl();
+		Long uid = dto.getUid();
+		String text = dto.getText();
+		Date postTime = dto.getPostTime();
+		work(uid, text, audioUrl, videoUrl, picUrl, postTime, exporter);
+	}
+
+	private void work(Long uid, String text, String audioUrl, String videoUrl, String picUrl,
+			Date startTime, SingleTaskExporter exporter) {
 		exporter.setProperty("id", uid);
 		exporter.setProperty("content", text);
+		exporter.setProperty("audioUrl", audioUrl);
+		exporter.setProperty("videoUrl", videoUrl);
+		exporter.setProperty("picUrl", picUrl);
 		User user = globalUserService.getUserById(uid);
 		exporter.setProperty("nickname", user.getNickName());
 		if (startTime != null) {

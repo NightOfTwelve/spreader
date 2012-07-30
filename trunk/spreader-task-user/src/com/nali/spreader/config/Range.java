@@ -25,4 +25,8 @@ public class Range<T extends Comparable<?>> implements Serializable {
 	public boolean checkNotNull() {
 		return gte!=null && lte!=null;
 	}
+
+	public boolean checkNull() {
+		return gte == null && lte == null;
+	}
 }
