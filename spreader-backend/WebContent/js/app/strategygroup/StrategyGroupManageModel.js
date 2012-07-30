@@ -738,6 +738,7 @@ Ext.onReady(function() {
 				// 获取分组类型分别做判断
 				var gType = data.groupType;
 				var descText = descField.getValue();
+				cleanHidden();
 				settingDescInfo(descText);
 				// 简单分组
 				if (gType == 1) {
@@ -919,7 +920,6 @@ Ext.onReady(function() {
 					text : '确定', // 按钮文本
 					iconCls : 'tbar_synchronizeIcon', // 按钮图标
 					handler : function() { // 按钮响应函数
-						GDISPID = null;
 						cleanCreateTrigger();
 						strategyIdHidden.setValue(stgSelectCombo2.getValue());
 						strategyNameHidden
@@ -1170,9 +1170,6 @@ Ext.onReady(function() {
 						strategyIdHidden.setValue(data.name);
 						objIdHidden.setValue(data.id);
 						groupTypeHidden.setValue(21);
-						var trgid = data.id;
-						editstgWindow.title = rendDispName2(strategyNameHidden
-								.getValue());
 						editstgWindow.show();
 					} else if (button == '执行情况') {
 						var jobId = data.id;
@@ -1246,6 +1243,8 @@ Ext.onReady(function() {
 						var tform = addGroupForm.getForm();
 						var gname = tform.findField("groupName").getValue();
 						var gnote = tform.findField("description").getValue();
+						// TODO
+						cleanHidden();
 						cleanCreateTrigger();
 						// 简单分组
 						if (gType == 1) {
@@ -1256,8 +1255,6 @@ Ext.onReady(function() {
 							groupNameHidden
 									.setValue(stgSelectCombo.lastSelectionText);
 							groupNoteHidden.setValue(gnote);
-							editstgWindow.title = rendDispName(strategyIdHidden
-									.getValue());
 							editstgWindow.show();
 						} else {
 							// 复杂分组
@@ -1313,6 +1310,9 @@ Ext.onReady(function() {
 		var repeatTimes = trigger.repeatTimes;
 		var repeatInternal = trigger.repeatInternal;
 		var remind = trigger.remind;
+		if (Ext.isEmpty(remind)) {
+			remind = "暂时无运行信息，任务可能正在执行中";
+		}
 		// 获取FORM
 		var tradioForm = radioForm.getForm();
 		var ttriggerDispForm = triggerDispForm.getForm();
@@ -1327,68 +1327,35 @@ Ext.onReady(function() {
 		var remindcmp = Ext.getCmp("jobremind");
 		var stext = "";
 		if (isGroup) {
-			stext = rendDispName(strategyNameHidden.getValue());
+			stext = rendDispNameFn(strategyIdHidden.getValue());
 		} else {
-			stext = rendDispName2(strategyNameHidden.getValue());
+			stext = rendDispName2(strategyIdHidden.getValue());
 		}
 		var tstr = '任务:' + stext + ',编号:' + objIdHidden.getValue() + ',目前运行信息:'
 				+ remind;
 		remindcmp.setText('<font color = "red">' + tstr + '</font>');
 	}
-	function settingCreateTrigger(trgid, isGroup) {
-		Ext.Ajax.request({
-			url : '../strategydisp/settgrparam',
-			params : {
-				'id' : trgid,
-				'isGroup' : isGroup
-			},
-			success : function(response) {
-				var result = Ext.decode(response.responseText);
-				if (result.error) {
-					Ext.MessageBox.alert('错误', '任务获取失败，不能设置参数');
-					return;
-				} else {
-					editstgWindow.show();
-					var description = result.description;
-					var triggerType = result.triggerType;
-					var cron = result.cron;
-					var start = result.start;
-					var sdate = new Date(start);
-					var repeatTimes = result.repeatTimes;
-					var repeatInternal = result.repeatInternal;
-					var remind = result.remind;
-					// 获取FORM
-					var tradioForm = radioForm.getForm();
-					var ttriggerDispForm = triggerDispForm.getForm();
-					var tsimpleDispForm = simpleDispForm.getForm();
-					// 设置参数
-					tradioForm.findField("triggerType").setValue(triggerType);
-					tradioForm.findField("description").setValue(description);
-					tsimpleDispForm.findField("start").setValue(sdate);
-					tsimpleDispForm.findField("repeatTimes")
-							.setValue(repeatTimes);
-					tsimpleDispForm.findField("repeatInternal")
-							.setValue(repeatInternal);
-					ttriggerDispForm.findField("cron").setValue(cron);
-					var remindcmp = Ext.getCmp("jobremind");
-					var stext = "";
-					if (isGroup) {
-						stext = rendDispName(strategyNameHidden.getValue());
-					} else {
-						stext = rendDispName2(strategyNameHidden.getValue());
-					}
-					var tstr = '任务:' + stext + ',编号:' + objIdHidden.getValue()
-							+ ',目前运行信息:' + remind;
-					remindcmp
-							.setText('<font color = "red">' + tstr + '</font>');
-				}
-			},
-			failure : function() {
-				// Ext.Msg.alert("提示", "数据获取异常");
-			}
-		});
+	/**
+	 * 清空隐藏域内容
+	 */
+	function cleanHidden() {
+		// 策略ID隐藏域
+		strategyIdHidden.setValue(null);
+		// 策略名称隐藏域
+		strategyNameHidden.setValue(null);
+		// 策略对象ID隐藏域
+		objIdHidden.setValue(null);
+		// 分组类型隐藏域
+		groupTypeHidden.setValue(null);
+		// 是否分组隐藏域
+		isGroupHidden.setValue(null);
+		// 分组ID隐藏域
+		groupIdHidden.setValue(null);
+		// 分组名称隐藏域
+		groupNameHidden.setValue(null);
+		// 分组说明隐藏域
+		groupNoteHidden.setValue(null);
 	}
-
 	/**
 	 * 初始化新增对象的参数
 	 * 
@@ -1453,24 +1420,6 @@ Ext.onReady(function() {
 		} else {
 			Ext.Msg.alert("提示", "请选择要删除的调度");
 			return;
-		}
-	}
-
-	/**
-	 * 渲染策略名称为中文名
-	 * 
-	 * @param {}
-	 *            value
-	 * @return {}
-	 */
-	function rendDispName(value) {
-		var list = groupStore.reader.jsonData.list;
-		for (var idx in list) {
-			var tmp = list[idx].groupName;
-			var dname = list[idx].transformName;
-			if (value == tmp) {
-				return dname;
-			}
 		}
 	}
 

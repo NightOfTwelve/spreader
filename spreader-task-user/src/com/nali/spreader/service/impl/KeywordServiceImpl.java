@@ -131,10 +131,14 @@ public class KeywordServiceImpl implements IKeywordService {
 			if (range.checkNotNull()) {
 				return new NumberRandomer(range.getGte(), range.getLte() + 1);
 			} else {
-				if (range.getGte() == null) {
-					return new NumberRandomer(defaultGte, range.getLte() + 1);
+				if (range.checkNull()) {
+					return new NumberRandomer(defaultGte, defaultLte + 1);
 				} else {
-					return new NumberRandomer(range.getGte(), defaultLte + 1);
+					if (range.getGte() == null) {
+						return new NumberRandomer(defaultGte, range.getLte() + 1);
+					} else {
+						return new NumberRandomer(range.getGte(), defaultLte + 1);
+					}
 				}
 			}
 		} else {

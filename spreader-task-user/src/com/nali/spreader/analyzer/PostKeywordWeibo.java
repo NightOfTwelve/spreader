@@ -12,7 +12,7 @@ import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.PostWeiboConfig;
 import com.nali.spreader.config.Range;
 import com.nali.spreader.data.Content;
-import com.nali.spreader.data.KeyValue;
+import com.nali.spreader.dto.WeiboContentDto;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
@@ -42,7 +42,7 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 	@Autowired
 	private IRobotContentService robotContentService;
 	@AutowireProductLine
-	private TaskProduceLine<KeyValue<KeyValue<Long, String>, Date>> postWeiboContent;
+	private TaskProduceLine<WeiboContentDto> postWeiboContent;
 	// 发帖随机数
 	private Randomer<Integer> postRandom;
 
@@ -81,17 +81,14 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 			if (!CollectionUtils.isEmpty(sendContent)) {
 				for (Long cid : sendContent) {
 					Content c = this.contentService.getContentById(cid);
-					KeyValue<Long, String> key = new KeyValue<Long, String>();
-					key.setKey(uid);
-					key.setValue(c.getContent());
-					KeyValue<KeyValue<Long, String>, Date> kv = new KeyValue<KeyValue<Long, String>, Date>();
-					kv.setKey(key);
+					c.setUid(uid);
 					Integer postInterval = config.getPostInterval();
 					if (postInterval == null) {
 						postInterval = PostWeiboConfig.DEFAULT_INTERVAL;
 					}
-					kv.setValue(DateUtils.addMinutes(new Date(), postInterval));
-					this.postWeiboContent.send(kv);
+					Date postTime = DateUtils.addMinutes(new Date(), postInterval);
+					WeiboContentDto param = WeiboContentDto.getWeiboContentDto(c, postTime);
+					this.postWeiboContent.send(param);
 					this.robotContentService.save(uid, cid, RobotContent.TYPE_POST);
 				}
 			}
@@ -101,6 +98,7 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 
 	@Override
 	public void init(PostWeiboConfig config) {
+		this.config = config;
 		Range<Integer> postRange = config.getPostNumber();
 		this.postRandom = this.keywordService.createRandomer(postRange,
 				PostWeiboConfig.DEFAULT_POSTNUM_GTE, PostWeiboConfig.DEFAULT_POSTNUM_LTE);
