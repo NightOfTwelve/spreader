@@ -51,7 +51,7 @@ public class AppDownloadDao implements IAppDownloadDao {
 
 	@Override
 	public void saveEndpoint(String appSource, Long appId, Long uid) {
-		hash.put(endpointKey(appSource), appId, appId);
+		hash.put(endpointKey(appSource), appId, uid);
 	}
 	
 	private String endpointKey(String appSource) {
