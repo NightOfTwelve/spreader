@@ -275,4 +275,14 @@ public class UserService extends WebsiteBaseService implements IUserService {
 		}
 		return this.crudUserDao.selectByPrimaryKey(uid);
 	}
+
+	@Override
+	public int addUserArticles(Long uid) {
+		if (uid == null) {
+			logger.error("uid is null");
+			return 0;
+		} else {
+			return this.userDao.updateUserArticles(uid);
+		}
+	}
 }

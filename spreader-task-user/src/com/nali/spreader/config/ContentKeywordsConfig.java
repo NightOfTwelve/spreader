@@ -5,20 +5,25 @@ import java.util.List;
 
 import com.nali.spreader.factory.config.desc.PropertyDescription;
 
-public class UserGroupContentDto implements Serializable {
+public class ContentKeywordsConfig extends UserDto implements Serializable {
 
-	private static final long serialVersionUID = -6729602199534447805L;
-
-	public static final long DEFAULT_MINUTE = 1440L;
-
-	@PropertyDescription("最新爬取时间(分钟)")
-	private Long lastFetchTime;
+	private static final long serialVersionUID = -8299695336236376798L;
+	public static final int DEFAULT_RANDOM_GTE = 1;
+	public static final int DEFAULT_RANDOM_LTE = 10;
 	@PropertyDescription("关键字列表")
 	private List<String> keywords;
 	@PropertyDescription("随机关键字列表")
 	private List<String> randomKeywords;
 	@PropertyDescription("随机关键字上下限")
 	private Range<Integer> randomKeywordsRange;
+
+	public List<String> getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(List<String> keywords) {
+		this.keywords = keywords;
+	}
 
 	public List<String> getRandomKeywords() {
 		return randomKeywords;
@@ -34,21 +39,5 @@ public class UserGroupContentDto implements Serializable {
 
 	public void setRandomKeywordsRange(Range<Integer> randomKeywordsRange) {
 		this.randomKeywordsRange = randomKeywordsRange;
-	}
-
-	public List<String> getKeywords() {
-		return keywords;
-	}
-
-	public void setKeywords(List<String> keywords) {
-		this.keywords = keywords;
-	}
-
-	public Long getLastFetchTime() {
-		return lastFetchTime;
-	}
-
-	public void setLastFetchTime(Long lastFetchTime) {
-		this.lastFetchTime = lastFetchTime;
 	}
 }

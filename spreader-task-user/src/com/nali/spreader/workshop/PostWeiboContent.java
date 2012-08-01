@@ -17,6 +17,7 @@ import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.Input;
 import com.nali.spreader.service.IGlobalUserService;
+import com.nali.spreader.service.IUserService;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
@@ -25,6 +26,8 @@ public class PostWeiboContent extends SingleTaskMachineImpl implements
 	private static Logger logger = Logger.getLogger(PostWeiboContent.class);
 	@Autowired
 	private IGlobalUserService globalUserService;
+	@Autowired
+	private IUserService userService;
 
 	public PostWeiboContent() {
 		super(SimpleActionConfig.postWeiboContent, Website.weibo, Channel.normal);
@@ -80,6 +83,8 @@ public class PostWeiboContent extends SingleTaskMachineImpl implements
 		// TODO result改为 KeyValue<Long, KeyValue<Long, Long>>，记录发过的原帖id
 		logger.info("user[" + uidToContentIdMap.getKey() + "] post a content["
 				+ uidToContentIdMap.getValue() + "]");
+		// 更新作者的微博数量
+		this.userService.addUserArticles(uidToContentIdMap.getKey());
 	}
 
 }

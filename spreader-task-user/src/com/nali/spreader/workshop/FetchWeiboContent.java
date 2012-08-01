@@ -1,6 +1,5 @@
 package com.nali.spreader.workshop;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -68,17 +67,8 @@ public class FetchWeiboContent extends SingleTaskMachineImpl implements
 	@Input
 	public void word(FetchUserWeiboDto dto, SingleTaskExporter exporter) {
 		Long uid = dto.getUid();
-		List<String> keywords = dto.getKeywords();
-		List<String> randomKeywords = dto.getRandomkeywords();
-		List<String> wrokList = new ArrayList<String>();
-		if (!CollectionUtils.isEmpty(keywords)) {
-			wrokList.addAll(keywords);
-		}
-		if (!CollectionUtils.isEmpty(randomKeywords)) {
-			wrokList.addAll(randomKeywords);
-		}
 		Date lastFetchTime = dto.getLastFetchTime();
-		exporter.setProperty("keywords", wrokList);
+		exporter.setProperty("keywords", dto.getKeywords());
 		work(uid, null, lastFetchTime, exporter);
 	}
 
@@ -104,6 +94,7 @@ public class FetchWeiboContent extends SingleTaskMachineImpl implements
 	@Override
 	public void handleResult(Date updateTime, List<Content> contents,
 			Map<String, Object> contextContents, Long uid) {
+		@SuppressWarnings("unchecked")
 		List<String> keywords = (List<String>) contextContents.get("keywords");
 		for (Content content : contents) {
 			content.setSyncDate(updateTime);
@@ -114,7 +105,7 @@ public class FetchWeiboContent extends SingleTaskMachineImpl implements
 			// fetchWeiboUserMainPage.send(uid);
 			// content.setUid(uid);
 			// }
-			content.setContentLength(this.contentService.getContentLength(content.getContent()));
+			// content.setContentLength(this.contentService.getContentLength(content.getContent()));
 			Long contentId = contentService.assignContentId(content);
 			if (!CollectionUtils.isEmpty(keywords)) {
 				for (String keyword : keywords) {

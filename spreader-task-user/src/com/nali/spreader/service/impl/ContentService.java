@@ -242,6 +242,29 @@ public class ContentService implements IContentService {
 		return saveOrassignContentId(content);
 	}
 
+	/**
+	 * 匹配在一个字符串中指定的字符串出现的次数
+	 * 
+	 * @param sr
+	 * @param ar
+	 * @return
+	 */
+	private int charMatch(String sr, char ar) {
+		int count = 0;
+		int num = 0;
+		int temp = 0;
+		while ((sr.length() - temp) >= 1) {
+			num = sr.indexOf(ar, temp);
+			if (num == -1) {
+				temp = sr.length();
+			} else {
+				temp = num + 1;
+				count++;
+			}
+		}
+		return count;
+	}
+
 	private Long saveOrassignContentId(Content content) {
 		Integer contentType = content.getType();
 		Integer websiteId = content.getWebsiteId();
@@ -250,6 +273,17 @@ public class ContentService implements IContentService {
 		// 唯一键必须都不为空
 		if (contentType != null && websiteId != null && websiteUid != null
 				&& StringUtils.isNotEmpty(entry)) {
+			String text = content.getContent();
+			// 设置内容长度
+			if (StringUtils.isEmpty(text)) {
+				content.setAtCount(0);
+				content.setContentLength(0);
+			} else {
+				// 设置@数
+				int atCount = this.charMatch(text, Content.AT_STR.charAt(0));
+				content.setAtCount(atCount);
+				content.setContentLength(text.length());
+			}
 			if (content.getUid() == null) {
 				Long uid = this.globalUserService.getOrAssignUid(websiteId, websiteUid);
 				content.setUid(uid);

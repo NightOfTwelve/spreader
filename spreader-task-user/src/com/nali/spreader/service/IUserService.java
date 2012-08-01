@@ -56,4 +56,12 @@ public interface IUserService {
 	void forceUpdateGids(Map<Long, List<Long>> gidRelation);
 	
 	User findUserById(Long uid);
+	
+	/**
+	 * 自动增加用户发微博数量
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	int addUserArticles(Long uid);
 }
