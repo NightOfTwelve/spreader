@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.spreader.KeywordUtil;
 import com.nali.spreader.config.ContentKeywordsConfig;
+import com.nali.spreader.config.ConfigDataUtil;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.dto.FetchUserWeiboDto;
@@ -15,7 +15,6 @@ import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
-import com.nali.spreader.service.IKeywordService;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
 import com.nali.spreader.util.random.Randomer;
@@ -27,8 +26,6 @@ public class FetchUserContent implements RegularAnalyzer, Configable<ContentKeyw
 	private IUserService userService;
 	private ContentKeywordsConfig dto;
 	private Randomer<Integer> keywordRandom;
-	@Autowired
-	private IKeywordService keywordService;
 	@AutowireProductLine
 	private TaskProduceLine<FetchUserWeiboDto> fetchWeiboContent;
 
@@ -46,8 +43,7 @@ public class FetchUserContent implements RegularAnalyzer, Configable<ContentKeyw
 	public String work() {
 		List<KeyValue<Long, Long>> uidToWebsiteUidMaps = userService
 				.findUidToWebsiteUidMapByDto(dto);
-		List<String> keywords = KeywordUtil.getKeywords(dto.getKeywords(), dto.getRandomKeywords(),
-				dto.getRandomKeywordsRange());
+		List<String> keywords = ConfigDataUtil.getKeywords(dto.getKeywords(), dto.getRandomKeywords(), keywordRandom);
 		for (KeyValue<Long, Long> uidToWebsiteUidMap : uidToWebsiteUidMaps) {
 			Long uid = uidToWebsiteUidMap.getKey();
 			FetchUserWeiboDto sendDto = new FetchUserWeiboDto();
@@ -62,8 +58,6 @@ public class FetchUserContent implements RegularAnalyzer, Configable<ContentKeyw
 	public void init(ContentKeywordsConfig dto) {
 		this.dto = dto;
 		dto.setIsRobot(false);
-		this.keywordRandom = this.keywordService.createRandomer(dto.getRandomKeywordsRange(),
-				ContentKeywordsConfig.DEFAULT_RANDOM_GTE,
-				ContentKeywordsConfig.DEFAULT_RANDOM_LTE + 1);
+		this.keywordRandom = ConfigDataUtil.createGteLteRandomer(dto.getRandomKeywordsRange(), false);
 	}
 }

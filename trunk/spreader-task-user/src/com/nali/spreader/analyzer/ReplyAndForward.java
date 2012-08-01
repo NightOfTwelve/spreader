@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.nali.common.util.CollectionUtils;
+import com.nali.spreader.config.ConfigDataUtil;
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.ReplyAndForwardConfig;
 import com.nali.spreader.data.Content;
@@ -146,14 +147,9 @@ public class ReplyAndForward extends UserGroupExtendedBeanImpl implements Regula
 		Range<Integer> replyRange = config.getReplyPer();
 		Range<Integer> forwardRange = config.getForwardPer();
 		Range<Integer> postRange = config.getPostNumber();
-		this.replyRandomer = this.keywordService.createRandomer(replyRange,
-				ReplyAndForwardConfig.DEFAULT_REPLY_GTE, ReplyAndForwardConfig.DEFAULT_REPLY_LTE);
-		this.forwardRandomer = this.keywordService.createRandomer(forwardRange,
-				ReplyAndForwardConfig.DEFAULT_FORWARD_GTE,
-				ReplyAndForwardConfig.DEFAULT_FORWARD_LTE);
-		this.postRandom = this.keywordService.createRandomer(postRange,
-				ReplyAndForwardConfig.DEFAULT_POSTNUM_GTE,
-				ReplyAndForwardConfig.DEFAULT_POSTNUM_LTE);
+		this.replyRandomer = ConfigDataUtil.createGteLteRandomer(replyRange, true);
+		this.forwardRandomer = ConfigDataUtil.createGteLteRandomer(forwardRange, true);
+		this.postRandom = ConfigDataUtil.createGteLteRandomer(postRange, true);
 	}
 
 	/**

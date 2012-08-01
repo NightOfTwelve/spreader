@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
-import com.nali.spreader.KeywordUtil;
-import com.nali.spreader.config.ContentKeywordsConfig;
+import com.nali.spreader.config.ConfigDataUtil;
 import com.nali.spreader.config.UserGroupContentDto;
 import com.nali.spreader.dto.FetchUserWeiboDto;
 import com.nali.spreader.factory.TaskProduceLine;
@@ -21,9 +20,7 @@ import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
 import com.nali.spreader.group.service.IUserGroupService;
 import com.nali.spreader.model.GrouppedUser;
-import com.nali.spreader.service.IKeywordService;
 import com.nali.spreader.util.DataIterator;
-import com.nali.spreader.util.random.RandomUtil;
 import com.nali.spreader.util.random.Randomer;
 
 @Component
@@ -35,8 +32,6 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 	private Date lastFetchTime;
 	@Autowired
 	private IUserGroupService userGroupService;
-	@Autowired
-	private IKeywordService keywordService;
 	@AutowireProductLine
 	private TaskProduceLine<FetchUserWeiboDto> fetchWeiboContent;
 	private Randomer<Integer> keywordRandom;
@@ -58,8 +53,7 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 			time = new Date();
 		}
 		this.lastFetchTime = time;
-		this.keywordRandom = this.keywordService.createRandomer(config.getRandomKeywordsRange(),
-				ContentKeywordsConfig.DEFAULT_RANDOM_GTE, ContentKeywordsConfig.DEFAULT_RANDOM_LTE);
+		this.keywordRandom = ConfigDataUtil.createGteLteRandomer(config.getRandomKeywordsRange(), false);
 	}
 
 	@Override
@@ -68,9 +62,7 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 		if (gid != null) {
 			DataIterator<GrouppedUser> data = this.userGroupService.queryGrouppedUserIterator(gid,
 					100);
-			List<String> randomList = RandomUtil.randomItems(config.getRandomKeywords(),
-					this.keywordRandom.get());
-			List<String> keywords = KeywordUtil.getKeywords(config.getKeywords(), config.getRandomKeywords(), config.getRandomKeywordsRange());
+			List<String> keywords = ConfigDataUtil.getKeywords(config.getKeywords(), config.getRandomKeywords(), keywordRandom);
 			if (data.hasNext()) {
 				List<GrouppedUser> list = data.next();
 				if (list.size() > 0) {

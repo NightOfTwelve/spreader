@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.nali.common.util.CollectionUtils;
+import com.nali.spreader.config.ConfigDataUtil;
 import com.nali.spreader.config.PostWeiboConfig;
 import com.nali.spreader.config.Range;
 import com.nali.spreader.data.Content;
@@ -100,7 +101,6 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 	public void init(PostWeiboConfig config) {
 		this.config = config;
 		Range<Integer> postRange = config.getPostNumber();
-		this.postRandom = this.keywordService.createRandomer(postRange,
-				PostWeiboConfig.DEFAULT_POSTNUM_GTE, PostWeiboConfig.DEFAULT_POSTNUM_LTE);
+		this.postRandom = ConfigDataUtil.createGteLteRandomer(postRange, true);
 	}
 }

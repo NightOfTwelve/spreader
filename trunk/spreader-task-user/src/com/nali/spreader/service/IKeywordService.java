@@ -2,10 +2,8 @@ package com.nali.spreader.service;
 
 import java.util.List;
 
-import com.nali.spreader.config.Range;
 import com.nali.spreader.data.Category;
 import com.nali.spreader.data.Keyword;
-import com.nali.spreader.util.random.NumberRandomer;
 
 /**
  * 关键字服务接口
@@ -77,16 +75,6 @@ public interface IKeywordService {
 	 * @return
 	 */
 	List<String> findDefaultKeywords();
-
-	/**
-	 * 构造一个NumberRandomer，Range数据为空用默认值代替
-	 * 
-	 * @param range
-	 * @param defaultGte
-	 * @param defaultLte
-	 * @return
-	 */
-	NumberRandomer createRandomer(Range<Integer> range, int defaultGte, int defaultLte);
 
 	/**
 	 * 创建发送的关键字列表
