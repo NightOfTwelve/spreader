@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.KeywordQueryParamsDto;
-import com.nali.spreader.config.Range;
 import com.nali.spreader.dao.ICrudKeywordDao;
 import com.nali.spreader.dao.IKeywordDao;
 import com.nali.spreader.data.Category;
@@ -20,7 +19,6 @@ import com.nali.spreader.data.Keyword;
 import com.nali.spreader.data.KeywordExample;
 import com.nali.spreader.data.KeywordExample.Criteria;
 import com.nali.spreader.service.IKeywordService;
-import com.nali.spreader.util.random.NumberRandomer;
 
 @Service
 public class KeywordServiceImpl implements IKeywordService {
@@ -123,27 +121,6 @@ public class KeywordServiceImpl implements IKeywordService {
 		List<String> list = new ArrayList<String>();
 		list.add("音乐");
 		return list;
-	}
-
-	@Override
-	public NumberRandomer createRandomer(Range<Integer> range, int defaultGte, int defaultLte) {
-		if (range != null) {
-			if (range.checkNotNull()) {
-				return new NumberRandomer(range.getGte(), range.getLte() + 1);
-			} else {
-				if (range.checkNull()) {
-					return new NumberRandomer(defaultGte, defaultLte + 1);
-				} else {
-					if (range.getGte() == null) {
-						return new NumberRandomer(defaultGte, range.getLte() + 1);
-					} else {
-						return new NumberRandomer(range.getGte(), defaultLte + 1);
-					}
-				}
-			}
-		} else {
-			return new NumberRandomer(defaultGte, defaultLte + 1);
-		}
 	}
 
 	@Override
