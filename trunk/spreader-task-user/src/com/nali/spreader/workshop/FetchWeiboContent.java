@@ -64,7 +64,7 @@ public class FetchWeiboContent extends SingleTaskMachineImpl implements
 		Date lastFetchTime = data.getValue();
 		work(uid, null, lastFetchTime, exporter);
 	}
-	
+
 	@Input
 	public void word(FetchUserWeiboDto dto, SingleTaskExporter exporter) {
 		Long uid = dto.getUid();
@@ -116,8 +116,8 @@ public class FetchWeiboContent extends SingleTaskMachineImpl implements
 			// }
 			content.setContentLength(this.contentService.getContentLength(content.getContent()));
 			Long contentId = contentService.assignContentId(content);
-			if(!CollectionUtils.isEmpty(keywords)){
-				for(String keyword:keywords){
+			if (!CollectionUtils.isEmpty(keywords)) {
+				for (String keyword : keywords) {
 					Long keywordId = this.keywordService.getOrAssignKeywordIdByName(keyword);
 					this.contentKeywordService.getOrAssignContentKeywordId(contentId, keywordId);
 				}
