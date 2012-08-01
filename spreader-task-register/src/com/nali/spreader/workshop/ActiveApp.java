@@ -48,8 +48,8 @@ public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassive
 		exporter.setProperty("id", registerId);
 		exporter.setProperty("email", register.getEmail());
 		AppUdid appUdid = appRegisterService.getAppUdid(registerId);
-		exporter.setProperty("emailPwd", register.getPwd());
-		exporter.setProperty("pwd", appUdid.getPwd());
+		exporter.setProperty("pwd", register.getPwd());
+		exporter.setProperty("applePwd", appUdid.getPwd());
 		exporter.setBasePriority(ClientTask.BASE_PRIORITY_MAX);
 		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterNow(30));
 	}
