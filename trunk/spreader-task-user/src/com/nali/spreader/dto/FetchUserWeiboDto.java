@@ -16,8 +16,6 @@ public class FetchUserWeiboDto implements Serializable {
 
 	private List<String> keywords;
 
-	private List<String> randomkeywords;
-
 	private Long uid;
 
 	private Date lastFetchTime;
@@ -28,14 +26,6 @@ public class FetchUserWeiboDto implements Serializable {
 
 	public void setLastFetchTime(Date lastFetchTime) {
 		this.lastFetchTime = lastFetchTime;
-	}
-
-	public List<String> getRandomkeywords() {
-		return randomkeywords;
-	}
-
-	public void setRandomkeywords(List<String> randomkeywords) {
-		this.randomkeywords = randomkeywords;
 	}
 
 	public List<String> getKeywords() {

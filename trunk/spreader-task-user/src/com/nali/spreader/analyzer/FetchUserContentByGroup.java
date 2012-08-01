@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
-import com.nali.spreader.config.UserDto;
+import com.nali.spreader.KeywordUtil;
+import com.nali.spreader.config.ContentKeywordsConfig;
 import com.nali.spreader.config.UserGroupContentDto;
 import com.nali.spreader.dto.FetchUserWeiboDto;
 import com.nali.spreader.factory.TaskProduceLine;
@@ -57,8 +58,8 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 			time = new Date();
 		}
 		this.lastFetchTime = time;
-		this.keywordRandom = this.keywordService.createRandomer(config.getRandomRange(),
-				UserDto.DEFAULT_RANDOM_GTE, UserDto.DEFAULT_RANDOM_LTE + 1);
+		this.keywordRandom = this.keywordService.createRandomer(config.getRandomKeywordsRange(),
+				ContentKeywordsConfig.DEFAULT_RANDOM_GTE, ContentKeywordsConfig.DEFAULT_RANDOM_LTE);
 	}
 
 	@Override
@@ -69,6 +70,7 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 					100);
 			List<String> randomList = RandomUtil.randomItems(config.getRandomKeywords(),
 					this.keywordRandom.get());
+			List<String> keywords = KeywordUtil.getKeywords(config.getKeywords(), config.getRandomKeywords(), config.getRandomKeywordsRange());
 			if (data.hasNext()) {
 				List<GrouppedUser> list = data.next();
 				if (list.size() > 0) {
@@ -77,8 +79,7 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 							Long uid = gu.getUid();
 							FetchUserWeiboDto sendDto = new FetchUserWeiboDto();
 							sendDto.setUid(uid);
-							sendDto.setKeywords(config.getKeywords());
-							sendDto.setRandomkeywords(randomList);
+							sendDto.setKeywords(keywords);
 							sendDto.setLastFetchTime(lastFetchTime);
 							fetchWeiboContent.send(sendDto);
 						}

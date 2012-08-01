@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
+import com.nali.spreader.config.ContentKeywordsConfig;
 import com.nali.spreader.config.Range;
-import com.nali.spreader.config.UserDto;
 import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.dao.ICrudPhotoDao;
 import com.nali.spreader.dao.ICrudRobotRegisterDao;
@@ -145,8 +145,8 @@ public class UserManageServiceImpl implements IUserManageService {
 		if (range.checkNotNull()) {
 			randomer = new NumberRandomer(range.getGte(), range.getLte() + 1);
 		} else {
-			randomer = new NumberRandomer(UserDto.DEFAULT_RANDOM_GTE,
-					UserDto.DEFAULT_RANDOM_LTE + 1);
+			randomer = new NumberRandomer(ContentKeywordsConfig.DEFAULT_RANDOM_GTE,
+					ContentKeywordsConfig.DEFAULT_RANDOM_LTE + 1);
 		}
 		List<T> result;
 		if (!CollectionUtils.isEmpty(list)) {

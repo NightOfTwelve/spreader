@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -79,7 +78,6 @@ public class FetchKeywordContent extends SingleTaskMachineImpl implements
 		String keyword = contextContents.get("keyword").toString();
 		if (result != null && result.size() > 0) {
 			for (Content c : result) {
-				String text = c.getContent();
 				Long websiteUid = c.getWebsiteUid();
 				Long userId = this.userService.assignUser(websiteUid);
 				// 用户不存在爬取用户
@@ -90,16 +88,6 @@ public class FetchKeywordContent extends SingleTaskMachineImpl implements
 					userId = user.getId();
 				}
 				c.setUid(userId);
-				// 设置内容长度
-				if (StringUtils.isEmpty(text)) {
-					c.setAtCount(0);
-					c.setContentLength(0);
-				} else {
-					// 设置@数
-					int atCount = this.charMatch(text, Content.AT_STR.charAt(0));
-					c.setAtCount(atCount);
-					c.setContentLength(text.length());
-				}
 				// 获取内容ID
 				Long contentId = this.contentService.assignContentId(c);
 				List<String> tagList = c.getTags();
@@ -116,21 +104,5 @@ public class FetchKeywordContent extends SingleTaskMachineImpl implements
 				}
 			}
 		}
-	}
-
-	private int charMatch(String sr, char ar) {
-		int count = 0;
-		int num = 0;
-		int temp = 0;
-		while ((sr.length() - temp) >= 1) {
-			num = sr.indexOf(ar, temp);
-			if (num == -1) {
-				temp = sr.length();
-			} else {
-				temp = num + 1;
-				count++;
-			}
-		}
-		return count;
 	}
 }
