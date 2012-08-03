@@ -88,7 +88,7 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 						postInterval = PostWeiboConfig.DEFAULT_INTERVAL;
 					}
 					Date postTime = DateUtils.addMinutes(new Date(), postInterval);
-					WeiboContentDto param = WeiboContentDto.getWeiboContentDto(c, postTime);
+					WeiboContentDto param = WeiboContentDto.getWeiboContentDto(uid, c, postTime);
 					this.postWeiboContent.send(param);
 					this.robotContentService.save(uid, cid, RobotContent.TYPE_POST);
 				}

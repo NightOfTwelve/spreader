@@ -123,6 +123,9 @@ public class StrategyDispatchController extends BaseController {
 			id = getRegularIdByGid(id);
 		}
 		ConfigableInfo cfg = regularConfigService.getConfigableInfo(name);
+		if (cfg == null) {
+			return null;
+		}
 		String dispname = cfg.getDisplayName();
 		String extendType = cfg.getExtendType();
 		Object meta = cfg.getExtendMeta();
@@ -147,7 +150,7 @@ public class StrategyDispatchController extends BaseController {
 		if (!StringUtils.isEmpty(extendType)) {
 			sug = cfgService.getExtendConfig(name, id);
 		}
-		TriggerDto trigger = this.getTrigger(id, isGroup);
+		TriggerDto trigger = this.getTrigger(id);
 		DispatchData dispatch = new DispatchData(null, dispname, extendType, meta, def, data, sug,
 				trigger);
 		return this.write(dispatch);
@@ -185,11 +188,8 @@ public class StrategyDispatchController extends BaseController {
 	 * @param id
 	 * @return
 	 */
-	private TriggerDto getTrigger(Long id, Boolean isGroup) {
+	private TriggerDto getTrigger(Long id) {
 		TriggerDto triggerObject;
-		if (Boolean.TRUE.equals(isGroup)) {
-			id = getRegularIdByGid(id);
-		}
 		// 默认trigger
 		if (id == null) {
 			triggerObject = new TriggerDto();

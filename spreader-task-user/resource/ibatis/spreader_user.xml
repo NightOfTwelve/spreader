@@ -394,4 +394,9 @@
 	where c.id = #id# and c.is_robot =
 	true
   </select>
+<update id="updateUserArticles" parameterClass="java.lang.Long">
+	update spreader.tb_user
+	set articles = articles+1
+	where id = #id#
+</update>
 </sqlMap>

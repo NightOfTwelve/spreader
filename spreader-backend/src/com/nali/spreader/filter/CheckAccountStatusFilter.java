@@ -40,8 +40,8 @@ public class CheckAccountStatusFilter implements Filter, InitializingBean {
 		HttpServletResponse resp = (HttpServletResponse) response;
 		HttpSession session = req.getSession();
 		String accountId = (String) session.getAttribute("accountId");
-		String url = req.getRequestURI();
-		if (!url.startsWith("/spreader-backend/account/") && !canPass(url)) {
+		String uri = req.getRequestURI();
+		if (!uri.startsWith("/spreader-backend/account/") && !canPass(uri)) {
 			if (StringUtils.isEmpty(accountId)) {
 				resp.sendRedirect("/spreader-backend/account/init");
 				return;
@@ -60,6 +60,14 @@ public class CheckAccountStatusFilter implements Filter, InitializingBean {
 			if (freePattern.matcher(path).find()) {
 				return true;
 			}
+		}
+		return false;
+	}
+
+	private boolean isAjaxRequest(HttpServletRequest request) {
+		String requestedWith = request.getHeader("x-requested-with");
+		if (requestedWith != null && "XMLHttpRequest".equals(requestedWith)) {
+			return true;
 		}
 		return false;
 	}

@@ -142,4 +142,9 @@ public class UserDao implements IUserDao {
 	public List<Long> queryContentIdByPostContentDto(PostWeiboContentDto dto) {
 		return this.sqlMap.queryForList("spreader_content.findContentIdByPostContentDto", dto);
 	}
+
+	@Override
+	public int updateUserArticles(Long uid) {
+		return this.sqlMap.update("spreader_user.updateUserArticles", uid);
+	}
 }

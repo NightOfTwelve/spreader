@@ -17,7 +17,7 @@ public class WeiboContentDto implements Serializable {
 	private String audioUrl;
 	private String videoUrl;
 	private String picUrl;
-	private Long uid;
+	private Long robotUid;
 	private String text;
 	private Date postTime;
 
@@ -28,13 +28,13 @@ public class WeiboContentDto implements Serializable {
 	 * @param postTime
 	 * @return
 	 */
-	public static WeiboContentDto getWeiboContentDto(Content c, Date postTime) {
+	public static WeiboContentDto getWeiboContentDto(Long robotId, Content c, Date postTime) {
 		WeiboContentDto dto = new WeiboContentDto();
 		dto.setAudioUrl(c.getAudioUrl());
 		dto.setPicUrl(c.getPicUrl());
 		dto.setVideoUrl(c.getVideoUrl());
 		dto.setPostTime(postTime);
-		dto.setUid(c.getUid());
+		dto.setRobotUid(robotId);
 		dto.setText(c.getContent());
 		return dto;
 	}
@@ -63,12 +63,12 @@ public class WeiboContentDto implements Serializable {
 		this.picUrl = picUrl;
 	}
 
-	public Long getUid() {
-		return uid;
+	public Long getRobotUid() {
+		return robotUid;
 	}
 
-	public void setUid(Long uid) {
-		this.uid = uid;
+	public void setRobotUid(Long robotUid) {
+		this.robotUid = robotUid;
 	}
 
 	public String getText() {
