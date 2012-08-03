@@ -54,7 +54,7 @@ public class PostWeiboContent extends SingleTaskMachineImpl implements
 		String audioUrl = dto.getAudioUrl();
 		String videoUrl = dto.getVideoUrl();
 		String picUrl = dto.getPicUrl();
-		Long uid = dto.getUid();
+		Long uid = dto.getRobotUid();
 		String text = dto.getText();
 		Date postTime = dto.getPostTime();
 		work(uid, text, audioUrl, videoUrl, picUrl, postTime, exporter);
@@ -71,6 +71,7 @@ public class PostWeiboContent extends SingleTaskMachineImpl implements
 		exporter.setProperty("nickname", user.getNickName());
 		if (startTime != null) {
 			exporter.setTimes(startTime, SpecialDateUtil.afterToday(3));
+			exporter.setUid(uid);
 			exporter.send();
 		} else {
 			exporter.send(uid, SpecialDateUtil.afterToday(3));

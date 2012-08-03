@@ -94,4 +94,12 @@ public interface IUserDao {
 	 * @return
 	 */
 	String getUserPassword(User user);
+
+	/**
+	 * 更新用户微博数量
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	int updateUserArticles(Long uid);
 }

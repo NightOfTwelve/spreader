@@ -195,6 +195,21 @@ function createNextDate() {
 	return tdate;
 }
 /**
+ * 格式化字符为指定颜色
+ * 
+ * @param {}
+ *            text
+ * @param {}
+ *            color
+ */
+function renderTextColor(text, color) {
+	if (!Ext.isEmpty(color)) {
+		return '<span style="color:' + color + ';">' + text + '</span>';
+	} else {
+		return '<span style="color:red;">' + text + '</span>';
+	}
+}
+/**
  * 格式化任务执行结果状态
  * 
  * @param {}

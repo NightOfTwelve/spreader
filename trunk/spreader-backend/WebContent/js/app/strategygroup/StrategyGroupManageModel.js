@@ -34,7 +34,8 @@ Ext.onReady(function() {
 	// 构造树的根节点ROOT
 	var stgroot = new Ext.tree.AsyncTreeNode({
 				id : '-1',
-				text : '配置列表'
+				text : '配置列表',
+				expanded : true
 			});
 	// 策略列表树
 	var stgdisptree = new Ext.tree.TreePanel({
@@ -43,7 +44,7 @@ Ext.onReady(function() {
 		autoScroll : false,
 		// autoHeight : true,
 		expanded : true,
-		singleExpand : true,
+		// singleExpand : true,
 		useArrows : true,
 		rootVisible : true,
 		root : stgroot,
@@ -111,7 +112,6 @@ Ext.onReady(function() {
 					}
 				})
 	});
-	stgdisptree.expand(true, true);
 	// 树形编辑器
 	var treeEditor = new Ext.tree.TreeEditor(Ext.getCmp('stgtree'), {
 				id : 'stgtreeEdit',
@@ -207,14 +207,60 @@ Ext.onReady(function() {
 							Ext.MessageBox.alert("提示", "用户分组不能为空");
 							return;
 						}
-						strategyGroupSubmitTreeData(stgdisptree,
-								triggerDispForm, radioForm, simpleDispForm,
-								editstgWindow, store, groupStore, fromId, toId,
-								strategyIdHidden.getValue(), groupNameHidden
-										.getValue(),
-								groupNoteHidden.getValue(), groupTypeHidden
-										.getValue(), objIdHidden.getValue(),
-								groupIdHidden.getValue());
+						// 获取调度FORM
+						var tradioForm = radioForm.getForm();
+						// 表达式
+						var ttriggerDispForm = triggerDispForm.getForm();
+						// 简单调度
+						var tsimpleDispForm = simpleDispForm.getForm();
+						// 获取调度参数
+						var triggerType = tradioForm.findField("triggerType")
+								.getGroupValue();
+						// 开始时间
+						var start = tsimpleDispForm.findField("start")
+								.getValue().getTime();
+						// 重复次数
+						var repeatTimes = tsimpleDispForm
+								.findField("repeatTimes").getValue();
+						// 间隔时间
+						var repeatInternal = tsimpleDispForm
+								.findField("repeatInternal").getValue();
+						// 当前时间
+						var thisTime = new Date().getTime();
+						var msg = '确定执行？';
+						var count = getDispCount(start, thisTime,
+								repeatInternal);
+						if ((count - (repeatTimes + 1)) > 0) {
+							msg = '即将执行总数:' + renderTextColor(count, 'red')
+									+ '次,设定的重复次数:'
+									+ renderTextColor((repeatTimes + 1), 'red')
+									+ '次,是否确定执行？点"否"重新设置日期';
+						}
+						Ext.Msg.show({
+									title : '确认信息',
+									msg : msg,
+									buttons : Ext.Msg.YESNO,
+									fn : function(ans) {
+										if (ans == 'yes') {
+											strategyGroupSubmitTreeData(
+													stgdisptree,
+													triggerDispForm,
+													radioForm,
+													simpleDispForm,
+													editstgWindow,
+													store,
+													groupStore,
+													fromId,
+													toId,
+													strategyIdHidden.getValue(),
+													groupNameHidden.getValue(),
+													groupNoteHidden.getValue(),
+													groupTypeHidden.getValue(),
+													objIdHidden.getValue(),
+													groupIdHidden.getValue());
+										}
+									}
+								});
 					}
 				}, {
 					text : "重置",
@@ -261,14 +307,31 @@ Ext.onReady(function() {
 							Ext.MessageBox.alert("提示", "用户分组不能为空");
 							return;
 						}
-						strategyGroupSubmitTreeData(stgdisptree,
-								triggerDispForm, radioForm, simpleDispForm,
-								editstgWindow, store, groupStore, fromId, toId,
-								strategyIdHidden.getValue(), groupNameHidden
-										.getValue(),
-								groupNoteHidden.getValue(), groupTypeHidden
-										.getValue(), objIdHidden.getValue(),
-								groupIdHidden.getValue());
+						Ext.Msg.show({
+									title : '确认信息',
+									msg : '是否确定执行该表达式?',
+									buttons : Ext.Msg.YESNO,
+									fn : function(ans) {
+										if (ans == 'yes') {
+											strategyGroupSubmitTreeData(
+													stgdisptree,
+													triggerDispForm,
+													radioForm,
+													simpleDispForm,
+													editstgWindow,
+													store,
+													groupStore,
+													fromId,
+													toId,
+													strategyIdHidden.getValue(),
+													groupNameHidden.getValue(),
+													groupNoteHidden.getValue(),
+													groupTypeHidden.getValue(),
+													objIdHidden.getValue(),
+													groupIdHidden.getValue());
+										}
+									}
+								});
 					}
 				}, {
 					text : "重置",
@@ -442,6 +505,8 @@ Ext.onReady(function() {
 	editstgWindow.on('show', function() {
 				stgdisptree.getRootNode().reload();
 				stgdisptree.root.select();
+				// 子节点全部展开，必须等到树组件全部加载完毕后才能调用，否则报错
+				stgroot.expand(true, false);
 				// 初始化清理相关信息
 				cleanStrategyExplain();
 				var pptGrid = Ext.getCmp("pptGrid");
@@ -581,6 +646,11 @@ Ext.onReady(function() {
 				dataIndex : 'id',
 				width : 80
 			}, {
+				header : '分组描述',
+				dataIndex : 'description',
+				renderer : renderBrief,
+				width : 100
+			}, {
 				header : '分组名称',
 				dataIndex : 'transformName',
 				// renderer : rendDispName,
@@ -590,11 +660,6 @@ Ext.onReady(function() {
 				dataIndex : 'groupType',
 				width : 100,
 				renderer : renderGroupType
-			}, {
-				header : '分组描述',
-				dataIndex : 'description',
-				renderer : renderBrief,
-				width : 100
 			}, {
 				header : '属性配置',
 				renderer : function showbutton() {
@@ -1056,15 +1121,6 @@ Ext.onReady(function() {
 				renderer : renderHtmlBrief,
 				width : 100
 			}, {
-				header : '分组编号',
-				dataIndex : 'gid',
-				width : 100
-			}, {
-				header : '所属分组',
-				dataIndex : 'gname',
-				renderer : renderBrief,
-				width : 100
-			}, {
 				header : '描述',
 				dataIndex : 'description',
 				renderer : renderBrief,
@@ -1243,7 +1299,7 @@ Ext.onReady(function() {
 						var tform = addGroupForm.getForm();
 						var gname = tform.findField("groupName").getValue();
 						var gnote = tform.findField("description").getValue();
-						// TODO
+						// 清除所有隐藏域的信息
 						cleanHidden();
 						cleanCreateTrigger();
 						// 简单分组
@@ -1529,6 +1585,13 @@ Ext.onReady(function() {
 			fromSelectUserGroupCombo.hide();
 			toSelectUserGroupCombo.hide();
 		}
+	}
+	/**
+	 * 计算调度执行次数
+	 */
+	function getDispCount(start, thisTime, internal) {
+		var count = Ext.util.Format.round((thisTime - start) / internal, 0);
+		return count;
 	}
 
 	/**
