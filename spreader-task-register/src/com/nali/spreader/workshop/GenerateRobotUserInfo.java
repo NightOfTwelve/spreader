@@ -46,7 +46,7 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<Object> {
 	private IRobotRegisterService robotRegisterService;
 	// Randomers
 	private Randomer<Integer> genderRandomer;
-	private Randomer<String> firstNameRandomer;
+	private Randomer<String> firstNameRanomer;
 	private Randomer<String> maleLastNameRandomer;
 	private Randomer<String> maleEnNameRandomer;
 	private Randomer<String> femaleLastNameRandomer;
