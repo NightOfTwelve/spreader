@@ -39,7 +39,7 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Mult
 	private IRobotRegisterService robotRegisterService;
 	
 //	private Randomer<String> emailISPs;
-	private Randomer<Long> actinIds;
+	private Randomer<Long> actionIds;
 
 	@AutowireProductLine
 	private TaskProduceLine<Long> registerWeiboAccount;
