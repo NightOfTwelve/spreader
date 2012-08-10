@@ -1,5 +1,6 @@
 package com.nali.spreader.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -352,15 +353,17 @@ public class StrategyDispatchController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/alldisplayname")
 	public String renderStrategyDisplayName() {
+		List<ConfigableInfo> data = new ArrayList<ConfigableInfo>();
 		List<ConfigableInfo> normalList = regularConfigService
 				.listConfigableInfo(ConfigableType.normal);
+		data.addAll(normalList);
 		List<ConfigableInfo> systemList = regularConfigService
 				.listConfigableInfo(ConfigableType.system);
-		normalList.addAll(systemList);
+		data.addAll(systemList);
 		List<ConfigableInfo> noticeList = regularConfigService
 				.listConfigableInfo(ConfigableType.noticeRelated);
-		normalList.addAll(noticeList);
-		return this.write(normalList);
+		data.addAll(noticeList);
+		return this.write(data);
 	}
 
 	/**
