@@ -411,9 +411,11 @@ function renderUserGroupType(value) {
 function renderWebsiteType(value) {
 	if (value == 1) {
 		return '新浪微博';
-	} else {
-		return '其它';
 	}
+	if (value == 2) {
+		return '苹果';
+	}
+	return '其它';
 }
 /**
  * 渲染消息类型
