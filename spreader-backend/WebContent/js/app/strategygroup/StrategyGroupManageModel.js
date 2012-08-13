@@ -41,7 +41,7 @@ Ext.onReady(function() {
 	var stgdisptree = new Ext.tree.TreePanel({
 		id : 'stgtree',
 		region : 'center',
-		autoScroll : false,
+		autoScroll : true,
 		// autoHeight : true,
 		expanded : true,
 		// singleExpand : true,
@@ -230,12 +230,16 @@ Ext.onReady(function() {
 						var msg = '确定执行？';
 						var count = getDispCount(start, thisTime,
 								repeatInternal);
-						if ((count - (repeatTimes + 1)) > 0) {
-							msg = '即将执行总数:' + renderTextColor(count, 'red')
-									+ '次,设定的重复次数:'
-									+ renderTextColor((repeatTimes + 1), 'red')
-									+ '次,是否确定执行？点"否"重新设置日期';
+						var showRepeatTimes = 0;
+						if ((count - (repeatTimes + 1)) >= 0) {
+							showRepeatTimes = repeatTimes + 1;
+						} else {
+							showRepeatTimes = count;
 						}
+						msg = '该任务的开始时间已经过期，如果保存会立即执行'
+								+ renderTextColor(showRepeatTimes, 'red')
+								+ '次，确定不需要修改' + renderTextColor('开始时间', 'red')
+								+ '吗？';
 						Ext.Msg.show({
 									title : '确认信息',
 									msg : msg,
@@ -413,12 +417,12 @@ Ext.onReady(function() {
 			});
 	// 嵌入的FORM
 	var infoViewForm = new Ext.form.FormPanel({
-				autoScroll : true,
-				title : '选择用户分组',
+//				title : '选择用户分组',
 				id : 'infoViewForm',
 				split : true,
+				autoScroll : true,
 				region : 'north',
-				height : 120,
+				height : 50,
 				border : true,
 				// labelWidth : 100, // 标签宽度
 				frame : true, // 是否渲染表单面板背景色
@@ -823,14 +827,15 @@ Ext.onReady(function() {
 					Ext.getCmp('groupinfo').setText(wtext);
 					compGroupWindow.show();
 					store.setBaseParam('groupId', data.id);
-					store.reload();
+					store.setBaseParam('jobType', 'normal');
+					store.load();
 				}
 			}
 			if (butname == '执行情况') {
 				var gid = data.id;
 				jobResultStore.setBaseParam('gid', gid);
 				jobResultStore.setBaseParam('groupType', 'simple');
-				jobResultStore.reload();
+				jobResultStore.load();
 				taskWindow.show();
 			}
 		}
@@ -1231,7 +1236,7 @@ Ext.onReady(function() {
 						var jobId = data.id;
 						jobResultStore.setBaseParam('jobId', jobId);
 						jobResultStore.setBaseParam('groupType', 'complex');
-						jobResultStore.reload();
+						jobResultStore.load();
 						taskWindow.show();
 					}
 				}
@@ -1526,7 +1531,7 @@ Ext.onReady(function() {
 								.decode(response.responseText);
 						groupIdHidden.setValue(result.groupId);
 						store.setBaseParam('groupId', groupIdHidden.getValue());
-						store.reload();
+						store.load();
 					},
 					failure : function(response, opts) {
 						Ext.MessageBox.alert('提示', '保存分组失败，无法进入编辑页面');
