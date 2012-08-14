@@ -26,8 +26,6 @@ public class ReplyAndForwardConfig extends PostWeiboConfig {
 	private Range<Integer> replyPer;
 	@PropertyDescription("转发比例")
 	private Range<Integer> forwardPer;
-	@PropertyDescription("回复并转发比例")
-	private Range<Integer> replyAndForwardPer;
 
 	public Range<Integer> getReplyPer() {
 		return replyPer;
@@ -45,11 +43,4 @@ public class ReplyAndForwardConfig extends PostWeiboConfig {
 		this.forwardPer = forwardPer;
 	}
 
-	public Range<Integer> getReplyAndForwardPer() {
-		return replyAndForwardPer;
-	}
-
-	public void setReplyAndForwardPer(Range<Integer> replyAndForwardPer) {
-		this.replyAndForwardPer = replyAndForwardPer;
-	}
 }
