@@ -78,13 +78,13 @@ public class RegularProducerManager {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public<T> void invokeRegularObject(String name, T params, Long sid) {
-		RegularObject regularObject = regularConfigService.getRegularObject(name, params);
-		if(regularObject instanceof ExtendedBean) {
-			extendExecuter.extend((ExtendedBean) regularObject, sid);
-		}
 		logger.info("start invoking task:"+name+"#"+sid);
 		Long resultId = logResultStart(sid);
 		try {
+			RegularObject regularObject = regularConfigService.getRegularObject(name, params);
+			if(regularObject instanceof ExtendedBean) {
+				extendExecuter.extend((ExtendedBean) regularObject, sid);
+			}
 			String msg;
 			if (regularObject instanceof RegularAnalyzer) {
 				msg = ((RegularAnalyzer) regularObject).work();
