@@ -69,8 +69,8 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 		while (iter.hasNext()) {
 			GrouppedUser gu = iter.next();
 			Long uid = gu.getUid();
+			// 获取所有的微博内容 TODO 在已配关键字情况下这里没有必要每次循环都查一次内容
 			List<String> sendKeywords = this.keywordService.createSendKeywordList(allKeywords, uid);
-			// 获取所有的微博内容
 			List<Long> allContent = this.contentService.findContentIdByPostContentDto(this.config
 					.getPostWeiboContentDto(sendKeywords));
 			// 已发送的内容
