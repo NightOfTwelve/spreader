@@ -96,7 +96,7 @@ public class KeywordServiceImpl implements IKeywordService {
 	}
 
 	@Override
-	public List<String> createKeywordList(List<String> keywords, List<String> categories) {
+	public List<String> createKeywordList(List<String> keywords, List<String> categories) {//TODO 移到controller或util里面去
 		// 所有关键的集合，包括通过分类查询出的关键字集合
 		List<String> allKeyword = new ArrayList<String>();
 		if (!CollectionUtils.isEmpty(keywords)) {
@@ -117,14 +117,14 @@ public class KeywordServiceImpl implements IKeywordService {
 	}
 
 	@Override
-	public List<String> findDefaultKeywords() {
+	public List<String> findDefaultKeywords() {//TODO 移到controller或util里面去
 		List<String> list = new ArrayList<String>();
 		list.add("音乐");
 		return list;
 	}
 
 	@Override
-	public List<String> createSendKeywordList(List<String> list, Long uid) {
+	public List<String> createSendKeywordList(List<String> list, Long uid) {//TODO 移到controller或util里面去
 		List<String> sendKeywords;
 		// 如果设置的关键字列表无内容则查找用户本身的标签列表
 		if (CollectionUtils.isEmpty(list)) {
