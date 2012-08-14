@@ -44,6 +44,7 @@ Ext.onReady(function() {
 		autoScroll : true,
 		// autoHeight : true,
 		expanded : true,
+		frame : true,
 		// singleExpand : true,
 		useArrows : true,
 		rootVisible : true,
@@ -154,7 +155,7 @@ Ext.onReady(function() {
 	// 创建简单调度的FORM
 	var simpleDispForm = new Ext.form.FormPanel({
 				id : 'simpcard',
-				height : 80,
+				height : 150,
 				frame : true,
 				layout : "form", // 整个大的表单是form布局
 				labelWidth : 100,
@@ -164,13 +165,7 @@ Ext.onReady(function() {
 					items : [{
 								columnWidth : .3, // 该列有整行中所占百分比
 								layout : "form", // 从上往下的布局
-								items : [{
-											xtype : "datetimefield",
-											fieldLabel : "开始时间",
-											name : 'start',
-											minValue : new Date(),
-											width : 150
-										}]
+								items : [calendarCmp('start', 'start', '开始时间')]
 							}, {
 								columnWidth : .3,
 								layout : "form",
@@ -217,8 +212,8 @@ Ext.onReady(function() {
 						var triggerType = tradioForm.findField("triggerType")
 								.getGroupValue();
 						// 开始时间
-						var start = tsimpleDispForm.findField("start")
-								.getValue().getTime();
+						var start = string2Date(tsimpleDispForm.findField("start")
+								.getValue());
 						// 重复次数
 						var repeatTimes = tsimpleDispForm
 								.findField("repeatTimes").getValue();
@@ -276,7 +271,7 @@ Ext.onReady(function() {
 	// 表达式配置FORM
 	var triggerDispForm = new Ext.form.FormPanel({
 				autoWidth : true,
-				height : 80,
+				height : 150,
 				id : 'trgcard',
 				frame : true,
 				layout : "form", // 整个大的表单是form布局
@@ -346,7 +341,7 @@ Ext.onReady(function() {
 			});
 	// 首先创建一个card布局的Panel
 	var cardPanel = new Ext.Panel({
-				region : 'center',
+				region : 'south',
 				id : 'cardPanel',
 				layout : 'card',
 				split : true,
@@ -367,9 +362,11 @@ Ext.onReady(function() {
 	// RADIO组件
 	var radioForm = new Ext.form.FormPanel({
 				frame : true,
-				region : 'north',
-				height : 80,
+				title : '调度配置',
+				region : 'center',
+				height : 200,
 				labelWidth : 65,
+				split : true,
 				labelAlign : "left",
 				items : [{
 							xtype : 'radiogroup',
@@ -417,14 +414,12 @@ Ext.onReady(function() {
 			});
 	// 嵌入的FORM
 	var infoViewForm = new Ext.form.FormPanel({
-//				title : '选择用户分组',
+				title : '选择用户分组',
 				id : 'infoViewForm',
 				split : true,
 				autoScroll : true,
+				height : 150,
 				region : 'north',
-				height : 50,
-				border : true,
-				// labelWidth : 100, // 标签宽度
 				frame : true, // 是否渲染表单面板背景色
 				defaultType : 'textfield', // 表单元素默认类型
 				labelAlign : 'left', // 标签对齐方式
@@ -439,54 +434,66 @@ Ext.onReady(function() {
 			});
 	// 创建策略维护的窗口组件
 	var editstgWindow = new Ext.Window({
-				layout : 'border',
-				width : document.documentElement.clientWidth - 200,
-				height : document.documentElement.clientHeight - 200,
-				resizable : true,
-				draggable : true,
-				closeAction : 'hide',
-				title : '<span class="commoncss">策略详细配置</span>',
-				iconCls : 'app_rightIcon',
-				modal : true,
-				collapsible : true,
-				maximizable : true,
-				animCollapse : true,
-				animateTarget : document.head,
-				buttonAlign : 'right',
-				constrain : true,
-				border : false,
-				items : [{
-							region : 'center',
-							id : 'pptgridmanage',
-							header : false,
-							collapsible : true,
-							split : true
-						}, {
-							region : 'west',
-							layout : 'border',
-							id : 'editview',
-							split : true,
-							width : 500,
-							items : [infoViewForm, stgdisptree
-							// ,
-							// addUserGroupSelectCmbForm
-							]
-						}, {
-							region : 'south',
-							title : '调度配置',
-							layout : 'border',
-							split : true,
-							height : 200,
-							items : [radioForm, cardPanel]
-						}],
-				buttons : [{
-							text : '关闭',
-							iconCls : 'deleteIcon',
-							handler : function() {
-								editstgWindow.hide();
-							}
-						}]
-			});
+		layout : 'border',
+		width : document.documentElement.clientWidth - 200,
+		height : document.documentElement.clientHeight - 200,
+		resizable : true,
+		draggable : true,
+		closeAction : 'hide',
+		title : '<span class="commoncss">策略详细配置</span>',
+		iconCls : 'app_rightIcon',
+		modal : true,
+		collapsible : true,
+		maximizable : true,
+		animCollapse : true,
+		animateTarget : document.head,
+		buttonAlign : 'right',
+		constrain : true,
+		border : false,
+		items : [{
+			region : 'center',
+			layout : 'border',
+			id : 'stginfos',
+			split : true,
+			width : 500,
+			items : [{
+						region : 'center',
+						layout : 'border',
+						id : 'pptgridAndInfo',
+						split : true,
+						items : [{
+									region : 'west',
+									frame : true,
+									width : 240,
+									layout : 'fit',
+									split : true,
+									autoScroll : true,
+									title : '策略属性',
+									id : 'pptgridmanage'
+								}, {
+									region : 'center',
+									layout : 'border',
+									split : true,
+									height : 220,
+									items : [infoViewForm, radioForm, cardPanel]
+								}]
+					}]
+		}, {
+			region : 'west',
+			layout : 'border',
+			id : 'editview',
+			split : true,
+			width : 260,
+			items : [stgdisptree]
+		}],
+		buttons : [{
+					text : '关闭',
+					iconCls : 'deleteIcon',
+					handler : function() {
+						editstgWindow.hide();
+					}
+				}]
+	});
 	// 为Combo加入选择事件 TODO
 	fromSelectUserGroupCombo.on('select', function(combo, record, index) {
 				var agroup = fromSelectUserGroupCombo.getRawValue();
@@ -1367,7 +1374,7 @@ Ext.onReady(function() {
 		var triggerType = trigger.triggerType;
 		var cron = trigger.cron;
 		var start = trigger.start;
-		var sdate = new Date(start);
+		var sdate = renderDateHis(start);
 		var repeatTimes = trigger.repeatTimes;
 		var repeatInternal = trigger.repeatInternal;
 		var remind = trigger.remind;
