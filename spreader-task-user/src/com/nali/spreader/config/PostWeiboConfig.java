@@ -41,7 +41,7 @@ public class PostWeiboConfig implements Serializable {
 	private Range<Integer> atCount;
 	@PropertyDescription("内容长度")
 	private Range<Integer> contentLength;
-	@PropertyDescription("帖子数量")
+	@PropertyDescription("操作的微博数")
 	private Range<Integer> postNumber;
 	@PropertyDescription("发送间隔(分钟)")
 	private Integer postInterval;
