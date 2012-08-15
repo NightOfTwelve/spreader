@@ -8,7 +8,7 @@
 // 创建简单调度的FORM
 var simpleDispForm = new Ext.form.FormPanel({
 			id : 'simpcard',
-			height : 80,
+			height : 150,
 			frame : true,
 			layout : "form", // 整个大的表单是form布局
 			labelWidth : 100,
@@ -18,13 +18,7 @@ var simpleDispForm = new Ext.form.FormPanel({
 				items : [{
 							columnWidth : .3, // 该列有整行中所占百分比
 							layout : "form", // 从上往下的布局
-							items : [{
-										xtype : "datetimefield",
-										fieldLabel : "开始时间",
-										name : 'start',
-										minValue : new Date(),
-										width : 150
-									}]
+							items : [calendarCmp('start', 'start', '开始时间')]
 						}, {
 							columnWidth : .3,
 							layout : "form",
@@ -53,7 +47,8 @@ var simpleDispForm = new Ext.form.FormPanel({
 							radioForm, simpleDispForm, editstgWindow, null,
 							null, null, null, strategyIdHidden.getValue(),
 							strategyIdHidden.getValue(), null, groupTypeHidden
-									.getValue(), objIdHidden.getValue(), null);
+									.getValue(), objIdHidden.getValue(), null,
+							noticeIdHidden.getValue());
 				}
 			}, {
 				text : "重置",
@@ -64,7 +59,8 @@ var simpleDispForm = new Ext.form.FormPanel({
 		});
 // 表达式配置FORM
 var triggerDispForm = new Ext.form.FormPanel({
-			height : 80,
+			autoWidth : true,
+			height : 150,
 			id : 'trgcard',
 			frame : true,
 			layout : "form", // 整个大的表单是form布局
@@ -98,10 +94,10 @@ var triggerDispForm = new Ext.form.FormPanel({
 		});
 // 首先创建一个card布局的Panel
 var cardPanel = new Ext.Panel({
-			region : 'center',
+			region : 'south',
 			id : 'cardPanel',
-			height : 100,
 			layout : 'card',
+			split : true,
 			activeItem : 0,
 			// bodyStyle : 'padding:15px',
 			defaults : {
@@ -118,10 +114,12 @@ radioTbar.add({
 		})
 // RADIO组件
 var radioForm = new Ext.form.FormPanel({
-			region : 'north',
 			frame : true,
-			height : 80,
+			title : '调度配置',
+			region : 'center',
+			height : 200,
 			labelWidth : 65,
+			split : true,
 			labelAlign : "left",
 			items : [{
 						xtype : 'radiogroup',
@@ -159,7 +157,27 @@ var radioForm = new Ext.form.FormPanel({
 					}],
 			tbar : radioTbar
 		});
-
+// 嵌入的FORM
+var infoViewForm = new Ext.form.FormPanel({
+			title : '策略信息',
+			id : 'infoViewForm',
+			split : true,
+			hidden : true,
+			autoScroll : true,
+			height : 150,
+			region : 'north',
+			frame : true, // 是否渲染表单面板背景色
+			defaultType : 'textfield', // 表单元素默认类型
+			labelAlign : 'left', // 标签对齐方式
+			bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
+			items : [{
+						xtype : 'label',
+						fieldLabel : '策略信息',
+						id : 'stginfo',
+						labelStyle : 'padding:0px',
+						text : ''
+					}]
+		});
 // 创建策略维护的窗口组件
 var editstgWindow = new Ext.Window({
 			layout : 'border',
@@ -179,26 +197,42 @@ var editstgWindow = new Ext.Window({
 			constrain : true,
 			border : false,
 			items : [{
-						region : 'center',
-						id : 'pptgridmanage',
-						header : false,
-						collapsible : true,
-						split : true
-					}, {
-						region : 'west',
-						split : true,
-						width : 200,
-						minWidth : 175,
-						maxWidth : 400,
-						items : [strategyTree]
-					}, {
-						region : 'south',
-						title : '调度配置',
-						layout : 'border',
-						split : true,
-						height : 200,
-						items : [radioForm, cardPanel]
-					}],
+				region : 'center',
+				layout : 'border',
+				id : 'stginfos',
+				split : true,
+				width : 500,
+				items : [{
+							region : 'center',
+							layout : 'border',
+							id : 'pptgridAndInfo',
+							split : true,
+							items : [{
+										region : 'west',
+										frame : true,
+										width : 240,
+										layout : 'fit',
+										split : true,
+										autoScroll : true,
+										title : '策略属性',
+										id : 'pptgridmanage'
+									}, {
+										region : 'center',
+										layout : 'border',
+										split : true,
+										height : 220,
+										items : [infoViewForm, radioForm,
+												cardPanel]
+									}]
+						}]
+			}, {
+				region : 'west',
+				layout : 'border',
+				id : 'stgTree',
+				split : true,
+				width : 260,
+				items : [strategyTree]
+			}],
 			buttons : [{
 						text : '关闭',
 						iconCls : 'deleteIcon',
@@ -229,7 +263,7 @@ function settingTrigger(trigger) {
 	var triggerType = trigger.triggerType;
 	var cron = trigger.cron;
 	var start = trigger.start;
-	var sdate = new Date(start);
+	var sdate = renderDateHis(start);
 	var repeatTimes = trigger.repeatTimes;
 	var repeatInternal = trigger.repeatInternal;
 	var remind = trigger.remind;
@@ -245,7 +279,7 @@ function settingTrigger(trigger) {
 	tsimpleDispForm.findField("repeatInternal").setValue(repeatInternal);
 	ttriggerDispForm.findField("cron").setValue(cron);
 	var remindcmp = Ext.getCmp("jobremind");
-	var tstr = '任务:' + rendDispName(strategyIdHidden.getValue()) + ',编号:'
+	var tstr = '任务:' + rendDispNameFn(strategyIdHidden.getValue()) + ',编号:'
 			+ objIdHidden.getValue() + ',目前运行信息:' + remind;
 	remindcmp.setText('<font color = "red">' + tstr + '</font>');
 }
@@ -313,39 +347,6 @@ function deleteData() {
 	} else {
 		Ext.Msg.alert("提示", "请选择要删除的调度");
 		return;
-	}
-}
-/**
- * 获取策略的中文名
- */
-var dispNameStore = new Ext.data.Store({
-			// 代理模式
-			proxy : new Ext.data.HttpProxy({
-						url : '../strategydisp/combstore'
-					}),
-			// 读取模式
-			reader : new Ext.data.JsonReader({}, [{
-								name : 'name'
-							}, {
-								name : 'displayName'
-							}]),
-			autoLoad : true
-		});
-/**
- * 渲染策略名称为中文名
- * 
- * @param {}
- *            value
- * @return {}
- */
-function rendDispName(value) {
-	var list = dispNameStore.reader.jsonData;
-	for (var idx in list) {
-		var tmp = list[idx].name;
-		var dname = list[idx].displayName;
-		if (value == tmp) {
-			return dname;
-		}
 	}
 }
 /**

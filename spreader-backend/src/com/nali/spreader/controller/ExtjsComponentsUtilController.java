@@ -117,6 +117,17 @@ public class ExtjsComponentsUtilController extends BaseController {
 		return this.write(pr);
 	}
 
+	/**
+	 * websiteId下拉框
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/website")
+	public String websiteIdComboxStore() {
+		return this.write(this.extjsService.findWebsite());
+	}
+
 	@Override
 	public String init() {
 		return null;

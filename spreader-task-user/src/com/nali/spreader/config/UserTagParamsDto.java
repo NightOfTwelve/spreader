@@ -29,6 +29,16 @@ public class UserTagParamsDto implements Serializable {
 	private Boolean isRobot;
 	// 地区
 	private String province;
+	// 网站分类
+	private Integer websiteId;
+
+	public Integer getWebsiteId() {
+		return websiteId;
+	}
+
+	public void setWebsiteId(Integer websiteId) {
+		this.websiteId = websiteId;
+	}
 
 	public String getProvince() {
 		return province;

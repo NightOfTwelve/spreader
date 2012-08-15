@@ -3,10 +3,10 @@
 <head>
 <title>策略分组管理</title>
 #parse("/show/comm/PublicInclude.vm")
-#parse("/show/comm/DateTimeFieldInclude.vm")
+#parse("/show/comm/My97DateInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/SelectUserGroupCombo.js'))"></script>
 #parse("/show/comm/TaskJobResultQueryInclude.vm")
-#parse("/show/comm/StrategyDispatchCmpInclude.vm")
+#parse("/show/comm/StrategyDisplayNameCmpInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategygroup/StrategyGroupManageModel.js'))"></script>
 #parse("/show/comm/FunctionsInclude.vm")
 </head>

@@ -149,13 +149,6 @@ Ext.onReady(function() {
 				fields : ['ID', 'NAME'],
 				data : [['0', '静态分组'], ['1', '动态分组'], ['2', '手动分组']]
 			});
-	/**
-	 * 网站类型的COMB的数据源
-	 */
-	var websiteStore = new Ext.data.ArrayStore({
-				fields : ['ID', 'NAME'],
-				data : [['1', '新浪微博']]
-			});
 
 	/**
 	 * 用户分组查询FORM
@@ -178,7 +171,6 @@ Ext.onReady(function() {
 								items : [{
 											fieldLabel : '分组类型',
 											xtype : 'combo',
-											width : 100,
 											store : groupTypeStore,
 											id : 'gtype',
 											hiddenName : 'gtype',
@@ -188,26 +180,15 @@ Ext.onReady(function() {
 											mode : 'local',
 											forceSelection : false,// 必须选择一项
 											emptyText : '分组类型...',// 默认值
-											triggerAction : 'all'
+											triggerAction : 'all',
+											anchor : '53%'
 										}]
 							}, {
 								columnWidth : .3, // 该列有整行中所占百分比
 								layout : "form", // 从上往下的布局
-								items : [{
-											fieldLabel : '网站类型',
-											xtype : 'combo',
-											width : 100,
-											store : websiteStore,
-											id : 'websiteid',
-											hiddenName : 'websiteid',
-											valueField : 'ID',
-											editable : false,
-											displayField : 'NAME',
-											mode : 'local',
-											forceSelection : false,// 必须选择一项
-											emptyText : '网站类型...',// 默认值
-											triggerAction : 'all'
-										}]
+								items : [webSiteComboUtil(
+										'selectWebSiteComboBakUtil',
+										'selectWebSiteComboBakUtil', null, null)]
 							}, {
 								columnWidth : .3,
 								layout : "form",
@@ -215,7 +196,7 @@ Ext.onReady(function() {
 											xtype : "textfield",
 											fieldLabel : "分组名称",
 											name : 'groupName',
-											width : 100
+											anchor : '53%'
 										}]
 							}]
 				}, {
@@ -329,7 +310,7 @@ Ext.onReady(function() {
 								.getValue();
 						var groupName = tform.findField('groupName').getValue();
 						var gtype = tform.findField('gtype').getValue();
-						var websiteid = tform.findField('websiteid').getValue();
+						var websiteid = tform.findField('websiteId').getValue();
 						var propField = tform.findField('propValBox')
 								.getValue();
 						var propValue = 0;
@@ -606,25 +587,6 @@ Ext.onReady(function() {
 				editable : false,
 				anchor : '100%'
 			});
-	// 网站类型COMB
-	var websiteCombo = new Ext.form.ComboBox({
-				hiddenName : 'websiteid',
-				id : 'websiteCombo',
-				fieldLabel : '网站类型',
-				emptyText : '请选择网站类型...',
-				triggerAction : 'all',
-				store : websiteStore,
-				displayField : 'NAME',
-				valueField : 'ID',
-				loadingText : '正在加载数据...',
-				mode : 'local', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取
-				forceSelection : true,
-				typeAhead : true,
-				resizable : true,
-				allowBlank : false,
-				editable : false,
-				anchor : '100%'
-			});
 	// 选择事件，用于联动
 	gtypeCombo.on('select', function() {
 				var value = gtypeCombo.getValue();
@@ -636,14 +598,17 @@ Ext.onReady(function() {
 			});
 	// 嵌入的FORM
 	var addGroupCmbForm = new Ext.form.FormPanel({
-				id : 'addGroupCmbForm',
-				name : 'addGroupCmbForm',
-				labelWidth : 100, // 标签宽度
-				frame : true, // 是否渲染表单面板背景色
-				defaultType : 'textfield', // 表单元素默认类型
-				labelAlign : 'left', // 标签对齐方式
-				bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
-				items : [gtypeCombo, websiteCombo, {
+		id : 'addGroupCmbForm',
+		name : 'addGroupCmbForm',
+		labelWidth : 100, // 标签宽度
+		frame : true, // 是否渲染表单面板背景色
+		defaultType : 'textfield', // 表单元素默认类型
+		labelAlign : 'left', // 标签对齐方式
+		bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
+		items : [
+				gtypeCombo,
+				webSiteComboUtil('selectWebSiteComboUtil',
+						'selectWebSiteComboUtil', null, null), {
 					xtype : "textfield",
 					fieldLabel : "分组名称",
 					name : 'gname',
@@ -682,7 +647,7 @@ Ext.onReady(function() {
 					name : 'description',
 					width : 100
 				}]
-			});
+	});
 	// 添加用户分组弹出窗口
 	var addGroupWindow = new Ext.Window({
 				title : '<span class="commoncss">新增用户分组</span>', // 窗口标题
@@ -708,7 +673,9 @@ Ext.onReady(function() {
 						// 分组类型
 						var gtype = gtypeCombo.getValue();
 						// 网站类型
-						var websiteid = websiteCombo.getValue();
+						// var websiteid = selectWebSiteComboUtil.getValue();
+						var websiteid = addForm.findField('websiteId')
+								.getValue();
 						// 分组名称
 						var gname = addForm.findField('gname').getValue();
 						// 分组说明
@@ -806,10 +773,10 @@ Ext.onReady(function() {
 			});
 	// ///////////////////添加用户部分代码//////////////////
 	// 为Combo加入选择事件
-	selectComboUtil.on('select', function(combo, record, index) {
-				var uid = selectComboUtil.getValue();
-				var uname = selectComboUtil.getRawValue();
-				var tutil = Ext.getCmp('selectComboUtil');
+	selectUserComboUtil.on('select', function(combo, record, index) {
+				var uid = selectUserComboUtil.getValue();
+				var uname = selectUserComboUtil.getRawValue();
+				var tutil = Ext.getCmp('selectUserComboUtil');
 				if (!Ext.isEmpty(uid)) {
 					if (userArray.indexOf(uid) < 0) {
 						userArray.push(uid);
@@ -840,7 +807,7 @@ Ext.onReady(function() {
 					id : 'groupinfo',
 					labelStyle : 'padding:0px',
 					text : ''
-				}, selectComboUtil, {
+				}, selectUserComboUtil, {
 					xtype : 'label',
 					fieldLabel : '已筛选人员',
 					id : 'selectusername',

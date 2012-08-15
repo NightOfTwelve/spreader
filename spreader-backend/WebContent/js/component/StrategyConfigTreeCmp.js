@@ -17,18 +17,23 @@ var isGroupHidden = new Ext.form.Hidden({
 var groupTypeHidden = new Ext.form.Hidden({
 			name : 'groupTypeHidden'
 		});
+// 策略默认data
+var defaultData = new Ext.form.Hidden({
+			name : 'defaultData'
+		});
+// 消息ID
+var noticeIdHidden = new Ext.form.Hidden({
+			name : 'noticeHidden'
+		});
 // 构造树的根节点ROOT
 var strategyRoot = new Ext.tree.AsyncTreeNode({
 			id : '-1',
 			text : '配置列表'
 		});
-// 策略默认data
-var defaultData = new Ext.form.Hidden({
-			name : 'defaultData'
-		});
 // 策略列表树
 var strategyTree = new Ext.tree.TreePanel({
 	id : 'strategyTree',
+	region : 'center',
 	autoScroll : false,
 	autoHeight : true,
 	expanded : true,
@@ -76,10 +81,10 @@ var strategyTree = new Ext.tree.TreePanel({
 });
 strategyTree.expand(true, true);
 // 树形编辑器
-var treeEditor = new Ext.tree.TreeEditor(Ext.getCmp('strategyTree'), {
-			id : 'stgtreeEdit',
-			allowBlank : false
-		});
+//var treeEditor = new Ext.tree.TreeEditor(Ext.getCmp('strategyTree'), {
+//			id : 'stgtreeEdit',
+//			allowBlank : false
+//		});
 /**
  * 右键菜单相关代码
  */
@@ -116,3 +121,19 @@ strategyTree.on('contextmenu', function(node, event) {
 			node.select();
 			rightMenu.showAt(event.getXY());// 取得鼠标点击坐标，展示菜单
 		});
+/**
+ * 清空隐藏域内容
+ */
+function cleanHidden() {
+	// 策略ID隐藏域
+	strategyIdHidden.setValue(null);
+	// 策略对象ID隐藏域
+	objIdHidden.setValue(null);
+	// 分组类型隐藏域
+	groupTypeHidden.setValue(null);
+	// 是否分组隐藏域
+	isGroupHidden.setValue(null);
+	// 消息ID
+	noticeIdHidden.setValue(null);
+	defaultData.setValue(null);
+}

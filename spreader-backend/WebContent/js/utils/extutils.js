@@ -168,7 +168,22 @@ function renderDateHis(value) {
 			? new Date(value).format('Y-m-d H:i:s')
 			: '';
 }
+/**
+ * 日期格式化汉字模式
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function renderDateNYRHis(value) {
+	return value != null && value != '' ? new Date(value)
+			.format('Y年m月d日 H时i分s秒') : '';
+}
 
+function string2Date(str) {
+	var d = new Date(Date.parse(str.replace(/-/g, "/")));
+	return d;
+}
 /**
  * 获取默认日期
  * 

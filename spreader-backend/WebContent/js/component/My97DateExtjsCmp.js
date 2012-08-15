@@ -17,16 +17,19 @@ function calendarCmp(fieldId, fieldName, text, dateTimeParams) {
 		this.readOnly = true; // 不允许在文本输入框中修改时间
 		// 4.8版本可以，如切换到4.7则为false
 		this.isShowWeek = true; // 默认显示周
-		this.startDate = '%y-%M-01 00:00:00'; // 开始时间
-		this.dateFmt = 'yyyy-MM-dd HH:mm:ss'; // 格式化时间
+		this.startDate = ''; // 开始时间
+		// this.dateFmt = 'yyyy年M月d日 HH时mm分ss秒'; // 格式化时间 年月日格式
+		this.dateFmt = 'yyyy-MM-dd HH:mm:ss';
 		this.alwaysUseStartDate = true; // 默认使用初始时间
+		this.autoPickDate = true;// 为false时 点日期的时候不自动输入,而是要通过确定才能输入,为true时
+		// 即点击日期即可返回日期值
 	};
 	// 构造参数取形参还是默认参数
 	var params = dateTimeParams ? dateTimeParams : defaultDateTimeParams;
 	// 采用TriggerField，保持与extjs控件一致
 	var triggerField = new Ext.form.TriggerField({
 				fieldLabel : Ext.isEmpty(text) ? '查询时间' : text,
-				labelWidth : 90,
+				labelWidth : 100,
 				id : Ext.isEmpty(fieldId) ? 'startDate' : fieldId,
 				name : Ext.isEmpty(fieldName) ? 'startDate' : fieldName,
 				// 使用TextField用到的样式
@@ -35,7 +38,7 @@ function calendarCmp(fieldId, fieldName, text, dateTimeParams) {
 				// cls : 'Wdate',
 				// 指定按钮的样式
 				triggerClass : 'x-form-date-trigger',
-				anchor : '60%',
+				anchor : '90%',
 				labelStyle : 'text-align:right;width:90;',
 				// TriggerField点击按钮函数
 				onTriggerClick : function(field) {

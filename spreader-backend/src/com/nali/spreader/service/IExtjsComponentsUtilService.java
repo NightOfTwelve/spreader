@@ -1,5 +1,8 @@
 package com.nali.spreader.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.data.Category;
@@ -39,4 +42,11 @@ public interface IExtjsComponentsUtilService {
 	 * @return
 	 */
 	PageResult<Category> findCategoryByName(String name, Limit limit);
+
+	/**
+	 * 获取所有website
+	 * 
+	 * @return
+	 */
+	List<Map<String, Object>> findWebsite();
 }

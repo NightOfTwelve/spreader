@@ -6,13 +6,14 @@ Ext.onReady(function() {
 	// 主布局设置
 	var mainviewport = new Ext.Viewport({
 				layout : 'border',
-				items : [{
-					region : 'north',
-					title : '营销管理系统 <font color="blue">'
-							+ new Date().format('Y-m-d')
-							+ ' <span id="rTime"><span></font>',
-					frame : true,
-					html : '<br><center><font size=6>那里营销后台管理系统</font></center>',
+				items : [
+								// {
+								// region : 'north',
+								// title : '营销管理系统 <font color="blue">'
+								// + new Date().format('Y-m-d')
+								// + ' <span id="rTime"><span></font>',
+								//					frame : true,
+								//					html : '<br><center><font size=6>那里营销后台管理系统</font></center>',
 					// html:'<img border="0" width="450"
 					// height="70"src="$StaticConfig.u('../images/logo.jpg')"
 					// ></img>',
@@ -26,10 +27,11 @@ Ext.onReady(function() {
 					// Date().format('Y-m-d')+' <span
 					// id="rTime"><span></font></td></tr><tr align="right"><td>'
 					// },
-					border : false,
-					layout : 'fit'
-						// autoHeight : true
-				}, {
+//					border : false,
+//					layout : 'fit'
+//						// autoHeight : true
+//				},
+				{
 					region : 'center',
 					header : false,
 					// collapsible : true,
@@ -39,7 +41,9 @@ Ext.onReady(function() {
 					items : [mainTabPanel]
 				}, {
 					region : 'west',
-					title : '系统导航',
+					title : '系统导航 <font color="blue">'
+							+ new Date().format('Y-m-d')
+							+ ' <span id="rTime"><span></font>',
 					split : true,
 					collapsible : true,
 					autoHeight : true,

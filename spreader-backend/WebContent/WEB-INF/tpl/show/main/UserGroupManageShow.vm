@@ -9,7 +9,8 @@
 #parse("/show/comm/PublicInclude.vm")
 #parse("/show/comm/DateTimeFieldInclude.vm")
 #parse("/show/comm/FunctionsInclude.vm")
-<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/SelectUserCombo.js'))"></script>
+#parse("/show/comm/WebsiteSelectCmpInclude.vm")
+#parse("/show/comm/UserSelectCmpInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/usergroup/UserGroupManageModel.js'))"></script>
 </head>
 <body>

@@ -3,12 +3,12 @@
 <head>
 <title>消息系统</title>
 #parse("/show/comm/PublicInclude.vm")
-#parse("/show/comm/DateTimeFieldInclude.vm")
+#parse("/show/comm/My97DateInclude.vm")
 #parse("/show/comm/NoticeCmpInclude.vm")
-#parse("/show/comm/StrategyDispatchCmpInclude.vm")
+#parse("/show/comm/StrategyDisplayNameCmpInclude.vm")
 #parse("/show/comm/FunctionsInclude.vm")
 #parse("/show/comm/TaskJobResultQueryInclude.vm")
-#parse("/show/comm/StrategyDisplayNameCmpInclude.vm")
+#parse("/show/comm/StrategyDispatchCmpInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/SelectUserCombo.js'))"></script>
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/notice/NoticeSystemModel.js'))"></script>
 </head>

@@ -1,5 +1,7 @@
 package com.nali.spreader.controller;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +34,7 @@ public class RobotRegistIfoController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/robotlist")
-	public String robotUserInfo(String nickName, String province, Integer start, Integer limit) {
+	public String robotUserInfo(Date startDate,String nickName, String province, Integer start, Integer limit) {
 		Limit lit = this.initLimit(start, limit);
 		PageResult<RobotRegister> pr = userService.findRobotRegisterInfo(nickName, province, lit);
 		return this.write(pr);

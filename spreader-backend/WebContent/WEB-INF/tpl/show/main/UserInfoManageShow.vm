@@ -4,6 +4,7 @@
 <title>用户信息管理查询</title>
 #parse("/show/comm/PublicInclude.vm")
 #parse("/show/comm/LockingGridInclude.vm")
+#parse("/show/comm/WebsiteSelectCmpInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/user/UserFansInfoDtlGrid.js'))"></script>
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/user/UserRobotFansInfoDtlGrid.js'))"></script>
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/user/UserInfoSinaGrid.js'))"></script>

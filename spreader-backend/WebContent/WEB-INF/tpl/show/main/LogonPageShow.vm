@@ -7,5 +7,7 @@
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/logon/SystemLogonModel.js'))"></script>
 </head>
 <body>
+<div id="logon"><br><center><font size=3>那里营销后台管理系统</font></center>
+</div>
 </body>
 </html>

@@ -2,6 +2,7 @@ Ext.onReady(function() {
 			// 系统登录FORM
 			var logonForm = new Ext.form.FormPanel({
 						frame : true,
+						el:'logon',
 						name : 'logonForm',
 						id : 'logonForm',
 						height : 120,
@@ -11,6 +12,7 @@ Ext.onReady(function() {
 						items : [{
 									fieldLabel : '账&nbsp;户',
 									allowBlank : false,
+									id : 'accountId',
 									name : 'accountId',
 									anchor : '90%',
 									listeners : {
@@ -23,6 +25,7 @@ Ext.onReady(function() {
 								}, {
 									fieldLabel : '密&nbsp;码',
 									name : 'password',
+									id : 'password',
 									allowBlank : false,
 									inputType : 'password', // 设置为密码框输入类型
 									anchor : '90%',
@@ -68,12 +71,25 @@ Ext.onReady(function() {
 									}
 								}]
 					});
+			logonWin.on('show', function() {
+						var logonCmp = Ext.getCmp("logonForm");
+						var account = logonCmp.findById('accountId');
+						var password = logonCmp.findById('password');
+						var cookieAccountId = getCookie('spreader.account');
+						account.setValue(cookieAccountId);
+						if (Ext.isEmpty(cookieAccountId)) {
+							account.focus();
+						} else {
+							password.focus();
+						}
+					});
 			logonWin.show();
 			/**
 			 * 登录
 			 */
 			function logon() {
-				var logonForm = Ext.getCmp("logonForm").form;
+				var logonCmp = Ext.getCmp("logonForm");
+				var logonForm = logonCmp.form;
 				if (logonForm.isValid()) {
 					logonForm.submit({
 								url : '../account/logon?_time='
@@ -84,6 +100,12 @@ Ext.onReady(function() {
 								success : function(form, action) {
 									var result = action.result;
 									if (result.success) {
+										var accountId = logonCmp
+												.findById('accountId')
+												.getValue();
+										// 设置cookie
+										setCookie("spreader.account",
+												accountId, 30);
 										window.location.href = '../index/init';
 									} else {
 										Ext.Msg.alert('提示', '验证失败');
@@ -95,6 +117,37 @@ Ext.onReady(function() {
 									return;
 								}
 							});
+				}
+			}
+			/**
+			 * 设置cookie
+			 */
+			function setCookie(name, value, days) {
+				if (Ext.isEmpty(days)) {
+					days = 30;
+				}
+				var date = new Date();
+				date.setTime(date.getTime() + days * 24 * 3600 * 1000);
+				document.cookie = name + '=' + escape(value) + ';path=/spreader-backend;expires='
+						+ date.toGMTString();
+			}
+			/**
+			 * 获取cookie
+			 */
+			function getCookie(name) {
+				var search = name + "="
+				if (document.cookie.length > 0) {
+					offset = document.cookie.indexOf(search)
+					if (offset != -1) {
+						offset += search.length
+						end = document.cookie.indexOf(";", offset)
+						if (end == -1)
+							end = document.cookie.length
+						return unescape(document.cookie.substring(offset, end))
+					} else
+						return "";
+				} else {
+					return "";
 				}
 			}
 		});
