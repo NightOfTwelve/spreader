@@ -79,6 +79,7 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 			// 随机取出发送的微博内容
 			List<Long> sendContent = RandomUtil.randomItemsUnmodify(allContent, existsContent,
 					this.postRandom.get());
+			Date postTime = new Date();
 			if (!CollectionUtils.isEmpty(sendContent)) {
 				for (Long cid : sendContent) {
 					Content c = this.contentService.getContentById(cid);
@@ -87,7 +88,7 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 					if (postInterval == null) {
 						postInterval = PostWeiboConfig.DEFAULT_INTERVAL;
 					}
-					Date postTime = DateUtils.addMinutes(new Date(), postInterval);
+					postTime = DateUtils.addMinutes(postTime, postInterval);
 					WeiboContentDto param = WeiboContentDto.getWeiboContentDto(uid, c, postTime);
 					this.postWeiboContent.send(param);
 					this.robotContentService.save(uid, cid, RobotContent.TYPE_POST);

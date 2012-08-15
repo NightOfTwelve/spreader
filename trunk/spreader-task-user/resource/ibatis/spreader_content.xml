@@ -217,6 +217,22 @@
 			at_count &lt;=
 			#atCount.lte#
 		</isNotNull>
+		<isNotNull prepend="and" property="refCount.gte">
+			ref_count &gt;=
+			#refCount.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="refCount.lte">
+			ref_count &lt;=
+			#refCount.lte#
+		</isNotNull>
+		<isNotNull prepend="and" property="replyCount.gte">
+			reply_count &gt;=
+			#replyCount.gte#
+		</isNotNull>
+		<isNotNull prepend="and" property="replyCount.lte">
+			reply_count &lt;=
+			#replyCount.lte#
+		</isNotNull>
 		<isNotNull prepend="and" property="contentLength.gte">
 			content_length &gt;=
 			#contentLength.gte#

@@ -51,6 +51,10 @@ public class PostWeiboConfig implements Serializable {
 	private Range<Long> fans;
 	@PropertyDescription("文章数")
 	private Range<Long> articles;
+	@PropertyDescription("转发数")
+	private Range<Integer> refCount;
+	@PropertyDescription("回复数")
+	private Range<Integer> replyCount;
 
 	public PostWeiboContentDto getPostWeiboContentDto(List<String> sendKeywords) {
 		PostWeiboContentDto query = new PostWeiboContentDto();
@@ -90,7 +94,25 @@ public class PostWeiboConfig implements Serializable {
 		query.setvType(vType);
 		query.setFans(fans);
 		query.setArticles(articles);
+		query.setRefCount(this.getRefCount());
+		query.setReplyCount(this.getReplyCount());
 		return query;
+	}
+
+	public Range<Integer> getRefCount() {
+		return refCount;
+	}
+
+	public void setRefCount(Range<Integer> refCount) {
+		this.refCount = refCount;
+	}
+
+	public Range<Integer> getReplyCount() {
+		return replyCount;
+	}
+
+	public void setReplyCount(Range<Integer> replyCount) {
+		this.replyCount = replyCount;
 	}
 
 	public Range<Integer> getContentLength() {

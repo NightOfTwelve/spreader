@@ -15,11 +15,11 @@ var addUserStore = new Ext.data.Store({
 							}])
 		});
 // 用户筛选模版
-var resultTpl = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{id}({nickName})</span></div></tpl>');
+var userResultTpl = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{id}({nickName})</span></div></tpl>');
 // 用户筛选的Combo
-var selectComboUtil = new Ext.form.ComboBox({
+var selectUserComboUtil = new Ext.form.ComboBox({
 			hiddenName : 'id',
-			id : 'selectComboUtil',
+			id : 'selectUserComboUtil',
 			fieldLabel : '选择人员',
 			emptyText : '请选择人员...',
 			triggerAction : 'all',
@@ -34,7 +34,7 @@ var selectComboUtil = new Ext.form.ComboBox({
 			minChars : 1,
 			pageSize : 10,
 			itemSelector : 'div.x-combo-list-item',
-			tpl : resultTpl,
+			tpl : userResultTpl,
 			editable : true,
 //			enableKeyEvents:true,
 			anchor : '100%'

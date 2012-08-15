@@ -37,6 +37,26 @@ public class PostWeiboContentDto implements Serializable {
 	private Range<Date> pubDate;
 	// 是否有筛选用户的标识符
 	private Boolean userCondition;
+	// 转发数
+	private Range<Integer> refCount;
+	// 回复数
+	private Range<Integer> replyCount;
+
+	public Range<Integer> getRefCount() {
+		return refCount;
+	}
+
+	public void setRefCount(Range<Integer> refCount) {
+		this.refCount = refCount;
+	}
+
+	public Range<Integer> getReplyCount() {
+		return replyCount;
+	}
+
+	public void setReplyCount(Range<Integer> replyCount) {
+		this.replyCount = replyCount;
+	}
 
 	public Boolean getUserCondition() {
 		return userCondition;

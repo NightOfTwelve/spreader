@@ -17,12 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 
 public class CheckAccountStatusFilter implements Filter, InitializingBean {
-
-	private static final Logger logger = Logger.getLogger(CheckAccountStatusFilter.class);
 
 	// 无需验证的URL
 	private List<String> noCheckPach;
@@ -41,17 +38,33 @@ public class CheckAccountStatusFilter implements Filter, InitializingBean {
 		HttpSession session = req.getSession();
 		String accountId = (String) session.getAttribute("accountId");
 		String uri = req.getRequestURI();
+		String serverName = req.getServerName();
+		int port = req.getServerPort();
+		String url = getServerUrl(serverName, port);
 		if (!uri.startsWith("/spreader-backend/account/") && !canPass(uri)) {
 			if (StringUtils.isEmpty(accountId)) {
-				resp.sendRedirect("/spreader-backend/account/init");
-				return;
+				if (isAjaxRequest(req) || isExtJsRequest(req)) {
+					// 未授权
+					resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					return;
+				}
+				if (StringUtils.isNotEmpty(url)) {
+					resp.getWriter().write(
+							"<script type=\"text/javascript\">parent.location.href='" + url
+									+ "/spreader-backend/account/init'</script>");
+					resp.getWriter().flush();
+					resp.getWriter().close();
+					return;
+				} else {
+					resp.sendRedirect("/spreader-backend/account/init");
+				}
 			}
 		}
 		filterChain.doFilter(request, response);
 	}
 
 	@Override
-	public void init(FilterConfig arg0) throws ServletException {
+	public void init(FilterConfig cfg) throws ServletException {
 
 	}
 
@@ -67,6 +80,20 @@ public class CheckAccountStatusFilter implements Filter, InitializingBean {
 	private boolean isAjaxRequest(HttpServletRequest request) {
 		String requestedWith = request.getHeader("x-requested-with");
 		if (requestedWith != null && "XMLHttpRequest".equals(requestedWith)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * ExtJs的request
+	 * 
+	 * @param request
+	 * @return
+	 */
+	private boolean isExtJsRequest(HttpServletRequest request) {
+		String requestedWith = request.getHeader("x-requested-with");
+		if (requestedWith != null && "Ext.basex".equals(requestedWith)) {
 			return true;
 		}
 		return false;
@@ -96,4 +123,16 @@ public class CheckAccountStatusFilter implements Filter, InitializingBean {
 		}
 		return compilePachPattern;
 	}
+
+	private String getServerUrl(String serverName, Integer port) {
+		StringBuffer buff = new StringBuffer();
+		if (StringUtils.isNotEmpty(serverName) && port != null) {
+			buff.append("http://").append(serverName).append(":").append(port);
+		}
+		return buff.toString();
+	}
+
+	// public static void main(String...strings) {
+	//
+	// }
 }

@@ -1,4 +1,1 @@
-<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/StrategyConfigTreeCmp.js'))"></script>
-<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/StrategyPropertyCmp.js'))"></script>
-<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/DispatchConfigCmp.js'))"></script>
-<br />
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/StrategyDisplayNameCmp.js'))"></script>

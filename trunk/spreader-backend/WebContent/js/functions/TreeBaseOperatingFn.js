@@ -229,7 +229,7 @@ function strategyDispatchSubmitTreeData(stgdisptree, triggerDispForm,
  */
 function strategyGroupSubmitTreeData(stgdisptree, triggerDispForm, radioForm,
 		simpleDispForm, editstgWindow, store, groupStore, fromId, toId,
-		strategyId, groupName, groupNote, groupType, objId, groupId) {
+		strategyId, groupName, groupNote, groupType, objId, groupId,refid) {
 	// 获取ROOT数组
 	var treearray = stgdisptree.root.childNodes;
 	var tparam = {};
@@ -247,6 +247,7 @@ function strategyGroupSubmitTreeData(stgdisptree, triggerDispForm, radioForm,
 	// 分组ID
 	tparam['fromGroupId'] = fromId;
 	tparam['toGroupId'] = toId;
+	tparam['refId'] = refid;
 	if (treearray.length > 0) {
 		var arrayobj = treearray[0].attributes;
 		var submitStr = treejson2str(arrayobj);
@@ -262,7 +263,7 @@ function strategyGroupSubmitTreeData(stgdisptree, triggerDispForm, radioForm,
 	tparam['description'] = description;
 	tparam['triggerType'] = triggerType;
 	if (triggerType == 1) {
-		var start = renderDateHis(tsimpleDispForm.findField("start").getValue());
+		var start = tsimpleDispForm.findField("start").getValue();
 		var repeatTimes = tsimpleDispForm.findField("repeatTimes").getValue();
 		var repeatInternal = tsimpleDispForm.findField("repeatInternal")
 				.getValue();

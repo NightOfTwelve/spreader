@@ -4,6 +4,8 @@
 <title>机器人注册信息查询</title>
 #parse("/show/comm/PublicInclude.vm")
 #parse("/show/comm/LockingGridInclude.vm")
+#parse("/show/comm/DateTimeFieldInclude.vm")
+#parse("/show/comm/My97DateInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/user/UserRobotInfoSinaGrid.js'))"></script>
 </head>
 <body>

@@ -1,4 +1,3 @@
-
 /**
  * 运行状态的COMB的数据源
  */
@@ -78,29 +77,34 @@ var userSinaForm = new Ext.form.FormPanel({
 							layout : "form",
 							items : [{
 										xtype : "textfield",
-										fieldLabel : "分类",
+										fieldLabel : "用户标签",
 										name : 'tag'
 									}]
 						}]
 			}, {	// 行2
 						layout : "column",
 						items : [{
-									columnWidth : .33,
-									layout : "form",
-									items : [{
-												xtype : "numberfield",
-												fieldLabel : "粉丝数大于",
-												name : 'minFans'
-											}]
-								}, {
-									columnWidth : .33,
-									layout : "form",
-									items : [{
-												xtype : "numberfield",
-												fieldLabel : "粉丝数小于",
-												name : 'maxFans'
-											}]
-								}]
+							columnWidth : .33,
+							layout : "form",
+							items : [webSiteComboUtil(selectWebSiteComboUtil,
+									selectWebSiteComboUtil, null, null)]
+						}, {
+							columnWidth : .33,
+							layout : "form",
+							items : [{
+										xtype : "numberfield",
+										fieldLabel : "粉丝数大于",
+										name : 'minFans'
+									}]
+						}, {
+							columnWidth : .33,
+							layout : "form",
+							items : [{
+										xtype : "numberfield",
+										fieldLabel : "粉丝数小于",
+										name : 'maxFans'
+									}]
+						}]
 					}, { // 行3
 						layout : "column",
 						items : [{
@@ -135,6 +139,8 @@ var userSinaForm = new Ext.form.FormPanel({
 							.getValue();
 					var tag = tform.findField("tag").getValue();
 					var isRobot = tform.findField("isRobot").getValue();
+//					var websiteId = selectWebSiteComboUtil.getValue();
+					var websiteId = tform.findField('websiteId').getValue();
 					var num = numtext.getValue();
 					sinaUserStore.setBaseParam('nickName', Ext
 									.isEmpty(nickName) ? null : nickName);
@@ -149,6 +155,7 @@ var userSinaForm = new Ext.form.FormPanel({
 									? number
 									: Number(num));
 					sinaUserStore.setBaseParam('isRobot', isRobot);
+					sinaUserStore.setBaseParam('websiteId', websiteId);
 					sinaUserStore.load();
 				}
 			}, {
@@ -176,6 +183,8 @@ var sinaUserStore = new Ext.data.Store({
 								name : 'isRobot'
 							}, {
 								name : 'nickName'
+							}, {
+								name : 'websiteId'
 							}, {
 								name : 'gender'
 							}, {
@@ -259,6 +268,11 @@ var cm = new Ext.grid.ColumnModel([rownums, sm, {
 			header : '网站编号',
 			dataIndex : 'websiteUid',
 			// locked : true,
+			width : 80
+		}, {
+			header : '网站分类',
+			dataIndex : 'websiteId',
+			renderer : renderWebsiteType,
 			width : 80
 		}, {
 			header : '机器人',

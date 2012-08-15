@@ -148,14 +148,16 @@ Ext.onReady(function() {
 			});
 	// 嵌入的FORM
 	var addKeywordCmbForm = new Ext.form.FormPanel({
-				id : 'addKeywordCmbForm',
-				name : 'addKeywordCmbForm',
-				labelWidth : 120, // 标签宽度
-				frame : true, // 是否渲染表单面板背景色
-				defaultType : 'textfield', // 表单元素默认类型
-				labelAlign : 'left', // 标签对齐方式
-				bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
-				items : [selectCategoryComboUtil, {
+		id : 'addKeywordCmbForm',
+		name : 'addKeywordCmbForm',
+		labelWidth : 120, // 标签宽度
+		frame : true, // 是否渲染表单面板背景色
+		defaultType : 'textfield', // 表单元素默认类型
+		labelAlign : 'left', // 标签对齐方式
+		bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
+		items : [
+				categoryComboCmp('selectCategoryComboUtil',
+						'selectCategoryComboUtil', null, null), {
 					xtype : "textfield",
 					fieldLabel : "标签名称",
 					name : 'keywordName',
@@ -205,7 +207,7 @@ Ext.onReady(function() {
 					emptyText : '...',// 默认值
 					triggerAction : 'all'
 				}]
-			});
+	});
 	// 添加新关键字
 	var addKeywordWindow = new Ext.Window({
 				title : '<span class="commoncss">新建关键字</span>', // 窗口标题
@@ -228,7 +230,9 @@ Ext.onReady(function() {
 					handler : function() { // 按钮响应函数
 						var addForm = addKeywordCmbForm.getForm();
 						// 分类ID
-						var categoryId = selectCategoryComboUtil.getValue();
+						// var categoryId = selectCategoryComboUtil.getValue();
+						var categoryId = addForm.findField('categoryId')
+								.getValue();
 						// 关键字
 						var keywordName = addForm.findField('keywordName')
 								.getValue();

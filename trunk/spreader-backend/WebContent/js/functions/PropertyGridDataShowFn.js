@@ -29,6 +29,7 @@ function getTypeDefaultEdit(stype) {
  *            node 当前的节点对象
  */
 function renderPropertyGrid(node) {
+	var nText = node.text;
 	// 获取数据
 	var data = node.attributes.data;
 	// 获取数据对应的表结构
@@ -38,9 +39,13 @@ function renderPropertyGrid(node) {
 	// 创建一个PropertyGrid
 	var pptgrid = new Ext.grid.PropertyGrid({
 				id : 'pptGrid',
-				title : '相关属性',
-				autoHeight : true,
-				width : 300
+				// 隐藏横向滚动条
+				bodyStyle : 'overflow-x:visible;overflow-y:scroll',
+				autoScroll : true,
+				tbar : [{
+							id : 'commNodePropText',
+							text : ''
+						}]
 			})
 	// 得到构造好的propertyNames对象
 	var pptnameobj = createPptGridStoreDef(def);
@@ -62,6 +67,7 @@ function renderPropertyGrid(node) {
 	pptgridcmp.removeAll(pptgrid);
 	// 绑定到布局页面
 	pptgridcmp.add(pptgrid);
+	Ext.getCmp('commNodePropText').setText(renderTextColor('属性-->'+nText, 'mediumorchid'));
 	pptgridcmp.doLayout();
 }
 /**
@@ -71,6 +77,7 @@ function renderPropertyGrid(node) {
  *            node
  */
 function collectionRender(node) {
+	var nText = node.text;
 	// 获取数据
 	var data = node.attributes.data;
 	// 获取数据对应的表结构
@@ -81,21 +88,24 @@ function collectionRender(node) {
 	var pptgrid = new Ext.Panel({
 				id : 'collPanle',
 				layout : 'form',
-				title : '相关操作',
-				autoHeight : true,
-				width : 300,
+				// 隐藏横向滚动条
+				bodyStyle : 'overflow-x:visible;overflow-y:scroll',
 				tbar : [{
-							text : '请增加子节点',
-							iconCls : 'addIcon',
+							id : 'collNodeText',
+							text : ''
+						}, '-', {
+							text : renderTextColor('操作-->新增节点' , 'lightseagreen'),
+//							iconCls : 'addIcon',
 							handler : function() {
 								appendNodeAction(node);
 							}
-						}, '-']
+						}]
 			});
 	// 删除添加的组件，防止重复出现
 	pptgridcmp.removeAll(pptgrid);
 	// 绑定到布局页面
 	pptgridcmp.add(pptgrid);
+	Ext.getCmp('collNodeText').setText(renderTextColor('属性-->'+nText, 'mediumorchid'));
 	pptgridcmp.doLayout();
 }
 /**

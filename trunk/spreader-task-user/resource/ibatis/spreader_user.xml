@@ -154,6 +154,9 @@
 		<isNotNull prepend="and" property="isRobot">
 			u.is_robot = #isRobot#
 		</isNotNull>
+		<isNotNull prepend="and" property="websiteId">
+			u.website_id = #websiteId#
+		</isNotNull>
 	</dynamic>
 	<isNotNull property="limit">
         limit $limit.offset$,$limit.maxRows$

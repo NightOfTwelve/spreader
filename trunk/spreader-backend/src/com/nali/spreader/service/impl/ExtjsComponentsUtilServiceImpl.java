@@ -1,6 +1,8 @@
 package com.nali.spreader.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.common.util.CollectionUtils;
+import com.nali.spreader.constants.Website;
 import com.nali.spreader.dao.ICrudCategoryDao;
 import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.ICrudUserGroupDao;
@@ -66,5 +70,18 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 		List<Category> list = this.crudCategoryDao.selectByExample(exp);
 		int cnt = this.crudCategoryDao.countByExample(exp);
 		return new PageResult<Category>(list, limit, cnt);
+	}
+
+	@Override
+	public List<Map<String, Object>> findWebsite() {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		Website[] websites = Website.values();
+		for (Website w : websites) {
+			Map<String, Object> m = CollectionUtils.newHashMap(2);
+			m.put("id", w.getId());
+			m.put("name", w.getName());
+			list.add(m);
+		}
+		return list;
 	}
 }

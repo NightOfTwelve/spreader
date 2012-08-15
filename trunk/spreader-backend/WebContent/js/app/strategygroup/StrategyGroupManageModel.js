@@ -44,7 +44,7 @@ Ext.onReady(function() {
 		autoScroll : true,
 		// autoHeight : true,
 		expanded : true,
-		frame : true,
+		frame : false,
 		// singleExpand : true,
 		useArrows : true,
 		rootVisible : true,
@@ -114,10 +114,10 @@ Ext.onReady(function() {
 				})
 	});
 	// 树形编辑器
-	var treeEditor = new Ext.tree.TreeEditor(Ext.getCmp('stgtree'), {
-				id : 'stgtreeEdit',
-				allowBlank : false
-			});
+	// var treeEditor = new Ext.tree.TreeEditor(Ext.getCmp('stgtree'), {
+	// id : 'stgtreeEdit',
+	// allowBlank : false
+	// });
 	// 给tree添加右键菜单事件
 	stgdisptree.on('rightMenu', stgdisptree.rightMenu, stgdisptree);
 	// 定义右键菜单
@@ -208,12 +208,9 @@ Ext.onReady(function() {
 						var ttriggerDispForm = triggerDispForm.getForm();
 						// 简单调度
 						var tsimpleDispForm = simpleDispForm.getForm();
-						// 获取调度参数
-						var triggerType = tradioForm.findField("triggerType")
-								.getGroupValue();
 						// 开始时间
-						var start = string2Date(tsimpleDispForm.findField("start")
-								.getValue());
+						var start = string2Date(tsimpleDispForm
+								.findField("start").getValue()).getTime();
 						// 重复次数
 						var repeatTimes = tsimpleDispForm
 								.findField("repeatTimes").getValue();
@@ -223,18 +220,20 @@ Ext.onReady(function() {
 						// 当前时间
 						var thisTime = new Date().getTime();
 						var msg = '确定执行？';
-						var count = getDispCount(start, thisTime,
-								repeatInternal);
-						var showRepeatTimes = 0;
-						if ((count - (repeatTimes + 1)) >= 0) {
-							showRepeatTimes = repeatTimes + 1;
-						} else {
-							showRepeatTimes = count;
+						if (start < thisTime) {
+							var count = getDispCount(start, thisTime,
+									repeatInternal);
+							var showRepeatTimes = 0;
+							if ((count - (repeatTimes + 1)) > 0) {
+								showRepeatTimes = repeatTimes + 1;
+							} else {
+								showRepeatTimes = count == 0 ? 0 : count;
+							}
+							msg = '该任务的开始时间已经过期，如果保存会立即执行'
+									+ renderTextColor(showRepeatTimes, 'red')
+									+ '次，确定不需要修改'
+									+ renderTextColor('开始时间', 'red') + '吗？';
 						}
-						msg = '该任务的开始时间已经过期，如果保存会立即执行'
-								+ renderTextColor(showRepeatTimes, 'red')
-								+ '次，确定不需要修改' + renderTextColor('开始时间', 'red')
-								+ '吗？';
 						Ext.Msg.show({
 									title : '确认信息',
 									msg : msg,
@@ -327,7 +326,8 @@ Ext.onReady(function() {
 													groupNoteHidden.getValue(),
 													groupTypeHidden.getValue(),
 													objIdHidden.getValue(),
-													groupIdHidden.getValue());
+													groupIdHidden.getValue(),
+													null);
 										}
 									}
 								});
@@ -481,7 +481,7 @@ Ext.onReady(function() {
 		}, {
 			region : 'west',
 			layout : 'border',
-			id : 'editview',
+			id : 'stgTree',
 			split : true,
 			width : 260,
 			items : [stgdisptree]
@@ -1602,7 +1602,8 @@ Ext.onReady(function() {
 	 * 计算调度执行次数
 	 */
 	function getDispCount(start, thisTime, internal) {
-		var count = Ext.util.Format.round((thisTime - start) / internal, 0);
+		var count = Math.abs(Ext.util.Format.round((thisTime - start)
+						/ internal, 0));
 		return count;
 	}
 

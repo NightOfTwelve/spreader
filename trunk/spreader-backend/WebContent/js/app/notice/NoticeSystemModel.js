@@ -46,7 +46,7 @@ Ext.onReady(function() {
 									}, {
 										columnWidth : .2,
 										layout : "form",
-										items : [selectComboUtil]
+										items : [selectUserComboUtil]
 									}]
 						}],
 				buttonAlign : "center",
@@ -211,6 +211,8 @@ Ext.onReady(function() {
 						}
 					}
 					if (buttons == '回粉') {
+						cleanHidden();
+						noticeIdHidden.setValue(noticeId);
 						addFansAction(toUserId, fromUserId);
 					}
 					if (buttons == '策略') {
