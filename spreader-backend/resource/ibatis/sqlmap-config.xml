@@ -30,6 +30,7 @@
   <sqlMap resource="ibatis/spreader_tb_content_keyword_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_notice_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_content_replay_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_real_man_SqlMap.xml" />
   
   <!-- ×Ô¶¨Òå -->
   <sqlMap resource="ibatis/spreader_tb_photo.xml" />
@@ -48,5 +49,6 @@
   <sqlMap resource="ibatis/spreader_keyword.xml"/>
   <sqlMap resource="ibatis/spreader_content_keyword.xml"/>
   <sqlMap resource="ibatis/spreader_notice.xml"/>
+  <sqlMap resource="ibatis/spreader_real_man.xml"/>
 </sqlMapConfig>
 
