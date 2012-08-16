@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="spreader_real_man">
+	<resultMap id="realManResultMap" class="com.nali.spreader.data.RealMan">
+		<result column="id" property="id" jdbcType="BIGINT" />
+		<result column="real_id" property="realId" jdbcType="VARCHAR" />
+		<result column="real_name" property="realName" jdbcType="VARCHAR" />
+		<result column="is_real" property="isReal" jdbcType="BIT" />
+		<result column="is_forbid_by_sina" property="isForbidBySina"
+			jdbcType="BIT" />
+		<result column="sina_use_count" property="sinaUseCount"
+			jdbcType="INTEGER" />
+	</resultMap>
+
+	<select id="selectEffRealMan" parameterClass="java.lang.Integer"
+		resultMap="realManResultMap">
+		select
+		id,real_id,real_name,is_real,is_forbid_by_sina,sina_use_count
+		from
+		spreader.tb_real_man
+		where is_real = true
+		and is_forbid_by_sina = false
+		order by sina_use_count asc limit #limit#
+	</select>
+
+	<update id="updateSinaUseCount" parameterClass="java.lang.Long">
+		update
+		spreader.tb_real_man 
+		set sina_use_count = sina_use_count+1 
+		where id = #id# 
+	</update>
+</sqlMap>
