@@ -22,6 +22,13 @@ public enum TaskErrorCode {
 	emailAccountError(10011),//邮箱密码错误
 	emailHasBeenUsed(10012),//邮箱已被使用
 	retryTooMuch(10013),//重试过多放弃
+	seemRevised(10014),//似乎改版了
+	
+	//2开头的微博异常
+	//201注册异常
+	personIdAbused(20101),//身份证使用太多了
+	personIdWrong(20102),//身份证号码和姓名对应错误
+	//3开头的苹果异常
 	;
 	private final String code;
 	private TaskErrorCode(int code) {
