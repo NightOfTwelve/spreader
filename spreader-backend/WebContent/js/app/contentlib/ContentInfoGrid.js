@@ -41,29 +41,96 @@ Ext.onReady(function() {
 					handler : function() { // 按钮响应函数
 						contentWindow.hide();
 					}
-				}
-				// ,
-				// { // 窗口底部按钮配置
-				// text : '保存', // 按钮文本
-				// iconCls : 'acceptIcon', // 按钮图标
-				// handler : function() { // 按钮响应函数
-				// var value = Ext.getCmp('htmleditor').getValue();
-				// // Ext.MessageBox.alert('提示', value);
-				// alert(value);
-				// }
-				// }, { // 窗口底部按钮配置
-				// text : '重置', // 按钮文本
-				// iconCls : 'tbar_synchronizeIcon', // 按钮图标
-				// handler : function() { // 按钮响应函数
-				// contentPanel.form.reset();
-				// }
-				// }
-				]
+				}]
 			});
 
 	Ext.getCmp('htmleditor').on('initialize', function() {
 				Ext.getCmp('htmleditor').focus();
-			})
+			});
+	var keywrodStore = new Ext.data.Store({
+				proxy : new Ext.data.HttpProxy({
+							url : '../contentlib/keyword?_time='
+									+ new Date().getTime()
+						}),
+				reader : new Ext.data.JsonReader({
+							root : 'list'
+						}, [{
+									name : 'keywordId'
+								}, {
+									name : 'keywordName'
+								}, {
+									name : 'categoryId'
+								}, {
+									name : 'categoryName'
+								}])
+			});
+
+	var krm = new Ext.grid.RowNumberer({
+				header : 'NO',
+				locked : true,
+				width : 28
+			});
+
+	var kcm = new Ext.grid.ColumnModel([krm, {
+				header : '关键编号',
+				dataIndex : 'keywordId',
+				width : 100
+			}, {
+				header : '关键字',
+				dataIndex : 'keywordName',
+				width : 100
+			}, {
+				header : '分类编号',
+				dataIndex : 'categoryId',
+				width : 100
+			}, {
+				header : '分类',
+				dataIndex : 'categoryName',
+				width : 100
+			}]);
+
+	var kgrid = new Ext.grid.GridPanel({
+				id : 'kgrid',
+				height : 300,
+				stripeRows : true, // 斑马线
+				frame : true,
+				autoScroll : true,
+				store : keywrodStore,
+				loadMask : {
+					msg : '正在加载表格数据,请稍等...'
+				},
+				cm : kcm,
+				tbar : [{
+							text : '刷新',
+							iconCls : 'arrow_refreshIcon',
+							handler : function() {
+								keywrodStore.reload();
+							}
+						}]
+			});
+	var keywordWindow = new Ext.Window({
+				title : '<span class="commoncss">关键字</span>', // 窗口标题
+				layout : 'fit', // 设置窗口布局模式
+				width : 700, // 窗口宽度
+				height : 450, // 窗口高度
+				closable : false, // 是否可关闭
+				collapsible : false, // 是否可收缩
+				maximizable : true, // 设置是否可以最大化
+				border : false, // 边框线设置
+				constrain : true, // 设置窗口是否可以溢出父容器
+				draggable : false,
+				animateTarget : Ext.getBody(),
+				pageY : 20, // 页面定位Y坐标
+				pageX : document.documentElement.clientWidth / 2 - 700 / 2, // 页面定位X坐标
+				items : [kgrid], // 嵌入的表单面板
+				buttons : [{ // 窗口底部按钮配置
+					text : '关闭', // 按钮文本
+					iconCls : 'deleteIcon', // 按钮图标
+					handler : function() { // 按钮响应函数
+						keywordWindow.hide();
+					}
+				}]
+			});
 	// 页数
 	var number = 20;
 	var numtext = new Ext.form.TextField({
@@ -200,80 +267,62 @@ Ext.onReady(function() {
 	 */
 	// 定义表格数据源
 	var contentStore = new Ext.data.Store({
-				proxy : new Ext.data.HttpProxy({
-							url : '../contentlib/grid'
-						}),
-				reader : new Ext.data.JsonReader({
-							totalProperty : 'totalCount',
-							root : 'list'
-						}, [{
-									name : 'id'
-								}, {
-									name : 'type'
-								}, {
-									name : 'websiteId'
-								}, {
-									name : 'websiteContentId'
-								}, {
-									name : 'websiteRefId'
-								}, {
-									name : 'websiteUid'
-								}, {
-									name : 'uid'
-								}, {
-									name : 'nickName'
-								}, {
-									name : 'title'
-								}, {
-									name : 'pubDate'
-								}, {
-									name : 'syncDate'
-								}, {
-									name : 'refCount'
-								}, {
-									name : 'replyCount'
-								}, {
-									name : 'entry'
-								}, {
-									name : 'content'
-								}, {
-									name : 'webSiteName'
-								}, {
-									name : 'categoryNames'
-								}, {
-									name : 'typeName'
-								}]),
-				autoLoad : {
-					params : {
-						start : 0,
-						limit : 20
-					}
-				}
-			});
-	// 分页带上查询条件
-	// contentStore.on('beforeload', function() {
-	// var pfrom = contentQueryForm.getForm();
-	// var sPubDate = pfrom.findField("sPubDate").getValue();
-	// var ePubDate = pfrom.findField("ePubDate").getValue();
-	// var categoryName = pfrom.findField("categoryName").getValue();
-	// var sSyncDate = pfrom.findField("sSyncDate").getValue();
-	// var eSyncDate = pfrom.findField("eSyncDate").getValue();
-	// var userName = pfrom.findField("userName").getValue();
-	// var limit = numtext.getValue();
-	// this.baseParams = {
-	// sPubDate : Ext.isEmpty(sPubDate) ? null : sPubDate,
-	// ePubDate : Ext.isEmpty(ePubDate) ? null : ePubDate,
-	// sSyncDate : Ext.isEmpty(sSyncDate) ? null : sSyncDate,
-	// eSyncDate : Ext.isEmpty(eSyncDate) ? null : eSyncDate,
-	// categoryName : Ext.isEmpty(categoryName)
-	// ? null
-	// : categoryName,
-	// userName : Ext.isEmpty(userName) ? null : userName,
-	// limit : Ext.isEmpty(limit) ? number : Number(limit)
-	// };
-	// });
-
-	// 定义Checkbox
+		proxy : new Ext.data.HttpProxy({
+					url : '../contentlib/grid'
+				}),
+		reader : new Ext.data.JsonReader({
+					totalProperty : 'totalCount',
+					root : 'list'
+				}, [{
+							name : 'id'
+						}, {
+							name : 'type'
+						}, {
+							name : 'websiteId'
+						}, {
+							name : 'url',
+							convert : function(value, rec) {
+								return "<a href='" + value
+										+ "' target='_blank'>" + value + "</a>";
+							}
+						}, {
+							name : 'websiteContentId'
+						}, {
+							name : 'websiteRefId'
+						}, {
+							name : 'websiteUid'
+						}, {
+							name : 'uid'
+						}, {
+							name : 'nickName'
+						}, {
+							name : 'title'
+						}, {
+							name : 'pubDate'
+						}, {
+							name : 'syncDate'
+						}, {
+							name : 'refCount'
+						}, {
+							name : 'replyCount'
+						}, {
+							name : 'entry'
+						}, {
+							name : 'content'
+						}, {
+							name : 'webSiteName'
+						}, {
+							name : 'categoryNames'
+						}, {
+							name : 'typeName'
+						}]),
+		autoLoad : {
+			params : {
+				start : 0,
+				limit : 20
+			}
+		}
+	});
 	// 定义自动当前页行号
 	var rownum = new Ext.grid.RowNumberer({
 				header : 'NO',
@@ -282,21 +331,18 @@ Ext.onReady(function() {
 			});
 
 	// 定义锁定列模型
-	var cm = new Ext.ux.grid.LockingColumnModel([rownum, {
+	var cm = new Ext.grid.ColumnModel([rownum, {
 				header : '编号',
 				dataIndex : 'id',
-				locked : true,
 				width : 80
 			}, {
 				header : '昵称',
 				dataIndex : 'nickName',
-				locked : true,
 				width : 100
 			}, {
 				header : '类型',
 				dataIndex : 'typeName',
 				// renderer : renderGender,
-				locked : true,
 				width : 80
 			}, {
 				header : 'typeid',
@@ -305,13 +351,8 @@ Ext.onReady(function() {
 				hidden : true,
 				width : 80
 			}, {
-				header : '标题',
-				dataIndex : 'title',
-				width : 100
-			}, {
-				header : '文章分类',
-				dataIndex : 'categoryNames',
-				renderer : renderBrief,
+				header : '微博链接',
+				dataIndex : 'url',
 				width : 100
 			}, {
 				header : '内容',
@@ -328,24 +369,17 @@ Ext.onReady(function() {
 				},
 				width : 35
 			}, {
+				header : '关键字',
+				renderer : function showbutton() {
+					var returnStr = "<input type='button' value='查看'/>";
+					return returnStr;
+				},
+				width : 100
+			}, {
 				header : '网站',
 				dataIndex : 'webSiteName',
 				width : 100,
 				sortable : true
-			}, {
-				header : 'websiteContentId',
-				dataIndex : 'websiteContentId',
-				width : 100,
-				sortable : true
-			}, {
-				header : 'websiteRefId',
-				dataIndex : 'websiteRefId',
-				width : 100,
-				sortable : true
-			}, {
-				header : 'websiteUid',
-				dataIndex : 'websiteUid',
-				width : 100
 			}, {
 				header : '发布时间',
 				dataIndex : 'pubDate',
@@ -357,16 +391,12 @@ Ext.onReady(function() {
 				renderer : renderDateHis,
 				width : 120
 			}, {
-				header : 'refCount',
+				header : '转发数',
 				dataIndex : 'refCount',
 				width : 100
 			}, {
-				header : 'replyCount',
+				header : '回复数',
 				dataIndex : 'replyCount',
-				width : 100
-			}, {
-				header : 'entry',
-				dataIndex : 'entry',
 				width : 100
 			}]);
 	// // 分页菜单
@@ -396,7 +426,6 @@ Ext.onReady(function() {
 				bbar : bbar,
 				// sm : sm,
 				colModel : cm,
-				view : new Ext.ux.grid.LockingGridView(), // 锁定列视图
 				tbar : [{
 							text : '刷新',
 							iconCls : 'arrow_refreshIcon',
@@ -405,6 +434,10 @@ Ext.onReady(function() {
 							}
 						}],
 				onCellClick : function(grid, rowIndex, columnIndex, e) {
+					var button = e.target.defaultValue;
+					var record = grid.getStore().getAt(rowIndex);
+					var data = record.data;
+					var contentId = data.id;
 					var selesm = grid.getSelectionModel().getSelections();
 					// var userid = selesm[0].data.id;
 					var cont = selesm[0].data.content;
@@ -415,6 +448,12 @@ Ext.onReady(function() {
 						var edit = Ext.getCmp('htmleditor');
 						edit.setValue(cont);
 						contentWindow.show();
+					}
+					if (button == '查看') {
+						keywrodStore.removeAll();
+						keywrodStore.setBaseParam('contentId', contentId);
+						keywrodStore.load();
+						keywordWindow.show();
 					}
 				}
 			});

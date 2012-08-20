@@ -25,8 +25,19 @@
 
 	<update id="updateSinaUseCount" parameterClass="java.lang.Long">
 		update
-		spreader.tb_real_man 
-		set sina_use_count = sina_use_count+1 
-		where id = #id# 
+		spreader.tb_real_man
+		set sina_use_count = sina_use_count+1
+		where id =
+		#id#
 	</update>
+	
+	<select id="selectRealManIdByUK" parameterClass="com.nali.spreader.data.KeyValue"
+		resultClass="java.lang.Long">
+		select id
+		from
+		spreader.tb_real_man
+		where real_id = #key#
+		and
+		real_name = #value#
+	</select>
 </sqlMap>

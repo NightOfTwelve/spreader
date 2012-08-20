@@ -73,7 +73,7 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									url : '../userinfo/init'
 								}, {
 									id : 'querymenu2',
-									text : "机器人查询",
+									text : "虚拟身份查询",
 									leaf : true,
 									url : '../rbtregist/init'
 								}, {
@@ -86,12 +86,14 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "客户端任务检索",
 									leaf : true,
 									url : '../taskstat/init'
-								}, {
-									id : 'clientTaskStatDtl',
-									text : "客户端任务详细信息",
-									leaf : true,
-									url : '../taskstatdtl/init'
-								}, {
+								}, 
+//									{
+//									id : 'clientTaskStatDtl',
+//									text : "客户端任务详细信息",
+//									leaf : true,
+//									url : '../taskstatdtl/init'
+//								}, 
+									{
 									id : 'clientTaskStatReport',
 									text : "报表查询",
 									leaf : true,

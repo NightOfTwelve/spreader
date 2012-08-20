@@ -2,6 +2,7 @@ package com.nali.spreader.dao;
 
 import java.util.List;
 
+import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.RealMan;
 
 /**
@@ -26,4 +27,12 @@ public interface IRealManDao {
 	 * @return
 	 */
 	int updateSinaUseCount(Long id);
+
+	/**
+	 * 通过身份证号码和姓名获取ID
+	 * 
+	 * @param param
+	 * @return
+	 */
+	Long getRealManIdByRealIdAndName(KeyValue<String, String> param);
 }

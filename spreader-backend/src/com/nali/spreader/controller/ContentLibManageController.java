@@ -1,6 +1,8 @@
 package com.nali.spreader.controller;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,16 +11,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.ContentQueryParamsDto;
+import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.Content;
 import com.nali.spreader.service.IContentLibManageService;
+import com.nali.spreader.service.IKeywordService;
 
 @Controller
 @RequestMapping(value = "/contentlib")
 public class ContentLibManageController extends BaseController {
 	@Autowired
 	private IContentLibManageService conService;
+	@Autowired
+	private IKeywordService keywordService;
 
 	/**
 	 * 载入页初始化
@@ -56,9 +63,18 @@ public class ContentLibManageController extends BaseController {
 		return this.write(pr);
 	}
 
-	// @InitBinder
-	// public void initBinder(WebDataBinder binder) {
-	// binder.registerCustomEditor(Date.class, new CustomDateEditor(new
-	// SimpleDateFormat("yyyy-MM-dd HH:mm:ss"), true));
-	// }
+	/**
+	 * 查询微博的关键字
+	 * 
+	 * @param contentId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/keyword")
+	public String queryKeyword(Long contentId) {
+		List<KeywordInfoQueryDto> list = this.keywordService.findKeywordByContentId(contentId);
+		Map<String, List<KeywordInfoQueryDto>> m = CollectionUtils.newHashMap(1);
+		m.put("list", list);
+		return this.write(m);
+	}
 }

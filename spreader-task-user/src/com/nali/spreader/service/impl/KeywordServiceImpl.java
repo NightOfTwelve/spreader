@@ -11,6 +11,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.nali.common.util.CollectionUtils;
+import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
 import com.nali.spreader.dao.ICrudKeywordDao;
 import com.nali.spreader.dao.IKeywordDao;
@@ -96,7 +97,8 @@ public class KeywordServiceImpl implements IKeywordService {
 	}
 
 	@Override
-	public List<String> createKeywordList(List<String> keywords, List<String> categories) {//TODO 移到controller或util里面去
+	public List<String> createKeywordList(List<String> keywords, List<String> categories) {// TODO
+																							// 移到controller或util里面去
 		// 所有关键的集合，包括通过分类查询出的关键字集合
 		List<String> allKeyword = new ArrayList<String>();
 		if (!CollectionUtils.isEmpty(keywords)) {
@@ -117,14 +119,15 @@ public class KeywordServiceImpl implements IKeywordService {
 	}
 
 	@Override
-	public List<String> findDefaultKeywords() {//TODO 移到controller或util里面去
+	public List<String> findDefaultKeywords() {// TODO 移到controller或util里面去
 		List<String> list = new ArrayList<String>();
 		list.add("音乐");
 		return list;
 	}
 
 	@Override
-	public List<String> createSendKeywordList(List<String> list, Long uid) {//TODO 移到controller或util里面去
+	public List<String> createSendKeywordList(List<String> list, Long uid) {// TODO
+																			// 移到controller或util里面去
 		List<String> sendKeywords;
 		// 如果设置的关键字列表无内容则查找用户本身的标签列表
 		if (CollectionUtils.isEmpty(list)) {
@@ -137,5 +140,13 @@ public class KeywordServiceImpl implements IKeywordService {
 			sendKeywords = list;
 		}
 		return sendKeywords;
+	}
+
+	@Override
+	public List<KeywordInfoQueryDto> findKeywordByContentId(Long contentId) {
+		if (contentId == null) {
+			return Collections.emptyList();
+		}
+		return this.keywordDao.selectKeywordByContentId(contentId);
 	}
 }

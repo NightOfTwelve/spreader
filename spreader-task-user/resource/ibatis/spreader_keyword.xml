@@ -14,6 +14,13 @@
 		<result column="executable" jdbcType="BIT" property="executable" />
 		<result column="allowtag" jdbcType="BIT" property="allowtag" />
 	</resultMap>
+	<resultMap class="com.nali.spreader.dto.ContentKeywordInfoDto"
+		id="ContentKeywordInfoResultMap">
+		<result column="keyword_id" jdbcType="BIGINT" property="keywordId" />
+		<result column="keyword_name" jdbcType="VARCHAR" property="keywordName" />
+		<result column="category_id" jdbcType="BIGINT" property="categoryId" />
+		<result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+	</resultMap>
 	<sql id="selectKeywordInfoCondition">
 		<isNotNull prepend="and" property="keywordId">
 			a.id = #keywordId#
@@ -116,6 +123,15 @@
 			<include refid="selectKeywordInfoCondition" />
 		</dynamic>
 	</select>
+	<select id="selectKeywordByContentId" parameterClass="java.lang.Long"
+		resultMap="ContentKeywordInfoResultMap">
+		select k.id keyword_id,k.name keyword_name,cg.id
+		category_id,cg.name category_name from
+		tb_content_keyword ck
+		join tb_keyword k on ck.keyword_id = k.id
+		join tb_category cg on k.category_id = cg.id
+		where ck.content_id = #contentId#
+	</select>
 	<select id="selectKeywordByCategories" parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
 		resultMap="spreader_tb_keyword.ibatorgenerated_BaseResultMap">
 		select id,name,category_id,tag,create_time,executable,allowtag from
@@ -142,7 +158,8 @@
 	<select id="selectKeywordByUserId" parameterClass="java.lang.Long"
 		resultClass="java.lang.String">
 		select kw.name from tb_user_tag ut
-		join tb_keyword kw on ut.tag_id = kw.id
+		join tb_keyword kw on
+		ut.tag_id = kw.id
 		where ut.uid = #uid#
 	</select>
 	<insert id="insertKeyword" parameterClass="com.nali.spreader.data.Keyword">

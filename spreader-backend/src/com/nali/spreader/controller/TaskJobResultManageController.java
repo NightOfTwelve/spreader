@@ -1,9 +1,11 @@
 package com.nali.spreader.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,6 +34,7 @@ public class TaskJobResultManageController extends BaseController {
 	private final static String GROUP_TYPE_SIMPLE = "simple";
 	// 复杂分组
 	private final static String GROUP_TYPE_COMPLEX = "complex";
+	private final static int[] ALL_TASK_STATUS = { 0, 1, 2, 3, 4 };
 
 	/**
 	 * 查询执行结果列表
@@ -95,12 +98,24 @@ public class TaskJobResultManageController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/statuscount")
 	public String queryStatusCount(Long resultId) {
+		Map<String, List<TaskStatusCountDto>> m = CollectionUtils.newHashMap(1);
 		if (resultId == null) {
 			return null;
 		} else {
 			List<TaskStatusCountDto> list = this.execuService.queryTaskStatusCount(resultId);
-			Map<String, List<TaskStatusCountDto>> m = CollectionUtils.newHashMap(1);
-			m.put("list", list);
+			if (CollectionUtils.isEmpty(list)) {
+				list = this.getAddTaskStatus(ArrayUtils.EMPTY_INT_ARRAY);
+				m.put("list", list);
+			} else {
+				List<TaskStatusCountDto> tmp = new ArrayList<TaskStatusCountDto>();
+				tmp.addAll(list);
+				int[] array = ArrayUtils.EMPTY_INT_ARRAY;
+				for (TaskStatusCountDto t : list) {
+					array = ArrayUtils.add(array, t.getStatus());
+				}
+				tmp.addAll(this.getAddTaskStatus(array));
+				m.put("list", tmp);
+			}
 			return this.write(m);
 		}
 	}
@@ -108,5 +123,34 @@ public class TaskJobResultManageController extends BaseController {
 	@Override
 	public String init() {
 		return null;
+	}
+
+	/**
+	 * 补全其它状态
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private List<TaskStatusCountDto> getAddTaskStatus(int[] array) {
+		List<TaskStatusCountDto> list = new ArrayList<TaskStatusCountDto>();
+		if (ArrayUtils.isEmpty(array)) {
+			for (int stat : ALL_TASK_STATUS) {
+				TaskStatusCountDto dto = new TaskStatusCountDto();
+				dto.setCnt(0);
+				dto.setStatus(stat);
+				list.add(dto);
+			}
+			return list;
+		} else {
+			for (int i : ALL_TASK_STATUS) {
+				if (!ArrayUtils.contains(array, i)) {
+					TaskStatusCountDto dto = new TaskStatusCountDto();
+					dto.setCnt(0);
+					dto.setStatus(i);
+					list.add(dto);
+				}
+			}
+		}
+		return list;
 	}
 }
