@@ -86,8 +86,8 @@ var userSinaForm = new Ext.form.FormPanel({
 						items : [{
 							columnWidth : .33,
 							layout : "form",
-							items : [webSiteComboUtil(selectWebSiteComboUtil,
-									selectWebSiteComboUtil, null, null)]
+							items : [webSiteComboUtil('selectWebSiteComboUtil',
+									'selectWebSiteComboUtil', null, null)]
 						}, {
 							columnWidth : .33,
 							layout : "form",
@@ -139,7 +139,7 @@ var userSinaForm = new Ext.form.FormPanel({
 							.getValue();
 					var tag = tform.findField("tag").getValue();
 					var isRobot = tform.findField("isRobot").getValue();
-//					var websiteId = selectWebSiteComboUtil.getValue();
+					// var websiteId = selectWebSiteComboUtil.getValue();
 					var websiteId = tform.findField('websiteId').getValue();
 					var num = numtext.getValue();
 					sinaUserStore.setBaseParam('nickName', Ext

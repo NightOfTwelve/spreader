@@ -52,4 +52,15 @@ public interface IRealManService {
 	 * @return
 	 */
 	RealMan getRealManById(Long id);
+
+	/**
+	 * 根据主键获取realman的ID
+	 * 
+	 * @param realId
+	 *            身份证号码
+	 * @param realName
+	 *            姓名
+	 * @return
+	 */
+	Long getRealManIdByUK(String realId, String realName);
 }

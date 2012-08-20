@@ -102,4 +102,12 @@ public interface IKeywordDao {
 	 * @return
 	 */
 	List<String> selectKeywordByUserId(Long uid);
+
+	/**
+	 * 获取内容的绑定关键字
+	 * 
+	 * @param contentId
+	 * @return
+	 */
+	List<KeywordInfoQueryDto> selectKeywordByContentId(Long contentId);
 }

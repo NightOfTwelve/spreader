@@ -40,7 +40,7 @@ function webSiteComboUtil(fieldId, fieldName, fieldLabel, emptyText) {
 				typeAhead : true,
 				resizable : true,
 				editable : false,
-				anchor : '100%'
+				anchor : '60%'
 			});
 	return selectWebSiteComboUtil;
 }

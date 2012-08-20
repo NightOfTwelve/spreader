@@ -3,6 +3,7 @@
 <sqlMap namespace="spreader_content">
 	<resultMap class="com.nali.spreader.data.Content" id="selectContentInfo"
 		extends="spreader_tb_content.ibatorgenerated_ResultMapWithBLOBs">
+		<result column="url" jdbcType="VARCHAR" property="url" />
 		<result property="nickName" column="uid"
 			select="spreader_content.contentUser" />
 	</resultMap>
@@ -39,10 +40,12 @@
 	</select>
 	<select id="getContentInfoByParamDto" parameterClass="com.nali.spreader.config.ContentQueryParamsDto"
 		resultMap="selectContentInfo">
-		select c.* from tb_content c
+		select c.*,concat('http://www.weibo.com/',c.website_uid,'/',c.entry)
+		as url from tb_content c
 		<dynamic prepend="where">
 			<include refid="contentPubCondition" />
 		</dynamic>
+		order by id desc
 		<isNotNull property="limit">
 			limit $limit.offset$,$limit.maxRows$
 		</isNotNull>
@@ -284,7 +287,8 @@
 				id in (
 				select content_id from tb_content_keyword ck
 				join
-				tb_keyword k on ck.keyword_id = k.id
+				tb_keyword k
+				on ck.keyword_id = k.id
 				where k.name in
 				<iterate property="sendKeywords" open="(" close=")"
 					conjunction=",">

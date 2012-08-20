@@ -34,7 +34,7 @@ var resultgridsm = new Ext.grid.CheckboxSelectionModel({
 					// 先清除缓存
 					statusCountStore.removeAll();
 					statusCountStore.setBaseParam('resultId', resultId);
-					statusCountStore.reload();
+					statusCountStore.load();
 				}
 			}
 		});
