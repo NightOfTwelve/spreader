@@ -31,6 +31,33 @@ public class UserTagParamsDto implements Serializable {
 	private String province;
 	// 网站分类
 	private Integer websiteId;
+	private Integer start;
+	private Integer limit;
+	private Limit lit;
+
+	public Integer getStart() {
+		return start;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
+
+	public Limit getLit() {
+		return lit;
+	}
+
+	public void setLit(Limit lit) {
+		this.lit = lit;
+	}
 
 	public Integer getWebsiteId() {
 		return websiteId;
@@ -47,16 +74,6 @@ public class UserTagParamsDto implements Serializable {
 	public void setProvince(String province) {
 		this.province = province;
 	}
-
-	public Limit getLimit() {
-		return limit;
-	}
-
-	public void setLimit(Limit limit) {
-		this.limit = limit;
-	}
-
-	private Limit limit;
 
 	public Long getId() {
 		return id;

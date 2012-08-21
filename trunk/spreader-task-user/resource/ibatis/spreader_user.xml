@@ -158,8 +158,8 @@
 			u.website_id = #websiteId#
 		</isNotNull>
 	</dynamic>
-	<isNotNull property="limit">
-        limit $limit.offset$,$limit.maxRows$
+	<isNotNull property="lit">
+        limit $lit.offset$,$lit.maxRows$
     </isNotNull>
   </select>
   <select id="getUserFansInfoByDto" parameterClass="com.nali.spreader.config.UserTagParamsDto" resultMap="selectuserinfo">
