@@ -252,35 +252,7 @@ Ext.onReady(function() {
 								sinaUserRobotStore.reload();
 							}
 						}]
-					// ,
-					// onCellClick : function(grid, rowIndex, columnIndex, e) {
-					// var selesm = grid.getSelectionModel()
-					// .getSelections();
-					// var userid = selesm[0].data.id;
-					// var nickname = selesm[0].data.nickName;
-					// var fanscol = grid.getColumnModel()
-					// .getDataIndex(columnIndex);
-					// if (fanscol == 'fans') {
-					// realFansDtlWin.title = nickname + '的粉丝';
-					// realFansDtlWin.show();
-					// GFANSID = userid;
-					// userFansStore.setBaseParam('id', userid);
-					// userFansStore.setBaseParam('isRobot', false);
-					// userFansStore.load();
-					// } else if (fanscol == 'robotFans') {
-					// robotFansDtlWin.show();
-					// GROBOTID = userid;
-					// userRobotFansStore.setBaseParam('id', userid);
-					// userRobotFansStore.setBaseParam('isRobot',
-					// false);
-					// userRobotFansStore.load();
-					// }
-					// }
 				});
-
-			// 注册事件
-			sinaUserRobotGrid.on('cellclick', sinaUserRobotGrid.onCellClick,
-					sinaUserRobotGrid);
 
 			// 布局模型
 			var viewport = new Ext.Viewport({

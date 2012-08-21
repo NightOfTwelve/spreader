@@ -172,7 +172,8 @@ var userSinaForm = new Ext.form.FormPanel({
 // 定义表格数据源
 var sinaUserStore = new Ext.data.Store({
 			proxy : new Ext.data.HttpProxy({
-						url : '../userinfo/userlist'
+						url : '../userinfo/userlist?_time='
+								+ new Date().getTime()
 					}),
 			reader : new Ext.data.JsonReader({
 						totalProperty : 'totalCount',
@@ -222,12 +223,7 @@ var sinaUserStore = new Ext.data.Store({
 							}, {
 								name : 'city'
 							}]),
-			autoLoad : {
-				params : {
-					start : 0,
-					limit : 20
-				}
-			}
+			autoLoad : true
 		});
 // 分页带上查询条件
 sinaUserStore.on('beforeload', function() {

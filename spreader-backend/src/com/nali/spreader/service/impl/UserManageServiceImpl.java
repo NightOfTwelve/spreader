@@ -45,7 +45,7 @@ public class UserManageServiceImpl implements IUserManageService {
 
 	@Override
 	public PageResult<User> findUserInfo(UserTagParamsDto utp, Limit lit) {
-		utp.setLimit(lit);
+		utp.setLit(lit);
 		List<User> uList = userDao.findUserAndTagInfoList(utp);
 		for (User u : uList) {
 			StringBuffer buff = new StringBuffer();
@@ -75,7 +75,7 @@ public class UserManageServiceImpl implements IUserManageService {
 
 	@Override
 	public PageResult<User> findUserFansInfo(UserTagParamsDto utp, Limit lit) {
-		utp.setLimit(lit);
+		utp.setLit(lit);
 		List<User> uList = userDao.findUserFansInfoList(utp);
 		for (User u : uList) {
 			StringBuffer buff = new StringBuffer();

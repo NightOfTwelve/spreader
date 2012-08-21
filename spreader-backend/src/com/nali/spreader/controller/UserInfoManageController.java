@@ -51,7 +51,7 @@ public class UserInfoManageController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/userlist")
-	public String userInfoDtl(UserTagParamsDto utp, Integer start, Integer limit)
+	public String userInfoDtl(UserTagParamsDto utp)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		// UserTagParamsDto utp = new UserTagParamsDto();
 		// utp.setMinFans(minFans);
@@ -62,7 +62,7 @@ public class UserInfoManageController extends BaseController {
 		// utp.setNickName(nickName);
 		// utp.setTag(tag);
 		// utp.setIsRobot(isRobot);
-		Limit lit = this.initLimit(start, limit);
+		Limit lit = this.initLimit(utp.getStart(), utp.getLimit());
 		PageResult<User> result = userService.findUserInfo(utp, lit);
 		return this.write(result);
 	}
