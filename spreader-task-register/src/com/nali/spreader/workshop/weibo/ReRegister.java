@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop;
+package com.nali.spreader.workshop.weibo;
 
 import org.springframework.stereotype.Component;
 

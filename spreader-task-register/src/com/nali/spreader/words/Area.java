@@ -18,6 +18,7 @@ public class Area {
 	private static final Pattern linePattern=Pattern.compile("(\\d+)(\t+)(.*)");
 	private String name;
 	private int code;
+	private Area parentArea;
 	private List<Area> subAreas;
 
 	private Area(String name, int code) {
@@ -42,10 +43,10 @@ public class Area {
 					String name = matcher.group(3);
 					Area area = new Area(name, code);
 					if(level==currentLevel) {
-						parent.subAreas.add(area);
+						parent.addSubAreas(area);
 					} else if(level>currentLevel) {
 						last.subAreas=new ArrayList<Area>();
-						last.subAreas.add(area);
+						last.addSubAreas(area);
 						stack.push(parent);
 						parent=last;
 					} else {//level<currentLevel
@@ -53,7 +54,7 @@ public class Area {
 							currentLevel--;
 							parent=stack.pop();
 						}
-						parent.subAreas.add(area);
+						parent.addSubAreas(area);
 					}
 					currentLevel=level;
 					last=area;
@@ -65,6 +66,12 @@ public class Area {
 		TxtFileUtil.read(src, handler);
 		return root.subAreas;
 	}
+	
+	protected void addSubAreas(Area area) {
+		subAreas.add(area);
+		area.parentArea = this;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -90,5 +97,9 @@ public class Area {
 				print(s, i+1);
 			}
 		}
+	}
+
+	public Area getParentArea() {
+		return parentArea;
 	}
 }

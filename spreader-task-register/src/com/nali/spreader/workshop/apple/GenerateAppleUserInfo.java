@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop;
+package com.nali.spreader.workshop.apple;
 
 import java.io.IOException;
 import java.util.Random;

@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop;
+package com.nali.spreader.workshop.apple;
 
 import java.io.IOException;
 import java.util.Random;
@@ -14,29 +14,24 @@ import com.nali.spreader.factory.passive.PassiveAnalyzer;
 import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.KeyValuePair;
 import com.nali.spreader.util.random.AvgRandomer;
+import com.nali.spreader.util.random.NumberRandomer;
 import com.nali.spreader.util.random.Randomer;
+import com.nali.spreader.words.CnAdress;
 import com.nali.spreader.words.EnQaRandomer;
 import com.nali.spreader.words.PwdGenerator;
-import com.nali.spreader.words.TxtCfgUtil;
-import com.nali.spreader.words.UsAdress;
-import com.nali.spreader.words.UsCity;
-import com.nali.spreader.words.UsCityRandomer;
-import com.nali.spreader.words.UsState;
 
 @Component
-public class GenerateWebAppleUserInfo implements PassiveAnalyzer<Long> {
-	private static final String EN_LAST_TXT = "txt/en-last.txt";
+public class GenerateCnAppleUserInfo implements PassiveAnalyzer<Long> {
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
 	@AutowireProductLine
-	private TaskProduceLine<AppleRegisterInfo> registerWebApple;
-	private Randomer<String> enLastNames;
-	private AvgRandomer<UsState> statesRandomer = UsCityRandomer.getStatesRandomer();
+	private TaskProduceLine<AppleRegisterInfo> registerCnApple;
 	private Random udidSeed = new Random();
 	private AvgRandomer<KeyValuePair<String, Randomer<String>>> qaRandomer;
+	private Randomer<Integer> zipRandomer=new NumberRandomer(100000, 800000);
+	private Randomer<Integer> phoneRandomer=new NumberRandomer(10000000, 100000000);
 	
-	public GenerateWebAppleUserInfo() throws IOException {
-		enLastNames=TxtCfgUtil.loadWeightWords(EN_LAST_TXT);
+	public GenerateCnAppleUserInfo() throws IOException {
 		initQa();
 	}
 
@@ -58,27 +53,23 @@ public class GenerateWebAppleUserInfo implements PassiveAnalyzer<Long> {
 		app.setMonth(info.getBirthdayMonth());
 		app.setDate(info.getBirthdayDay());
 		app.setEmail(info.getEmail());
-		String firstName = info.getEnName();
-		String lastName = enLastNames.get();
-		app.setPwd(checkedPwd(info, firstName, lastName));
-		app.setFirstName(firstName);
-		app.setLastName(lastName);
-		app.setStreet(UsAdress.address());
-		app.setSuite(UsAdress.suite());
-		UsState state = statesRandomer.get();
-		UsCity city = state.getRandomCity();
-		String zip = city.getRandomZip();
-		app.setCity(city.getName());
-		app.setState(state.getName());
-		app.setZip(zip);
+		app.setPwd(checkedPwd(info));
+		app.setFirstName(info.getFirstName());
+		app.setLastName(info.getLastName());
+		app.setStreet(CnAdress.street());
+		app.setSuite(CnAdress.suite());
+		app.setCity(info.getCity());
+		app.setState(info.getProvince());
+		app.setZip(zipRandomer.get()+"");//TODO
+		app.setPhone(phoneRandomer.get()+"");
 		app.setUdid(genUdid());
 		app.setRegisterId(registerId);
 
-		KeyValuePair<String, Randomer<String>> qa1 = qaRandomer.get();
+		KeyValuePair<String, Randomer<String>> qa1 = qaRandomer.get();//TODO
 		app.setQ1(qa1.getKey());
 		app.setA1(qa1.getValue().get());
 		
-		registerWebApple.send(app);
+		registerCnApple.send(app);
 	}
 
 	private String genUdid() {
@@ -93,12 +84,12 @@ public class GenerateWebAppleUserInfo implements PassiveAnalyzer<Long> {
 		return birthdayYear>1993?1993*2-birthdayYear:birthdayYear;
 	}
 
-	private String checkedPwd(RobotRegister info, String firstName, String lastName) {
+	private String checkedPwd(RobotRegister info) {
 		String pwd = info.getPwd();
 		if(PwdGenerator.checkPwd(pwd)) {
 			return pwd;
 		} else {
-			return PwdGenerator.makePwd(firstName, lastName, info.getLastNamePinyin(), info.getBirthdayFull());
+			return PwdGenerator.makePwd(info.getFirstNamePinyin(), info.getLastNamePinyin(), info.getEnName(), info.getBirthdayFull());
 		}
 	}
 	

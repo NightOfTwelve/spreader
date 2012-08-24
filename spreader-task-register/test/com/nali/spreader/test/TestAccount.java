@@ -1,19 +1,18 @@
 package com.nali.spreader.test;
 
-import com.nali.spreader.data.RobotRegister;
-import com.nali.spreader.workshop.GenerateRobotUserInfo;
-import com.nali.spreader.workshop.RegisterWeiboAccount;
-
+import com.nali.spreader.words.IDGenerator;
 
 public class TestAccount {
 	
 	public static void main(String[] args) throws Exception {
-		GenerateRobotUserInfo ui = new GenerateRobotUserInfo();
-		while (true) {
-			RobotRegister robot = ui.createRobot();
-			RegisterWeiboAccount rwa = new RegisterWeiboAccount();
-			System.out.println(rwa.getModifiedNames(robot));
-			break;
-		}
+		String idCode = IDGenerator.generate(321321, 1983, 3, 26, 5);
+		System.out.println(idCode);
+		System.out.println(IDGenerator.getAreaCode(idCode));
+		System.out.println(IDGenerator.getYear(idCode));
+		System.out.println(IDGenerator.getMonth(idCode));
+		System.out.println(IDGenerator.getDate(idCode));
+		System.out.println(IDGenerator.isMale(idCode));
+		
+		System.out.println(IDGenerator.tran15("321321830326005"));
 	}
 }

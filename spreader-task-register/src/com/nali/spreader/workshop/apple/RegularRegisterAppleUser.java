@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop;
+package com.nali.spreader.workshop.apple;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.service.IAppRegisterService;
 
 @Component
-@ClassDescription("注册苹果帐号")
+@ClassDescription("注册·苹果帐号")
 public class RegularRegisterAppleUser implements RegularAnalyzer, Configable<Integer> {
 	@AutowireProductLine
 	private TaskProduceLine<Long> generateCnAppleUserInfo;

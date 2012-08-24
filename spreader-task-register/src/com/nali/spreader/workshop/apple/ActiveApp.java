@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop;
+package com.nali.spreader.workshop.apple;
 
 import java.util.Date;
 import java.util.Map;
@@ -27,6 +27,7 @@ import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
 public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassiveWorkshop<Long, Boolean> {
+	private static final long RECEIVE_DELAY = 1000*60*10;
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
 	@Autowired
@@ -51,7 +52,9 @@ public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassive
 		exporter.setProperty("pwd", register.getPwd());
 		exporter.setProperty("applePwd", appUdid.getPwd());
 		exporter.setBasePriority(ClientTask.BASE_PRIORITY_MAX);
-		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterNow(30));
+		exporter.setTimes(new Date(System.currentTimeMillis()+RECEIVE_DELAY), SpecialDateUtil.afterNow(30));
+		exporter.setUid(User.UID_NOT_LOGIN);
+		exporter.send();
 	}
 
 	@Override
