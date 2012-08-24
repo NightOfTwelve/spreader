@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop;
+package com.nali.spreader.workshop.weibo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +20,7 @@ import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.ClientTask;
+import com.nali.spreader.service.IRealManService;
 import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.words.naming.NamingMode;
@@ -30,6 +31,8 @@ public class RegisterWeiboAccount extends SingleTaskMachineImpl implements Passi
 	private TaskProduceLine<Long> activeWeibo;
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
+	@Autowired
+	private IRealManService realManService;
 	private NamingMode[] namingModes=NamingMode.values();
 
 	public RegisterWeiboAccount() {
@@ -41,6 +44,10 @@ public class RegisterWeiboAccount extends SingleTaskMachineImpl implements Passi
 		Long id = robotAccount.getKey();
 		String nickname = robotAccount.getValue();
 		robotRegisterService.addRegisteringAccount(websiteId, id, nickname);
+		RobotRegister robotRegister = robotRegisterService.get(id);
+		if(robotRegister.getRealManId()!=null) {
+			realManService.updateSinaUseCount(robotRegister.getRealManId());
+		}
 		activeWeibo.send(id);
 	}
 

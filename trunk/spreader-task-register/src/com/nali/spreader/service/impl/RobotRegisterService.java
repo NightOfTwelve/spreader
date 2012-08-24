@@ -28,7 +28,7 @@ public class RobotRegisterService implements IRobotRegisterService {
 	@Override
 	public void save(RobotRegister robotRegister) {
 		robotRegister.setUpdateTime(new Date());
-		Long id = robotRegisterDao.saveRobotRegister(robotRegister);
+		Long id = crudRobotRegisterDao.insertSelective(robotRegister);
 		robotRegister.setId(id);
 	}
 

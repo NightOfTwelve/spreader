@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop;
+package com.nali.spreader.workshop.apple;
 
 import java.util.Arrays;
 import java.util.Date;

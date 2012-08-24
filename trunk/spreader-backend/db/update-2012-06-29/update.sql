@@ -49,3 +49,7 @@ create index idx_content_id on tb_content_replay
 );
 
 ALTER TABLE spreader.tb_regular_job ADD ref_id bigint comment '关联消息ID';
+
+
+alter table tb_task_batch add index (assign_time);
+alter table tb_client_task add index (batch_id);

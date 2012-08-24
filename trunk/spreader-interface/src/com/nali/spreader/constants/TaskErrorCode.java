@@ -23,6 +23,7 @@ public enum TaskErrorCode {
 	emailHasBeenUsed(10012),//邮箱已被使用
 	retryTooMuch(10013),//重试过多放弃
 	seemRevised(10014),//似乎改版了
+	noActiveEmail(10015),//没有收到激活邮件
 	
 	//2开头的微博异常
 	//201注册异常

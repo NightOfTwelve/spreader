@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop;
+package com.nali.spreader.workshop.weibo;
 
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +20,6 @@ import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.passive.PassiveAnalyzer;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.model.RobotUserExample;
-import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
@@ -33,10 +32,6 @@ public class ReRegisterPassive implements PassiveAnalyzer<Object> {//TODO temp c
 	private RedisTemplate<String, Object> redisTemplate;
 	@AutowireProductLine
 	private TaskProduceLine<Long> registerWeiboAccount;
-	@Autowired
-	private GenerateRobotUserInfo generateRobotUserInfo;
-	@Autowired
-	private IRobotRegisterService robotRegisterService;
 
 	@Override
 	public void work(Object data) {
@@ -77,10 +72,6 @@ public class ReRegisterPassive implements PassiveAnalyzer<Object> {//TODO temp c
 			for (RobotRegister robotRegister : list) {
 				Long robotRegisterId = robotRegister.getId();
 				if(!existIds.contains(robotRegisterId)) {
-					if(robotRegister.getPersonId()==null) {
-						generateRobotUserInfo.setAreaAndId(robotRegister);//TODO 线程不安全
-						robotRegisterService.updateSelective(robotRegister);
-					}
 					registerWeiboAccount.send(robotRegisterId);
 				}
 			}

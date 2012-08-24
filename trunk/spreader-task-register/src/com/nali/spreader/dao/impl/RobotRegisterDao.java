@@ -2,24 +2,15 @@ package com.nali.spreader.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.nali.spreader.dao.IRobotRegisterDao;
-import com.nali.spreader.data.RobotRegister;
 
 @Repository
 public class RobotRegisterDao implements IRobotRegisterDao {
     private static final String REGISTERING_ACCOUNT_KEY_PREFIX = "RegisteringAccount_";
 	@Autowired
-    private SqlMapClientTemplate sqlMap;
-	@Autowired
     private RedisTemplate<String, Integer> redisTemplate;
-    
-	@Override
-	public Long saveRobotRegister(RobotRegister robotRegister) {
-		return (Long) sqlMap.insert("spreader_register.insertRobotRegister", robotRegister);
-	}
 
 	@Override
 	public Integer countRegisteringAccount(Integer websiteId) {

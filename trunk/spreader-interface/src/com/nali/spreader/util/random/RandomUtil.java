@@ -50,6 +50,10 @@ public class RandomUtil {
 		}
 	}
 	
+	public static<T> T randomItem(List<T> datas) {
+		return randomItem(datas, random);
+	}
+	
 	public static<T> T randomItem(List<T> datas, Random random) {
 		int idx = random.nextInt(datas.size());
 		return datas.get(idx);
