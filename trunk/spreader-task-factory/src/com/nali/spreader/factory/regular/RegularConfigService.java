@@ -56,7 +56,7 @@ public class RegularConfigService extends AbstractConfigService<Long> {
 		}
 	}
 
-	Object unSerializeConfigData(String configStr, String name) throws Exception {
+	Object unSerializeConfigData(String configStr, String name) throws IOException {
 		Class<?> configClazz = getConfigableInfo(name).getDataClass();
 		Object config = null;
 		if(configClazz!=null) {
