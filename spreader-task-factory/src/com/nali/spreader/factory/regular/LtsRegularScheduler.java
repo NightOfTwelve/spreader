@@ -137,23 +137,34 @@ public class LtsRegularScheduler extends AbstractTask implements RegularSchedule
 
 	@Override
 	public RegularJob getRegularJobObject(Long id) {
+		RegularJob regularJob = getRegularJob(id);
+		Object config;
 		try {
-			RegularJob regularJob = getRegularJob(id);
-			Object config = regularProducerManager.unSerializeConfigData(regularJob.getConfig(),
-					regularJob.getName());
-			Object extendConfig = getExtendConfig(regularJob.getName(), id);
-			TriggerDto triggerDto = string2TriggerDto(regularJob.getTriggerInfo());
-			String remind = getRemind(getTriggerName(regularJob.getName(), id),
-					regularJob.getName());
-			triggerDto.setRemind(remind);
-
-			regularJob.setConfigObject(config);
-			regularJob.setExtendConfigObject(extendConfig);
-			regularJob.setTriggerObject(triggerDto);
-			return regularJob;
+			config = regularProducerManager.unSerializeConfigData(regularJob.getConfig(), regularJob.getName());
+		} catch (IOException e) {
+			logger.error("unSerializeConfigData error", e);
+			config = null;
+		}
+		Object extendConfig = getExtendConfig(regularJob.getName(), id);
+		TriggerDto triggerDto;
+		try {
+			triggerDto = string2TriggerDto(regularJob.getTriggerInfo());
+		} catch (IOException e) {
+			logger.error("unSerializeTriggerDto error", e);
+			triggerDto = null;
+		}
+		String remind;
+		try {
+			remind = getRemind(getTriggerName(regularJob.getName(), id), regularJob.getName());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		triggerDto.setRemind(remind);
+
+		regularJob.setConfigObject(config);
+		regularJob.setExtendConfigObject(extendConfig);
+		regularJob.setTriggerObject(triggerDto);
+		return regularJob;
 	}
 
 	// String triggerName = getTriggerName(name, id);

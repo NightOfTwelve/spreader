@@ -1,5 +1,6 @@
 package com.nali.spreader.factory.regular;
 
+import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -135,7 +136,7 @@ public class RegularProducerManager {
 		return regularConfigService.serializeConfigData(obj);
 	}
 
-	public Object unSerializeConfigData(String configStr, String name) throws Exception {
+	public Object unSerializeConfigData(String configStr, String name) throws IOException {
 		return regularConfigService.unSerializeConfigData(configStr, name);
 	}
 	
