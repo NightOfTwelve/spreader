@@ -1,10 +1,13 @@
 package com.nali.spreader.data;
 
+
 public class AppInfo {
 	private String appSource;
 	private Long appId;
 	private String url;
-	private Integer secondsWaitBase;
+	private Double millionBite;
+	private boolean waitToEnd;
+	private boolean runApp;
 	public String getAppSource() {
 		return appSource;
 	}
@@ -23,11 +26,23 @@ public class AppInfo {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public Integer getSecondsWaitBase() {
-		return secondsWaitBase;
+	public Double getMillionBite() {
+		return millionBite;
 	}
-	public void setSecondsWaitBase(Integer secondsWaitBase) {
-		this.secondsWaitBase = secondsWaitBase;
+	public void setMillionBite(Double millionBite) {
+		this.millionBite = millionBite;
+	}
+	public boolean isWaitToEnd() {
+		return waitToEnd;
+	}
+	public void setWaitToEnd(boolean waitToEnd) {
+		this.waitToEnd = waitToEnd;
+	}
+	public boolean isRunApp() {
+		return runApp;
+	}
+	public void setRunApp(boolean runApp) {
+		this.runApp = runApp;
 	}
 
 }

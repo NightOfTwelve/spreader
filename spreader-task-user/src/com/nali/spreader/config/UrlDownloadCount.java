@@ -10,8 +10,12 @@ public class UrlDownloadCount implements Serializable {
 	private String url;
 	@PropertyDescription("下载次数")
 	private Integer count;
-	@PropertyDescription("预计下载时间（秒）")
-	private Integer secondsWaitBase;
+	@PropertyDescription("app大小（MB）")
+	private Double millionBite;
+	@PropertyDescription("是否等待下载结束")
+	private boolean waitToEnd = true;
+	@PropertyDescription("是否进入app")
+	private boolean runApp = true;
 	public String getUrl() {
 		return url;
 	}
@@ -24,10 +28,22 @@ public class UrlDownloadCount implements Serializable {
 	public void setCount(Integer count) {
 		this.count = count;
 	}
-	public Integer getSecondsWaitBase() {
-		return secondsWaitBase;
+	public Double getMillionBite() {
+		return millionBite;
 	}
-	public void setSecondsWaitBase(Integer secondsWaitBase) {
-		this.secondsWaitBase = secondsWaitBase;
+	public void setMillionBite(Double millionBite) {
+		this.millionBite = millionBite;
+	}
+	public boolean isWaitToEnd() {
+		return waitToEnd;
+	}
+	public void setWaitToEnd(boolean waitToEnd) {
+		this.waitToEnd = waitToEnd;
+	}
+	public boolean isRunApp() {
+		return runApp;
+	}
+	public void setRunApp(boolean runApp) {
+		this.runApp = runApp;
 	}
 }

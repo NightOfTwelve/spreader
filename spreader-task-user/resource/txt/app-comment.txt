@@ -1,0 +1,6 @@
+#(it's )?word(!)?
+1=good,excellent,amazing,awesome,my favorite app,interesting,cool,fun,funny
+#word(!)?
+2=use it everyday,good job,good stuff,really,happy,five stars,worth it,smart,great
+#(i )?word(!)?
+3=like it,love it,love this company's app

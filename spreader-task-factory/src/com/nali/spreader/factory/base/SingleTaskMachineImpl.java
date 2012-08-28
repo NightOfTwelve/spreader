@@ -37,4 +37,8 @@ public class SingleTaskMachineImpl implements TaskMachine<SingleTaskMeta> {
 	protected void setContextMeta(List<String> systemOnlyProperties, String... systemProperties) {
 		taskMeta.setContextMeta(new ContextMeta(systemOnlyProperties, Arrays.asList(systemProperties)));
 	}
+	
+	protected void setContextMeta(String[] systemOnlyProperties, String... systemProperties) {
+		taskMeta.setContextMeta(new ContextMeta(Arrays.asList(systemOnlyProperties), Arrays.asList(systemProperties)));
+	}
 }

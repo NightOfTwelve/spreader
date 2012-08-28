@@ -1,6 +1,7 @@
 package com.nali.spreader.util.random;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.RandomAccess;
@@ -8,6 +9,10 @@ import java.util.RandomAccess;
 public class AvgRandomer<T> implements Randomer<T> {
 	private List<T> datas;
 	private Randomer<Integer> idxRandomer;
+	
+	public AvgRandomer(T... datas) {
+		this(Arrays.asList(datas));
+	}
 	
 	public AvgRandomer(Collection<T> datas) {
 		super();
