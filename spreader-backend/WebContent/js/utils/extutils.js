@@ -259,6 +259,8 @@ function renderTaskStatus(value) {
 		return '<span style="color:bule;">' + '放弃' + '</span>';
 	} else if (value == 4) {
 		return '<span style="color:black;">' + '过期' + '</span>';
+	} else if (value == 5) {
+		return '<span style="color:black;">' + '系统异常' + '</span>';
 	}
 	return value;
 }
