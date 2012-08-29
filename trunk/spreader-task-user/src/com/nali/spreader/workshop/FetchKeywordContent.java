@@ -28,6 +28,7 @@ import com.nali.spreader.service.IContentKeywordService;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IKeywordService;
 import com.nali.spreader.service.IUserService;
+import com.nali.spreader.service.IUserServiceFactory;
 import com.nali.spreader.util.SpecialDateUtil;
 
 /**
@@ -48,11 +49,15 @@ public class FetchKeywordContent extends SingleTaskMachineImpl implements
 	private IKeywordService keywordService;
 	@Autowired
 	private IContentKeywordService contentKeywordService;
-	@Autowired
 	private IUserService userService;
 	@AutowireProductLine
 	private TaskProduceLine<Long> fetchWeiboUserMainPage;
 
+	@Autowired
+	public void initUserService(IUserServiceFactory userServiceFactory) {
+		userService = userServiceFactory.getUserService(websiteId);
+	}
+	
 	public FetchKeywordContent() {
 		super(SimpleActionConfig.fetchKeywordContent, Website.weibo, Channel.fetch);
 		ContextMeta contextMeta = new ContextMeta(Collections.<String> emptyList(),
