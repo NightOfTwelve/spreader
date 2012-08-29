@@ -34,7 +34,7 @@ public class TaskJobResultManageController extends BaseController {
 	private final static String GROUP_TYPE_SIMPLE = "simple";
 	// 复杂分组
 	private final static String GROUP_TYPE_COMPLEX = "complex";
-	private final static int[] ALL_TASK_STATUS = { 0, 1, 2, 3, 4 };
+	private final static int[] ALL_TASK_STATUS = { 0, 1, 2 };
 
 	/**
 	 * 查询执行结果列表
