@@ -158,34 +158,37 @@ Ext.onReady(function() {
 				height : 150,
 				frame : true,
 				layout : "form", // 整个大的表单是form布局
-				labelWidth : 100,
-				labelAlign : "left",
+				labelWidth : 150,
+				labelAlign : "right",
 				items : [{ // 行1
 					layout : "column", // 从左往右的布局
 					items : [{
-								columnWidth : .3, // 该列有整行中所占百分比
+								columnWidth : 1.0, // 该列有整行中所占百分比
 								layout : "form", // 从上往下的布局
 								items : [calendarCmp('start', 'start', '开始时间')]
-							}, {
-								columnWidth : .3,
-								layout : "form",
-								items : [{
-											xtype : "numberfield",
-											fieldLabel : "重复次数",
-											name : 'repeatTimes',
-											width : 100
-										}]
-							}, {
-								columnWidth : .3,
-								layout : "form",
-								items : [{
-											xtype : "numberfield",
-											fieldLabel : "毫秒数",
-											name : 'repeatInternal',
-											width : 100
-										}]
 							}]
-				}],
+				}, {	// 行2
+							layout : "column", // 从左往右的布局
+							items : [{
+										columnWidth : .5,
+										layout : "form",
+										items : [{
+													xtype : "numberfield",
+													fieldLabel : "重复次数",
+													name : 'repeatTimes',
+													width : 100
+												}]
+									}, {
+										columnWidth : .5,
+										layout : "form",
+										items : [{
+													xtype : "numberfield",
+													fieldLabel : "毫秒数",
+													name : 'repeatInternal',
+													width : 100
+												}]
+									}]
+						}],
 				buttonAlign : "center",
 				buttons : [{
 					text : '保存',
@@ -455,7 +458,6 @@ Ext.onReady(function() {
 			layout : 'border',
 			id : 'stginfos',
 			split : true,
-			width : 500,
 			items : [{
 						region : 'center',
 						layout : 'border',
@@ -464,7 +466,7 @@ Ext.onReady(function() {
 						items : [{
 									region : 'west',
 									frame : true,
-									width : 240,
+									width : 550,
 									layout : 'fit',
 									split : true,
 									autoScroll : true,
