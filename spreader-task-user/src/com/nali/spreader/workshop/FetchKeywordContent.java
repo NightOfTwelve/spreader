@@ -93,6 +93,8 @@ public class FetchKeywordContent extends SingleTaskMachineImpl implements
 					userId = user.getId();
 				}
 				c.setUid(userId);
+				c.setWebsiteId(Website.weibo.getId());
+				c.setType(Content.TYPE_WEIBO);
 				// 获取内容ID
 				Long contentId = this.contentService.assignContentId(c);
 				List<String> tagList = c.getTags();
