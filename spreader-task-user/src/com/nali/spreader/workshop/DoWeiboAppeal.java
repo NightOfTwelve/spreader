@@ -53,7 +53,7 @@ public class DoWeiboAppeal extends SingleTaskMachineImpl implements SinglePassiv
 	private long interval = 1000*60*10L;
 
 	public DoWeiboAppeal() {
-		super(SimpleActionConfig.weiboAppeal, Website.weibo, Channel.normal);
+		super(SimpleActionConfig.weiboAppeal, Website.weibo, Channel.intervention);
 		ContextMeta contextMeta = new ContextMeta("uid");
 		setContextMeta(contextMeta);
 	}
@@ -120,7 +120,7 @@ public class DoWeiboAppeal extends SingleTaskMachineImpl implements SinglePassiv
 		}
 		exporter.setBasePriority(basePriority);
 		exporter.setProperty("uid", uid);
-		exporter.setProperty("nickName", user.getNickName());
+		exporter.setProperty("nickname", user.getNickName());
 		exporter.setProperty("loginName", robotUser.getLoginName());
 		exporter.setProperty("loginPwd", robotUser.getLoginPwd());
 		exporter.setProperty("appealWord", getAppealWord());
