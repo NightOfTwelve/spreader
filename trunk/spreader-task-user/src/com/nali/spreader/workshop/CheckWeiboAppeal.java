@@ -32,7 +32,7 @@ public class CheckWeiboAppeal extends SingleTaskMachineImpl implements SinglePas
 	private IGlobalUserService globalUserService;
 
 	public CheckWeiboAppeal() {
-		super(SimpleActionConfig.confirmWeiboAppeal, Website.weibo, Channel.normal);
+		super(SimpleActionConfig.confirmWeiboAppeal, Website.weibo, Channel.instant);
 		ContextMeta contextMeta = new ContextMeta("uid");
 		setContextMeta(contextMeta);
 	}

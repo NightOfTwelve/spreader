@@ -163,13 +163,15 @@ public class GenerateRobotUserInfo implements PassiveAnalyzer<KeyValue<String, R
 		robot.setBirthdayMonth(month);
 		robot.setBirthdayDay(date);
 
-		robot.setFirstNamePinyin(CnPersons.getNamePinyin(lastName, true));//颠倒设置
-		robot.setLastNamePinyin(CnPersons.getNamePinyin(firstName, false));//颠倒设置
+		String lastNamePinyin = CnPersons.getNamePinyin(lastName, true);
+		String firstNamePinyin = CnPersons.getNamePinyin(firstName, false);
+		robot.setFirstNamePinyin(lastNamePinyin);//颠倒设置
+		robot.setLastNamePinyin(firstNamePinyin);//颠倒设置
 		Constellation constellation = getConstellation(month, date);
 		robot.setConstellation(constellation.ordinal());
 		robot.setStudentId(StudentIDGenerator.generate(robot));
 
-		String pwd = PwdGenerator.makePwd(firstName, lastName, robot.getEnName(), year*10000+month*100+date);
+		String pwd = PwdGenerator.makePwd(firstNamePinyin, lastNamePinyin, robot.getEnName(), year*10000+month*100+date);
 		robot.setPwd(pwd);
 
 		// robot.setCareer(career);
