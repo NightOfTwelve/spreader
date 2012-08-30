@@ -254,10 +254,4 @@ public class BeanProperties {
 		}
 		return map;
 	}
-
-	public static void main(String[] args) {
-		String methodName = "isBCabc";
-		String x = BeanProperties.getBeanPropertiesName(methodName);
-		System.out.println("XX:" + x);
-	}
 }
