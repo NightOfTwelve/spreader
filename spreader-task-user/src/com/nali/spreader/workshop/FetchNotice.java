@@ -120,6 +120,8 @@ public class FetchNotice extends SingleTaskMachineImpl implements
 			if (NoticeTypeEnum.atWeibo.getNocticeType().equals(noticeType)) {
 				Content content = (Content) refData;
 				content = settingContentUid(content);
+				content.setType(Content.TYPE_WEIBO);
+				content.setWebsiteId(Website.weibo.getId());
 				Long contentId = this.contentService.assignContentId(content);
 				saveNotice(contentId, null, robotId, content.getUid(), noticeType);
 			}
