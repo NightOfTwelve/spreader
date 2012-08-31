@@ -128,8 +128,8 @@
 		select k.id keyword_id,k.name keyword_name,cg.id
 		category_id,cg.name category_name from
 		tb_content_keyword ck
-		join tb_keyword k on ck.keyword_id = k.id
-		join tb_category cg on k.category_id = cg.id
+		left join tb_keyword k on ck.keyword_id = k.id
+		left join tb_category cg on k.category_id = cg.id
 		where ck.content_id = #contentId#
 	</select>
 	<select id="selectKeywordByCategories" parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
