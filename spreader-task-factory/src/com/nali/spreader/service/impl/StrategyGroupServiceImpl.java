@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
@@ -36,10 +37,11 @@ public class StrategyGroupServiceImpl implements IStrategyGroupService {
 	private ICrudRegularJobDao crudRegDao;
 	@Autowired
 	private ICrudRegularJobDao crudRegularJobDao;
+	@Autowired
+	private ICrudStrategyGroupDao crudStrategyGroupDao;
 
 	@Override
-	public PageResult<StrategyGroup> findStrategyGroupPageResult(StrategyGroup params, Integer pageNum,
-			Integer pageSize) {
+	public PageResult<StrategyGroup> findStrategyGroupPageResult(StrategyGroup params, Limit lit) {
 		if (params == null) {
 			params = new StrategyGroup();
 		}
@@ -54,7 +56,6 @@ public class StrategyGroupServiceImpl implements IStrategyGroupService {
 			criteria.andGroupTypeEqualTo(groupType);
 		}
 		exp.setOrderByClause("id desc");
-		Limit lit = Limit.newInstanceForLimit(pageNum, pageSize);
 		exp.setLimit(lit);
 		List<StrategyGroup> list = gcrudDao.selectByExample(exp);
 		int cnt = gcrudDao.countByExample(exp);
@@ -139,7 +140,8 @@ public class StrategyGroupServiceImpl implements IStrategyGroupService {
 
 	private void unSchedule(String name, Long id) {
 		try {
-			SchedulerFactory.getInstance().getScheduler().unscheduleTask(getTriggerName(name, id), name);
+			SchedulerFactory.getInstance().getScheduler()
+					.unscheduleTask(getTriggerName(name, id), name);
 		} catch (SchedulerException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -158,5 +160,14 @@ public class StrategyGroupServiceImpl implements IStrategyGroupService {
 				logger.error("删除策略分组失败,分组编号:" + gid, e);
 			}
 		}
+	}
+
+	@Override
+	public int updateGroupDescription(Long gid, String text) {
+		Assert.notNull(gid, "group id is null");
+		StrategyGroup group = new StrategyGroup();
+		group.setId(gid);
+		group.setDescription(text);
+		return this.crudStrategyGroupDao.updateByPrimaryKeySelective(group);
 	}
 }

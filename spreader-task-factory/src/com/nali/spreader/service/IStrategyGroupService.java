@@ -2,6 +2,7 @@ package com.nali.spreader.service;
 
 import java.util.List;
 
+import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.model.RegularJob;
 import com.nali.spreader.model.StrategyGroup;
@@ -21,8 +22,7 @@ public interface IStrategyGroupService {
 	 * @param pageSize
 	 * @return
 	 */
-	PageResult<StrategyGroup> findStrategyGroupPageResult(StrategyGroup params, Integer pageNum,
-			Integer pageSize);
+	PageResult<StrategyGroup> findStrategyGroupPageResult(StrategyGroup params, Limit lit);
 
 	/**
 	 * 保存StrategyGroup 并返回主键
@@ -72,4 +72,13 @@ public interface IStrategyGroupService {
 	 * @param gid
 	 */
 	void rollBackStrategyGroupByGid(Long gid);
+
+	/**
+	 * 修改分组说明
+	 * 
+	 * @param gid
+	 * @param text
+	 * @return
+	 */
+	int updateGroupDescription(Long gid, String text);
 }
