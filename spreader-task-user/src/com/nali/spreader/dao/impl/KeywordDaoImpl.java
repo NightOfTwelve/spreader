@@ -88,4 +88,9 @@ public class KeywordDaoImpl implements IKeywordDao {
 	public List<KeywordInfoQueryDto> selectKeywordByContentId(Long contentId) {
 		return this.sqlMap.queryForList("spreader_keyword.selectKeywordByContentId", contentId);
 	}
+
+	@Override
+	public int cleanKeywordCategory(Long categoryId) {
+		return this.sqlMap.update("spreader_keyword.updateKeywordCategoryId", categoryId);
+	}
 }
