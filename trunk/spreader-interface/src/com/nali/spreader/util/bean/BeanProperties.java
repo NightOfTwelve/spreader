@@ -32,24 +32,32 @@ public class BeanProperties {
 	private Map<String, Method> setMethodMap;
 	private Map<String, Method> getMethodMap;
 	private Set<String> blackSet;
+	private IConvertMethodParamType convert;
 
-	public BeanProperties(Class<?> clazz, String... strs) {
-		this(clazz, ArrayUtils.isEmpty(strs) ? null : new HashSet<String>(Arrays.asList(strs)));
+	public BeanProperties(IConvertMethodParamType convert, Class<?> clazz, String... strs) {
+		this(convert, clazz, ArrayUtils.isEmpty(strs) ? null : new HashSet<String>(
+				Arrays.asList(strs)));
 	}
 
-	public BeanProperties(Class<?> clazz, List<String> list) {
-		this(clazz, CollectionUtils.isEmpty(list) ? null : new HashSet<String>(list));
+	public BeanProperties(IConvertMethodParamType convert, Class<?> clazz, List<String> list) {
+		this(convert, clazz, CollectionUtils.isEmpty(list) ? null : new HashSet<String>(list));
 	}
 
-	public BeanProperties(Class<?> clazz, Set<String> blackSet) {
+	public BeanProperties(IConvertMethodParamType convert, Class<?> clazz, Set<String> blackSet) {
 		this.clazz = clazz;
 		this.blackSet = blackSet;
+		if (convert == null) {
+			convert = new ConvertMethodParamTypeImpl();
+		}
+		this.convert = convert;
 		setMethodMap = instanceSetMethodMap();
 		getMethodMap = instanceGetMethodMap();
 	}
 
 	public BeanProperties(Class<?> clazz) {
 		this.clazz = clazz;
+		// 使用默认的转换类型接口
+		this.convert = new ConvertMethodParamTypeImpl();
 		setMethodMap = instanceSetMethodMap();
 		getMethodMap = instanceGetMethodMap();
 	}
@@ -199,7 +207,9 @@ public class BeanProperties {
 	 */
 	@SuppressWarnings("unchecked")
 	public <E> E convertBean(Map<String, Object> dataMap) {
-		Assert.notNull(dataMap, "convertBean,map is null");
+		if (dataMap == null) {
+			return null;
+		}
 		Assert.notNull(setMethodMap, "setMethodMap is null");
 		E obj = null;
 		try {
@@ -213,6 +223,16 @@ public class BeanProperties {
 			String propName = entry.getKey();
 			Method method = entry.getValue();
 			Object data = dataMap.get(propName);
+			if (data != null) {
+				Class<?> setParam = method.getParameterTypes()[0];
+				if (!setParam.isInstance(data)) {
+					if (Number.class.isAssignableFrom(setParam)) {
+						if (Number.class.isInstance(data)) {
+							data = this.convert.convertNumberParam(setParam, data);
+						}
+					}
+				}
+			}
 			try {
 				method.invoke(obj, data);
 			} catch (IllegalArgumentException e) {
