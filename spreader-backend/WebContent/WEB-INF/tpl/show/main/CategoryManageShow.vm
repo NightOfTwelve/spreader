@@ -3,6 +3,7 @@
 <head>
 <title>分类管理</title>
 #parse("/show/comm/PublicInclude.vm")
+#parse("/show/comm/RowEditorCmpInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/categorytag/CategoryManageModel.js'))"></script>
 </head>
 <body>

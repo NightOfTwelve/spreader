@@ -1,13 +1,19 @@
 package com.nali.spreader.service.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
@@ -15,16 +21,19 @@ import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.ContentKeywordsConfig;
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.UserTagParamsDto;
+import com.nali.spreader.constants.Website;
 import com.nali.spreader.dao.ICrudPhotoDao;
 import com.nali.spreader.dao.ICrudRobotRegisterDao;
 import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.IUserDao;
+import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.Photo;
 import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.data.RobotRegisterExample;
 import com.nali.spreader.data.RobotRegisterExample.Criteria;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserTag;
+import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IUserManageService;
 import com.nali.spreader.util.random.NumberRandomer;
 import com.nali.spreader.util.random.RandomUtil;
@@ -42,6 +51,8 @@ public class UserManageServiceImpl implements IUserManageService {
 	private ICrudPhotoDao photoDao;
 	@Autowired
 	private ICrudUserDao crudUserDao;
+	// 导入帐号的默认ROBOT_REGISTER_ID
+	private static final Long IMPORT_ROBOT_REGISTER_ID = 0L;
 
 	@Override
 	public PageResult<User> findUserInfo(UserTagParamsDto utp, Limit lit) {
@@ -168,5 +179,70 @@ public class UserManageServiceImpl implements IUserManageService {
 			}
 		}
 		return tagList;
+	}
+
+	@Override
+	public List<KeyValue<RobotUser, User>> importWeiboAccount(CommonsMultipartFile file) {
+		if (file.isEmpty()) {
+			throw new IllegalArgumentException("import file is empty");
+		}
+		try {
+			List<KeyValue<RobotUser, User>> data = new ArrayList<KeyValue<RobotUser, User>>();
+			XSSFWorkbook book = new XSSFWorkbook(file.getInputStream());
+			// sheet 总数
+			int sheetNumber = book.getNumberOfSheets();
+			for (int i = 0; i < sheetNumber; i++) {
+				XSSFSheet sheet = book.getSheetAt(i);
+				int sheetRows = sheet.getPhysicalNumberOfRows();
+				for (int r = 1; r < sheetRows; r++) {
+					XSSFRow row = sheet.getRow(r);
+					if (row != null) {
+						// 微博昵称
+						XSSFCell nickNameCell = row.getCell(0);
+						// websiteUid
+						XSSFCell websiteUidCell = row.getCell(1);
+						// email
+						XSSFCell emailCell = row.getCell(2);
+						// password
+						XSSFCell pwdCell = row.getCell(3);
+						if (websiteUidCell != null && websiteUidCell != null && emailCell != null
+								&& pwdCell != null) {
+							String websiteUidStr = websiteUidCell.getRichStringCellValue()
+									.getString();
+							String emailAccount = emailCell.getRichStringCellValue().getString();
+							String pwd = pwdCell.getRichStringCellValue().getString();
+							// 有些空行也会读出来，这里做过滤
+							if (StringUtils.isNotBlank(websiteUidStr)
+									&& StringUtils.isNotBlank(emailAccount)
+									&& StringUtils.isNotBlank(pwd)) {
+								String nickName = null;
+								if (nickNameCell != null) {
+									nickName = nickNameCell.getRichStringCellValue().getString();
+								}
+								Long websiteUid = Long.parseLong(websiteUidStr);
+								KeyValue<RobotUser, User> kv = new KeyValue<RobotUser, User>();
+								RobotUser robotUser = new RobotUser();
+								robotUser.setRobotRegisterId(IMPORT_ROBOT_REGISTER_ID);
+								robotUser.setAccountState(RobotUser.ACCOUNT_STATE_NORMAL);
+								robotUser.setWebsiteId(Website.weibo.getId());
+								robotUser.setWebsiteUid(websiteUid);
+								robotUser.setLoginName(emailAccount);
+								robotUser.setLoginPwd(pwd);
+								User user = new User();
+								user.setEmail(emailAccount);
+								user.setNickName(nickName);
+								kv.setKey(robotUser);
+								kv.setValue(user);
+								data.add(kv);
+							}
+						}
+					}
+				}
+			}
+			return data;
+		} catch (IOException e) {
+			LOGGER.error("file read error", e);
+			return Collections.emptyList();
+		}
 	}
 }

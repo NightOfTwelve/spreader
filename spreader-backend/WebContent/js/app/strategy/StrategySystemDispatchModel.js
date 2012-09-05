@@ -2,6 +2,18 @@
  * 策略调度列表的布局JS 统一使用Ext.Viewport分为north,CENTER两块 上侧为查询条件 下方为具体的列表显示
  */
 Ext.onReady(function() {
+	// 策略ID隐藏域
+	var strategyIdHidden = new Ext.form.Hidden({
+				name : 'strategyIdHidden'
+			});
+	// 策略名称隐藏域
+	var strategyNameHidden = new Ext.form.Hidden({
+				name : 'strategyNameHidden'
+			});
+	// 策略对象ID隐藏域
+	var objIdHidden = new Ext.form.Hidden({
+				name : 'objIdHidden'
+			});
 	// 构造树的根节点ROOT
 	var stgroot = new Ext.tree.AsyncTreeNode({
 				id : '-1',
@@ -45,9 +57,10 @@ Ext.onReady(function() {
 					listeners : {
 						"beforeload" : function(treeloader, node) {
 							treeloader.baseParams = {
-								name : GOBJID,
-								disname : GDISNAME,
-								id : GDISPID
+								name : strategyIdHidden.getValue(),
+								id : objIdHidden.getValue(),
+								isGroup : false,
+								defaultData : null
 							};
 						}
 					}
@@ -314,12 +327,10 @@ Ext.onReady(function() {
 					var data = record.data;
 					// 找出表格中‘配置’按钮
 					if (butname == '配置') {
-						GDISNAME = data.name;
-						GOBJID = data.name;
-						GDISPID = data.id;
+						strategyIdHidden.setValue(data.name);
+						objIdHidden.setValue(data.id);
 						var trgid = data.id;
 						settingCreateTrigger(trgid);
-						editstgWindow.title = rendDispName(GDISNAME);
 						editstgWindow.show();
 					}
 					if (butname == '执行情况') {
@@ -440,7 +451,8 @@ Ext.onReady(function() {
 					handler : function() {
 						strategyDispatchSubmitTreeData(stgdisptree,
 								triggerDispForm, radioForm, simpleDispForm,
-								editstgWindow, store);
+								editstgWindow, store, strategyIdHidden
+										.getValue(), objIdHidden.getValue());
 					}
 				}, {
 					text : "重置",
@@ -566,11 +578,8 @@ Ext.onReady(function() {
 					text : '确定', // 按钮文本
 					iconCls : 'tbar_synchronizeIcon', // 按钮图标
 					handler : function() { // 按钮响应函数
-						GDISPID = null;
 						cleanCreateTrigger();
-						GOBJID = stgSelectCombo.getValue();
-						GDISNAME = stgSelectCombo.lastSelectionText;
-						editstgWindow.title = GDISNAME;
+						strategyIdHidden.setValue(stgSelectCombo.getValue());
 						editstgWindow.show();
 						stgCmbWindow.hide();
 					}
@@ -686,10 +695,10 @@ Ext.onReady(function() {
 						ttriggerDispForm.findField("cron").setValue(cron);
 						// TODO
 						var remindcmp = Ext.getCmp("jobremind");
-						var tstr = '任务:' + rendDispName(GDISNAME) + ',编号:'
-								+ GDISPID + ',目前运行信息:' + remind;
-						remindcmp.setText('<font color = "red">' + tstr
-								+ '</font>');
+//						var tstr = '任务:' + rendDispName(GDISNAME) + ',编号:'
+//								+ GDISPID + ',目前运行信息:' + remind;
+//						remindcmp.setText('<font color = "red">' + tstr
+//								+ '</font>');
 					},
 					failure : function() {
 						// Ext.Msg.alert("提示", "数据获取异常");

@@ -173,6 +173,7 @@ function strategyDispatchSubmitTreeData(stgdisptree, triggerDispForm,
 	tparam['name'] = strategyId;
 	tparam['_time'] = new Date().getTime();
 	tparam['id'] = objId;
+	tparam['groupType'] = 1;
 	if (treearray.length > 0) {
 		var arrayobj = treearray[0].attributes;
 		var submitStr = treejson2str(arrayobj);

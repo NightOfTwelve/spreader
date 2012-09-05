@@ -2,13 +2,17 @@ package com.nali.spreader.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.UserTagParamsDto;
+import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserTag;
+import com.nali.spreader.model.RobotUser;
 
 public interface IUserManageService {
 	/**
@@ -73,4 +77,6 @@ public interface IUserManageService {
 	 * @return
 	 */
 	List<UserTag> createUserTags(List<String> keywordList);
+	
+	List<KeyValue<RobotUser, User>> importWeiboAccount(CommonsMultipartFile file);
 }

@@ -194,4 +194,33 @@ public class CategoryManageController extends BaseController {
 		m.put("isPresence", flag);
 		return this.write(m);
 	}
+
+	/**
+	 * 更新分类属性
+	 * 
+	 * @param category
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/updatecategory")
+	public String updateCategory(Category category) {
+		this.ckService.updateCategory(category);
+		return null;
+	}
+
+	/**
+	 * 删除分类
+	 * 
+	 * @param ids
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/deletecategory")
+	public String deleteCategory(Long... ids) {
+		Integer rows = 0;
+		if (ids.length > 0) {
+			rows = this.ckService.deleteCategory(ids);
+		}
+		return this.write(rows);
+	}
 }

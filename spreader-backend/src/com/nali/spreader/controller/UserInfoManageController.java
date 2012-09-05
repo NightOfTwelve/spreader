@@ -21,9 +21,12 @@ import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.controller.basectrl.BaseController;
+import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserTag;
+import com.nali.spreader.dto.UploadBeanDto;
 import com.nali.spreader.model.RobotUser;
+import com.nali.spreader.service.IGlobalRobotUserService;
 import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserManageService;
 
@@ -35,6 +38,8 @@ public class UserInfoManageController extends BaseController {
 	private IUserManageService userService;
 	@Autowired
 	private IGlobalUserService globaUserService;
+	@Autowired
+	private IGlobalRobotUserService globalRobotUserService;
 
 	public String init() {
 		return "/show/main/UserInfoManageShow";
@@ -51,8 +56,8 @@ public class UserInfoManageController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/userlist")
-	public String userInfoDtl(UserTagParamsDto utp)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public String userInfoDtl(UserTagParamsDto utp) throws JsonGenerationException,
+			JsonMappingException, IOException {
 		// UserTagParamsDto utp = new UserTagParamsDto();
 		// utp.setMinFans(minFans);
 		// utp.setMaxFans(maxFans);
@@ -222,5 +227,29 @@ public class UserInfoManageController extends BaseController {
 		Map<String, Integer> m = CollectionUtils.newHashMap(1);
 		m.put("count", count);
 		return this.write(m);
+	}
+
+	/**
+	 * 导入指定的帐号
+	 * 
+	 * @param form
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/uploadacc")
+	public String uploadAccount(UploadBeanDto form) {
+		int count = 0;
+		List<KeyValue<RobotUser, User>> list = this.userService.importWeiboAccount(form.getFile());
+		if (!CollectionUtils.isEmpty(list)) {
+			for (KeyValue<RobotUser, User> kv : list) {
+				RobotUser robotUser = kv.getKey();
+				User user = kv.getValue();
+				Long uid = this.globaUserService.registerRobotUser(robotUser, user);
+				robotUser.setUid(uid);
+				this.globalRobotUserService.syncLoginConfig(robotUser);
+				count++;
+			}
+		}
+		return this.write(count);
 	}
 }
