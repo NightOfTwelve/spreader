@@ -110,4 +110,12 @@ public interface IKeywordDao {
 	 * @return
 	 */
 	List<KeywordInfoQueryDto> selectKeywordByContentId(Long contentId);
+
+	/**
+	 * 清空与分类的对应关系
+	 * 
+	 * @param categoryId
+	 * @return
+	 */
+	int cleanKeywordCategory(Long categoryId);
 }

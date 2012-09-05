@@ -194,4 +194,9 @@
 		where id = #id:BIGINT# and executable =
 		true
 	</update>
+	<update id="updateKeywordCategoryId" parameterClass="java.lang.Long">
+		update spreader.tb_keyword
+		set category_id = null
+		where category_id = #categoryId#
+	</update>
 </sqlMap>
