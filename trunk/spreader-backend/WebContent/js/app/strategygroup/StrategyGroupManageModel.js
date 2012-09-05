@@ -836,7 +836,8 @@ Ext.onReady(function() {
 					groupIdHidden.setValue(data.id);
 					groupNameHidden.setValue(data.groupName);
 					groupTypeHidden.setValue(gType);
-					var wtext = '当前分组:' + data.groupName + ',编号:' + data.id;
+					var wtext = '【分组名】:' + data.groupName + ',【编号】:' + data.id
+							+ ',【说明】：' + data.description;
 					Ext.getCmp('groupinfo').setText(wtext);
 					compGroupWindow.show();
 					store.setBaseParam('groupId', data.id);
@@ -1062,13 +1063,22 @@ Ext.onReady(function() {
 											fieldLabel : "调度名称",
 											name : 'dispname1',
 											width : 100
-										}, {
-											xtype : 'label',
-											fieldLabel : '分组信息',
-											id : 'groupinfo',
-											labelStyle : 'padding:0px',
-											text : ''
-										}]
+										}, new Ext.form.Label({
+													fieldLabel : '分组信息',
+													id : 'groupinfo',
+													name : 'groupinfo',
+													labelStyle : 'padding:0px',
+													text : '',
+													width : 130
+												})
+								// {
+								// xtype : 'label',
+								// fieldLabel : '分组信息',
+								// id : 'groupinfo',
+								// labelStyle : 'padding:0px',
+								// text : ''
+								// }
+								]
 							}]
 				}],
 				buttonAlign : "center",
@@ -1126,7 +1136,7 @@ Ext.onReady(function() {
 			}, {
 				header : '调度名称',
 				dataIndex : 'name',
-				// renderer : rendDispName,
+				renderer : rendDispNameFn,
 				width : 100
 			}, {
 				header : '调度类型',
@@ -1221,16 +1231,39 @@ Ext.onReady(function() {
 							handler : function() {
 								deleteData();
 							}
-						}, {
-							text : '查询',
-							iconCls : 'previewIcon',
-							handler : function() {
-							}
 						}, '-', {
 							text : '刷新',
 							iconCls : 'arrow_refreshIcon',
 							handler : function() {
 								store.reload();
+							}
+						}, '-', new Ext.form.TextField({
+									id : 'groupDesc',
+									name : 'groupDesc',
+									emptyText : '请输入分组备注信息',
+									enableKeyEvents : true,
+									listeners : {
+										specialkey : function(field, e) {
+											if (e.getKey() == Ext.EventObject.ENTER) {
+												var text = field.getValue();
+												var gid = groupIdHidden
+														.getValue();
+												var gname = groupNameHidden
+														.getValue();
+												updateGroupNote(gid, text,
+														gname);
+											}
+										}
+									},
+									width : 130
+								}), {
+							text : '修改分组备注',
+							iconCls : 'edit1Icon',
+							handler : function() {
+								var gid = groupIdHidden.getValue();
+								var text = Ext.getCmp('groupDesc').getValue();
+								var gname = groupNameHidden.getValue();
+								updateGroupNote(gid, text, gname);
 							}
 						}],
 				bbar : bbar,
@@ -1623,6 +1656,47 @@ Ext.onReady(function() {
 		var tcombo = Ext.getCmp('toSelectUserGroupCombo');
 		fcombo.setValue('');
 		tcombo.setValue('');
+	}
+
+	/**
+	 * 更新分组的备注信息
+	 */
+	function updateGroupNote(gid, noteText, gname) {
+		Ext.Msg.show({
+					title : '确认信息',
+					msg : '确认修改分组说明?',
+					buttons : Ext.Msg.YESNO,
+					fn : function(ans) {
+						if (ans == 'yes') {
+							Ext.Ajax.request({
+										url : '../stggroup/updatedesc?_time'
+												+ new Date().getTime(),
+										params : {
+											gid : gid,
+											text : noteText
+										},
+										success : function(response) {
+											var rows = Ext
+													.decode(response.responseText);
+											if (rows > 0) {
+												Ext.Msg.alert("提示", "修改成功");
+												var wtext = '【分组名】:' + gname
+														+ '，【编号】:' + gid
+														+ '，【说明】:' + noteText;
+												Ext.getCmp('groupinfo')
+														.setText(wtext);
+											} else {
+												Ext.Msg.alert("提示", "修改失败");
+											}
+											groupStore.reload();
+										},
+										failure : function() {
+											Ext.Msg.alert("提示", "修改失败");
+										}
+									});
+						}
+					}
+				});
 	}
 
 	var viewport = new Ext.Viewport({

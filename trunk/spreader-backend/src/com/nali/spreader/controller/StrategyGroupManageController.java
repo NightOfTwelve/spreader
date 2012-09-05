@@ -59,12 +59,11 @@ public class StrategyGroupManageController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/groupgrid")
 	public String groupGridStore(String groupName, Integer groupType, Integer start, Integer limit) {
-		if (start == null)
-			start = 0;
 		StrategyGroup sg = new StrategyGroup();
 		sg.setGroupName(groupName);
 		sg.setGroupType(groupType);
-		PageResult<StrategyGroup> pr = groupService.findStrategyGroupPageResult(sg, start, limit);
+		PageResult<StrategyGroup> pr = groupService.findStrategyGroupPageResult(sg,
+				this.initLimit(start, limit));
 		int totalCount = pr.getTotalCount();
 		List<ConfigableInfo> dispnamelist = regularConfigService
 				.listConfigableInfo(ConfigableType.normal);
@@ -128,5 +127,19 @@ public class StrategyGroupManageController extends BaseController {
 			}
 		}
 		return this.write(result);
+	}
+
+	/**
+	 * 更新分组说明
+	 * 
+	 * @param gid
+	 * @param text
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/updatedesc")
+	public String updateGroupNote(Long gid, String text) {
+		int rows = this.groupService.updateGroupDescription(gid, text);
+		return this.write(rows);
 	}
 }

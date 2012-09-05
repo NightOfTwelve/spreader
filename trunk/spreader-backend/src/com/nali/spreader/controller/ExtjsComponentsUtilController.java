@@ -47,13 +47,12 @@ public class ExtjsComponentsUtilController extends BaseController {
 	@RequestMapping(value = "/strategygroupcombo")
 	public String testComboBoxStore(String groupName, Integer groupType, Long id, String query,
 			Integer start, Integer limit) {
-		if (start == null)
-			start = 0;
 		StrategyGroup sg = new StrategyGroup();
 		sg.setId(id);
 		sg.setGroupName(query);
 		sg.setGroupType(groupType);
-		PageResult<StrategyGroup> pr = groupService.findStrategyGroupPageResult(sg, start, limit);
+		PageResult<StrategyGroup> pr = groupService.findStrategyGroupPageResult(sg,
+				this.initLimit(start, limit));
 		return this.write(pr);
 	}
 
