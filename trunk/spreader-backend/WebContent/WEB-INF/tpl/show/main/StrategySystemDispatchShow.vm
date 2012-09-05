@@ -2,12 +2,6 @@
 <html>
 <head>
 <title>系统策略调度列表</title>
-<script>
-	// 全局对象ID
-	var GOBJID = null;
-	var GDISNAME = null;
-	var GDISPID;
-</script>
 #parse("/show/comm/PublicInclude.vm")
 #parse("/show/comm/DateTimeFieldInclude.vm")
 #parse("/show/comm/FunctionsInclude.vm")

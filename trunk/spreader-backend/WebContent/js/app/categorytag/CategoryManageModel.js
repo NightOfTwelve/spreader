@@ -114,22 +114,64 @@ Ext.onReady(function() {
 				locked : true,
 				width : 28
 			});
+	// RowEditor
+	var categoryGridEditor = new Ext.ux.grid.RowEditor({
+				saveText : '更新',
+				cancelText : '取消',
+				clicksToEdit : 2
+			});
+	// 增加编辑事件
+	categoryGridEditor.on({
+				scope : this,
+				afteredit : function(roweditor, changes, record, rowIndex) {
+					var categoryId = record.id;
+					var categoryName = changes.name;
+					var description = changes.description;
+					Ext.Ajax.request({
+								url : '../category/updatecategory?_time='
+										+ new Date().getTime(),
+								params : {
+									'id' : categoryId,
+									'name' : categoryName,
+									'description' : description
+								},
+								scope : this,
+								success : function(response) {
+									// 页面提交
+									record.commit();
+									return;
+								},
+								failure : function() {
+									Ext.Msg.alert("提示", "更新失败");
+									// 还原数据
+									record.reject();
+									return;
+								}
+							});
+				}
+			});
 
 	// 定义锁定列模型
-	var categoryGridcm = new Ext.grid.ColumnModel([categoryGridsm,
+	var categoryGridcm = new Ext.grid.ColumnModel([
+			// categoryGridsm,
 			categoryGridRownum, {
 				header : '编号',
 				dataIndex : 'id',
-				// locked : true,
 				width : 80
 			}, {
 				header : '关键字',
 				dataIndex : 'name',
-				// locked : true,
+				editor : {
+					xtype : 'textfield',
+					allowBlank : false
+				},
 				width : 100
 			}, {
 				header : '分类说明',
 				dataIndex : 'description',
+				editor : {
+					xtype : 'textfield'
+				},
 				width : 100
 			}, {
 				header : '添加关键字',
@@ -151,52 +193,102 @@ Ext.onReady(function() {
 
 	// 分类列表
 	var categoryGrid = new Ext.grid.GridPanel({
-				height : 500,
-				autoWidth : true,
-				autoScroll : true,
-				split : true,
-				region : 'center',
-				store : categoryStore,
-				loadMask : {
-					msg : '正在加载表格数据,请稍等...'
-				},
-				// stripeRows : true,
-				frame : true,
-				// autoExpandColumn : 'remark',
-				sm : categoryGridsm,
-				cm : categoryGridcm,
-				tbar : [{
-							text : '新增',
-							iconCls : 'page_addIcon',
-							handler : function() {
-								addCategoryCmbForm.form.reset();
-								addCategoryWindow.show();
-							}
-						}, '-', {
-							text : '刷新',
-							iconCls : 'arrow_refreshIcon',
-							handler : function() {
-								categoryStore.load();
-							}
-						}],
-				bbar : categoryGridBbar,
-				onCellClick : function(grid, rowIndex, columnIndex, e) {
-					var buttons = e.target.defaultValue;
-					var record = grid.getStore().getAt(rowIndex);
-					var data = record.data;
-					// 找出表格中‘配置’按钮
-					if (buttons == '添加') {
-						var cgid = data.id;
-						categoryIdHidden.setValue(cgid);
-						addTagWindow.show();
-						cagegoryTagStore.load();
-						cagegoryNotTagStore.load();
+		height : 500,
+		autoWidth : true,
+		autoScroll : true,
+		split : true,
+		plugins : [categoryGridEditor],
+		region : 'center',
+		store : categoryStore,
+		loadMask : {
+			msg : '正在加载表格数据,请稍等...'
+		},
+		// stripeRows : true,
+		frame : true,
+		// autoExpandColumn : 'remark',
+		// sm : categoryGridsm,
+		cm : categoryGridcm,
+		tbar : [{
+					text : '新增',
+					iconCls : 'page_addIcon',
+					handler : function() {
+						addCategoryCmbForm.form.reset();
+						addCategoryWindow.show();
 					}
-				}
-			});
+				}, '-', {
+					text : '刷新',
+					iconCls : 'arrow_refreshIcon',
+					handler : function() {
+						categoryStore.load();
+					}
+				}, '-', {
+					ref : '../removeBtn',
+					iconCls : 'deleteIcon',
+					text : '删除分类',
+					disabled : true,
+					handler : function() {
+						categoryGridEditor.stopEditing();
+						var s = categoryGrid.getSelectionModel()
+								.getSelections();
+						var ids = [];
+						for (var i = 0, r; r = s[i]; i++) {
+							var cid = r.data.id;
+							ids[i] = cid;
+						}
+						if (ids.length == 0) {
+							Ext.MessageBox.alert('提示', '至少选择一行记录');
+							return;
+						}
+						Ext.Msg.show({
+							title : '提示',
+							msg : '确认删除？',
+							buttons : Ext.Msg.YESNO,
+							fn : function(ans) {
+								if (ans == 'yes') {
+									Ext.Ajax.request({
+										url : '../category/deletecategory?_time='
+												+ new Date().getTime(),
+										params : {
+											'ids' : ids
+										},
+										success : function(response) {
+											var result = Ext
+													.decode(response.responseText);
+											Ext.MessageBox.alert('提示', '成功删除：'
+															+ result + '条记录');
+											categoryStore.reload();
+											return;
+										},
+										failure : function() {
+											Ext.MessageBox.alert('提示', '删除失败');
+											return;
+										}
+									});
+								}
+							}
+						});
+					}
+				}],
+		bbar : categoryGridBbar,
+		onCellClick : function(grid, rowIndex, columnIndex, e) {
+			var buttons = e.target.defaultValue;
+			var record = grid.getStore().getAt(rowIndex);
+			var data = record.data;
+			// 找出表格中‘配置’按钮
+			if (buttons == '添加') {
+				var cgid = data.id;
+				categoryIdHidden.setValue(cgid);
+				addTagWindow.show();
+				cagegoryTagStore.load();
+				cagegoryNotTagStore.load();
+			}
+		}
+	});
 	// 注册事件
 	categoryGrid.on('cellclick', categoryGrid.onCellClick, categoryGrid);
-
+	categoryGrid.getSelectionModel().on('selectionchange', function(sm) {
+				categoryGrid.removeBtn.setDisabled(sm.getCount() < 1);
+			});
 	// 嵌入的FORM
 	var addCategoryCmbForm = new Ext.form.FormPanel({
 		id : 'addCategoryCmbForm',

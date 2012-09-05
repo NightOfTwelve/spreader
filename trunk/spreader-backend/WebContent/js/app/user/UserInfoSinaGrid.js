@@ -247,7 +247,71 @@ sinaUserStore.on('beforeload', function() {
 				isRobot : isRobot
 			};
 		});
-
+// 导入excel文件窗口
+var importAccWindows;
+// 导入excelForm
+var importAccForm = new Ext.form.FormPanel({
+	labelWidth : 60,
+	fileUpload : true,
+	frame : true,
+	bodyStyle : 'padding: 10px',
+	defaults : {
+		anchor : '95%',
+		allowBlank : false,
+		msgTarget : 'side'
+	},
+	items : [{
+				xtype : 'fileuploadfield',
+				id : 'uploadFile',
+				emptyText : '请选择数据文件(.xlsx)',
+				fieldLabel : '数据文件',
+				name : 'file',
+				buttonText : '···'
+			}],
+	buttons : [{
+		text : '导入',
+		handler : function() {
+			if (importAccForm.getForm().isValid()) {
+				var uploadForm = Ext.getCmp('uploadFile');
+				var fileName = uploadForm.value;
+				var extName = /\.[^\.]+$/.exec(fileName);
+				if (extName != '.xlsx') {
+					Ext.Msg.alert('提示,', '请导入.xlsx文件,目前只支持Office2007以上版本 ');
+					importAccForm.getForm().reset();
+					return;
+				}
+				importAccForm.getForm().submit({
+					url : '../userinfo/uploadacc?_time=' + new Date().getTime(),
+					method : 'POST',
+					waitMsg : '上传中...',
+					timeout : 600000,
+					success : function(form, obj) {
+						var count = obj.result;
+						Ext.Msg.alert('提示,', '成功导入:' + count + '条记录 ');
+						form.reset();
+						importAccWindows.hide();
+					},
+					failure : function(tform, action) {
+						if (action.failureType === Ext.form.Action.CONNECT_FAILURE) {
+							Ext.Msg.alert('服务器错误,', '状态:'
+											+ action.response.status + ': '
+											+ action.response.statusText);
+						}
+						if (action.failureType === Ext.form.Action.SERVER_INVALID) {
+							Ext.Msg.alert('提交错误', action.result.errMsg);
+						}
+					}
+				});
+			}
+			sinaUserStore.load();
+		}
+	}, {
+		text : '重置',
+		handler : function() {
+			importAccForm.getForm().reset();
+		}
+	}]
+});
 // 定义Checkbox
 var sm = new Ext.grid.CheckboxSelectionModel();
 var rownums = new Ext.grid.RowNumberer({
@@ -292,7 +356,6 @@ var cm = new Ext.grid.ColumnModel([rownums, sm, {
 		, {
 			header : '头像',
 			dataIndex : 'avatarUrl',
-			// TODO
 			// renderer : renderImage,
 			width : 80
 		}, {
@@ -399,21 +462,40 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 						handler : function() {
 							sinaUserStore.reload();
 						}
-					}, {
+					}, '-', {
 						text : '导出用户',
-						iconCls : 'arrow_refreshIcon',
+						iconCls : 'downloadIcon',
 						handler : expUserInfo
-					}, {
+					}, '-', {
 						id : 'updateremind',
 						name : 'updateremind',
 						xtype : 'tbtext',
-						text : '<font color = "red">双击行可修改用户信息</font>'
-					}, {
+						text : '<font color = "red">双击表格修改用户信息</font>'
+					}, '-', {
 						text : '批量修改用户标签',
-						iconCls : 'arrow_refreshIcon',
-						// TODO
+						iconCls : 'edit1Icon',
 						handler : function() {
 							updateUserTagWin.show();
+						}
+					}, '-', {
+						text : '导入微博帐号',
+						iconCls : 'uploadIcon',
+						handler : function() {
+							if (!importAccWindows) {
+								importAccWindows = new Ext.Window({
+											title : '批量导入',
+											layout : 'fit',
+											width : 400,
+											height : 140,
+											closeAction : 'hide',
+											plain : true,
+											items : [importAccForm]
+										});
+								importAccWindows.on('show', function() {
+											importAccForm.getForm().reset();
+										});
+							}
+							importAccWindows.show(this);
 						}
 					}],
 			onCellClick : function(grid, rowIndex, columnIndex, e) {
@@ -811,7 +893,7 @@ var updateUserTagForm = new Ext.form.FormPanel({
 /**
  * 修改用户标签win
  */
-// TODO
+
 var updateUserTagWin = new Ext.Window({
 			title : '<span class="commoncss">更新用户标签</span>', // 窗口标题
 			iconCls : 'imageIcon',

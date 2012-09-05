@@ -120,4 +120,20 @@ public interface ICategoryKeyWordService {
 	 * @return
 	 */
 	boolean checkCategoryName(String name);
+
+	/**
+	 * 更新分类属性
+	 * 
+	 * @param category
+	 * @return
+	 */
+	int updateCategory(Category category);
+
+	/**
+	 * 批量删除分类
+	 * 
+	 * @param ids
+	 * @return
+	 */
+	int deleteCategory(Long... ids);
 }

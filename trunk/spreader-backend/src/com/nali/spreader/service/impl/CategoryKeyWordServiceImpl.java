@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.KeywordInfoQueryDto;
@@ -210,5 +211,30 @@ public class CategoryKeyWordServiceImpl implements ICategoryKeyWordService {
 		c.andNameEqualTo(name);
 		List<Category> list = this.crudCategoryDao.selectByExample(exp);
 		return list.size() > 0;
+	}
+
+	@Override
+	public int updateCategory(Category category) {
+		Assert.notNull(category, "category is null");
+		Long categoryId = category.getId();
+		Assert.notNull(categoryId, "categoryId is null");
+		String categoryName = category.getName();
+		Assert.notNull(categoryName, "categoryName is null");
+		return this.crudCategoryDao.updateByPrimaryKeySelective(category);
+	}
+
+	@Override
+	public int deleteCategory(Long... ids) {
+		int rows = 0;
+		for (Long id : ids) {
+			try {
+				this.crudCategoryDao.deleteByPrimaryKey(id);
+				this.keywordDao.cleanKeywordCategory(id);
+				rows++;
+			} catch (Exception e) {
+				logger.error(e);
+			}
+		}
+		return rows;
 	}
 }

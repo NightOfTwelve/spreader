@@ -170,7 +170,7 @@ Ext.onReady(function() {
 				}, {	// 行2
 							layout : "column", // 从左往右的布局
 							items : [{
-										columnWidth : .5,
+										columnWidth : 1.0,
 										layout : "form",
 										items : [{
 													xtype : "numberfield",
@@ -178,9 +178,12 @@ Ext.onReady(function() {
 													name : 'repeatTimes',
 													width : 100
 												}]
-									}, {
-										columnWidth : .5,
-										layout : "form",
+									}]
+						}, { // 行3
+							layout : "column", // 从左往右的布局
+							items : [{
+										columnWidth : 1.0, // 该列有整行中所占百分比
+										layout : "form", // 从上往下的布局
 										items : [{
 													xtype : "numberfield",
 													fieldLabel : "毫秒数",
@@ -442,6 +445,7 @@ Ext.onReady(function() {
 		height : document.documentElement.clientHeight - 200,
 		resizable : true,
 		draggable : true,
+		maximized : true,
 		closeAction : 'hide',
 		title : '<span class="commoncss">策略详细配置</span>',
 		iconCls : 'app_rightIcon',
@@ -464,19 +468,19 @@ Ext.onReady(function() {
 						id : 'pptgridAndInfo',
 						split : true,
 						items : [{
-									region : 'west',
+									region : 'center',
 									frame : true,
-									width : 550,
+									// width : 550,
 									layout : 'fit',
 									split : true,
 									autoScroll : true,
 									title : '策略属性',
 									id : 'pptgridmanage'
 								}, {
-									region : 'center',
+									region : 'east',
 									layout : 'border',
 									split : true,
-									height : 220,
+									width : 310,
 									items : [infoViewForm, radioForm, cardPanel]
 								}]
 					}]
