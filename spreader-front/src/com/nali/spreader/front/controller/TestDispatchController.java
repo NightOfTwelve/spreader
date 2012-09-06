@@ -21,7 +21,7 @@ public class TestDispatchController {
 	@ResponseBody
 	@RequestMapping("/askForTasks/{taskType}/{clientId}/uid")
 	public String askForTasks(@PathVariable Integer taskType, @PathVariable Long clientId) {
-		ClientContext context = new ClientContext(clientId, taskType);
+		ClientContext context = new ClientContext(clientId, taskType, null);
 		ClientContext.setCurrentContext(context);
 		List<ClientTask> tasks = remoteTaskService.askForTasks();
 		StringBuilder sb = new StringBuilder();
