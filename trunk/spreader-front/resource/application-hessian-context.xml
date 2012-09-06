@@ -17,6 +17,16 @@
 	<!-- for http hessian path -->
 	<bean id="hessianHandler" class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter"/>
 	
+	<bean name="/loginService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+	    <property name="service" ref="remoteActionService"/>
+	    <property name="serviceInterface" value="com.nali.spreader.remote.ILoginService"/>
+	</bean>
+	
+	<bean name="/remoteClientService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+	    <property name="service" ref="remoteActionService"/>
+	    <property name="serviceInterface" value="com.nali.spreader.remote.IRemoteClientService"/>
+	</bean>
+	
 	<bean name="/remoteActionService" class="org.springframework.remoting.caucho.HessianServiceExporter">
 	    <property name="service" ref="remoteActionService"/>
 	    <property name="serviceInterface" value="com.nali.spreader.remote.IRemoteActionService"/>
