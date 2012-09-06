@@ -89,7 +89,7 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Mult
 		add(rlt, robot.getEnNameLower()+"_"+robot.getFirstNamePinyinLower());
 		add(rlt, robot.getLastNamePinyinLower()+"_"+(robot.getBirthdayMonth()*100+robot.getBirthdayDay()));
 		add(rlt, robot.getFirstNamePinyinLower()+"_"+robot.getLastNamePinyinLower());
-		rlt.remove(robot.getPwd());
+		rlt.remove(robot.getPwd().toLowerCase());
 		rlt = new ArrayList<String>(rlt);
 		Collections.shuffle(rlt);
 		return rlt;
