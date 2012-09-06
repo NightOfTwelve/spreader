@@ -18,12 +18,12 @@
 	<bean id="hessianHandler" class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter"/>
 	
 	<bean name="/loginService" class="org.springframework.remoting.caucho.HessianServiceExporter">
-	    <property name="service" ref="remoteActionService"/>
+	    <property name="service" ref="loginService"/>
 	    <property name="serviceInterface" value="com.nali.spreader.remote.ILoginService"/>
 	</bean>
 	
 	<bean name="/remoteClientService" class="org.springframework.remoting.caucho.HessianServiceExporter">
-	    <property name="service" ref="remoteActionService"/>
+	    <property name="service" ref="remoteClientService"/>
 	    <property name="serviceInterface" value="com.nali.spreader.remote.IRemoteClientService"/>
 	</bean>
 	
