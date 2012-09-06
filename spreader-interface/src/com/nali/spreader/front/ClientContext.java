@@ -1,14 +1,18 @@
 package com.nali.spreader.front;
 
+import javax.servlet.http.HttpServletRequest;
+
 public class ClientContext {
 	private final static ThreadLocal<ClientContext> tl=new ThreadLocal<ClientContext>();
 	private Long clientId;
 	private Integer taskType;
+	private HttpServletRequest request;
 
-	public ClientContext(Long clientId, Integer taskType) {
+	public ClientContext(Long clientId, Integer taskType, HttpServletRequest request) {
 		super();
 		this.clientId = clientId;
 		this.taskType = taskType;
+		this.request = request;
 	}
 
 	public Long getClientId() {
@@ -37,6 +41,14 @@ public class ClientContext {
 
 	public void setTaskType(Integer taskType) {
 		this.taskType = taskType;
+	}
+
+	public HttpServletRequest getRequest() {
+		return request;
+	}
+
+	public void setRequest(HttpServletRequest request) {
+		this.request = request;
 	}
 
 }
