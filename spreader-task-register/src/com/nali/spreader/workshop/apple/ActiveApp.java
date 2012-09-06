@@ -24,6 +24,7 @@ import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IAppRegisterService;
 import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.SpecialDateUtil;
+import com.nali.spreader.words.AppleNickname;
 
 @Component
 public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassiveWorkshop<Long, Boolean> {
@@ -81,7 +82,7 @@ public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassive
 		user.setEmail(robotRegister.getEmail());
 		user.setGender(robotRegister.getGender());
 		user.setIntroduction(robotRegister.getIntroduction());
-		user.setNickName(robotRegister.getFullName());
+		user.setNickName(AppleNickname.genNickname(robotRegister));
 		user.setRealName(robotRegister.getFullName());
 		user.setNationality(regAddress.getNationality());
 		generateAppAccount.send(new KeyValue<RobotUser, User>(robotUser, user));

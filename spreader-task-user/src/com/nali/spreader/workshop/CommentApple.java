@@ -4,22 +4,28 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
+import com.nali.spreader.data.User;
 import com.nali.spreader.factory.ContextedPassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.model.ClientTask;
+import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.workshop.CommentApple.CommentDto;
 
 @Component
 public class CommentApple extends SingleTaskMachineImpl implements ContextedPassiveWorkshop<KeyValue<Long, CommentDto>, Boolean> {
 	private static final int BASE_PRIORITY = ClientTask.BASE_PRIORITY_MAX/10;
+	@Autowired
+	private IGlobalUserService globalUserService;
 	
 	public CommentApple() {
 		super(SimpleActionConfig.commentApple, Website.apple, Channel.intervention);
@@ -29,6 +35,8 @@ public class CommentApple extends SingleTaskMachineImpl implements ContextedPass
 	@Override
 	public void work(KeyValue<Long, CommentDto> data, SingleTaskExporter exporter) {
 		Long uid = data.getKey();
+		User user = globalUserService.getUserById(uid);
+		Assert.notNull(user, "user is null:" + uid);
 		CommentDto commentDto = data.getValue();
 		exporter.setProperty("appSource", commentDto.getAppSource());
 		exporter.setProperty("appId", commentDto.getAppId());
@@ -36,6 +44,7 @@ public class CommentApple extends SingleTaskMachineImpl implements ContextedPass
 		exporter.setProperty("title", commentDto.getTitle());
 		exporter.setProperty("content", commentDto.getContent());
 		exporter.setProperty("stars", commentDto.getStars());
+		exporter.setProperty("nickname", user.getNickName());
 		exporter.setBasePriority(BASE_PRIORITY);
 		exporter.send(uid, SpecialDateUtil.afterNow(10));//TODO add start time
 	}
