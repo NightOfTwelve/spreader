@@ -1,0 +1,4 @@
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/ux/roweditor/css/RowEditor.css')" />
+<br />
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/ux/roweditor/RowEditor.js'))"></script>
+<br />
