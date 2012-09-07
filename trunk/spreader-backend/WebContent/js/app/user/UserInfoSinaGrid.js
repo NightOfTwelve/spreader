@@ -500,6 +500,9 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 					}],
 			onCellClick : function(grid, rowIndex, columnIndex, e) {
 				var selesm = grid.getSelectionModel().getSelections();
+				if(selesm.length==0){
+					return;
+				}
 				var userid = selesm[0].data.id;
 				var nickname = selesm[0].data.nickName;
 				var fanscol = grid.getColumnModel().getDataIndex(columnIndex);
@@ -606,7 +609,6 @@ var addUserWindow = new Ext.Window({
 					var gender = addForm.findField('gender').getValue();
 					var introduction = addForm.findField('introduction')
 							.getValue();
-					var updateForm = addUserCmbForm.getForm();
 					Ext.Ajax.request({
 								url : '../userinfo/updateuser',
 								params : {
@@ -636,7 +638,7 @@ var addUserWindow = new Ext.Window({
 									return;
 								}
 							});
-					addKeywordWindow.hide();
+					addUserWindow.hide();
 				}
 			}, {	// 窗口底部按钮配置
 						text : '重置', // 按钮文本
@@ -700,7 +702,11 @@ sinaUserGrid.on("rowcontextmenu", function(grid, rowIndex, e) {
 sinaUserGrid.on('cellclick', sinaUserGrid.onCellClick, sinaUserGrid);
 
 sinaUserGrid.on('celldblclick', function(grid, rowIndex, columnIndex, e) {
-			var selectData = grid.selModel.selections.items[0].data;
+			var sms = grid.selModel.selections.items[0];
+			if(sms == undefined){
+				return;
+			}
+			var selectData = sms.data;
 			var uid = selectData.id;
 			var nickName = selectData.nickName;
 			var nationality = selectData.nationality;
