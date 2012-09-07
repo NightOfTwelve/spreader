@@ -851,7 +851,17 @@ var expUserWin = new Ext.Window({
 						text : '关闭',
 						iconCls : 'deleteIcon',
 						handler : function() {
-							expUserWin.hide();
+							Ext.Msg.confirm('警告','此操作会导致帐号删除，请确认是否已经复制帐号信息，取消请按‘否’',function op(btn)   
+						     {   
+						        if (btn == 'yes')   
+						        {    
+						        	expUserWin.hide();
+						        }    
+						        else  
+						        {   
+						        	return; 
+						        }     
+						    });		
 						}
 					}]
 		});
