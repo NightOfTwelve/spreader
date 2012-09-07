@@ -930,16 +930,17 @@ var updateUserTagWin = new Ext.Window({
  */
 function expUserInfo() {
 	var expArray = getSelectUsers();
+	var rows = [];
 	if (expArray.length > 0) {
-		for (var i = 0; i < rows.length; i++) {
-			var uid = rows[i].data.id;
-			expArray.push(uid);
+		for (var i = 0; i < expArray.length; i++) {
+			var uid = expArray[i];
+			rows.push(uid);
 		}
 	} else {
 		Ext.Msg.alert("提示", "请至少选择一个用户");
 		return;
 	}
-	expUserStore.setBaseParam('uids', expArray);
+	expUserStore.setBaseParam('uids', rows);
 	expUserStore.load();
 	expUserWin.show();
 }
