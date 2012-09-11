@@ -1,0 +1,3 @@
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/app/zoom/css/zoom.css')" />
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/zoom/js/zoom.js'))"></script>
+<br />

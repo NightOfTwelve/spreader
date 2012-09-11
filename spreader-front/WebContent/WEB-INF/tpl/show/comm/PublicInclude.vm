@@ -1,0 +1,13 @@
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/extgridselect.css')" />
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/extjs3/resources/css/ext-all.css')" />
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/ext_icon.css')" />
+<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/adapter/ext/ext-base.js')" ></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all.js')" ></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-basex.js')" ></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/gridselect.js')" ></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-lang-zh_CN.js')" ></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/pubjs/includeinit.js'))"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/ProgressBarPager.js')"></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/ux/RowExpander.js')"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/utils/extutils.js'))"></script>
+<br />

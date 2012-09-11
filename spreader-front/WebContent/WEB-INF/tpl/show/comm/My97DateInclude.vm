@@ -1,0 +1,4 @@
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/ux/my97beta/WdatePicker.js'))"></script>
+<br />
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/My97DateExtjsCmp.js'))"></script>
+<br />

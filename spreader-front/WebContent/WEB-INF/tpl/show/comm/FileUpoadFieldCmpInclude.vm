@@ -1,0 +1,4 @@
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/ux/fileuploadfield/css/fileuploadfield.css')" />
+<br />
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/ux/fileuploadfield/FileUploadField.js'))"></script>
+<br />
