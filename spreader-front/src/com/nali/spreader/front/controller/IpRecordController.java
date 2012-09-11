@@ -3,6 +3,7 @@ package com.nali.spreader.front.controller;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.dto.CurrentClientIpRecordDto;
 import com.nali.spreader.model.IpRecord;
 import com.nali.spreader.service.IClientService;
@@ -49,7 +51,9 @@ public class IpRecordController {
 	public String queryCurrentIpRecord() throws JsonGenerationException, JsonMappingException,
 			IOException {
 		List<CurrentClientIpRecordDto> list = this.clientService.getCurrentClientIpRecord();
-		return objectMapper.writeValueAsString(list);
+		Map<String, List<CurrentClientIpRecordDto>> m = CollectionUtils.newHashMap(1);
+		m.put("list", list);
+		return objectMapper.writeValueAsString(m);
 	}
 
 	/**
