@@ -286,22 +286,24 @@ var importAccForm = new Ext.form.FormPanel({
 					waitMsg : '上传中...',
 					timeout : 600000,
 					success : function(form, obj) {
-						var count = obj.result;
+						var count = obj.result.count;
 						Ext.Msg.alert('提示,', '成功导入:' + count + '条记录 ');
 						form.reset();
-						importAccWindows.hide();
+
 					},
 					failure : function(tform, action) {
 						if (action.failureType === Ext.form.Action.CONNECT_FAILURE) {
-							Ext.Msg.alert('服务器错误,', '状态:'
+							Ext.Msg.alert('连接错误', '状态:'
 											+ action.response.status + ': '
 											+ action.response.statusText);
 						}
 						if (action.failureType === Ext.form.Action.SERVER_INVALID) {
-							Ext.Msg.alert('提交错误', action.result.errMsg);
+							Ext.Msg.alert('服务无效', action.result);
 						}
+						tform.reset();
 					}
 				});
+				importAccWindows.hide();
 			}
 			sinaUserStore.load();
 		}
