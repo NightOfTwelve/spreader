@@ -102,7 +102,7 @@ Ext.onReady(function() {
 				header : 'Token',
 				dataIndex : 'token',
 				locked : true,
-				width : 100
+				width : 120
 			}, {
 				header : '起始时间',
 				dataIndex : 'createTime',
@@ -122,7 +122,7 @@ Ext.onReady(function() {
 				title : '实时IP记录查询',
 				stripeRows : true, // 斑马线
 				frame : true,
-				width : 600,
+				width : 650,
 				split : true,
 				autoScroll : true,
 				store : currentIpStore,
@@ -166,6 +166,7 @@ Ext.onReady(function() {
 				header : '起始时间',
 				dataIndex : 'createTime',
 				renderer : renderDateHis,
+				sortable: true,
 				width : 120
 			}, {
 				header : '记录时间',
