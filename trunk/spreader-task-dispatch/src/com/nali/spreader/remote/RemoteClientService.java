@@ -14,9 +14,9 @@ public class RemoteClientService implements IRemoteClientService {
 	@Override
 	public void heartbeat() {
 		ClientContext context = ClientContext.getCurrentContext();
-		Long clientId = context.getClientId();
+		String token = context.getToken();
 		String ip = context.getRequest().getRemoteAddr();
-		clientService.logIp(clientId, ip);
+		clientService.logIp(token, ip);
 	}
 	
 }
