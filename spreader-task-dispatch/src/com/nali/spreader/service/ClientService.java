@@ -27,7 +27,8 @@ import com.nali.spreader.model.IpRecordExample.Criteria;
 
 @Service
 public class ClientService implements IClientService {
-	private static final int EFFECTIVE_TIME_MINUTE = 1;
+	private static final int EFFECTIVE_TIME_MINUTE = 30;
+	private static final int REFRESH_TIME = 60000;
 	private static final Logger LOGGER = Logger.getLogger(ClientService.class);
 	private ConcurrentHashMap<String, ClientInfo> recordMap = new ConcurrentHashMap<String, ClientInfo>();
 	private ConcurrentLinkedQueue<IpRecord> recordQueue = new ConcurrentLinkedQueue<IpRecord>();
@@ -163,7 +164,7 @@ public class ClientService implements IClientService {
 					LOGGER.error(e);
 				}
 				try {
-					Thread.sleep(60000);
+					Thread.sleep(REFRESH_TIME);
 				} catch (InterruptedException e) {
 					LOGGER.error(e);
 				}
