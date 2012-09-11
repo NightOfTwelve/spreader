@@ -11,7 +11,7 @@
  *            dateTimeParams my97date的一些属性，一般无需填写
  * @return {}
  */
-function calendarCmp(fieldId, fieldName, text, dateTimeParams) {
+function calendarCmp(fieldId, fieldName, text, dateTimeParams,emptyText) {
 	// 日期时间的默认参数
 	var defaultDateTimeParams = new function() {
 		this.readOnly = true; // 不允许在文本输入框中修改时间
@@ -33,6 +33,7 @@ function calendarCmp(fieldId, fieldName, text, dateTimeParams) {
 	// 采用TriggerField，保持与extjs控件一致
 	var triggerField = new Ext.form.TriggerField({
 				fieldLabel : Ext.isEmpty(text) ? '查询时间' : text,
+				emptyText : Ext.isEmpty(emptyText) ? '请输入时间' : emptyText,
 				labelWidth : 100,
 				id : Ext.isEmpty(fieldId) ? 'startDate' : fieldId,
 				name : Ext.isEmpty(fieldName) ? 'startDate' : fieldName,
