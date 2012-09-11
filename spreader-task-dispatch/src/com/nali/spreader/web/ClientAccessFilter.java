@@ -43,13 +43,14 @@ public class ClientAccessFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		Long clientId = getClientId((HttpServletRequest) request);
 		Integer taskType = getTaskType((HttpServletRequest) request);
+		String token = request.getParameter(PARAM_TOKEN);
 		if(clientId==null) {
-			String token = request.getParameter(PARAM_TOKEN);
 			if(token==null) {
-				if(checkEscape(((HttpServletRequest)request).getPathInfo())) {
-					chain.doFilter(request, response);
-					return;
+				HttpServletRequest httpRequest = (HttpServletRequest)request;
+				if(checkEscape(httpRequest.getServletPath() + httpRequest.getPathInfo())) {
+					clientId = 0L;
 				}
+			} else {
 				clientId = clientService.check(token);
 			}
 			if(clientId==null) {
@@ -58,7 +59,7 @@ public class ClientAccessFilter implements Filter {
 				return;
 			}
 		}
-		ClientContext context = new ClientContext(clientId, taskType, (HttpServletRequest) request);
+		ClientContext context = new ClientContext(clientId, token, taskType, (HttpServletRequest) request);
 		ClientContext.setCurrentContext(context);
 		try {
 			chain.doFilter(request, response);
