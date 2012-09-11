@@ -77,6 +77,12 @@ public interface IUserManageService {
 	 * @return
 	 */
 	List<UserTag> createUserTags(List<String> keywordList);
-	
+
+	/**
+	 * 导入指定微博帐号
+	 * 
+	 * @param file
+	 * @return
+	 */
 	List<KeyValue<RobotUser, User>> importWeiboAccount(CommonsMultipartFile file);
 }
