@@ -2,6 +2,7 @@ Ext.BLANK_IMAGE_URL = $CONFIG.BLANK_IMAGE_URL;
 Ext.chart.Chart.CHART_URL = $CONFIG.CHART_URL;
 Ext.QuickTips.init();
 var host = 'http://' + window.location.host;
+Ext.util.CSS.swapStyleSheet("theme", "../js/extjs3/resources/css/xtheme-gray.css");
 /**
  * 捕获ajax异常做重定向处理 登录超时
  */

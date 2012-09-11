@@ -6,13 +6,23 @@ public class ClientContext {
 	private final static ThreadLocal<ClientContext> tl=new ThreadLocal<ClientContext>();
 	private Long clientId;
 	private Integer taskType;
+	private String token;
 	private HttpServletRequest request;
 
-	public ClientContext(Long clientId, Integer taskType, HttpServletRequest request) {
+	public ClientContext(Long clientId, String token, Integer taskType, HttpServletRequest request) {
 		super();
 		this.clientId = clientId;
+		this.token = token;
 		this.taskType = taskType;
 		this.request = request;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	public Long getClientId() {

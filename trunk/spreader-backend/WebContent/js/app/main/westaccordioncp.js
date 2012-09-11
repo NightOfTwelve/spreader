@@ -86,6 +86,11 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "客户端任务检索",
 									leaf : true,
 									url : '../taskstat/init'
+								},{
+									id : 'iprecord',
+									text : "客户端IP查询",
+									leaf : true,
+									url : '/spreader-front/iprecord/init'
 								}, 
 //									{
 //									id : 'clientTaskStatDtl',

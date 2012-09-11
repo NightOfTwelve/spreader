@@ -238,18 +238,27 @@ public class UserInfoManageController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/uploadacc")
 	public String uploadAccount(UploadBeanDto form) {
+		Map<String, Object> result = CollectionUtils.newHashMap(2);
+		result.put("success", false);
 		int count = 0;
-		List<KeyValue<RobotUser, User>> list = this.userService.importWeiboAccount(form.getFile());
-		if (!CollectionUtils.isEmpty(list)) {
-			for (KeyValue<RobotUser, User> kv : list) {
-				RobotUser robotUser = kv.getKey();
-				User user = kv.getValue();
-				Long uid = this.globaUserService.registerRobotUser(robotUser, user);
-				robotUser.setUid(uid);
-				this.globalRobotUserService.syncLoginConfig(robotUser);
-				count++;
+		try {
+			List<KeyValue<RobotUser, User>> list = this.userService.importWeiboAccount(form
+					.getFile());
+			if (!CollectionUtils.isEmpty(list)) {
+				for (KeyValue<RobotUser, User> kv : list) {
+					RobotUser robotUser = kv.getKey();
+					User user = kv.getValue();
+					Long uid = this.globaUserService.registerRobotUser(robotUser, user);
+					robotUser.setUid(uid);
+					this.globalRobotUserService.syncLoginConfig(robotUser);
+					count++;
+				}
 			}
+			result.put("success", true);
+		} catch (Exception e) {
+			LOGGER.error(e);
 		}
-		return this.write(count);
+		result.put("count", count);
+		return this.write(result);
 	}
 }

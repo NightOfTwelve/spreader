@@ -34,6 +34,7 @@ import com.nali.spreader.data.RobotRegisterExample.Criteria;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserTag;
 import com.nali.spreader.model.RobotUser;
+import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserManageService;
 import com.nali.spreader.util.random.NumberRandomer;
 import com.nali.spreader.util.random.RandomUtil;
@@ -51,6 +52,8 @@ public class UserManageServiceImpl implements IUserManageService {
 	private ICrudPhotoDao photoDao;
 	@Autowired
 	private ICrudUserDao crudUserDao;
+	@Autowired
+	private IGlobalUserService globaUserService;
 	// 导入帐号的默认ROBOT_REGISTER_ID
 	private static final Long IMPORT_ROBOT_REGISTER_ID = 0L;
 
@@ -207,19 +210,33 @@ public class UserManageServiceImpl implements IUserManageService {
 						XSSFCell pwdCell = row.getCell(3);
 						if (websiteUidCell != null && websiteUidCell != null && emailCell != null
 								&& pwdCell != null) {
-							String websiteUidStr = websiteUidCell.getRichStringCellValue()
-									.getString();
+							Long websiteUid = null;
+							// 该单元格如果为数字型直接转为Long
+							if (websiteUidCell.getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
+								websiteUid = ((Double) websiteUidCell.getNumericCellValue())
+										.longValue();
+							} else {
+								String websiteUidStr = websiteUidCell.getRichStringCellValue()
+										.getString();
+								if (StringUtils.isNotBlank(websiteUidStr)) {
+									websiteUid = Long.parseLong(websiteUidStr);
+								}
+							}
 							String emailAccount = emailCell.getRichStringCellValue().getString();
 							String pwd = pwdCell.getRichStringCellValue().getString();
 							// 有些空行也会读出来，这里做过滤
-							if (StringUtils.isNotBlank(websiteUidStr)
-									&& StringUtils.isNotBlank(emailAccount)
+							if (websiteUid != null && StringUtils.isNotBlank(emailAccount)
 									&& StringUtils.isNotBlank(pwd)) {
 								String nickName = null;
 								if (nickNameCell != null) {
 									nickName = nickNameCell.getRichStringCellValue().getString();
 								}
-								Long websiteUid = Long.parseLong(websiteUidStr);
+								// 已存在的跳过
+								User u = globaUserService.findByUniqueKey(Website.weibo.getId(),
+										websiteUid);
+								if (u != null) {
+									continue;
+								}
 								KeyValue<RobotUser, User> kv = new KeyValue<RobotUser, User>();
 								RobotUser robotUser = new RobotUser();
 								robotUser.setRobotRegisterId(IMPORT_ROBOT_REGISTER_ID);
