@@ -13,6 +13,8 @@ COLLATE = utf8_bin;
 
 alter table spreader.tb_ip_record comment '客户端IP记录';
 
+alter table spreader.tb_ip_record add is_cleared boolean default false not null comment '过期清理';
+
 create index idx_client_id_create_time on spreader.tb_ip_record
 (
    client_id,create_time
