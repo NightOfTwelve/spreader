@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -27,7 +28,7 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 	private LinkedHashMap<Long, ClientUid> clients = new LinkedHashMap<Long, UidPool.ClientUid>();//L1
 	private Lock clientsLock = new ReentrantLock();
 	private Lock sharedTaskLock = new ReentrantLock();
-	private int fetchCount;
+	private AtomicInteger fetchCount = new AtomicInteger();
 	private int clientUidSize=10;
 	private long clientExpiredTime=1000*60*20;
 	@Autowired
@@ -35,6 +36,7 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 
 	private InnerPool currentInnerPool;
 	private InnerPool nextInnderPool;
+	private ThreadLocal<Long> batchIdLocal = new ThreadLocal<Long>();
 	
 	private boolean sayEnd;//是否log过任务结束了，避免大量日志出现
 	
@@ -60,25 +62,38 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 		}
 		
 		List<ClientTask> tasks = new ArrayList<ClientTask>();
-		Long batchId = uidPoolService.getBatchId(taskType.getId(), clientId);
 		List<ItemCount<KeyValuePair<Long, Long>>> normal = clientUid.getNormal();//ASK noraml first or anyone first
-		assignTasks(batchId, tasks, normal);
+		assignTasks(clientId, tasks, normal);
 		sharedTaskLock.lock();
 		try {
 			List<ItemCount<Long>> notLogin;
 			List<ItemCount<Long>> anyone;
 			notLogin = getNotLogin();
 			anyone = getAnyone();
-			assignTasks(batchId, tasks, User.UID_NOT_LOGIN, notLogin, null);
-			assignTasks(batchId, tasks, User.UID_ANYONE, anyone, clientUid);
+			assignTasks(clientId, tasks, User.UID_NOT_LOGIN, notLogin, null);
+			assignTasks(clientId, tasks, User.UID_ANYONE, anyone, clientUid);
 		} finally {
 			sharedTaskLock.unlock();
+			clearBatchId();
 		}
 		//TODO handle empty list
 		return tasks;
 	}
+
+	private void clearBatchId() {
+		batchIdLocal.remove();
+	}
 	
-	private void assignTasks(Long batchId, List<ClientTask> tasks, List<ItemCount<KeyValuePair<Long, Long>>> uidActionCounts) {
+	private Long getBatchId(Long clientId) {
+		Long batchId = batchIdLocal.get();
+		if(batchId==null) {
+			batchId = uidPoolService.getBatchId(taskType.getId(), clientId);
+			batchIdLocal.set(batchId);
+		}
+		return batchId;
+	}
+	
+	private void assignTasks(Long clientId, List<ClientTask> tasks, List<ItemCount<KeyValuePair<Long, Long>>> uidActionCounts) {
 		for (ItemCount<KeyValuePair<Long, Long>> itemCount : uidActionCounts) {
 			Integer count = itemCount.getCount();
 			if(count==0) {
@@ -87,13 +102,13 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 			KeyValuePair<Long, Long> uidAction = itemCount.getItem();
 			Long uid = uidAction.getKey();
 			Long actionId = uidAction.getValue();
-			List<ClientTask> actionTasks = uidPoolService.assignTasks(batchId, uid, actionId, taskType.getId(), count);
+			List<ClientTask> actionTasks = uidPoolService.assignTasks(getBatchId(clientId), uid, actionId, taskType.getId(), count);
 			tasks.addAll(actionTasks);
 			countPlus(actionTasks.size());
 		}
 	}
 
-	private void assignTasks(Long batchId, List<ClientTask> tasks, Long uid, List<ItemCount<Long>> itemCounts, ClientUid clientUid) {
+	private void assignTasks(Long clientId, List<ClientTask> tasks, Long uid, List<ItemCount<Long>> itemCounts, ClientUid clientUid) {
 		CycleIterator<Long> uidIter = null;
 		if(clientUid!=null) {//it's anyone task
 			List<Long> uids = clientUid.getUids();
@@ -108,7 +123,7 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 			if(count==0) {
 				continue;
 			}
-			List<ClientTask> actionTasks = uidPoolService.assignTasks(batchId, uid, itemCount.getItem(), taskType.getId(), count);
+			List<ClientTask> actionTasks = uidPoolService.assignTasks(getBatchId(clientId), uid, itemCount.getItem(), taskType.getId(), count);
 			if(uidIter!=null) {
 				for (ClientTask actionTask : actionTasks) {
 					actionTask.setUid(uidIter.next());
@@ -203,24 +218,14 @@ public class UidPool extends AbstractUidPool {//TODO innerPool和notlogin,anyone
 	}
 	
 	public int getFetchCount() {
-		clientsLock.lock();
-		try {
-			return fetchCount;
-		} finally {
-			clientsLock.unlock();
-		}
+		return fetchCount.intValue();
 	}
 	
 	protected void countPlus(int count) {
 		if(count==0) {
 			return;
 		}
-		clientsLock.lock();
-		try {
-			fetchCount+=count;
-		} finally {
-			clientsLock.unlock();
-		}
+		fetchCount.addAndGet(count);
 	}
 
 	private class ClientUid {
