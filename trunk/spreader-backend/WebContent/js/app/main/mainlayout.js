@@ -41,7 +41,7 @@ Ext.onReady(function() {
 					items : [mainTabPanel]
 				}, {
 					region : 'west',
-					title : '系统导航 <font color="blue">'
+					title : '系统导航 <font color="black">'
 							+ new Date().format('Y-m-d')
 							+ ' <span id="rTime"><span></font>',
 					split : true,
