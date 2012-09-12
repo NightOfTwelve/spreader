@@ -197,24 +197,12 @@ public class ClientService implements IClientService {
 				if (recordTime.before(thisTime)) {
 					iter.remove();
 					IpRecord ipRecord = clientInfo.replaceIp(null);
+					ipRecord.setIsCleared(true);
 					crudIpRecordDao.insertSelective(ipRecord);
 				}
 			}
 		}
 	}
-
-	//
-	// public static void main(String[] args) {
-	// ConcurrentHashMap<String, Integer> m = new ConcurrentHashMap<String,
-	// Integer>();
-	// m.put("test", 1);
-	// m.put("test2", 2);
-	// Iterator<Integer> iter = m.values().iterator();
-	// Integer x = iter.next();
-	// iter.remove();
-	// System.out.println(m);
-	// iter.remove();
-	// }
 
 	@Override
 	public List<CurrentClientIpRecordDto> getCurrentClientIpRecord() {
@@ -247,9 +235,10 @@ public class ClientService implements IClientService {
 		if (endTime != null) {
 			c.andCreateTimeLessThanOrEqualTo(endTime);
 		}
+		exp.setLimit(lit);
+		exp.setOrderByClause("id desc");
 		List<IpRecord> list = this.crudIpRecordDao.selectByExample(exp);
 		int count = this.crudIpRecordDao.countByExample(exp);
-		exp.setLimit(lit);
 		return new PageResult<IpRecord>(list, lit, count);
 	}
 }

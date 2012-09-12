@@ -11,7 +11,7 @@ Ext.onReady(function() {
 				listeners : {
 					specialKey : function(field, e) {
 						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							bbar.pageSize = Number(numtext.getValue());
+							recbbar.pageSize = Number(numtext.getValue());
 							number = Number(numtext.getValue());
 							recordIpStore.reload({
 										params : {
@@ -68,6 +68,8 @@ Ext.onReady(function() {
 									name : 'recordTime'
 								}, {
 									name : 'id'
+								}, {
+									name : 'isCleared'
 								}]),
 				autoLoad : {
 					params : {
@@ -88,30 +90,32 @@ Ext.onReady(function() {
 			});
 
 	// 定义锁定列模型
-	var curcm = new Ext.grid.ColumnModel([cursm, currownum, {
+	var curcm = new Ext.grid.ColumnModel([{
 				header : '客户端ID',
 				dataIndex : 'clientId',
-				locked : true,
+				sortable : true,
 				width : 80
 			}, {
 				header : 'IP',
 				dataIndex : 'ip',
-				locked : true,
+				sortable : true,
 				width : 100
 			}, {
 				header : 'Token',
 				dataIndex : 'token',
-				locked : true,
+				sortable : true,
 				width : 120
 			}, {
 				header : '起始时间',
 				dataIndex : 'createTime',
 				renderer : renderDateHis,
+				sortable : true,
 				width : 120
 			}, {
 				header : '记录时间',
 				dataIndex : 'recordTime',
 				renderer : renderDateHis,
+				sortable : true,
 				width : 120
 			}]);
 
@@ -129,7 +133,6 @@ Ext.onReady(function() {
 				loadMask : {
 					msg : '正在加载表格数据,请稍等...'
 				},
-				sm : cursm,
 				colModel : curcm,
 				tbar : [{
 							text : '刷新',
@@ -152,27 +155,38 @@ Ext.onReady(function() {
 			});
 
 	// 定义锁定列模型
-	var reccm = new Ext.grid.ColumnModel([recsm, recrownum, {
+	var reccm = new Ext.grid.ColumnModel([{
+				header : 'ID',
+				dataIndex : 'id',
+				sortable : true,
+				width : 80
+			}, {
 				header : '客户端ID',
 				dataIndex : 'clientId',
-				locked : true,
+				sortable : true,
 				width : 80
 			}, {
 				header : 'IP',
 				dataIndex : 'ip',
-				locked : true,
+				sortable : true,
 				width : 100
 			}, {
 				header : '起始时间',
 				dataIndex : 'createTime',
 				renderer : renderDateHis,
-				sortable: true,
+				sortable : true,
 				width : 120
 			}, {
 				header : '记录时间',
 				dataIndex : 'recordTime',
 				renderer : renderDateHis,
+				sortable : true,
 				width : 120
+			}, {
+				header : '过期清理',
+				dataIndex : 'isCleared',
+				sortable : true,
+				width : 80
 			}]);
 	// 分页菜单
 	var recbbar = new Ext.PagingToolbar({
@@ -198,7 +212,6 @@ Ext.onReady(function() {
 		loadMask : {
 			msg : '正在加载表格数据,请稍等...'
 		},
-		sm : recsm,
 		colModel : reccm,
 		bbar : recbbar,
 		tbar : [
