@@ -60,7 +60,6 @@ public class CategoryManageController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/categorygrid")
 	public String queryCategoryGrid(KeywordQueryParamsDto param) {
-		this.getObjectMapper();
 		Integer start = param.getStart();
 		Integer limit = param.getLimit();
 		Limit lit = this.initLimit(start, limit);

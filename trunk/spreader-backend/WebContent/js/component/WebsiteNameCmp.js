@@ -1,16 +1,16 @@
 /**
- * 格式化策略中文名称组件
+ * 格式化website中文名
  */
-var dispNameStore = new Ext.data.Store({
+var websiteNameStore = new Ext.data.Store({
 			// 代理模式
 			proxy : new Ext.data.HttpProxy({
-						url : '../extutil/dispnames'
+						url : '../extutil/website'
 					}),
 			// 读取模式
 			reader : new Ext.data.JsonReader({}, [{
-								name : 'name'
+								name : 'id'
 							}, {
-								name : 'displayName'
+								name : 'name'
 							}]),
 			autoLoad : true
 		});
@@ -21,13 +21,13 @@ var dispNameStore = new Ext.data.Store({
  *            value
  * @return {}
  */
-function rendDispNameFn(value) {
-	var list = dispNameStore.reader.jsonData;
+function rendWebsiteNameFn(value) {
+	var list = websiteNameStore.reader.jsonData;
 	for (var idx in list) {
-		var tmp = list[idx].name;
-		var dname = list[idx].displayName;
+		var tmp = list[idx].id;
+		var wname = list[idx].name;
 		if (value == tmp) {
-			return dname;
+			return wname;
 		}
 	}
 }

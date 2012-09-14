@@ -9,7 +9,6 @@ import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.ContentQueryParamsDto;
 import com.nali.spreader.constants.WebTypeEnum;
-import com.nali.spreader.constants.Website;
 import com.nali.spreader.dao.IContentLibDao;
 import com.nali.spreader.data.Content;
 import com.nali.spreader.service.IContentLibManageService;
@@ -20,38 +19,12 @@ public class ContentLibManageServiceImpl implements IContentLibManageService {
 	private IContentLibDao conDao;
 
 	@Override
-	public PageResult<Content> findContentPageResult(ContentQueryParamsDto cqd, Limit lit) {
-		cqd.setLimit(lit);
-		List<Content> cList = conDao.findContentListByParamsDto(cqd);
-		if (cList.size() > 0) {
-			for (Content c : cList) {
-				// 网站ID
-				int webSiteId = c.getWebsiteId();
-				// 类型
-				int webType = c.getType();
-				// 处理网站名称
-				String tname = findWebsiteName(webSiteId);
-				c.setWebSiteName(tname);
-				// 处理类型
-				String wtype = findWebTypeName(webType);
-				c.setTypeName(wtype);
-			}
-		}
-		int cnt = conDao.getContentCountByParamsDto(cqd);
+	public PageResult<Content> findContentPageResult(ContentQueryParamsDto param) {
+		Limit lit = param.getLit();
+		List<Content> cList = conDao.findContentListByParamsDto(param);
+		int cnt = conDao.getContentCountByParamsDto(param);
 		PageResult<Content> pr = new PageResult<Content>(cList, lit, cnt);
 		return pr;
-	}
-
-	@Override
-	public String findWebsiteName(int id) {
-		String webName = null;
-		for (Website w : Website.values()) {
-			if (id == w.getId()) {
-				webName = w.name();
-				break;
-			}
-		}
-		return webName;
 	}
 
 	@Override

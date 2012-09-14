@@ -1,6 +1,5 @@
 package com.nali.spreader.controller;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -343,27 +342,6 @@ public class StrategyDispatchController extends BaseController {
 	public String createStgCombStore() {
 		List<ConfigableInfo> list = regularConfigService.listConfigableInfo(ConfigableType.normal);
 		return this.write(list);
-	}
-
-	/**
-	 * 获取所有策略中文名
-	 * 
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/alldisplayname")
-	public String renderStrategyDisplayName() {
-		List<ConfigableInfo> data = new ArrayList<ConfigableInfo>();
-		List<ConfigableInfo> normalList = regularConfigService
-				.listConfigableInfo(ConfigableType.normal);
-		data.addAll(normalList);
-		List<ConfigableInfo> systemList = regularConfigService
-				.listConfigableInfo(ConfigableType.system);
-		data.addAll(systemList);
-		List<ConfigableInfo> noticeList = regularConfigService
-				.listConfigableInfo(ConfigableType.noticeRelated);
-		data.addAll(noticeList);
-		return this.write(data);
 	}
 
 	/**

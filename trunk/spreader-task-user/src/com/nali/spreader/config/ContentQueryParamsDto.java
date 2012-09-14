@@ -12,6 +12,10 @@ public class ContentQueryParamsDto implements Serializable {
 	 * 微博类型
 	 */
 	private String categoryName;
+
+	private Integer start;
+
+	private Integer limit;
 	/**
 	 * 微博发布时间 起始
 	 */
@@ -29,11 +33,23 @@ public class ContentQueryParamsDto implements Serializable {
 	 */
 	private Date eSyncDate;
 
-	private Limit limit;
+	private Limit lit;
 	/**
 	 * 微博作者
 	 */
 	private String userName;
+	/**
+	 * 关键字
+	 */
+	private String keyword;
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
 
 	public String getCategoryName() {
 		return categoryName;
@@ -49,6 +65,22 @@ public class ContentQueryParamsDto implements Serializable {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public Integer getStart() {
+		return start;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
 	}
 
 	public Date getsPubDate() {
@@ -83,11 +115,11 @@ public class ContentQueryParamsDto implements Serializable {
 		this.eSyncDate = eSyncDate;
 	}
 
-	public Limit getLimit() {
-		return limit;
+	public Limit getLit() {
+		return lit;
 	}
 
-	public void setLimit(Limit limit) {
-		this.limit = limit;
+	public void setLit(Limit lit) {
+		this.lit = lit;
 	}
 }

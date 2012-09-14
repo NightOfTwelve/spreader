@@ -8,6 +8,7 @@ import com.nali.common.pagination.PageResult;
 import com.nali.spreader.data.Category;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserGroup;
+import com.nali.spreader.factory.config.desc.ConfigableInfo;
 
 /**
  * Extjs相关控件的Service
@@ -49,4 +50,11 @@ public interface IExtjsComponentsUtilService {
 	 * @return
 	 */
 	List<Map<String, Object>> findWebsite();
+
+	/**
+	 * 获取所有策略中文名
+	 * 
+	 * @return
+	 */
+	List<ConfigableInfo> getAllStrategyDisplayName();
 }

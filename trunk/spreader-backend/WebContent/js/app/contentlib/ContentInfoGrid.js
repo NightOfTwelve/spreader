@@ -225,6 +225,17 @@ Ext.onReady(function() {
 													name : 'userName'
 												}]
 									}]
+						}, { // 行3
+							layout : "column",
+							items : [{
+										columnWidth : .33,
+										layout : "form",
+										items : [{
+													xtype : "textfield",
+													fieldLabel : "关键字",
+													name : 'keyword'
+												}]
+									}]
 						}],
 				buttonAlign : "center",
 				buttons : [{
@@ -238,8 +249,10 @@ Ext.onReady(function() {
 						var sSyncDate = tform.findField("sSyncDate").getValue();
 						var eSyncDate = tform.findField("eSyncDate").getValue();
 						var userName = tform.findField("userName").getValue();
+						var keyword = tform.findField("keyword").getValue();
 						var num = numtext.getValue();
 						contentStore.setBaseParam('categoryName', categoryName);
+						contentStore.setBaseParam('keyword', keyword);
 						contentStore.setBaseParam('sPubDate',
 								renderDateHis(sPubDate));
 						contentStore.setBaseParam('ePubDate',
@@ -268,7 +281,7 @@ Ext.onReady(function() {
 	// 定义表格数据源
 	var contentStore = new Ext.data.Store({
 		proxy : new Ext.data.HttpProxy({
-					url : '../contentlib/grid'
+					url : '../contentlib/grid?_time=' + new Date().getTime()
 				}),
 		reader : new Ext.data.JsonReader({
 					totalProperty : 'totalCount',
@@ -321,7 +334,9 @@ Ext.onReady(function() {
 				start : 0,
 				limit : 20
 			}
-		}
+
+		},
+		timeout : 600000
 	});
 	// 定义自动当前页行号
 	var rownum = new Ext.grid.RowNumberer({
@@ -341,14 +356,8 @@ Ext.onReady(function() {
 				width : 100
 			}, {
 				header : '类型',
-				dataIndex : 'typeName',
-				// renderer : renderGender,
-				width : 80
-			}, {
-				header : 'typeid',
-				dataIndex : 'type',
-				// renderer : renderGender,
-				hidden : true,
+				dataIndex : 'websiteId',
+				renderer : rendWebsiteNameFn,
 				width : 80
 			}, {
 				header : '微博链接',
@@ -375,11 +384,6 @@ Ext.onReady(function() {
 					return returnStr;
 				},
 				width : 100
-			}, {
-				header : '网站',
-				dataIndex : 'webSiteName',
-				width : 100,
-				sortable : true
 			}, {
 				header : '发布时间',
 				dataIndex : 'pubDate',
