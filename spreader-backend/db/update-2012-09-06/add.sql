@@ -19,3 +19,8 @@ create index idx_client_id_create_time on spreader.tb_ip_record
 (
    client_id,create_time
 );
+
+create index idx_keyword_category_id on spreader.tb_keyword
+(
+   category_id
+);

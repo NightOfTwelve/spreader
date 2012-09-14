@@ -4,18 +4,16 @@
 	<resultMap class="com.nali.spreader.data.Content" id="selectContentInfo"
 		extends="spreader_tb_content.ibatorgenerated_ResultMapWithBLOBs">
 		<result column="url" jdbcType="VARCHAR" property="url" />
-		<result property="nickName" column="uid"
-			select="spreader_content.contentUser" />
+		<result column="nick_name" jdbcType="VARCHAR" property="nickName" />
 	</resultMap>
 	<sql id="contentPubCondition">
 		<isNotEmpty prepend="and" property="categoryName">
-			c.id in (select
-			cc.content_id
-			from tb_category cg
-			inner join tb_content_category cc on
-			cg.id = cc.category_id
-			where cg.name like
-			CONCAT('%',#categoryName#,'%'))
+			cg.name like
+			CONCAT('%',#categoryName#,'%')
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="keyword">
+			k.name like
+			CONCAT('%',#keyword#,'%')
 		</isNotEmpty>
 		<isNotNull prepend="and" property="sPubDate">
 			<![CDATA[c.pub_date >= #sPubDate#]]>
@@ -30,29 +28,37 @@
 			<![CDATA[c.sync_date <= #eSyncDate#]]>
 		</isNotNull>
 		<isNotEmpty prepend="and" property="userName">
-			c.uid in (select u.id
-			from
-			tb_user u where u.nick_name like CONCAT('%',#userName#,'%'))
+			u.nick_name like
+			CONCAT('%',#userName#,'%')
 		</isNotEmpty>
 	</sql>
-	<select id="contentUser" parameterClass="int" resultClass="java.lang.String">
-		select u.nick_name nickName from tb_user u where u.id = #uid#
-	</select>
 	<select id="getContentInfoByParamDto" parameterClass="com.nali.spreader.config.ContentQueryParamsDto"
 		resultMap="selectContentInfo">
 		select c.*,concat('http://www.weibo.com/',c.website_uid,'/',c.entry)
-		as url from tb_content c
+		as url,u.nick_name from tb_content c
+		left join spreader.tb_user u on
+		u.id = c.uid
+		left join spreader.tb_content_keyword ck on c.id =
+		ck.content_id
+		left join spreader.tb_keyword k on ck.keyword_id = k.id
+		left join spreader.tb_category cg on k.category_id = cg.id
 		<dynamic prepend="where">
 			<include refid="contentPubCondition" />
 		</dynamic>
 		order by id desc
 		<isNotNull property="limit">
-			limit $limit.offset$,$limit.maxRows$
+			limit $lit.offset$,$lit.maxRows$
 		</isNotNull>
 	</select>
 	<select id="getCountContentInfo" parameterClass="com.nali.spreader.config.ContentQueryParamsDto"
 		resultClass="java.lang.Integer">
 		select count(c.id) as cnum from tb_content c
+		left join spreader.tb_user
+		u on u.id = c.uid
+		left join spreader.tb_content_keyword ck on c.id =
+		ck.content_id
+		left join spreader.tb_keyword k on ck.keyword_id = k.id
+		left join spreader.tb_category cg on k.category_id = cg.id
 		<dynamic prepend="where">
 			<include refid="contentPubCondition" />
 		</dynamic>
@@ -278,6 +284,24 @@
 			)
 		</isEqual>
 	</sql>
+	<select id="getKeywordIdByCategory" parameterClass="java.lang.String"
+		resultClass="java.lang.Long">
+		select k.id from spreader.tb_keyword k
+		join
+		spreader.tb_category cg on k.category_id = cg.id
+		where cg.name like
+		CONCAT('%',#category#,'%')
+	</select>
+	<select id="getKeywordIdByName" parameterClass="java.lang.String"
+		resultClass="java.lang.Long">
+		select k.id From tb_keyword k where k.name like
+		CONCAT('%',#keyword#,'%');
+	</select>
+	<select id="getUidByNickName" parameterClass="java.lang.String"
+		resultClass="java.lang.Long">select u.id
+		from
+		tb_user u where u.nick_name like
+		CONCAT('%',#nickName#,'%')</select>
 	<select id="findContentIdByPostContentDto" resultClass="java.lang.Long"
 		parameterClass="com.nali.spreader.dto.PostWeiboContentDto">
 		select id from spreader.tb_content

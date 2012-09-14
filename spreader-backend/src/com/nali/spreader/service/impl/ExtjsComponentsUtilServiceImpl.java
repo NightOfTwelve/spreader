@@ -22,6 +22,9 @@ import com.nali.spreader.data.UserExample;
 import com.nali.spreader.data.UserExample.Criteria;
 import com.nali.spreader.data.UserGroup;
 import com.nali.spreader.data.UserGroupExample;
+import com.nali.spreader.factory.config.ConfigableType;
+import com.nali.spreader.factory.config.IConfigService;
+import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.service.IExtjsComponentsUtilService;
 
 @Service
@@ -32,6 +35,8 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 	private ICrudUserGroupDao crudUserGroupDao;
 	@Autowired
 	private ICrudCategoryDao crudCategoryDao;
+	@Autowired
+	private IConfigService<Long> regularConfigService;
 
 	@Override
 	public PageResult<User> findUserByName(String name, Limit limit) {
@@ -83,5 +88,19 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 			list.add(m);
 		}
 		return list;
+	}
+
+	public List<ConfigableInfo> getAllStrategyDisplayName() {
+		List<ConfigableInfo> data = new ArrayList<ConfigableInfo>();
+		List<ConfigableInfo> normalList = regularConfigService
+				.listConfigableInfo(ConfigableType.normal);
+		data.addAll(normalList);
+		List<ConfigableInfo> systemList = regularConfigService
+				.listConfigableInfo(ConfigableType.system);
+		data.addAll(systemList);
+		List<ConfigableInfo> noticeList = regularConfigService
+				.listConfigableInfo(ConfigableType.noticeRelated);
+		data.addAll(noticeList);
+		return data;
 	}
 }

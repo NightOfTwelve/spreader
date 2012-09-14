@@ -5,6 +5,7 @@
 #parse("/show/comm/PublicInclude.vm")
 #parse("/show/comm/LockingGridInclude.vm")
 #parse("/show/comm/HtmlEditorFieldInclude.vm")
+#parse("/show/comm/WebsiteNameCmpInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/contentlib/ContentInfoGrid.js'))"></script>
 </head>
 <body>

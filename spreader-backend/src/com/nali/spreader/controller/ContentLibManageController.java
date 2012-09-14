@@ -1,6 +1,5 @@
 package com.nali.spreader.controller;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,17 +48,10 @@ public class ContentLibManageController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/grid")
-	public String contentGridStore(Date sPubDate, Date ePubDate, Date sSyncDate, Date eSyncDate,
-			String categoryName, String userName, Integer start, Integer limit) {
-		ContentQueryParamsDto cqd = new ContentQueryParamsDto();
-		cqd.setCategoryName(categoryName);
-		cqd.setUserName(userName);
-		cqd.setsPubDate(sPubDate);
-		cqd.setePubDate(ePubDate);
-		cqd.setsSyncDate(sSyncDate);
-		cqd.seteSyncDate(eSyncDate);
-		Limit lit = this.initLimit(start, limit);
-		PageResult<Content> pr = conService.findContentPageResult(cqd, lit);
+	public String contentGridStore(ContentQueryParamsDto param) {
+		Limit lit = this.initLimit(param.getStart(), param.getLimit());
+		param.setLit(lit);
+		PageResult<Content> pr = conService.findContentPageResult(param);
 		return this.write(pr);
 	}
 

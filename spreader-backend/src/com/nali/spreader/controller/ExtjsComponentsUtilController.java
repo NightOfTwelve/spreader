@@ -131,4 +131,15 @@ public class ExtjsComponentsUtilController extends BaseController {
 	public String init() {
 		return null;
 	}
+
+	/**
+	 * 获取所有策略的中文名
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/dispnames")
+	public String allStrategyDisplayName() {
+		return this.write(this.extjsService.getAllStrategyDisplayName());
+	}
 }
