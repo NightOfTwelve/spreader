@@ -1,5 +1,6 @@
 package com.nali.spreader.group.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -49,15 +50,15 @@ public class PropertiesUserGroupService implements
 	@Override
 	public long getUserCount(long gid) throws GroupUserQueryException {
 		UserGroup userGroup = this.crudUserGroupDao.selectByPrimaryKey(gid);
-		if(userGroup.getGtype().intValue() == UserGroupType.manual.getTypeVal()) {
-			return 0L;
-		}
 		return this.getUserCount(userGroup);
 	}
 
 	@Override
 	public long getUserCount(UserGroup userGroup)
 			throws GroupUserQueryException {
+		if(userGroup.getGtype().intValue() == UserGroupType.manual.getTypeVal()) {
+			return 0L;
+		}
 		Map<String, Object> propertyMap = this.assemblePropertyMap(userGroup);
 
 		return this.userDao.countByProperties(propertyMap);
@@ -88,6 +89,9 @@ public class PropertiesUserGroupService implements
 	@Override
 	public List<Long> queryGrouppedUids(UserGroup userGroup, int start,
 			int limit) throws GroupUserQueryException {
+		if(userGroup.getGtype().intValue() == UserGroupType.manual.getTypeVal()) {
+			return Collections.emptyList();
+		}
 		Map<String, Object> propertyMap = this.assemblePropertyMap(userGroup);
 
 		Limit limitObject = Limit.newInstanceForLimit(start, limit);
@@ -101,6 +105,9 @@ public class PropertiesUserGroupService implements
 	public List<Long> queryGrouppedUids(long gid)
 			throws GroupUserQueryException {
 		UserGroup userGroup = this.crudUserGroupDao.selectByPrimaryKey(gid);
+		if(userGroup.getGtype().intValue() == UserGroupType.manual.getTypeVal()) {
+			return Collections.emptyList();
+		}
 		Map<String, Object> propertyMap = this.assemblePropertyMap(userGroup);
 		return this.userDao.queryUidsByProperties(propertyMap);
 	}
