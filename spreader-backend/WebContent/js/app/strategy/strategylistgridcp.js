@@ -103,12 +103,12 @@ var editstgWindow = new Ext.Window({
 			animateTarget : document.head,
 			buttonAlign : 'right',
 			constrain : true,
-			border : false,
 			items : [{
 						region : 'center',
 						id : 'pptgridmanage',
 						header : false,
-						// TODO
+						layout : 'fit',
+						autoScroll : true,
 						collapsible : true,
 						split : true,
 						height : 100

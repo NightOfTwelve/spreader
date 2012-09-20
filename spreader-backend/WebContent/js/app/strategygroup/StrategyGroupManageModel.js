@@ -456,7 +456,6 @@ Ext.onReady(function() {
 		animateTarget : document.head,
 		buttonAlign : 'right',
 		constrain : true,
-		border : false,
 		items : [{
 			region : 'center',
 			layout : 'border',
@@ -470,7 +469,6 @@ Ext.onReady(function() {
 						items : [{
 									region : 'center',
 									frame : true,
-									// width : 550,
 									layout : 'fit',
 									split : true,
 									autoScroll : true,

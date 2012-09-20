@@ -748,11 +748,12 @@ Ext.onReady(function() {
 				animateTarget : document.head,
 				buttonAlign : 'right',
 				constrain : true,
-				border : false,
 				items : [{
 							region : 'center',
 							id : 'pptgridmanage',
 							header : false,
+							layout : 'fit',
+							autoScroll : true,
 							collapsible : true,
 							split : true
 						}, {

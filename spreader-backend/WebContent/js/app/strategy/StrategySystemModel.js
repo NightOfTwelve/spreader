@@ -246,15 +246,14 @@ Ext.onReady(function() {
 				animateTarget : document.head,
 				buttonAlign : 'right',
 				constrain : true,
-				border : false,
 				items : [{
 							region : 'center',
 							id : 'pptgridmanage',
 							header : false,
-							// TODO
+							layout : 'fit',
+							autoScroll : true,
 							collapsible : true,
-							split : true,
-							height : 100
+							split : true
 						}, {
 							region : 'west',
 							// title : '选择配置',
