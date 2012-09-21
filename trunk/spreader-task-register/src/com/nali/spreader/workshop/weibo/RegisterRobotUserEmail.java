@@ -20,6 +20,8 @@ import com.nali.spreader.factory.MultiActionConfig;
 import com.nali.spreader.factory.MultiTypeTaskPassiveWorkshop;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.base.MultiTaskMachineImpl;
+import com.nali.spreader.factory.config.Configable;
+import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.exporter.MultiTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.service.IRobotRegisterService;
@@ -30,7 +32,8 @@ import com.nali.spreader.util.random.Randomer;
 import com.nali.spreader.words.Txt;
 
 @Component
-public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements MultiTypeTaskPassiveWorkshop<KeyValue<RobotRegister, String>, KeyValue<Long, String>> {
+@ClassDescription("注册邮箱之后接着注册微博")
+public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Configable<Boolean>, MultiTypeTaskPassiveWorkshop<KeyValue<RobotRegister, String>, KeyValue<Long, String>> {
 	private static final String FILE_QUESTION_SERVICE = "txt/question.txt";
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
@@ -38,6 +41,7 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Mult
 	@AutowireProductLine
 	private TaskProduceLine<Long> registerWeiboAccount;
 	private Randomer<String> questions;
+	private Boolean registerWeibo = false;
 	
 	public RegisterRobotUserEmail() throws IOException {
 		super(MultiActionConfig.registerRobotUserEmail, Website.weibo, Channel.intervention);
@@ -52,7 +56,9 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Mult
 	@Override
 	public void handleResult(Date updateTime, KeyValue<Long, String> robotEmail) {
 		robotRegisterService.updateEmail(robotEmail.getKey(), robotEmail.getValue());
-		registerWeiboAccount.send(robotEmail.getKey());
+		if(registerWeibo) {
+			registerWeiboAccount.send(robotEmail.getKey());
+		}
 	}
 
 	@Override
@@ -100,5 +106,10 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Mult
 			roughName = roughName.substring(0, 18);
 		}
 		names.add(roughName);
+	}
+
+	@Override
+	public void init(Boolean config) {
+		registerWeibo = config;
 	}
 }
