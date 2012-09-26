@@ -226,11 +226,7 @@ public class BeanProperties {
 			if (data != null) {
 				Class<?> setParam = method.getParameterTypes()[0];
 				if (!setParam.isInstance(data)) {
-					if (Number.class.isAssignableFrom(setParam)) {
-						if (Number.class.isInstance(data)) {
-							data = this.convert.convertNumberParam(setParam, data);
-						}
-					}
+					data = this.convert.convert(setParam, data);
 				}
 			}
 			try {

@@ -45,6 +45,18 @@ public class Content extends BaseModel implements Serializable {
 	 * 引用的微博
 	 */
 	private Content refContent;
+	/**
+	 * 对应的所有关键字ID
+	 */
+	private Long[] keywords;
+
+	public Long[] getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(Long[] keywords) {
+		this.keywords = keywords;
+	}
 
 	public String getUrl() {
 		return url;

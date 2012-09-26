@@ -15,14 +15,14 @@ import com.nali.spreader.config.ContentQueryParamsDto;
 import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.Content;
-import com.nali.spreader.service.IContentLibManageService;
+import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IKeywordService;
 
 @Controller
 @RequestMapping(value = "/contentlib")
 public class ContentLibManageController extends BaseController {
 	@Autowired
-	private IContentLibManageService conService;
+	private IContentService contentService;
 	@Autowired
 	private IKeywordService keywordService;
 
@@ -51,7 +51,7 @@ public class ContentLibManageController extends BaseController {
 	public String contentGridStore(ContentQueryParamsDto param) {
 		Limit lit = this.initLimit(param.getStart(), param.getLimit());
 		param.setLit(lit);
-		PageResult<Content> pr = conService.findContentPageResult(param);
+		PageResult<Content> pr = contentService.findContentPageResult(param);
 		return this.write(pr);
 	}
 

@@ -2,7 +2,6 @@ package com.nali.spreader.dto;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import com.nali.spreader.config.Range;
 
@@ -16,8 +15,10 @@ public class PostWeiboContentDto implements Serializable {
 
 	private static final long serialVersionUID = 6786639746848467960L;
 	// 关键字列表
-	private List<String> sendKeywords;
-	// 转发数
+	private Long[] keywords;
+	// 用户列表
+	private Long[] uids;
+	// @数
 	private Range<Integer> atCount;
 	// 是否图片
 	private Boolean isPic;
@@ -25,22 +26,30 @@ public class PostWeiboContentDto implements Serializable {
 	private Boolean isAudio;
 	// 是否视频
 	private Boolean isVideo;
-	// 加V类型
-	private Integer vType;
 	// 内容长度
 	private Range<Integer> contentLength;
-	// 粉丝数
-	private Range<Long> fans;
-	// 文章数
-	private Range<Long> articles;
 	// 发布时间
 	private Range<Date> pubDate;
-	// 是否有筛选用户的标识符
-	private Boolean userCondition;
 	// 转发数
 	private Range<Integer> refCount;
 	// 回复数
 	private Range<Integer> replyCount;
+	
+	public Long[] getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(Long[] keywords) {
+		this.keywords = keywords;
+	}
+
+	public Long[] getUids() {
+		return uids;
+	}
+
+	public void setUids(Long[] uids) {
+		this.uids = uids;
+	}
 
 	public Range<Integer> getRefCount() {
 		return refCount;
@@ -58,28 +67,12 @@ public class PostWeiboContentDto implements Serializable {
 		this.replyCount = replyCount;
 	}
 
-	public Boolean getUserCondition() {
-		return userCondition;
-	}
-
-	public void setUserCondition(Boolean userCondition) {
-		this.userCondition = userCondition;
-	}
-
 	public Range<Integer> getContentLength() {
 		return contentLength;
 	}
 
 	public void setContentLength(Range<Integer> contentLength) {
 		this.contentLength = contentLength;
-	}
-
-	public List<String> getSendKeywords() {
-		return sendKeywords;
-	}
-
-	public void setSendKeywords(List<String> sendKeywords) {
-		this.sendKeywords = sendKeywords;
 	}
 
 	public Range<Integer> getAtCount() {
@@ -112,30 +105,6 @@ public class PostWeiboContentDto implements Serializable {
 
 	public void setIsVideo(Boolean isVideo) {
 		this.isVideo = isVideo;
-	}
-
-	public Integer getvType() {
-		return vType;
-	}
-
-	public void setvType(Integer vType) {
-		this.vType = vType;
-	}
-
-	public Range<Long> getFans() {
-		return fans;
-	}
-
-	public void setFans(Range<Long> fans) {
-		this.fans = fans;
-	}
-
-	public Range<Long> getArticles() {
-		return articles;
-	}
-
-	public void setArticles(Range<Long> articles) {
-		this.articles = articles;
 	}
 
 	public Range<Date> getPubDate() {

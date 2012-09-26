@@ -93,7 +93,15 @@ public interface IKeywordDao {
 	 * @param categoryName
 	 * @return
 	 */
-	List<String> selectKeywordNameByCategory(String categoryName);
+	List<Long> selectKeywordIdsByCategories(List<String> categories);
+
+	/**
+	 * 根据关键字列表获取相应ID
+	 * 
+	 * @param keywords
+	 * @return
+	 */
+	List<Long> selectKeywordIdsByKeywords(List<String> keywords);
 
 	/**
 	 * 通过UID查找关键字
@@ -101,7 +109,7 @@ public interface IKeywordDao {
 	 * @param uid
 	 * @return
 	 */
-	List<String> selectKeywordByUserId(Long uid);
+	List<Long> selectKeywordByUserId(Long uid);
 
 	/**
 	 * 获取内容的绑定关键字
@@ -118,4 +126,36 @@ public interface IKeywordDao {
 	 * @return
 	 */
 	int cleanKeywordCategory(Long categoryId);
+
+	/**
+	 * 查询内容所属的所有关键字
+	 * 
+	 * @param contentId
+	 * @return
+	 */
+	List<Long> selectKeywordByContent(Long contentId);
+
+	/**
+	 * 根据分类获取关键字列表
+	 * 
+	 * @param categoryName
+	 * @return
+	 */
+	List<String> selectKeywordNameByCategory(String categoryName);
+
+	/**
+	 * 根据分类获取所有关键字
+	 * 
+	 * @param category
+	 * @return
+	 */
+	List<Long> getKeywordIdByCategory(String category);
+
+	/**
+	 * 根据关键字名称获取所有匹配的关键字ID
+	 * 
+	 * @param keyword
+	 * @return
+	 */
+	List<Long> getKeywordIdByName(String keyword);
 }

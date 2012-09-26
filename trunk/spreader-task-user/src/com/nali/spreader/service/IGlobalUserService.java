@@ -3,6 +3,7 @@ package com.nali.spreader.service;
 import java.util.Date;
 import java.util.List;
 
+import com.nali.spreader.config.Range;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserTag;
 import com.nali.spreader.data.WeiboAppeal;
@@ -46,4 +47,14 @@ public interface IGlobalUserService {
 	User recoverDeletedUser(Long uid);
 
 	List<WeiboAppeal> findInitedWeiboAppeal(int limit);
+
+	/**
+	 * 查询符合条件的用户
+	 * 
+	 * @param vType
+	 * @param fans
+	 * @param articles
+	 * @return
+	 */
+	Long[] findPostContentUids(Integer vType, Range<Long> fans, Range<Long> articles);
 }

@@ -8,11 +8,13 @@ package com.nali.spreader.util.bean;
  */
 public interface IConvertMethodParamType {
 	/**
-	 * 将数据类型转换成目标类型
+	 * 将数据转化为目标类型
 	 * 
 	 * @param toTypeClass
+	 *            目标类型
 	 * @param fromDataType
+	 *            需转换的数据类型
 	 * @return
 	 */
-	Number convertNumberParam(Class<?> toTypeClass, Object fromDataType);
+	<T> T convert(Class<?> toTypeClass, Object fromDataType);
 }

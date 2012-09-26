@@ -56,13 +56,10 @@ public class PostWeiboConfig implements Serializable {
 	@PropertyDescription("回复数")
 	private Range<Integer> replyCount;
 
-	public PostWeiboContentDto getPostWeiboContentDto(List<String> sendKeywords) {
+	public PostWeiboContentDto getPostWeiboContentDto(Long[] keywords, Long[] uids) {
 		PostWeiboContentDto query = new PostWeiboContentDto();
-		// 设置关键字列表
-		query.setSendKeywords(sendKeywords);
-		/**
-		 * 筛选微博条件
-		 */
+		query.setKeywords(keywords);
+		query.setUids(uids);
 		// 是否图片
 		query.setIsPic(this.getIsPic());
 		// 是否音频
@@ -79,21 +76,6 @@ public class PostWeiboConfig implements Serializable {
 		Range<Date> pubDate = new Range<Date>();
 		pubDate.setGte(DateUtils.addMinutes(new Date(), -1 * effTime));
 		query.setPubDate(pubDate);
-		/**
-		 * 处理筛选用户
-		 */
-		// 加V类型
-		Integer vType = this.getvType();
-		// 粉丝数
-		Range<Long> fans = this.getFans();
-		// 文章数
-		Range<Long> articles = this.getArticles();
-		if (vType != null || fans.checkNotNull() || articles.checkNotNull()) {
-			query.setUserCondition(true);
-		}
-		query.setvType(vType);
-		query.setFans(fans);
-		query.setArticles(articles);
 		query.setRefCount(this.getRefCount());
 		query.setReplyCount(this.getReplyCount());
 		return query;
