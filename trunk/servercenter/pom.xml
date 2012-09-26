@@ -5,7 +5,7 @@
 	<artifactId>servercenter</artifactId>
 	<packaging>war</packaging>
 	<name>servercenter</name>
-	<version>0.9</version>
+	<version>0.9.1</version>
 	<url>http://www.9nali.com</url>
 	<developers>
 		<developer>
