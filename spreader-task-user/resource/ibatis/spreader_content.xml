@@ -284,24 +284,6 @@
 			)
 		</isEqual>
 	</sql>
-	<select id="getKeywordIdByCategory" parameterClass="java.lang.String"
-		resultClass="java.lang.Long">
-		select k.id from spreader.tb_keyword k
-		join
-		spreader.tb_category cg on k.category_id = cg.id
-		where cg.name like
-		CONCAT('%',#category#,'%')
-	</select>
-	<select id="getKeywordIdByName" parameterClass="java.lang.String"
-		resultClass="java.lang.Long">
-		select k.id From tb_keyword k where k.name like
-		CONCAT('%',#keyword#,'%');
-	</select>
-	<select id="getUidByNickName" parameterClass="java.lang.String"
-		resultClass="java.lang.Long">select u.id
-		from
-		tb_user u where u.nick_name like
-		CONCAT('%',#nickName#,'%')</select>
 	<select id="findContentIdByPostContentDto" resultClass="java.lang.Long"
 		parameterClass="com.nali.spreader.dto.PostWeiboContentDto">
 		select id from spreader.tb_content

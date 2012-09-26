@@ -12,20 +12,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.nali.common.util.CollectionUtils;
+import com.nali.common.model.Limit;
+import com.nali.common.pagination.PageResult;
+import com.nali.dal.exception.UniqueKeyException;
 import com.nali.spreader.config.ContentDto;
+import com.nali.spreader.config.ContentQueryParamsDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
-import com.nali.spreader.config.PostWeiboConfig;
-import com.nali.spreader.config.Range;
 import com.nali.spreader.constants.Website;
-import com.nali.spreader.dao.ICrudContentDao;
+import com.nali.spreader.dao.IContentMassDataDao;
 import com.nali.spreader.dao.ICrudKeywordDao;
 import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.ICrudUserTagDao;
@@ -41,7 +40,6 @@ import com.nali.spreader.data.UserTagExample;
 import com.nali.spreader.dto.PostWeiboContentDto;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IGlobalUserService;
-import com.nali.spreader.service.IKeywordService;
 
 @Service
 public class ContentService implements IContentService {
@@ -55,7 +53,7 @@ public class ContentService implements IContentService {
 	@Autowired
 	private ICrudUserTagDao crudUserTagDao;
 	@Autowired
-	private ICrudContentDao crudContentDao;
+	private IContentMassDataDao contentMassDataDao;
 	@Autowired
 	private IUserDao userDao;
 	@Autowired
@@ -66,8 +64,6 @@ public class ContentService implements IContentService {
 	private IKeywordDao keywordDao;
 	@Autowired
 	private ICrudKeywordDao crudKeywordDao;
-	@Autowired
-	private IKeywordService keywordService;
 
 	@Override
 	public Content getMatchedContent(Long uid) {
@@ -98,7 +94,7 @@ public class ContentService implements IContentService {
 				return null;
 			}
 		}
-		return crudContentDao.selectByPrimaryKey(contentId);
+		return contentMassDataDao.selectByPrimaryKey(contentId);
 	}
 
 	@Override
@@ -116,10 +112,8 @@ public class ContentService implements IContentService {
 				content.getWebsiteUid(), content.getEntry());
 		if (exist != null) {
 			if (exist.getWebsiteContentId() == null) {
-				Content record = new Content();
-				record.setId(exist.getId());
-				record.setWebsiteContentId(content.getWebsiteContentId());
-				crudContentDao.updateByPrimaryKeySelective(record);
+				exist.setWebsiteContentId(content.getWebsiteContentId());
+				this.assignContentId(content);
 				registerRecommandContent(exist.getId(), exist.getUid());
 			}
 			return;
@@ -136,7 +130,7 @@ public class ContentService implements IContentService {
 			}
 			content.setUid(users.get(0).getId());
 		}
-		Long contentId = crudContentDao.insertSelective(content);
+		Long contentId = this.assignContentId(content);
 		registerRecommandContent(contentId, content.getUid());
 	}
 
@@ -164,11 +158,9 @@ public class ContentService implements IContentService {
 		ContentExample example = new ContentExample();
 		example.createCriteria().andTypeEqualTo(type).andWebsiteIdEqualTo(websiteId)
 				.andWebsiteUidEqualTo(websiteUid).andEntryEqualTo(entry);
-		List<Content> contents = crudContentDao.selectByExampleWithoutBLOBs(example);
-		if (contents.size() == 0) {
-			return null;
-		}
-		return contents.get(0);
+		Content content = contentMassDataDao.selectContentsByUniqueKey(type, websiteId, websiteUid,
+				entry);
+		return content;
 	}
 
 	private void checkNotNull(Object param) {
@@ -179,7 +171,7 @@ public class ContentService implements IContentService {
 
 	@Override
 	public Content getContentById(Long contentId) {
-		return crudContentDao.selectByPrimaryKey(contentId);
+		return contentMassDataDao.selectByPrimaryKey(contentId);
 	}
 
 	@Override
@@ -210,12 +202,7 @@ public class ContentService implements IContentService {
 		content.setEntry(entry);
 		Long uid = globalUserService.getOrAssignUid(websiteId, websiteUid);
 		content.setUid(uid);
-		try {
-			crudContentDao.insertSelective(content);
-		} catch (DuplicateKeyException e) {
-			logger.info("double insert.");
-		}
-		return assignContent(websiteId, websiteUid, entry);
+		return assignContent(content);
 	}
 
 	@Override
@@ -228,18 +215,6 @@ public class ContentService implements IContentService {
 		} else {
 			return null;
 		}
-	}
-
-	@Override
-	public Long assignContentId(Content content) {
-		Assert.notNull(content, "content is null");
-		Content refContent = content.getRefContent();
-		Long refContentId = null;
-		if (refContent != null) {
-			refContentId = assignContentId(refContent);
-		}
-		content.setRefId(refContentId);
-		return saveOrassignContentId(content);
 	}
 
 	/**
@@ -265,6 +240,12 @@ public class ContentService implements IContentService {
 		return count;
 	}
 
+	/**
+	 * 保存并分配contentId的统一调用方法
+	 * 
+	 * @param content
+	 * @return
+	 */
 	private Long saveOrassignContentId(Content content) {
 		Integer contentType = content.getType();
 		Integer websiteId = content.getWebsiteId();
@@ -291,12 +272,12 @@ public class ContentService implements IContentService {
 			Content tmp = this.findByUniqueKey(contentType, websiteId, websiteUid, entry);
 			if (tmp != null) {
 				content.setId(tmp.getId());
-				crudContentDao.updateByPrimaryKeySelective(content);
+				contentMassDataDao.updateContent(content);
 				return tmp.getId();
 			} else {
 				try {
-					return crudContentDao.insertSelective(content);
-				} catch (DuplicateKeyException e) {
+					return contentMassDataDao.insertContent(content);
+				} catch (UniqueKeyException e) {
 					return saveOrassignContentId(content);
 				}
 			}
@@ -306,67 +287,26 @@ public class ContentService implements IContentService {
 	}
 
 	@Override
-	public List<Long> findContentIdByPostContentDto(PostWeiboContentDto dto) {
-		return this.userDao.queryContentIdByPostContentDto(dto);
+	public Long assignContentId(Content content) {
+		Assert.notNull(content, "content is null");
+		Content refContent = content.getRefContent();
+		Long refContentId = null;
+		if (refContent != null) {
+			refContentId = assignContentId(refContent);
+		}
+		content.setRefId(refContentId);
+		return saveOrassignContentId(content);
 	}
 
 	@Override
-	public List<Long> findContentIdByConfig(PostWeiboConfig cfg, List<String> allKeywords, Long uid) {
-		if (cfg == null) {
-			return null;
-		}
-		List<String> sendKeywords;
-		// 如果设置的关键字列表无内容则查找用户本身的标签列表
-		if (CollectionUtils.isEmpty(allKeywords)) {
-			sendKeywords = this.keywordService.findKeywordByUserId(uid);
-			// 如果用户本身没有标签，则取默认列表
-			if (CollectionUtils.isEmpty(sendKeywords)) {
-				sendKeywords = this.keywordService.findDefaultKeywords();
-			}
-		} else {
-			sendKeywords = allKeywords;
-		}
-		PostWeiboContentDto query = new PostWeiboContentDto();
-		// 设置关键字列表
-		query.setSendKeywords(sendKeywords);
-		/**
-		 * 筛选微博条件
-		 */
-		// 是否图片
-		query.setIsPic(cfg.getIsPic());
-		// 是否音频
-		query.setIsAudio(cfg.getIsAudio());
-		// 是否视频
-		query.setIsVideo(cfg.getIsVideo());
-		// 内容长度
-		query.setContentLength(cfg.getContentLength());
-		// 处理内容的新鲜度,发布时间
-		Integer effTime = cfg.getEffective();
-		if (effTime == null) {
-			effTime = PostWeiboConfig.DEFAULT_EFFTIME;
-		}
-		Range<Date> pubDate = new Range<Date>();
-		pubDate.setGte(DateUtils.addMinutes(new Date(), -1 * effTime));
-		query.setPubDate(pubDate);
-		/**
-		 * 处理筛选用户
-		 */
-		// 加V类型
-		Integer vType = cfg.getvType();
-		// 粉丝数
-		Range<Long> fans = cfg.getFans();
-		// 文章数
-		Range<Long> articles = cfg.getArticles();
-		if (vType != null || fans.checkNotNull() || articles.checkNotNull()) {
-			query.setUserCondition(true);
-		}
-		query.setvType(vType);
-		query.setFans(fans);
-		query.setArticles(articles);
+	public Content assignContent(Content content) {
+		Long cid = this.assignContentId(content);
+		return this.getContentById(cid);
+	}
 
-		// 获取所有的微博内容
-		List<Long> allContent = this.findContentIdByPostContentDto(query);
-		return allContent;
+	@Override
+	public List<Long> findContentIdByPostContentDto(PostWeiboContentDto dto) {
+		return this.contentMassDataDao.queryPostContents(dto);
 	}
 
 	@Override
@@ -378,8 +318,18 @@ public class ContentService implements IContentService {
 	}
 
 	@Override
-	public Content assignContent(Content content) {
-		Long cid = this.assignContentId(content);
-		return this.getContentById(cid);
+	public int saveContentKeyword(Long contentId, Long... keywords) {
+		Assert.notNull(contentId, "contentId is null");
+		Assert.notNull(keywords, "keywordId is null");
+		return this.contentMassDataDao.upsertContentKeyword(contentId, keywords);
+	}
+
+	@Override
+	public PageResult<Content> findContentPageResult(ContentQueryParamsDto param) {
+		Limit lit = param.getLit();
+		List<Content> cList = this.contentMassDataDao.getContentLibrary(param);
+		int cnt = this.contentMassDataDao.countContentLibraryRows(param);
+		PageResult<Content> pr = new PageResult<Content>(cList, lit, cnt);
+		return pr;
 	}
 }

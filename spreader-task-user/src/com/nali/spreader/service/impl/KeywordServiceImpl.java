@@ -1,9 +1,12 @@
 package com.nali.spreader.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,8 @@ public class KeywordServiceImpl implements IKeywordService {
 	private IKeywordDao keywordDao;
 	@Autowired
 	private ICrudKeywordDao crudKeywordDao;
+	// 默认关键字
+	private static final String[] DEFAULT_KEYWORDS = { "音乐" };
 
 	@Override
 	public List<Keyword> findKeywordsByCategoryList(List<Category> categories) {
@@ -88,6 +93,41 @@ public class KeywordServiceImpl implements IKeywordService {
 	}
 
 	@Override
+	public Set<Long> createMergerKeyword(List<String> keywords, List<String> categories) {
+		Set<Long> result = new HashSet<Long>();
+		result.addAll(keywordDao.selectKeywordIdsByKeywords(keywords));
+		result.addAll(keywordDao.selectKeywordIdsByCategories(categories));
+		return result;
+	}
+
+	@Override
+	public Long[] createSendKeywordList(Set<Long> set, Long uid) {
+		Set<Long> sendKeywords;
+		// 如果设置的关键字列表无内容则查找用户本身的标签列表
+		if (CollectionUtils.isEmpty(set)) {
+			sendKeywords = new HashSet<Long>(this.keywordDao.selectKeywordByUserId(uid));
+			// 如果用户本身没有标签，则取默认列表
+			if (CollectionUtils.isEmpty(sendKeywords)) {
+				List<String> defKeyword = Arrays.asList(DEFAULT_KEYWORDS);
+				sendKeywords = new HashSet<Long>(
+						this.keywordDao.selectKeywordIdsByKeywords(defKeyword));
+			}
+		} else {
+			sendKeywords = set;
+		}
+		Long[] result = new Long[sendKeywords.size()];
+		return sendKeywords.toArray(result);
+	}
+
+	@Override
+	public List<KeywordInfoQueryDto> findKeywordByContentId(Long contentId) {
+		if (contentId == null) {
+			return Collections.emptyList();
+		}
+		return this.keywordDao.selectKeywordByContentId(contentId);
+	}
+
+	@Override
 	public List<String> findKeywordNamesByCategory(String category) {
 		if (StringUtils.isEmpty(category)) {
 			return Collections.emptyList();
@@ -97,8 +137,7 @@ public class KeywordServiceImpl implements IKeywordService {
 	}
 
 	@Override
-	public List<String> createKeywordList(List<String> keywords, List<String> categories) {// TODO
-																							// 移到controller或util里面去
+	public List<String> createMergerKeywordName(List<String> keywords, List<String> categories) {
 		// 所有关键的集合，包括通过分类查询出的关键字集合
 		List<String> allKeyword = new ArrayList<String>();
 		if (!CollectionUtils.isEmpty(keywords)) {
@@ -111,42 +150,5 @@ public class KeywordServiceImpl implements IKeywordService {
 			}
 		}
 		return allKeyword;
-	}
-
-	@Override
-	public List<String> findKeywordByUserId(Long uid) {
-		return this.keywordDao.selectKeywordByUserId(uid);
-	}
-
-	@Override
-	public List<String> findDefaultKeywords() {// TODO 移到controller或util里面去
-		List<String> list = new ArrayList<String>();
-		list.add("音乐");
-		return list;
-	}
-
-	@Override
-	public List<String> createSendKeywordList(List<String> list, Long uid) {// TODO
-																			// 移到controller或util里面去
-		List<String> sendKeywords;
-		// 如果设置的关键字列表无内容则查找用户本身的标签列表
-		if (CollectionUtils.isEmpty(list)) {
-			sendKeywords = this.findKeywordByUserId(uid);
-			// 如果用户本身没有标签，则取默认列表
-			if (CollectionUtils.isEmpty(sendKeywords)) {
-				sendKeywords = this.findDefaultKeywords();
-			}
-		} else {
-			sendKeywords = list;
-		}
-		return sendKeywords;
-	}
-
-	@Override
-	public List<KeywordInfoQueryDto> findKeywordByContentId(Long contentId) {
-		if (contentId == null) {
-			return Collections.emptyList();
-		}
-		return this.keywordDao.selectKeywordByContentId(contentId);
 	}
 }

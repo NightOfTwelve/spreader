@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.orm.ibatis.SqlMapClientTemplate;
@@ -18,6 +19,7 @@ import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.dao.IUserDao;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
+import com.nali.spreader.dto.FilterUserDto;
 import com.nali.spreader.dto.PostWeiboContentDto;
 
 @Repository
@@ -36,21 +38,18 @@ public class UserDao implements IUserDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<KeyValue<Long, Long>> findUidToWebsiteUidMapByDto(UserDto dto) {
-		return sqlMap.queryForList("spreader_user.findUidToWebsiteUidMapByDto",
-				dto);
+		return sqlMap.queryForList("spreader_user.findUidToWebsiteUidMapByDto", dto);
 	}
 
 	@Override
 	public Date getAndTouchLastFetchTime(Long uid) {
-		return redisTemplate.opsForValue().getAndSet(
-				LAST_FETCH_TIME_KEY_PREFIX + uid, new Date());
+		return redisTemplate.opsForValue().getAndSet(LAST_FETCH_TIME_KEY_PREFIX + uid, new Date());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> findUserFansInfoByDto(UserDto dto) {
-		return (List<User>) sqlMap.queryForList(
-				"spreader_user.findUserFansInfoByDto", dto);
+		return (List<User>) sqlMap.queryForList("spreader_user.findUserFansInfoByDto", dto);
 	}
 
 	@Override
@@ -66,8 +65,7 @@ public class UserDao implements IUserDao {
 
 	@Override
 	public Integer countUserAndTagNumer(UserTagParamsDto utp) {
-		return (Integer) sqlMap.queryForObject(
-				"spreader_user.getUserAndTagCountByDto", utp);
+		return (Integer) sqlMap.queryForObject("spreader_user.getUserAndTagCountByDto", utp);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -84,8 +82,7 @@ public class UserDao implements IUserDao {
 
 	@Override
 	public Integer countUserFansNumer(UserTagParamsDto utp) {
-		return (Integer) sqlMap.queryForObject(
-				"spreader_user.getUserFansCountByDto", utp);
+		return (Integer) sqlMap.queryForObject("spreader_user.getUserFansCountByDto", utp);
 	}
 
 	@Override
@@ -94,8 +91,7 @@ public class UserDao implements IUserDao {
 	}
 
 	@Override
-	public List<Long> queryUidsByProperties(Map<String, Object> properties, 
-			Limit limit) {
+	public List<Long> queryUidsByProperties(Map<String, Object> properties, Limit limit) {
 		properties.put("limit", limit);
 		return sqlMap.queryForList("spreader_user.queryUidsByProperties", properties);
 	}
@@ -120,11 +116,11 @@ public class UserDao implements IUserDao {
 
 	@Override
 	public Map<Long, Long> queryGids(List<Long> uids) {
-		if(!CollectionUtils.isEmpty(uids)) {
-			List<User> userList =  this.sqlMap.queryForList("spreader_user.queryGids", uids);
-			if(!CollectionUtils.isEmpty(userList)) {
+		if (!CollectionUtils.isEmpty(uids)) {
+			List<User> userList = this.sqlMap.queryForList("spreader_user.queryGids", uids);
+			if (!CollectionUtils.isEmpty(userList)) {
 				Map<Long, Long> gidMap = CollectionUtils.newHashMap(userList.size());
-				for(User user : userList) {
+				for (User user : userList) {
 					gidMap.put(user.getId(), user.getCtrlGid());
 				}
 				return gidMap;
@@ -146,5 +142,18 @@ public class UserDao implements IUserDao {
 	@Override
 	public int updateUserArticles(Long uid) {
 		return this.sqlMap.update("spreader_user.updateUserArticles", uid);
+	}
+
+	@Override
+	public List<Long> getUidByNickName(String nickName) {
+		if (StringUtils.isEmpty(nickName)) {
+			return Collections.emptyList();
+		}
+		return sqlMap.queryForList("spreader_user.getUidByNickName", nickName);
+	}
+
+	@Override
+	public List<Long> queryPostContentUids(FilterUserDto param) {
+		return sqlMap.queryForList("spreader_user.queryPostContentUids", param);
 	}
 }

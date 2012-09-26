@@ -1,6 +1,7 @@
 package com.nali.spreader.service;
 
 import java.util.List;
+import java.util.Set;
 
 import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.data.Category;
@@ -46,7 +47,16 @@ public interface IKeywordService {
 	Long getOrAssignKeywordIdByName(String keywordName);
 
 	/**
-	 * 通过分类获取关键字列表
+	 * 将关键字列表与分类列表合并成新的关键字列表
+	 * 
+	 * @param keywords
+	 * @param categories
+	 * @return
+	 */
+	Set<Long> createMergerKeyword(List<String> keywords, List<String> categories);
+
+	/**
+	 * 根据分类名找出相关的关键字名称
 	 * 
 	 * @param category
 	 * @return
@@ -54,28 +64,13 @@ public interface IKeywordService {
 	List<String> findKeywordNamesByCategory(String category);
 
 	/**
-	 * 将关键字列表与分类列表合并成新的关键字列表
+	 * 合并获取所有关键字名称
 	 * 
 	 * @param keywords
 	 * @param categories
 	 * @return
 	 */
-	List<String> createKeywordList(List<String> keywords, List<String> categories);
-
-	/**
-	 * 通过用户ID获取用户的关键字
-	 * 
-	 * @param uid
-	 * @return
-	 */
-	List<String> findKeywordByUserId(Long uid);
-
-	/**
-	 * 默认的关键字列表
-	 * 
-	 * @return
-	 */
-	List<String> findDefaultKeywords();
+	List<String> createMergerKeywordName(List<String> keywords, List<String> categories);
 
 	/**
 	 * 创建发送的关键字列表
@@ -84,7 +79,7 @@ public interface IKeywordService {
 	 * @param uid
 	 * @return
 	 */
-	List<String> createSendKeywordList(List<String> list, Long uid);
+	Long[] createSendKeywordList(Set<Long> set, Long uid);
 
 	/**
 	 * 获取微博的关键字

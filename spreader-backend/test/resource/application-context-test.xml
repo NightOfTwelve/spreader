@@ -19,6 +19,7 @@
 	<context:component-scan base-package="com.nali.spreader" />
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
 				<value>classpath:jdbc.properties</value>
@@ -166,6 +167,7 @@
 
 	<import resource="classpath:application-lwtmq-context.xml" />
 	<import resource="classpath:application-lts-context.xml" />
+	<import resource="classpath:application-dal-context.xml" />
 
 	<bean id="identityService" class="com.nali.spreader.test.identity.MockIdentityService"></bean>
 

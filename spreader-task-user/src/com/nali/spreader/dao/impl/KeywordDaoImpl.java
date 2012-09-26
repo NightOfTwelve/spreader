@@ -1,11 +1,15 @@
 package com.nali.spreader.dao.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
 import com.nali.spreader.dao.IKeywordDao;
@@ -74,13 +78,17 @@ public class KeywordDaoImpl implements IKeywordDao {
 	}
 
 	@Override
-	public List<String> selectKeywordNameByCategory(String categoryName) {
-		return this.sqlMap.queryForList("spreader_keyword.selectKeywordNameByCategoryName",
-				categoryName);
+	public List<Long> selectKeywordIdsByCategories(List<String> categories) {
+		if (CollectionUtils.isEmpty(categories)) {
+			return new ArrayList<Long>();
+		}
+		List<Long> idList = this.sqlMap.queryForList(
+				"spreader_keyword.selectKeywordIdsByCategories", categories);
+		return idList;
 	}
 
 	@Override
-	public List<String> selectKeywordByUserId(Long uid) {
+	public List<Long> selectKeywordByUserId(Long uid) {
 		return this.sqlMap.queryForList("spreader_keyword.selectKeywordByUserId", uid);
 	}
 
@@ -92,5 +100,44 @@ public class KeywordDaoImpl implements IKeywordDao {
 	@Override
 	public int cleanKeywordCategory(Long categoryId) {
 		return this.sqlMap.update("spreader_keyword.updateKeywordCategoryId", categoryId);
+	}
+
+	@Override
+	public List<Long> selectKeywordByContent(Long contentId) {
+		if (contentId == null) {
+			return Collections.emptyList();
+		}
+		return this.sqlMap.queryForList("spreader_keyword.selectKeywordByContent", contentId);
+	}
+
+	@Override
+	public List<Long> selectKeywordIdsByKeywords(List<String> keywords) {
+		if (CollectionUtils.isEmpty(keywords)) {
+			return new ArrayList<Long>();
+		}
+		List<Long> idList = this.sqlMap.queryForList("spreader_keyword.selectKeywordIdsByKeywords",
+				keywords);
+		return idList;
+	}
+
+	@Override
+	public List<String> selectKeywordNameByCategory(String categoryName) {
+		return this.sqlMap.queryForList("spreader_keyword.selectKeywordNameByCategoryName",
+				categoryName);
+	}
+	@Override
+	public List<Long> getKeywordIdByCategory(String category) {
+		if (StringUtils.isEmpty(category)) {
+			return Collections.emptyList();
+		}
+		return sqlMap.queryForList("spreader_keyword.getKeywordIdByCategory", category);
+	}
+	
+	@Override
+	public List<Long> getKeywordIdByName(String keyword) {
+		if (StringUtils.isEmpty(keyword)) {
+			return Collections.emptyList();
+		}
+		return sqlMap.queryForList("spreader_keyword.getKeywordIdByName", keyword);
 	}
 }

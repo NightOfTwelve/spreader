@@ -289,7 +289,7 @@ var importAccForm = new Ext.form.FormPanel({
 						var count = obj.result.count;
 						Ext.Msg.alert('提示,', '成功导入:' + count + '条记录 ');
 						form.reset();
-
+						
 					},
 					failure : function(tform, action) {
 						if (action.failureType === Ext.form.Action.CONNECT_FAILURE) {

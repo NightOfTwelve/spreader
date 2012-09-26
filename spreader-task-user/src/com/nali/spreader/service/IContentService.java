@@ -4,8 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.ContentDto;
-import com.nali.spreader.config.PostWeiboConfig;
+import com.nali.spreader.config.ContentQueryParamsDto;
 import com.nali.spreader.data.Content;
 import com.nali.spreader.dto.PostWeiboContentDto;
 
@@ -29,8 +30,7 @@ public interface IContentService {
 	Content parseUrl(String url);
 
 	/**
-	 * 分配一个contentID
-	 * content == null return null 
+	 * 分配一个contentID content == null return null
 	 * 
 	 * contentType websiteId websiteUid entry 有一项为空 return null
 	 * 
@@ -38,9 +38,10 @@ public interface IContentService {
 	 * @return
 	 */
 	Long assignContentId(Content content);
-	
+
 	/**
 	 * 分配一个content
+	 * 
 	 * @param content
 	 * @return
 	 */
@@ -55,21 +56,27 @@ public interface IContentService {
 	List<Long> findContentIdByPostContentDto(PostWeiboContentDto dto);
 
 	/**
-	 * 根据配置获取内容集合
-	 * 
-	 * @param cfg
-	 * @param allKeywords
-	 * @param uid
-	 * @return
-	 */
-
-	List<Long> findContentIdByConfig(PostWeiboConfig cfg, List<String> allKeywords, Long uid);
-
-	/**
 	 * 获取内容的长度
 	 * 
 	 * @param content
 	 * @return
 	 */
 	int getContentLength(String content);
+
+	/**
+	 * 保存一条内容与关键字的映射关系
+	 * 
+	 * @param contentId
+	 * @param keywordId
+	 * @return
+	 */
+	int saveContentKeyword(Long contentId, Long... keywords);
+	
+	/**
+	 * 查询内容库分页数据
+	 * 
+	 * @param cqd
+	 * @return
+	 */
+	PageResult<Content> findContentPageResult(ContentQueryParamsDto param);
 }

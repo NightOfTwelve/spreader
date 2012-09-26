@@ -177,5 +177,5 @@
 		class="com.nali.stat.dc.collecter.RedisHashSimpleCountCollecter">
 		<property name="moduleName" value="spreader"></property>
 	</bean>
-
+	<import resource="classpath:application-dal-context.xml" />
 </beans>

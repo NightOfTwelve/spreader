@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -13,6 +14,8 @@ import org.springframework.util.Assert;
 
 import com.nali.common.model.Limit;
 import com.nali.common.model.Shard;
+import com.nali.spreader.config.Range;
+import com.nali.spreader.constants.Website;
 import com.nali.spreader.dao.ICrudRobotUserDao;
 import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.ICrudUserRelationDao;
@@ -28,6 +31,7 @@ import com.nali.spreader.data.UserTag;
 import com.nali.spreader.data.UserTagExample;
 import com.nali.spreader.data.WeiboAppeal;
 import com.nali.spreader.data.WeiboAppealExample;
+import com.nali.spreader.dto.FilterUserDto;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IGlobalRobotUserService;
 import com.nali.spreader.service.IGlobalUserService;
@@ -267,7 +271,7 @@ public class GlobalUserService implements IGlobalUserService {
 		}
 		return crudWeiboAppealDao.selectByExample(example);
 	}
-	
+
 	@Override
 	public List<WeiboAppeal> findInitedWeiboAppeal(int limit) {
 		WeiboAppealExample example = new WeiboAppealExample();
@@ -303,5 +307,26 @@ public class GlobalUserService implements IGlobalUserService {
 		Assert.notNull(websiteUid, "websiteUid is null");
 		Long uid = getOrAssignUid(websiteId, websiteUid);
 		return this.getUserById(uid);
+	}
+
+	@Override
+	public Long[] findPostContentUids(Integer vType, Range<Long> fans, Range<Long> articles) {
+		if (vType == null && fans == null && articles == null) {
+			return ArrayUtils.EMPTY_LONG_OBJECT_ARRAY;
+		}
+		FilterUserDto query = new FilterUserDto();
+		query.setvType(vType);
+		if (fans != null) {
+			query.setGteFans(fans.getGte());
+			query.setLteFans(fans.getLte());
+		}
+		if (articles != null) {
+			query.setGteArticles(articles.getGte());
+			query.setLteArticles(articles.getLte());
+		}
+		query.setWebsiteId(Website.weibo.getId());
+		List<Long> uidList = this.userDao.queryPostContentUids(query);
+		Long[] tmp = new Long[uidList.size()];
+		return uidList.toArray(tmp);
 	}
 }

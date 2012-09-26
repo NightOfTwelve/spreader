@@ -67,6 +67,13 @@
 			limit $lit.offset$,$lit.maxRows$
 		</isNotNull>
 	</select>
+	<select id="selectKeywordNameByCategoryName" parameterClass="java.lang.String"
+		resultClass="java.lang.String">
+		select kw.name from tb_keyword kw
+		inner join tb_category ca
+		on kw.category_id = ca.id
+		where ca.name = #categoryName#
+	</select>
 	<select id="selectKeywordInfoNotEqualToCategoryId"
 		parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
 		resultMap="keywordinfo_resultmap">
@@ -127,10 +134,14 @@
 		resultMap="ContentKeywordInfoResultMap">
 		select k.id keyword_id,k.name keyword_name,cg.id
 		category_id,cg.name category_name from
-		tb_content_keyword ck
-		left join tb_keyword k on ck.keyword_id = k.id
-		left join tb_category cg on k.category_id = cg.id
-		where ck.content_id = #contentId#
+		spreader.tb_content_keyword ck
+		left join
+		spreader.tb_keyword k on ck.keyword_id = k.id
+		left join
+		tb_category cg on
+		k.category_id = cg.id
+		where ck.content_id =
+		#contentId#
 	</select>
 	<select id="selectKeywordByCategories" parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
 		resultMap="spreader_tb_keyword.ibatorgenerated_BaseResultMap">
@@ -148,19 +159,51 @@
 			#keywordIds[]#
 		</iterate>
 	</select>
-	<select id="selectKeywordNameByCategoryName" parameterClass="java.lang.String"
-		resultClass="java.lang.String">
-		select kw.name from tb_keyword kw
-		inner join tb_category ca
-		on kw.category_id = ca.id
-		where ca.name = #categoryName#
+	<select id="selectKeywordIdsByCategories" parameterClass="java.util.List"
+		resultClass="java.lang.Long">
+		select kw.id from spreader.tb_keyword kw
+		inner join
+		spreader.tb_category ca
+		on
+		kw.category_id = ca.id
+		where ca.name
+		<iterate prepend="in" open="(" close=")" conjunction=",">
+			#categories[]#
+		</iterate>
+	</select>
+	<select id="selectKeywordIdsByKeywords" parameterClass="java.util.List"
+		resultClass="java.lang.Long">
+		select id from spreader.tb_keyword where name
+		<iterate prepend="in" open="(" close=")" conjunction=",">
+			#keywords[]#
+		</iterate>
 	</select>
 	<select id="selectKeywordByUserId" parameterClass="java.lang.Long"
-		resultClass="java.lang.String">
-		select kw.name from tb_user_tag ut
-		join tb_keyword kw on
+		resultClass="java.lang.Long">
+		select kw.id from spreader.tb_user_tag ut
+		join
+		spreader.tb_keyword kw on
 		ut.tag_id = kw.id
 		where ut.uid = #uid#
+	</select>
+	<select id="selectKeywordByContent" parameterClass="java.lang.Long"
+		resultClass="java.lang.Long">
+		select keyword_id from spreader.tb_content_keyword where
+		content_id
+		= #contentId#
+	</select>
+	<select id="getKeywordIdByCategory" parameterClass="java.lang.String"
+		resultClass="java.lang.Long">
+		select k.id from spreader.tb_keyword k
+		join
+		spreader.tb_category cg on k.category_id = cg.id
+		where cg.name like
+		CONCAT('%',#category#,'%')
+	</select>
+	<select id="getKeywordIdByName" parameterClass="java.lang.String"
+		resultClass="java.lang.Long">
+		select k.id From tb_keyword k where k.name like
+		CONCAT('%',#keyword#,'%');
 	</select>
 	<insert id="insertKeyword" parameterClass="com.nali.spreader.data.Keyword">
 		insert into spreader.tb_keyword(
@@ -195,8 +238,10 @@
 		true
 	</update>
 	<update id="updateKeywordCategoryId" parameterClass="java.lang.Long">
-		update spreader.tb_keyword
+		update
+		spreader.tb_keyword
 		set category_id = null
-		where category_id = #categoryId#
+		where category_id =
+		#categoryId#
 	</update>
 </sqlMap>

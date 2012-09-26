@@ -10,6 +10,7 @@ import com.nali.spreader.config.UserDto;
 import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
+import com.nali.spreader.dto.FilterUserDto;
 import com.nali.spreader.dto.PostWeiboContentDto;
 
 public interface IUserDao {
@@ -102,4 +103,20 @@ public interface IUserDao {
 	 * @return
 	 */
 	int updateUserArticles(Long uid);
+
+	/**
+	 * 筛选符合条件的UID
+	 * 
+	 * @param param
+	 * @return
+	 */
+	List<Long> queryPostContentUids(FilterUserDto param);
+
+	/**
+	 * 根据昵称找出userId
+	 * 
+	 * @param nickName
+	 * @return
+	 */
+	List<Long> getUidByNickName(String nickName);
 }
