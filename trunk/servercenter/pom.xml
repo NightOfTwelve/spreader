@@ -166,6 +166,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<configuration>
 					<overwrite>true</overwrite>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
