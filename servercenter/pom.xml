@@ -351,9 +351,9 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>product</id>
+			<id>dev-test</id>
 			<properties>
-				<envcfg.dir>product</envcfg.dir>
+				<envcfg.dir>dev-test</envcfg.dir>
 			</properties>
 		</profile>
 	</profiles>
