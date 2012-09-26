@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.nali.spreader.util.reflect.GenericInfo;
-import com.nali.spreader.workshop.AddUserFans;
+import com.nali.spreader.workshop.other.AddUserFans;
 
 
 public class TestGenericInfo {
