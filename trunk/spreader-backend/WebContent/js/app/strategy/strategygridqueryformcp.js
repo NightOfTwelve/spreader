@@ -43,6 +43,9 @@ var stggridform = new Ext.form.FormPanel({
 			buttons : [{
 						text : "查询"
 					}, {
-						text : "重置"
+						text : "重置",
+						handler : function() { // 按钮响应函数
+							stggridform.form.reset();
+						}
 					}]
 		});

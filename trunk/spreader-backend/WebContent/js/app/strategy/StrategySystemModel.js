@@ -143,7 +143,10 @@ Ext.onReady(function() {
 				buttons : [{
 							text : "查询"
 						}, {
-							text : "重置"
+							text : "重置",
+							handler : function() {
+								stggridform.form.reset();
+							}
 						}]
 			});
 	var store = new Ext.data.Store({
