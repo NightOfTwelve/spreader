@@ -498,7 +498,7 @@ Ext.onReady(function() {
 					}
 				}]
 	});
-	// 为Combo加入选择事件 TODO
+	// 为Combo加入选择事件
 	fromSelectUserGroupCombo.on('select', function(combo, record, index) {
 				var agroup = fromSelectUserGroupCombo.getRawValue();
 				var btag = toSelectUserGroupCombo.hidden;
@@ -1025,6 +1025,8 @@ Ext.onReady(function() {
 						}]
 			});
 	stgCmbWindow.on('show', function() {
+				// 新增 先清空GDISPID
+				objIdHidden.setValue(null);
 				stgCmbForm.getForm().reset();
 			});
 	/**
@@ -1321,6 +1323,7 @@ Ext.onReady(function() {
 			});
 	// 弹出前事件
 	compGroupWindow.on('show', function() {
+				// objIdHidden.setValue(null);
 				stgdispgridform.form.reset();
 			});
 	// 弹出窗口

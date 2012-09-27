@@ -17,6 +17,8 @@ function getTypeDefaultEdit(stype) {
 		} else if (stype == 'Float') {
 			defValue = new Ext.grid.GridEditor(new Ext.form.NumberField());
 		} else if (stype == 'Date') {
+			// new Ext.ux.form.DateTimeField() calendarCmp('start', 'start',
+			// '开始时间')
 			defValue = new Ext.grid.GridEditor(new Ext.ux.form.DateTimeField());
 		}
 	}
@@ -67,7 +69,8 @@ function renderPropertyGrid(node) {
 	pptgridcmp.removeAll(pptgrid);
 	// 绑定到布局页面
 	pptgridcmp.add(pptgrid);
-	Ext.getCmp('commNodePropText').setText(renderTextColor('属性-->'+nText, 'mediumorchid'));
+	Ext.getCmp('commNodePropText').setText(renderTextColor('属性-->' + nText,
+			'mediumorchid'));
 	pptgridcmp.doLayout();
 }
 /**
@@ -94,8 +97,8 @@ function collectionRender(node) {
 							id : 'collNodeText',
 							text : ''
 						}, '-', {
-							text : renderTextColor('操作-->新增节点' , 'lightseagreen'),
-//							iconCls : 'addIcon',
+							text : renderTextColor('操作-->新增节点', 'lightseagreen'),
+							// iconCls : 'addIcon',
 							handler : function() {
 								appendNodeAction(node);
 							}
@@ -105,7 +108,8 @@ function collectionRender(node) {
 	pptgridcmp.removeAll(pptgrid);
 	// 绑定到布局页面
 	pptgridcmp.add(pptgrid);
-	Ext.getCmp('collNodeText').setText(renderTextColor('属性-->'+nText, 'mediumorchid'));
+	Ext.getCmp('collNodeText').setText(renderTextColor('属性-->' + nText,
+			'mediumorchid'));
 	pptgridcmp.doLayout();
 }
 /**
@@ -138,7 +142,7 @@ function createPptGridStoreData(data, def) {
 			var pType = defObj.propertyDefinition.type;
 			if (Ext.isEmpty(data[defname])) {
 				if (pType == 'Boolean') {
-					data[defname] = false;
+					data[defname] = NO_SELECT;
 				} else {
 					data[defname] = '';
 				}
@@ -150,6 +154,7 @@ function createPptGridStoreData(data, def) {
 		return;
 	}
 }
+
 /**
  * 创建用户定义的输入框类型
  * 
@@ -166,6 +171,9 @@ function createPptGridCustEdit(data, def) {
 			var defObj = def[i];
 			var defname = defObj.propertyName;
 			var pType = defObj.propertyDefinition.type;
+			if (pType == 'Boolean') {
+				custEdit[defname] = new Ext.grid.GridEditor(createBooleanFiled(defname));
+			}
 			// if (!data.hasOwnProperty(defname)) {
 			if (Ext.isEmpty(data[defname])) {
 				custEdit[defname] = getTypeDefaultEdit(pType);
@@ -176,6 +184,36 @@ function createPptGridCustEdit(data, def) {
 		Ext.MessageBox.alert("提示", "对象获取错误");
 		return;
 	}
+}
+/**
+ * 创建boolean型的输入框
+ * 
+ * @param {}
+ *            name
+ */
+function createBooleanFiled(filedName) {
+	var combo = new Ext.form.ComboBox({
+				name : filedName,
+				id : filedName,
+				fieldLabel : 'condition',
+				mode : 'local',
+				valueField : 'id',
+				displayField : 'name',
+				allowBlank : false,
+				minListWidth : 220,
+				store : new Ext.data.ArrayStore({
+							id : 'isCons',
+							fields : ['id', 'name'],
+							data : [[true, "是"], [false, "否"], [NO_SELECT, "不限"]]
+						}),
+				listeners : {
+					expand : function() {
+						/* 下拉框展开时重置，否则不能重新加载列表 */
+						Ext.getCmp(filedName).reset();
+					}
+				}
+			});
+	return combo;
 }
 /**
  * 渲染布尔型的列
@@ -197,7 +235,10 @@ function createCustRenderers(data, def) {
 			if (pType == 'Boolean') {
 				customRenderers[defname] = function(v) {
 					if (Ext.isEmpty(v)) {
-						v = false;
+						return '不限';
+					}
+					if (v == NO_SELECT) {
+						return '不限';
 					}
 					return v ? '是' : '否';
 				}

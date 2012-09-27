@@ -6,6 +6,7 @@
 		BLANK_IMAGE_URL:"$StaticConfig.u('/js/extjs3/resources/images/default/s.gif')",
 		CHART_URL:"$StaticConfig.u('/js/extjs3/resources/charts.swf')"
 	};
+	var NO_SELECT = '_no_select';
 </script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/adapter/ext/ext-base.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all.js')" ></script>

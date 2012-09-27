@@ -172,7 +172,7 @@ function createNodeData(node) {
 			var nodedata = node.data;
 			for (var key in nodedata) {
 				var tmpvar = nodedata[key];
-				if (Ext.isEmpty(tmpvar)) {
+				if (Ext.isEmpty(tmpvar) || tmpvar == NO_SELECT) {
 					tmpvar = null;
 				}
 				// data[key] = nodedata[key];
