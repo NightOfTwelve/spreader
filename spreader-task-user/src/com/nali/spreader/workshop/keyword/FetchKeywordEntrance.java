@@ -18,7 +18,7 @@ import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.util.SpecialDateUtil;
-import com.nali.spreader.workshop.other.WeiboRobotUserHolder;
+import com.nali.spreader.workshop.system.WeiboRobotUserHolder;
 
 /**
  * 爬取微话题的入口

@@ -1,6 +1,7 @@
 package com.nali.spreader.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class ReplyDto implements Serializable {
 	private static final long serialVersionUID = 3239316598865583715L;
@@ -8,17 +9,26 @@ public class ReplyDto implements Serializable {
 	private Long contentId;
 	private String text;
 	private boolean forward;
+	private Date startTime;
+	
+	public ReplyDto(Long robotId, Long contentId, String text, boolean forward, Date startTime) {
+		super();
+		this.robotId = robotId;
+		this.contentId = contentId;
+		this.text = text;
+		this.forward = forward;
+		this.startTime = startTime;
+	}
+
+	public ReplyDto() {
+	}
 	
 	public ReplyDto(Long robotId, Long contentId, String text) {
 		this(robotId, contentId, text, false);
 	}
 	
 	public ReplyDto(Long robotId, Long contentId, String text, boolean forward) {
-		super();
-		this.robotId = robotId;
-		this.contentId = contentId;
-		this.text = text;
-		this.forward = forward;
+		this(robotId, contentId, text, forward, null);
 	}
 	public Long getRobotId() {
 		return robotId;
@@ -43,6 +53,14 @@ public class ReplyDto implements Serializable {
 	}
 	public void setForward(boolean forward) {
 		this.forward = forward;
+	}
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
 	}
 
 }

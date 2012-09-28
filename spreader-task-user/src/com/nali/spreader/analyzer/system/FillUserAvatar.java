@@ -1,4 +1,4 @@
-package com.nali.spreader.analyzer.other;
+package com.nali.spreader.analyzer.system;
 
 import java.util.List;
 

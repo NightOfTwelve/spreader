@@ -26,6 +26,7 @@ import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IKeywordService;
 import com.nali.spreader.util.SpecialDateUtil;
+import com.nali.spreader.workshop.system.WeiboRobotUserHolder;
 
 @Component
 public class FetchWeiboContent extends SingleTaskMachineImpl implements

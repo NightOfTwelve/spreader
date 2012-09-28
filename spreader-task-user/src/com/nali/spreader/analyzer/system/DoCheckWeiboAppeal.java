@@ -1,5 +1,6 @@
-package com.nali.spreader.analyzer.other;
+package com.nali.spreader.analyzer.system;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,26 +15,26 @@ import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.service.IGlobalUserService;
 
 @Component
-@ClassDescription("补跑微博申诉")
-public class RetryWeiboAppeal implements RegularAnalyzer, Configable<Integer> {
+@ClassDescription("检查微博申诉")
+public class DoCheckWeiboAppeal implements RegularAnalyzer, Configable<Date> {
 	@AutowireProductLine
-	private TaskProduceLine<WeiboAppeal> doWeiboAppeal;
+	private TaskProduceLine<Long> checkWeiboAppeal;
+	private Date startDate;
 	@Autowired
 	private IGlobalUserService globalUserService;
-	private Integer limit;
 	
 	@Override
-	public void init(Integer config) {
-		limit = config;
+	public void init(Date config) {
+		startDate=config;
 	}
 
 	@Override
 	public String work() {
-		List<WeiboAppeal> appeals = globalUserService.findInitedWeiboAppeal(limit);
+		List<WeiboAppeal> appeals = globalUserService.findUncheckedWeiboAppeal(startDate);
 		for (WeiboAppeal appeal : appeals) {
-			doWeiboAppeal.send(appeal);
+			checkWeiboAppeal.send(appeal.getUid());
 		}
-		return "补跑微博申诉：" + appeals.size();
+		return "检查微博申诉：" + appeals.size();
 	}
 
 }

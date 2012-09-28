@@ -9,6 +9,8 @@ import com.nali.spreader.util.random.RandomUtil;
 import com.nali.spreader.util.random.Randomer;
 
 public class ConfigDataUtil {
+	public static final NumberRandomer ZERO_NUMBER_RANDOMER = new NumberRandomer(0, 1);
+
 	public static List<String> getKeywords(List<String> defaultKeywords, List<String> randomKeywords, Randomer<Integer> keywordRandomer) {
 		if(defaultKeywords==null) {
 			defaultKeywords = Collections.emptyList();
@@ -22,6 +24,21 @@ public class ConfigDataUtil {
 		} else {
 			return defaultKeywords;
 		}
+	}
+	
+	/**
+	 * @return if range==null NumberRandomer always return zero
+	 */
+	public static NumberRandomer createNotNullGteLteRandomer(Range<Integer> range) {
+		return createGteLteRandomer(range, ZERO_NUMBER_RANDOMER);
+	}
+	
+	public static NumberRandomer createGteLteRandomer(Range<Integer> range, NumberRandomer defaultNumberRandomer) {
+		NumberRandomer numberRandomer = createGteLteRandomer(range, false);
+		if(numberRandomer==null) {
+			return defaultNumberRandomer;
+		}
+		return numberRandomer;
 	}
 	
 	public static NumberRandomer createGteLteRandomer(Range<Integer> range, boolean checkNotNull) {

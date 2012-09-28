@@ -16,7 +16,7 @@ import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.service.IKeywordService;
 import com.nali.spreader.util.SpecialDateUtil;
-import com.nali.spreader.workshop.other.WeiboRobotUserHolder;
+import com.nali.spreader.workshop.system.WeiboRobotUserHolder;
 
 /**
  * 根据返回的入口爬取关键字

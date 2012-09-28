@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop.other;
+package com.nali.spreader.workshop.register;
 
 import java.util.Date;
 import java.util.Map;

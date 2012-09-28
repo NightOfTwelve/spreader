@@ -5,12 +5,10 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.spreader.config.NoticeReplayWeiboConfig;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.Content;
 import com.nali.spreader.data.KeyValue;
-import com.nali.spreader.dto.ReplyWeiboDto;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
@@ -19,6 +17,7 @@ import com.nali.spreader.factory.passive.Input;
 import com.nali.spreader.model.ReplyDto;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.util.SpecialDateUtil;
+import com.nali.spreader.workshop.system.WeiboRobotUserHolder;
 
 @Component
 public class ReplyWeibo extends SingleTaskMachineImpl implements PassiveWorkshop<KeyValue<Long, KeyValue<Long, String>>, KeyValue<Long, KeyValue<Long,Boolean>>> {
@@ -33,7 +32,7 @@ public class ReplyWeibo extends SingleTaskMachineImpl implements PassiveWorkshop
 
 	@Input
 	public void work(SingleTaskExporter exporter, ReplyDto dto) {
-		work(dto.getRobotId(), dto.getContentId(), dto.getText(), dto.isForward(), exporter);
+		work(dto.getRobotId(), dto.getContentId(), dto.getText(), dto.isForward(), exporter, dto.getStartTime());
 	}
 	
 	@Input
@@ -41,37 +40,19 @@ public class ReplyWeibo extends SingleTaskMachineImpl implements PassiveWorkshop
 		Long contentId = data.getKey();
 		String text = data.getValue();
 		Long robotUid = weiboRobotUserHolder.getRobotUid();
-		work(robotUid, contentId, text, false, exporter);
+		work(robotUid, contentId, text, false, exporter, null);
 	}
 	
-	@Input
-	public void work(ReplyWeiboDto dto, SingleTaskExporter exporter) {
-		Long contentId = dto.getContentId();
-		String text = dto.getText();
-		Long robotUid = dto.getUid();
-		Boolean needForward = dto.getNeedForward();
-		work(robotUid, contentId, text, needForward, exporter);
-	}
-
 	@Override
 	public void work(KeyValue<Long, KeyValue<Long, String>> data, SingleTaskExporter exporter) {
 		Long robotUid = data.getKey();
 		KeyValue<Long, String> contentReply = data.getValue();
 		Long contentId = contentReply.getKey();
 		String text = contentReply.getValue();
-		work(robotUid, contentId, text, false, exporter);
+		work(robotUid, contentId, text, false, exporter, null);
 	}
 	
-	@Input
-	public void work(NoticeReplayWeiboConfig data, SingleTaskExporter exporter) {
-		Long robotUid = data.getToUid();
-		Long contentId = data.getReplayContentId();
-		String text = data.getContent();
-		Boolean needForward = data.getNeedForward();
-		work(robotUid, contentId, text, needForward, exporter);
-	}
-	
-	private void work(Long robotUid, Long contentId, String text, boolean needForward, SingleTaskExporter exporter) {
+	private void work(Long robotUid, Long contentId, String text, boolean needForward, SingleTaskExporter exporter, Date startTime) {
 		Content content = contentService.getContentById(contentId);
 		exporter.setProperty("id", robotUid);
 		exporter.setProperty("contentId", contentId);
@@ -80,7 +61,12 @@ public class ReplyWeibo extends SingleTaskMachineImpl implements PassiveWorkshop
 		exporter.setProperty("entry", content.getEntry());
 		exporter.setProperty("text", text);
 		exporter.setProperty("needForward", needForward);
-		exporter.send(robotUid, SpecialDateUtil.afterToday(3));
+		if(startTime==null) {
+			startTime = new Date();
+		}
+		exporter.setTimes(startTime, SpecialDateUtil.afterToday(3));
+		exporter.setUid(robotUid);
+		exporter.send();
 	}
 
 	@Override

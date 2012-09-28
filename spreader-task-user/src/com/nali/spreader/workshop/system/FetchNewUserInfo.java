@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop.other;
+package com.nali.spreader.workshop.system;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -50,6 +50,7 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 	private TaskProduceLine<WeiboContentDto> postWeiboContent;
 	// 发帖随机数
 	private Randomer<Integer> postRandom;
+	private Integer postInterval;
 
 	public PostKeywordWeibo() {
 		super("发送${fromGroup}的微博");
@@ -90,12 +91,8 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 				for (Long cid : sendContent) {
 					Content c = this.contentService.getContentById(cid);
 					c.setUid(uid);
-					Integer postInterval = config.getPostInterval();
-					if (postInterval == null) {
-						postInterval = PostWeiboConfig.DEFAULT_INTERVAL;
-					}
-					postTime = DateUtils.addMinutes(postTime, postInterval);
 					WeiboContentDto param = WeiboContentDto.getWeiboContentDto(uid, c, postTime);
+					postTime = DateUtils.addMinutes(postTime, postInterval);
 					this.postWeiboContent.send(param);
 					this.robotContentService.save(uid, cid, RobotContent.TYPE_POST);
 				}
@@ -109,5 +106,9 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 		this.config = config;
 		Range<Integer> postRange = config.getPostNumber();
 		this.postRandom = ConfigDataUtil.createGteLteRandomer(postRange, true);
+		postInterval = config.getPostInterval();
+		if (postInterval == null) {
+			postInterval = PostWeiboConfig.DEFAULT_INTERVAL;
+		}
 	}
 }

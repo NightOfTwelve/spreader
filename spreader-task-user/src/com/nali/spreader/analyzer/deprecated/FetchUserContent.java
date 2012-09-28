@@ -1,4 +1,4 @@
-package com.nali.spreader.analyzer.other;
+package com.nali.spreader.analyzer.deprecated;
 
 import java.util.List;
 

@@ -29,8 +29,8 @@ import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.INoticeService;
 import com.nali.spreader.util.SpecialDateUtil;
-import com.nali.spreader.workshop.other.FetchNewUserInfo;
-import com.nali.spreader.workshop.other.WeiboRobotUserHolder;
+import com.nali.spreader.workshop.system.FetchNewUserInfo;
+import com.nali.spreader.workshop.system.WeiboRobotUserHolder;
 
 @Component
 public class FetchNotice extends SingleTaskMachineImpl implements
