@@ -409,6 +409,8 @@ Ext.onReady(function() {
 			});
 	cagegoryTagStore.on('beforeload', function() {
 				this.baseParams = {
+					keywordName : Ext.getCmp('queryCategoryTagsForm')
+							.getValue(),
 					categoryId : categoryIdHidden.getValue()
 				};
 			});
@@ -463,7 +465,7 @@ Ext.onReady(function() {
 		listeners : {
 			specialKey : function(field, e) {
 				if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-					cagegoryTagbbar.pageSize = parseInt(cagegoryTagnumber
+					cagegoryTagbbar.pageSize = parseInt(cagegoryTagnumtext
 							.getValue());
 					cagegoryTagnumber = parseInt(cagegoryTagnumtext.getValue());
 					cagegoryTagStore.reload({
@@ -541,6 +543,11 @@ Ext.onReady(function() {
 										.getValue();
 								queryKeywordByName(cagegoryTagStore, keyName);
 							}
+						}, '-', {
+							id : 'tagmind',
+							name : 'tagmind',
+							xtype : 'tbtext',
+							text : '<font color = "red">选中关键字拖动至右边</font>'
 						}],
 				bbar : cagegoryTagbbar
 			});
@@ -548,7 +555,8 @@ Ext.onReady(function() {
 	// 待筛选的grid相关组件
 	var cagegoryNotTagStore = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
-							url : '../category/notcategorytags'
+							url : '../category/notcategorytags?_time'
+									+ new Date().getTime()
 						}),
 				reader : new Ext.data.JsonReader({
 							totalProperty : 'totalCount',
@@ -573,6 +581,8 @@ Ext.onReady(function() {
 			});
 	cagegoryNotTagStore.on('beforeload', function() {
 				this.baseParams = {
+					keywordName : Ext.getCmp('queryCategoryNotTagForm')
+							.getValue(),
 					categoryId : categoryIdHidden.getValue()
 				};
 			});
@@ -619,28 +629,28 @@ Ext.onReady(function() {
 			}]);
 	var cagegoryNotTagnumber = 20;
 	var cagegoryNotTagnumtext = new Ext.form.TextField({
-				id : 'cagegoryNotTagnumtext',
-				width : 60,
-				emptyText : '每页条数',
-				// 激活键盘事件
-				enableKeyEvents : true,
-				listeners : {
-					specialKey : function(field, e) {
-						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							cagegoryNotTagbbar.pageSize = parseInt(cagegoryNotTagnumber
-									.getValue());
-							cagegoryNotTagnumber = parseInt(cagegoryNotTagnumtext
-									.getValue());
-							cagegoryNotTagStore.reload({
-										params : {
-											start : 0,
-											limit : cagegoryNotTagbbar.pageSize
-										}
-									});
-						}
-					}
+		id : 'cagegoryNotTagnumtext',
+		width : 60,
+		emptyText : '每页条数',
+		// 激活键盘事件
+		enableKeyEvents : true,
+		listeners : {
+			specialKey : function(field, e) {
+				if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
+					cagegoryNotTagbbar.pageSize = parseInt(cagegoryNotTagnumtext
+							.getValue());
+					cagegoryNotTagnumber = parseInt(cagegoryNotTagnumtext
+							.getValue());
+					cagegoryNotTagStore.reload({
+								params : {
+									start : 0,
+									limit : cagegoryNotTagbbar.pageSize
+								}
+							});
 				}
-			});
+			}
+		}
+	});
 	var cagegoryNotTagbbar = new Ext.PagingToolbar({
 				pageSize : cagegoryNotTagnumber,
 				store : cagegoryNotTagStore,
@@ -697,6 +707,11 @@ Ext.onReady(function() {
 				var keyName = Ext.getCmp('queryCategoryNotTagForm').getValue();
 				queryKeywordByName(cagegoryNotTagStore, keyName);
 			}
+		}, '-', {
+			id : 'notagmind',
+			name : 'notagmind',
+			xtype : 'tbtext',
+			text : '<font color = "red">选中关键字拖动至左边</font>'
 		}],
 		bbar : cagegoryNotTagbbar
 	});
