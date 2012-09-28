@@ -23,6 +23,7 @@ import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
 import com.nali.spreader.util.SpecialDateUtil;
+import com.nali.spreader.workshop.system.WeiboRobotUserHolder;
 
 @Component
 @ClassDescription("爬取用户关注的用户")//TODO 真正功能是爬取用户主页，这个是一个配置项的名字

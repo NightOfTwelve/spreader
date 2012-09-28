@@ -1,4 +1,4 @@
-package com.nali.spreader.analyzer.other;
+package com.nali.spreader.analyzer.system;
 
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +10,7 @@ import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
 import com.nali.spreader.factory.TaskProduceLine;
+import com.nali.spreader.factory.config.SystemObject;
 import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
@@ -23,7 +24,7 @@ import com.nali.spreader.util.NumberUtil;
 
 @Component
 @ClassDescription("爬取用户主页")
-public class UpdateUserMainPage implements RegularAnalyzer {//TODO SystemObject
+public class UpdateUserMainPage implements RegularAnalyzer,SystemObject {
 	private Integer websiteId = Website.weibo.getId();
 	private IRobotUserService robotUserService;
 	private IUserService userService;

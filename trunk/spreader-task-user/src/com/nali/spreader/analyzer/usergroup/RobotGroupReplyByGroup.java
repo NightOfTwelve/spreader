@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.nali.spreader.analyzer.other.Words;
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.RobotGroupReplyDto;
 import com.nali.spreader.data.User;
@@ -92,7 +93,7 @@ public class RobotGroupReplyByGroup extends UserGroupExtendedBeanImpl implements
 		Range<Integer> toRange = config.getToReplyGroup();
 		// 符合回复的微博上下限
 		Range<Integer> contentRange = config.getContentCount();
-		this.replyWords = ReplyWeiboByGroup.defaultReplyWords;
+		this.replyWords = Words.defaultReplyWords;
 		if (fromRange != null && toRange != null && contentRange != null && fromRange.checkNotNull()
 				&& toRange.checkNotNull() && contentRange.checkNotNull()) {
 			fromRandom = new NumberRandomer(fromRange.getGte(), fromRange.getLte() + 1);

@@ -95,7 +95,9 @@ public class KeywordServiceImpl implements IKeywordService {
 	@Override
 	public Set<Long> createMergerKeyword(List<String> keywords, List<String> categories) {
 		Set<Long> result = new HashSet<Long>();
-		result.addAll(keywordDao.selectKeywordIdsByKeywords(keywords));
+		for (String keyword : keywords) {
+			result.add(getOrAssignKeywordIdByName(keyword));
+		}
 		result.addAll(keywordDao.selectKeywordIdsByCategories(categories));
 		return result;
 	}

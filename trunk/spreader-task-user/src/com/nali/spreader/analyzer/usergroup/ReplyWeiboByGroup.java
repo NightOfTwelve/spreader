@@ -3,7 +3,6 @@ package com.nali.spreader.analyzer.usergroup;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -11,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.nali.spreader.analyzer.other.Words;
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.RobotReplyListDto;
 import com.nali.spreader.data.Content;
@@ -27,7 +27,6 @@ import com.nali.spreader.model.RobotContent;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IRobotContentService;
 import com.nali.spreader.service.IUserGroupFacadeService;
-import com.nali.spreader.util.TxtFileUtil;
 import com.nali.spreader.util.random.AvgRandomer;
 import com.nali.spreader.util.random.NumberRandomer;
 import com.nali.spreader.util.random.Randomer;
@@ -36,9 +35,7 @@ import com.nali.spreader.util.random.WeightRandomer;
 @Component
 @ClassDescription("分组·回转指定微博")
 public class ReplyWeiboByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,Configable<RobotReplyListDto> {
-	private static final String FILE_REPLY_WORDS = "txt/reply.txt";
 	private static Logger logger = Logger.getLogger(ReplyWeiboByGroup.class);
-	static Randomer<String> defaultReplyWords;
 	@Autowired
 	private IUserGroupFacadeService userGroupFacadeService;
 	@Autowired
@@ -55,15 +52,6 @@ public class ReplyWeiboByGroup extends UserGroupExtendedBeanImpl implements Regu
 	
 	public ReplyWeiboByGroup() {
 		super(UserGroupMetaInfo.FROM_GROUP + "回复微博");
-	}
-	
-	static {
-		try {
-			Set<String> datas = TxtFileUtil.read(ReplyWeiboByGroup.class.getClassLoader().getResource(FILE_REPLY_WORDS));
-			defaultReplyWords = new AvgRandomer<String>(datas);
-		} catch (IOException e) {
-			logger.error(e, e);
-		}
 	}
 	
 	@PostConstruct
@@ -113,10 +101,9 @@ public class ReplyWeiboByGroup extends UserGroupExtendedBeanImpl implements Regu
 			needForwardPercent=Math.min(100, needForwardPercent);
 		}
 		if(config.getWords()==null || config.getWords().size()==0) {
-			replyWords = defaultReplyWords;
+			replyWords = Words.defaultReplyWords;
 		} else {
-			List<String> words = config.getWords();
-			replyWords = new AvgRandomer<String>(words);
+			replyWords = new AvgRandomer<String>(config.getWords());
 		}
 		WeightRandomer<Boolean> needForward = new WeightRandomer<Boolean>();
 		needForward.add(true, needForwardPercent);

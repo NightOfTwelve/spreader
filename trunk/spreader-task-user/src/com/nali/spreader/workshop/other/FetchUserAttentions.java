@@ -20,6 +20,7 @@ import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
 import com.nali.spreader.util.SpecialDateUtil;
+import com.nali.spreader.workshop.system.WeiboRobotUserHolder;
 
 @Component
 public class FetchUserAttentions extends SingleTaskMachineImpl implements PassiveWorkshop<Long, List<UserRelation>> {

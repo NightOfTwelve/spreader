@@ -9,6 +9,7 @@ import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.Content;
 import com.nali.spreader.data.KeyValue;
+import com.nali.spreader.dto.ForwardDto;
 import com.nali.spreader.factory.PassiveWorkshop;
 import com.nali.spreader.factory.SimpleActionConfig;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
@@ -31,27 +32,43 @@ public class ForwardWeiboContent extends SingleTaskMachineImpl implements Passiv
 		Long robotUid=data.getKey();
 		Long contentId=data.getValue();
 		Content content = contentService.getContentById(contentId);
-		work(robotUid, content, exporter);
+		work(robotUid, content, exporter, null);
 	}
 
 	@Input
 	public void work(SingleTaskExporter exporter, KeyValue<Long, Content> data) {
 		Long robotUid=data.getKey();
 		Content content=data.getValue();
-		work(robotUid, content, exporter);
+		work(robotUid, content, exporter, null);
 	}
 	
-	private void work(Long robotUid, Content content, SingleTaskExporter exporter) {
-		work(robotUid, content.getId(), content.getWebsiteContentId(), content.getWebsiteUid(), content.getEntry(), exporter);
+	@Input
+	public void work(SingleTaskExporter exporter, ForwardDto dto) {
+		Content content=dto.getContent();
+		if(content==null) {
+			content = contentService.getContentById(dto.getContentId());
+		}
+		Long robotUid=dto.getRobotUid();
+		Date startTime = dto.getStartTime();
+		work(robotUid, content, exporter, startTime);
+	}
+	
+	private void work(Long robotUid, Content content, SingleTaskExporter exporter, Date startTime) {
+		work(robotUid, content.getId(), content.getWebsiteContentId(), content.getWebsiteUid(), content.getEntry(), exporter, startTime);
 	}
 
-	private void work(Long robotUid, Long contentId, Long websiteContentId, Long websiteUid, String entry, SingleTaskExporter exporter) {
+	private void work(Long robotUid, Long contentId, Long websiteContentId, Long websiteUid, String entry, SingleTaskExporter exporter, Date startTime) {
 		exporter.setProperty("id", robotUid);
 		exporter.setProperty("contentId", contentId);
 		exporter.setProperty("websiteContentId", websiteContentId);
 		exporter.setProperty("websiteUid", websiteUid);
 		exporter.setProperty("entry", entry);
-		exporter.send(robotUid, SpecialDateUtil.afterToday(3));
+		if(startTime==null) {
+			startTime = new Date();
+		}
+		exporter.setTimes(startTime, SpecialDateUtil.afterToday(3));
+		exporter.setUid(robotUid);
+		exporter.send();
 		contentService.addPostContentId(robotUid, contentId);
 	}
 
