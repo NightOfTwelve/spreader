@@ -17,12 +17,12 @@ public class NoticeReplayWeibo implements RegularAnalyzer, NoticeRelatedObject,
 		Configable<NoticeReplayWeiboConfig> {
 	private NoticeReplayWeiboConfig config;
 	@AutowireProductLine
-	private TaskProduceLine<NoticeReplayWeiboConfig> replyWeibo;
+	private TaskProduceLine<ReplyDto> replyWeibo;
 
 	@Override
 	public String work() {
-		new ReplyDto(config.getToUid(), config.getReplayContentId(), config.getContent(), config.getNeedForward());
-		replyWeibo.send(config);
+		ReplyDto replyDto = new ReplyDto(config.getToUid(), config.getReplayContentId(), config.getContent(), config.getNeedForward());
+		replyWeibo.send(replyDto);
 		return null;
 	}
 
