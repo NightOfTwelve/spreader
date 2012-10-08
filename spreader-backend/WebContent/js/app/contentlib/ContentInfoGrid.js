@@ -280,64 +280,67 @@ Ext.onReady(function() {
 	 */
 	// 定义表格数据源
 	var contentStore = new Ext.data.Store({
-		proxy : new Ext.data.HttpProxy({
-					url : '../contentlib/grid?_time=' + new Date().getTime()
-				}),
-		reader : new Ext.data.JsonReader({
-					totalProperty : 'totalCount',
-					root : 'list'
-				}, [{
-							name : 'id'
-						}, {
-							name : 'type'
-						}, {
-							name : 'websiteId'
-						}, {
-							name : 'url',
-							convert : function(value, rec) {
-								return "<a href='" + value
-										+ "' target='_blank'>" + value + "</a>";
-							}
-						}, {
-							name : 'websiteContentId'
-						}, {
-							name : 'websiteRefId'
-						}, {
-							name : 'websiteUid'
-						}, {
-							name : 'uid'
-						}, {
-							name : 'nickName'
-						}, {
-							name : 'title'
-						}, {
-							name : 'pubDate'
-						}, {
-							name : 'syncDate'
-						}, {
-							name : 'refCount'
-						}, {
-							name : 'replyCount'
-						}, {
-							name : 'entry'
-						}, {
-							name : 'content'
-						}, {
-							name : 'webSiteName'
-						}, {
-							name : 'categoryNames'
-						}, {
-							name : 'typeName'
-						}]),
-		autoLoad : {
-			params : {
-				start : 0,
-				limit : 20
-			}
+				proxy : new Ext.data.HttpProxy({
+							url : '../contentlib/grid?_time='
+									+ new Date().getTime()
+						}),
+				reader : new Ext.data.JsonReader({
+							totalProperty : 'totalCount',
+							root : 'list'
+						}, [{
+									name : 'id'
+								}, {
+									name : 'type'
+								}, {
+									name : 'websiteId'
+								}
+								// , {
+								// name : 'url',
+								// convert : function(value, rec) {
+								// return "<a href='" + value
+								// + "' target='_blank'>" + value + "</a>";
+								// }
+								// }
+								, {
+									name : 'websiteContentId'
+								}, {
+									name : 'websiteRefId'
+								}, {
+									name : 'websiteUid'
+								}, {
+									name : 'uid'
+								}, {
+									name : 'nickName'
+								}, {
+									name : 'title'
+								}, {
+									name : 'pubDate'
+								}, {
+									name : 'syncDate'
+								}, {
+									name : 'refCount'
+								}, {
+									name : 'replyCount'
+								}, {
+									name : 'entry'
+								}, {
+									name : 'content'
+								}, {
+									name : 'webSiteName'
+								}, {
+									name : 'categoryNames'
+								}, {
+									name : 'typeName'
+								}]),
+				autoLoad : {
+					params : {
+						start : 0,
+						limit : 20
+					}
 
-		},
-		timeout : 600000
-	});
+				},
+				timeout : 600000
+			});
 	// 定义自动当前页行号
 	var rownum = new Ext.grid.RowNumberer({
 				header : 'NO',
@@ -362,6 +365,17 @@ Ext.onReady(function() {
 			}, {
 				header : '微博链接',
 				dataIndex : 'url',
+				renderer : function(value, cellmeta, record) {
+					var entry = record.data.entry
+					var websiteUid = record.data.websiteUid;
+					if (!Ext.isEmpty(entry) && !Ext.isEmpty(websiteUid)) {
+						var url = 'http://www.weibo.com/' + websiteUid + '/'
+								+ entry;
+						return "<a href='" + url + "' target='_blank'>" + url
+								+ "</a>";
+					}
+					return '';
+				},
 				width : 100
 			}, {
 				header : '内容',

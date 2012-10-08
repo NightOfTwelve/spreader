@@ -8,6 +8,7 @@ import com.nali.common.pagination.PageResult;
 import com.nali.spreader.config.ContentDto;
 import com.nali.spreader.config.ContentQueryParamsDto;
 import com.nali.spreader.data.Content;
+import com.nali.spreader.dto.ContentKeywordInfoDto;
 import com.nali.spreader.dto.PostWeiboContentDto;
 
 public interface IContentService {
@@ -71,7 +72,7 @@ public interface IContentService {
 	 * @return
 	 */
 	int saveContentKeyword(Long contentId, Long... keywords);
-	
+
 	/**
 	 * 查询内容库分页数据
 	 * 
@@ -79,4 +80,12 @@ public interface IContentService {
 	 * @return
 	 */
 	PageResult<Content> findContentPageResult(ContentQueryParamsDto param);
+
+	/**
+	 * 查询文章的关键字
+	 * 
+	 * @param contentId
+	 * @return
+	 */
+	List<ContentKeywordInfoDto> findKeywordByContentId(Long contentId);
 }

@@ -234,6 +234,7 @@ public class UserManageServiceImpl implements IUserManageService {
 								// 已存在的跳过
 								User u = globaUserService.findByUniqueKey(Website.weibo.getId(),
 										websiteUid);
+								//TODO 设置isrobot true
 								if (u != null) {
 									continue;
 								}

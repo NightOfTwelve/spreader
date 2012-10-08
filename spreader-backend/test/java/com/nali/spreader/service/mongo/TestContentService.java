@@ -25,7 +25,7 @@ import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.util.random.RandomUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@ContextConfiguration("161-application-context-test.xml")
 public class TestContentService {
 	private static final Logger logger = Logger.getLogger(TestContentService.class);
 	private static final String TEST_STR = ">>>>>>>>>>TEST>>>>>>>:";
@@ -150,15 +150,16 @@ public class TestContentService {
 	// List<Content> listt = pg.getList();
 	// logger.debug(TEST_STR + listt);
 	// }
-	@Test
-	public void testFindPostContentUids() {
-		Range<Long> fans = new Range<Long>();
-		fans.setGte(10L);
-		fans.setLte(200L);
-		Range<Long> articles = new Range<Long>();
-		articles.setGte(10L);
-		articles.setLte(500L);
-		Long[] ids = globalUserService.findPostContentUids(1, fans, articles);
-		logger.debug(TEST_STR + ids.toString());
-	}
+//	@Test
+//	public void testFindPostContentUids() {
+//		throw new IllegalArgumentException();
+//		Range<Long> fans = new Range<Long>();
+//		fans.setGte(10L);
+//		fans.setLte(200L);
+//		Range<Long> articles = new Range<Long>();
+//		articles.setGte(10L);
+//		articles.setLte(500L);
+//		Long[] ids = globalUserService.findPostContentUids(1, fans, articles);
+//		logger.debug(TEST_STR + ids.toString());
+//	}
 }

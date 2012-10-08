@@ -95,4 +95,6 @@ public interface IContentMassDataDao {
 	 * @return
 	 */
 	List<Long> queryPostContents(PostWeiboContentDto param);
+	
+	List<Long> selectContentKeywords(Long contentId);
 }

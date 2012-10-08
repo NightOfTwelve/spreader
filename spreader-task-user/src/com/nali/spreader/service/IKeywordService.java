@@ -3,7 +3,6 @@ package com.nali.spreader.service;
 import java.util.List;
 import java.util.Set;
 
-import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.data.Category;
 import com.nali.spreader.data.Keyword;
 
@@ -80,12 +79,4 @@ public interface IKeywordService {
 	 * @return
 	 */
 	Long[] createSendKeywordList(Set<Long> set, Long uid);
-
-	/**
-	 * 获取微博的关键字
-	 * 
-	 * @param categoryId
-	 * @return
-	 */
-	List<KeywordInfoQueryDto> findKeywordByContentId(Long contentId);
 }
