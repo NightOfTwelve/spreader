@@ -12,19 +12,16 @@ import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.ContentQueryParamsDto;
-import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.Content;
+import com.nali.spreader.dto.ContentKeywordInfoDto;
 import com.nali.spreader.service.IContentService;
-import com.nali.spreader.service.IKeywordService;
 
 @Controller
 @RequestMapping(value = "/contentlib")
 public class ContentLibManageController extends BaseController {
 	@Autowired
 	private IContentService contentService;
-	@Autowired
-	private IKeywordService keywordService;
 
 	/**
 	 * 载入页初始化
@@ -64,8 +61,8 @@ public class ContentLibManageController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/keyword")
 	public String queryKeyword(Long contentId) {
-		List<KeywordInfoQueryDto> list = this.keywordService.findKeywordByContentId(contentId);
-		Map<String, List<KeywordInfoQueryDto>> m = CollectionUtils.newHashMap(1);
+		List<ContentKeywordInfoDto> list = this.contentService.findKeywordByContentId(contentId);
+		Map<String, List<ContentKeywordInfoDto>> m = CollectionUtils.newHashMap(1);
 		m.put("list", list);
 		return this.write(m);
 	}

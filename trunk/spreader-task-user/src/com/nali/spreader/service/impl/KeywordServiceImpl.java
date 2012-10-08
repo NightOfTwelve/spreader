@@ -14,7 +14,6 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.nali.common.util.CollectionUtils;
-import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
 import com.nali.spreader.dao.ICrudKeywordDao;
 import com.nali.spreader.dao.IKeywordDao;
@@ -119,14 +118,6 @@ public class KeywordServiceImpl implements IKeywordService {
 		}
 		Long[] result = new Long[sendKeywords.size()];
 		return sendKeywords.toArray(result);
-	}
-
-	@Override
-	public List<KeywordInfoQueryDto> findKeywordByContentId(Long contentId) {
-		if (contentId == null) {
-			return Collections.emptyList();
-		}
-		return this.keywordDao.selectKeywordByContentId(contentId);
 	}
 
 	@Override

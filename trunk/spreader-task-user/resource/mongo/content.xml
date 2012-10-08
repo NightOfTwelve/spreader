@@ -53,6 +53,14 @@
 		</property>
 		<property name="from" value="content" />
 	</bean>
+	<bean id="dal.selectContentKeywords" class="com.nali.dal.statement.query.SelectStatement">
+		<property name="select">
+			<list>
+				<value>keywords</value>
+			</list>
+		</property>
+		<property name="from" value="content" />
+	</bean>
 	<bean id="dal.insertContent" class="com.nali.dal.statement.upsert.InserterStatement">
 		<property name="into" value="content" />
 		<property name="values">

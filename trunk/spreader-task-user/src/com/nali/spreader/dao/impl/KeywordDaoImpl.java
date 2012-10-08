@@ -14,6 +14,7 @@ import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
 import com.nali.spreader.dao.IKeywordDao;
 import com.nali.spreader.data.Keyword;
+import com.nali.spreader.dto.ContentKeywordInfoDto;
 
 /**
  * 实现类
@@ -91,10 +92,10 @@ public class KeywordDaoImpl implements IKeywordDao {
 	public List<Long> selectKeywordByUserId(Long uid) {
 		return this.sqlMap.queryForList("spreader_keyword.selectKeywordByUserId", uid);
 	}
-
+	
 	@Override
-	public List<KeywordInfoQueryDto> selectKeywordByContentId(Long contentId) {
-		return this.sqlMap.queryForList("spreader_keyword.selectKeywordByContentId", contentId);
+	public List<ContentKeywordInfoDto> selectContentKeywordByKids(List<Long> keywords) {
+		return this.sqlMap.queryForList("spreader_keyword.selectContentKeywordByKids", keywords);
 	}
 
 	@Override

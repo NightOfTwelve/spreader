@@ -19,6 +19,7 @@ import org.springframework.util.Assert;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.common.util.CollectionUtils;
 import com.nali.dal.exception.UniqueKeyException;
 import com.nali.spreader.config.ContentDto;
 import com.nali.spreader.config.ContentQueryParamsDto;
@@ -37,6 +38,7 @@ import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserExample;
 import com.nali.spreader.data.UserTag;
 import com.nali.spreader.data.UserTagExample;
+import com.nali.spreader.dto.ContentKeywordInfoDto;
 import com.nali.spreader.dto.PostWeiboContentDto;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IGlobalUserService;
@@ -331,5 +333,14 @@ public class ContentService implements IContentService {
 		int cnt = this.contentMassDataDao.countContentLibraryRows(param);
 		PageResult<Content> pr = new PageResult<Content>(cList, lit, cnt);
 		return pr;
+	}
+
+	@Override
+	public List<ContentKeywordInfoDto> findKeywordByContentId(Long contentId) {
+		List<Long> keywordList = this.contentMassDataDao.selectContentKeywords(contentId);
+		if (!CollectionUtils.isEmpty(keywordList)) {
+			return this.keywordDao.selectContentKeywordByKids(keywordList);
+		}
+		return Collections.emptyList();
 	}
 }

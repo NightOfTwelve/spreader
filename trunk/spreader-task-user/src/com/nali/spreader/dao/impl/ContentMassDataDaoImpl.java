@@ -1,6 +1,7 @@
 package com.nali.spreader.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -332,5 +333,19 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 			LOGGER.error("insert failed,content:" + content, e);
 		}
 		return null;
+	}
+
+	@Override
+	public List<Long> selectContentKeywords(Long contentId) {
+		Assert.notNull(contentId, "contentId is null");
+		Map<String, Object> dataMap = dalTemplate.selectForObject("dal.selectContentKeywords",
+				new ExpressionValue<Criteria>("id", Criteria.eq, contentId));
+		if (dataMap != null) {
+			if (dataMap.containsKey("keywords")) {
+				List<Long> keywords = (List<Long>) dataMap.get("keywords");
+				return keywords;
+			}
+		}
+		return Collections.emptyList();
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
 import com.nali.spreader.data.Keyword;
+import com.nali.spreader.dto.ContentKeywordInfoDto;
 
 /**
  * keyword自定义DAO
@@ -114,10 +115,10 @@ public interface IKeywordDao {
 	/**
 	 * 获取内容的绑定关键字
 	 * 
-	 * @param contentId
+	 * @param keywords
 	 * @return
 	 */
-	List<KeywordInfoQueryDto> selectKeywordByContentId(Long contentId);
+	List<ContentKeywordInfoDto> selectContentKeywordByKids(List<Long> keywords);
 
 	/**
 	 * 清空与分类的对应关系

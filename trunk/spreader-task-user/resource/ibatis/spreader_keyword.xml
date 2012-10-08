@@ -130,18 +130,18 @@
 			<include refid="selectKeywordInfoCondition" />
 		</dynamic>
 	</select>
-	<select id="selectKeywordByContentId" parameterClass="java.lang.Long"
+
+	<select id="selectContentKeywordByKids" parameterClass="java.util.List"
 		resultMap="ContentKeywordInfoResultMap">
 		select k.id keyword_id,k.name keyword_name,cg.id
-		category_id,cg.name category_name from
-		spreader.tb_content_keyword ck
-		left join
-		spreader.tb_keyword k on ck.keyword_id = k.id
-		left join
-		tb_category cg on
-		k.category_id = cg.id
-		where ck.content_id =
-		#contentId#
+		category_id,cg.name
+		category_name from
+		spreader.tb_keyword k
+		left join tb_category cg on k.category_id = cg.id
+		where k.id
+		<iterate prepend="in" open="(" close=")" conjunction=",">
+			#keywords[]#
+		</iterate>
 	</select>
 	<select id="selectKeywordByCategories" parameterClass="com.nali.spreader.config.KeywordQueryParamsDto"
 		resultMap="spreader_tb_keyword.ibatorgenerated_BaseResultMap">
