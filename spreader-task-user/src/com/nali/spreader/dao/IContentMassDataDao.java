@@ -95,6 +95,12 @@ public interface IContentMassDataDao {
 	 * @return
 	 */
 	List<Long> queryPostContents(PostWeiboContentDto param);
-	
+
+	/**
+	 * 获取某条内容的所有关键字 mongodb方式
+	 * 
+	 * @param contentId
+	 * @return
+	 */
 	List<Long> selectContentKeywords(Long contentId);
 }
