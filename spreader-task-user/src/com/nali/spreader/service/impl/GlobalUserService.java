@@ -3,6 +3,7 @@ package com.nali.spreader.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.util.Assert;
 
 import com.nali.common.model.Limit;
 import com.nali.common.model.Shard;
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.config.Range;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.dao.ICrudRobotUserDao;
@@ -328,5 +330,15 @@ public class GlobalUserService implements IGlobalUserService {
 		List<Long> uidList = this.userDao.queryPostContentUids(query);
 		Long[] tmp = new Long[uidList.size()];
 		return uidList.toArray(tmp);
+	}
+
+	@Override
+	public String getNickNameByWebsiteUid(Integer websiteId, Long websiteUid) {
+		Assert.notNull(websiteId, " websiteId is null");
+		Assert.notNull(websiteUid, " websiteUid is null");
+		Map<String, Object> param = CollectionUtils.newHashMap(2);
+		param.put("websiteId", websiteId);
+		param.put("websiteUid", websiteUid);
+		return this.userDao.queryNickNameByWebsiteUid(param);
 	}
 }
