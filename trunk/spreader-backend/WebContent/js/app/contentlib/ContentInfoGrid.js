@@ -235,6 +235,14 @@ Ext.onReady(function() {
 													fieldLabel : "关键字",
 													name : 'keyword'
 												}]
+									}, {
+										columnWidth : .33,
+										layout : "form",
+										items : [{
+													xtype : "textfield",
+													fieldLabel : "网站Uid",
+													name : 'websiteUid'
+												}]
 									}]
 						}],
 				buttonAlign : "center",
@@ -250,8 +258,11 @@ Ext.onReady(function() {
 						var eSyncDate = tform.findField("eSyncDate").getValue();
 						var userName = tform.findField("userName").getValue();
 						var keyword = tform.findField("keyword").getValue();
+						var websiteUid = tform.findField("websiteUid")
+								.getValue();
 						var num = numtext.getValue();
 						contentStore.setBaseParam('categoryName', categoryName);
+						contentStore.setBaseParam('websiteUid', websiteUid);
 						contentStore.setBaseParam('keyword', keyword);
 						contentStore.setBaseParam('sPubDate',
 								renderDateHis(sPubDate));
