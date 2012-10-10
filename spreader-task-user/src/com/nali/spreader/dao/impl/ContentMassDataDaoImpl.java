@@ -147,6 +147,7 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 		Date eSyncDate = param.geteSyncDate();
 		String userName = param.getUserName();
 		Long[] keywords = getKeywordIdArrays(categoryName, keywordName);
+		Long websiteUid = param.getWebsiteUid();
 		if (ArrayUtils.isNotEmpty(keywords)) {
 			criteriaList.add(new ExpressionValue<Criteria>("keywords", Criteria.in, keywords));
 		}
@@ -165,6 +166,9 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 		if (StringUtils.isNotEmpty(userName)) {
 			Long[] users = this.getUidArrays(userName);
 			criteriaList.add(new ExpressionValue<Criteria>("uid", Criteria.in, users));
+		}
+		if (websiteUid != null) {
+			criteriaList.add(new ExpressionValue<Criteria>("websiteUid", Criteria.eq, websiteUid));
 		}
 		return criteriaList;
 	}

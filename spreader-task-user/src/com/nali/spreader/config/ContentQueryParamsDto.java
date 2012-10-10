@@ -5,6 +5,12 @@ import java.util.Date;
 
 import com.nali.common.model.Limit;
 
+/**
+ * 微博内容库查询的参数
+ * 
+ * @author xiefei
+ * 
+ */
 public class ContentQueryParamsDto implements Serializable {
 
 	private static final long serialVersionUID = 7106488306283460918L;
@@ -42,6 +48,18 @@ public class ContentQueryParamsDto implements Serializable {
 	 * 关键字
 	 */
 	private String keyword;
+	/**
+	 * 网站Uid
+	 */
+	private Long websiteUid;
+
+	public Long getWebsiteUid() {
+		return websiteUid;
+	}
+
+	public void setWebsiteUid(Long websiteUid) {
+		this.websiteUid = websiteUid;
+	}
 
 	public String getKeyword() {
 		return keyword;
