@@ -119,4 +119,12 @@ public interface IUserDao {
 	 * @return
 	 */
 	List<Long> getUidByNickName(String nickName);
+
+	/**
+	 * 获取用户的昵称
+	 * 
+	 * @param param
+	 * @return
+	 */
+	String queryNickNameByWebsiteUid(Map<String, Object> param);
 }

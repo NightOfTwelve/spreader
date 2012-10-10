@@ -3,6 +3,7 @@ package com.nali.spreader.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,17 +12,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
+import com.nali.lang.StringUtils;
 import com.nali.spreader.config.ContentQueryParamsDto;
+import com.nali.spreader.constants.Website;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.Content;
 import com.nali.spreader.dto.ContentKeywordInfoDto;
 import com.nali.spreader.service.IContentService;
+import com.nali.spreader.service.IGlobalUserService;
 
 @Controller
 @RequestMapping(value = "/contentlib")
 public class ContentLibManageController extends BaseController {
+	private static final Logger logger = Logger.getLogger(ContentLibManageController.class);
 	@Autowired
 	private IContentService contentService;
+	@Autowired
+	private IGlobalUserService globalUserService;
 
 	/**
 	 * 载入页初始化
@@ -65,5 +72,27 @@ public class ContentLibManageController extends BaseController {
 		Map<String, List<ContentKeywordInfoDto>> m = CollectionUtils.newHashMap(1);
 		m.put("list", list);
 		return this.write(m);
+	}
+
+	/**
+	 * 查询用户昵称
+	 * 
+	 * @param websiteUid
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/nickname")
+	public String queryNickName(Long websiteUid) {
+		String nickName = "--";
+		try {
+			nickName = this.globalUserService.getNickNameByWebsiteUid(Website.weibo.getId(),
+					websiteUid);
+			if (StringUtils.isEmpty(nickName)) {
+				nickName = "--";
+			}
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		return this.write(nickName);
 	}
 }
