@@ -239,7 +239,7 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 		if (ArrayUtils.isNotEmpty(keywords)) {
 			criteriaList.add(new ExpressionValue<Criteria>("keywords", Criteria.in, keywords));
 		}
-		if (ArrayUtils.isNotEmpty(uids)) {
+		if (uids!=null) {
 			criteriaList.add(new ExpressionValue<Criteria>("uid", Criteria.in, uids));
 		}
 		if (Boolean.TRUE.equals(isPic)) {

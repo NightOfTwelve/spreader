@@ -54,7 +54,7 @@ public interface IGlobalUserService {
 	 * @param vType
 	 * @param fans
 	 * @param articles
-	 * @return
+	 * @return 如果没有任何条件，返回null
 	 */
 	Long[] findPostContentUids(Integer vType, Range<Long> fans, Range<Long> articles);
 }
