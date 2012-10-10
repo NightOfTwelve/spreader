@@ -366,7 +366,8 @@ Ext.onReady(function() {
 				width : 80
 			}, {
 				header : '昵称',
-				dataIndex : 'nickName',
+				dataIndex : 'websiteUid',
+				renderer : showUserNickName,
 				width : 100
 			}, {
 				header : '类型',
@@ -495,4 +496,21 @@ Ext.onReady(function() {
 				layout : 'border',
 				items : [contentQueryForm, contentGrid]
 			});
+	/**
+	 * 通过websiteUid渲染昵称
+	 */
+	function showUserNickName(value) {
+		Ext.Ajax.request({
+					url : '../contentlib/nickname?_time' + new Date().getTime(),
+					params : {
+						websiteUid : value
+					},
+					success : function(response) {
+						var nickName = Ext.decode(response.responseText);
+						return nickName;
+					},
+					failure : function() {
+					}
+				});
+	}
 });

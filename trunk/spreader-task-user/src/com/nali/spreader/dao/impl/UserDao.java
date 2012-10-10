@@ -156,4 +156,9 @@ public class UserDao implements IUserDao {
 	public List<Long> queryPostContentUids(FilterUserDto param) {
 		return sqlMap.queryForList("spreader_user.queryPostContentUids", param);
 	}
+
+	@Override
+	public String queryNickNameByWebsiteUid(Map<String, Object> param) {
+		return (String) sqlMap.queryForObject("spreader_user.queryNickNameByWebsiteUid", param);
+	}
 }

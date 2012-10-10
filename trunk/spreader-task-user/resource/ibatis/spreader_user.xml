@@ -381,7 +381,10 @@
 			<include refid="propertiesWhere" />
 		</dynamic>
 	</select>
-
+	<select id="queryNickNameByWebsiteUid" parameterClass="java.util.HashMap"
+		resultClass="java.lang.String">
+		select nick_name From spreader.tb_user where website_id = #websiteId# and website_uid = #websiteUid#
+	</select>
 	<select id="queryUidsByProperties" parameterClass="java.util.HashMap"
 		resultClass="long">
 		select u.id from spreader.tb_user as u
