@@ -29,6 +29,8 @@ public enum TaskErrorCode {
 	//201注册异常
 	personIdAbused(20101),//身份证使用太多了
 	personIdWrong(20102),//身份证号码和姓名对应错误
+	//202权限异常
+	accountLimited(20201),//帐号受限
 	//3开头的苹果异常
 	;
 	private final String code;

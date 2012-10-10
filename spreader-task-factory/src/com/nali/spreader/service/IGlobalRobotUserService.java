@@ -17,4 +17,6 @@ public interface IGlobalRobotUserService {
 	
 	void changeAccountStatus(Long uid, Integer status);
 
+	void accountLimited(Long uid);
+
 }
