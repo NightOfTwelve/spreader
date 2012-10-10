@@ -44,6 +44,7 @@
 			</list>
 		</property>
 		<property name="from" value="content" />
+		<property name="orderBy" value="-id" />
 	</bean>
 	<bean id="dal.selectContentId" class="com.nali.dal.statement.query.SelectStatement">
 		<property name="select">
