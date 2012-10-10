@@ -57,4 +57,13 @@ public interface IGlobalUserService {
 	 * @return 如果没有任何条件，返回null
 	 */
 	Long[] findPostContentUids(Integer vType, Range<Long> fans, Range<Long> articles);
+	
+	/**
+	 * 获取用户昵称
+	 * 
+	 * @param websiteId 网站类型  必选参数
+	 * @param websiteUid 网站Uid 必选参数
+	 * @return
+	 */
+	String getNickNameByWebsiteUid(Integer websiteId,Long websiteUid);
 }
