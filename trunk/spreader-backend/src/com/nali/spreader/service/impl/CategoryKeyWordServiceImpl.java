@@ -55,9 +55,12 @@ public class CategoryKeyWordServiceImpl implements ICategoryKeyWordService {
 		if (kw == null) {
 			throw new IllegalArgumentException("创建关键字传入参数为null");
 		} else {
-			if (StringUtils.isEmpty(kw.getName())) {
+			if (StringUtils.isBlank(kw.getName())) {
 				throw new IllegalArgumentException("关键字名称为null");
 			}
+			String keyword = kw.getName();
+			// 去掉前后空格
+			kw.setName(StringUtils.strip(keyword));
 			// 手工创建
 			kw.setTag(isManual);
 			kw.setCreateTime(new Date());
@@ -68,10 +71,10 @@ public class CategoryKeyWordServiceImpl implements ICategoryKeyWordService {
 	@Override
 	public boolean checkKeywordNameIsPresence(String keywordName) {
 		boolean tag = false;
-		if (StringUtils.isNotEmpty(keywordName)) {
+		if (StringUtils.isNotBlank(keywordName)) {
 			KeywordExample exp = new KeywordExample();
 			Criteria c = exp.createCriteria();
-			c.andNameEqualTo(keywordName);
+			c.andNameEqualTo(StringUtils.strip(keywordName));
 			List<Keyword> list = this.curdKeywordDao.selectByExample(exp);
 			if (list.size() > 0) {
 				tag = true;
