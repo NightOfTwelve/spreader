@@ -500,17 +500,19 @@ Ext.onReady(function() {
 	 * 通过websiteUid渲染昵称
 	 */
 	function showUserNickName(value) {
+		var nickName = '--';
 		Ext.Ajax.request({
 					url : '../contentlib/nickname?_time' + new Date().getTime(),
+					async : false,
 					params : {
 						websiteUid : value
 					},
 					success : function(response) {
-						var nickName = Ext.decode(response.responseText);
-						return nickName;
+						nickName = Ext.decode(response.responseText);
 					},
 					failure : function() {
 					}
 				});
+		return nickName;
 	}
 });
