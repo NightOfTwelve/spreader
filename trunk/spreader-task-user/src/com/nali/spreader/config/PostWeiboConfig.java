@@ -59,7 +59,9 @@ public class PostWeiboConfig implements Serializable {
 	public PostWeiboContentDto getPostWeiboContentDto(Long[] keywords, Long[] uids) {
 		PostWeiboContentDto query = new PostWeiboContentDto();
 		query.setKeywords(keywords);
-		query.setUids(uids);
+		if(uids!=null) {
+			query.setUids(uids);
+		}
 		// 是否图片
 		query.setIsPic(this.getIsPic());
 		// 是否音频

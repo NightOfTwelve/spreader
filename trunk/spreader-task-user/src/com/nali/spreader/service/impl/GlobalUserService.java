@@ -311,8 +311,8 @@ public class GlobalUserService implements IGlobalUserService {
 
 	@Override
 	public Long[] findPostContentUids(Integer vType, Range<Long> fans, Range<Long> articles) {
-		if (vType == null && fans == null && articles == null) {
-			return ArrayUtils.EMPTY_LONG_OBJECT_ARRAY;
+		if (vType == null && (fans == null || fans.checkAllNull()) && (articles == null || articles.checkAllNull())) {
+			return null;
 		}
 		FilterUserDto query = new FilterUserDto();
 		query.setvType(vType);
