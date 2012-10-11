@@ -317,7 +317,7 @@ function renderNobind(value) {
 		return '<span style="color:red;">未绑定分类</span>';
 	}
 	if (value == -1) {
-		return '<span style="color:blue;">无需分类</span>';
+		return '<span style="color:blue;">无需分类</span>&nbsp;<input type="button" value="解除"/>';
 	}
 	return value;
 }

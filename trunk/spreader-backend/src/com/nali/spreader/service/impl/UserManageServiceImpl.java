@@ -184,6 +184,12 @@ public class UserManageServiceImpl implements IUserManageService {
 		return tagList;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.nali.spreader.service.IUserManageService#importWeiboAccount(org.
+	 * springframework.web.multipart.commons.CommonsMultipartFile)
+	 */
 	@Override
 	public List<KeyValue<RobotUser, User>> importWeiboAccount(CommonsMultipartFile file) {
 		if (file.isEmpty()) {
@@ -231,13 +237,6 @@ public class UserManageServiceImpl implements IUserManageService {
 								if (nickNameCell != null) {
 									nickName = nickNameCell.getRichStringCellValue().getString();
 								}
-								// 已存在的跳过
-								User u = globaUserService.findByUniqueKey(Website.weibo.getId(),
-										websiteUid);
-								//TODO 设置isrobot true
-								if (u != null) {
-									continue;
-								}
 								KeyValue<RobotUser, User> kv = new KeyValue<RobotUser, User>();
 								RobotUser robotUser = new RobotUser();
 								robotUser.setRobotRegisterId(IMPORT_ROBOT_REGISTER_ID);
@@ -246,11 +245,19 @@ public class UserManageServiceImpl implements IUserManageService {
 								robotUser.setWebsiteUid(websiteUid);
 								robotUser.setLoginName(emailAccount);
 								robotUser.setLoginPwd(pwd);
-								User user = new User();
-								user.setEmail(emailAccount);
-								user.setNickName(nickName);
 								kv.setKey(robotUser);
-								kv.setValue(user);
+								User existsUser = globaUserService.findByUniqueKey(
+										Website.weibo.getId(), websiteUid);
+								// 已存在，设置isrobot true
+								if (existsUser != null) {
+									existsUser.setIsRobot(true);
+									kv.setValue(existsUser);
+								} else {
+									User user = new User();
+									user.setEmail(emailAccount);
+									user.setNickName(nickName);
+									kv.setValue(user);
+								}
 								data.add(kv);
 							}
 						}

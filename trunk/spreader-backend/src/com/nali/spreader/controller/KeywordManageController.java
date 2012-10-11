@@ -98,8 +98,8 @@ public class KeywordManageController extends BaseController {
 	}
 
 	/**
-	 * 取消绑定
-	 * 无需分类
+	 * 取消绑定 无需分类
+	 * 
 	 * @param keywordId
 	 * @param oldCategoryId
 	 * @return
@@ -144,5 +144,18 @@ public class KeywordManageController extends BaseController {
 		Boolean status = this.ckService.checkKeywordUpdateStatus(keywordId);
 		m.put("isUpdate", status);
 		return this.write(m);
+	}
+
+	/**
+	 * 解除无需分类的状态
+	 * 
+	 * @param keywordId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/cancelcategory")
+	public String cancelNoCategory(Long keywordId) {
+		int rows = this.ckService.cancelNoCategoryStatus(keywordId);
+		return this.write(rows);
 	}
 }

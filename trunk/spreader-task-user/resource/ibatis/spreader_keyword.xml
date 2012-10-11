@@ -237,6 +237,12 @@
 		where id = #id:BIGINT# and executable =
 		true
 	</update>
+	<update id="clearKeywordCategory" parameterClass="java.lang.Long">
+		update spreader.tb_keyword
+		set category_id = null
+		where id = #keywordId#
+		and category_id = -1
+	</update>
 	<update id="updateKeywordCategoryId" parameterClass="java.lang.Long">
 		update
 		spreader.tb_keyword
