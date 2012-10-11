@@ -92,7 +92,7 @@ public class KeywordDaoImpl implements IKeywordDao {
 	public List<Long> selectKeywordByUserId(Long uid) {
 		return this.sqlMap.queryForList("spreader_keyword.selectKeywordByUserId", uid);
 	}
-	
+
 	@Override
 	public List<ContentKeywordInfoDto> selectContentKeywordByKids(List<Long> keywords) {
 		return this.sqlMap.queryForList("spreader_keyword.selectContentKeywordByKids", keywords);
@@ -126,18 +126,19 @@ public class KeywordDaoImpl implements IKeywordDao {
 		return this.sqlMap.queryForList("spreader_keyword.selectKeywordNameByCategoryName",
 				categoryName);
 	}
+
 	@Override
 	public List<Long> getKeywordIdByCategory(String category) {
-		if (StringUtils.isEmpty(category)) {
-			return Collections.emptyList();
+		if (StringUtils.isBlank(category)) {
+			return null;
 		}
 		return sqlMap.queryForList("spreader_keyword.getKeywordIdByCategory", category);
 	}
-	
+
 	@Override
 	public List<Long> getKeywordIdByName(String keyword) {
-		if (StringUtils.isEmpty(keyword)) {
-			return Collections.emptyList();
+		if (StringUtils.isBlank(keyword)) {
+			return null;
 		}
 		return sqlMap.queryForList("spreader_keyword.getKeywordIdByName", keyword);
 	}

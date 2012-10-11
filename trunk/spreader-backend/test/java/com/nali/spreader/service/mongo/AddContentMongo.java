@@ -18,7 +18,7 @@ import com.nali.spreader.data.Content;
 import com.nali.spreader.data.ContentExample;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@ContextConfiguration("161-application-context-test.xml")
 public class AddContentMongo {
 	@Autowired
 	private ICrudContentDao crudContentDao;
@@ -31,7 +31,7 @@ public class AddContentMongo {
 	public void test() {
 		ContentExample example = new ContentExample();
 		int start = 0;
-		int limit = 1000;
+		int limit = 5000;
 		List<Content> list = null;
 		int rows = 0;
 		int i = 1;

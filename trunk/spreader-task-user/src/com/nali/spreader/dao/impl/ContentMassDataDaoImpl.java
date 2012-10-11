@@ -148,7 +148,7 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 		String userName = param.getUserName();
 		Long[] keywords = getKeywordIdArrays(categoryName, keywordName);
 		Long websiteUid = param.getWebsiteUid();
-		if (ArrayUtils.isNotEmpty(keywords)) {
+		if (keywords != null) {
 			criteriaList.add(new ExpressionValue<Criteria>("keywords", Criteria.in, keywords));
 		}
 		if (sPubDate != null) {
@@ -182,9 +182,16 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 	private Long[] getKeywordIdArrays(String category, String keyword) {
 		List<Long> allKeyword = new ArrayList<Long>();
 		List<Long> cgKeyword = this.keywordDao.getKeywordIdByCategory(category);
-		allKeyword.addAll(cgKeyword);
 		List<Long> keywords = this.keywordDao.getKeywordIdByName(keyword);
-		allKeyword.addAll(keywords);
+		if (cgKeyword == null && keywords == null) {
+			return null;
+		}
+		if (cgKeyword != null) {
+			allKeyword.addAll(cgKeyword);
+		}
+		if (keywords != null) {
+			allKeyword.addAll(keywords);
+		}
 		Long[] array = new Long[allKeyword.size()];
 		return allKeyword.toArray(array);
 	}
@@ -239,7 +246,7 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 		if (ArrayUtils.isNotEmpty(keywords)) {
 			criteriaList.add(new ExpressionValue<Criteria>("keywords", Criteria.in, keywords));
 		}
-		if (uids!=null) {
+		if (uids != null) {
 			criteriaList.add(new ExpressionValue<Criteria>("uid", Criteria.in, uids));
 		}
 		if (Boolean.TRUE.equals(isPic)) {
