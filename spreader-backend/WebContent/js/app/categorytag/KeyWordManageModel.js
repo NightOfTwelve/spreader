@@ -396,72 +396,108 @@ Ext.onReady(function() {
 
 	// 定义grid表格
 	var keywordGrid = new Ext.grid.GridPanel({
-				region : 'center',
-				id : 'keywordGrid',
-				height : 500,
-				stripeRows : true, // 斑马线
-				frame : true,
-				// autoWidth : true,
-				autoScroll : true,
-				store : keywordStore,
-				loadMask : {
-					msg : '正在加载表格数据,请稍等...'
-				},
-				bbar : bbar,
-				sm : sm,
-				colModel : cm,
-				tbar : [{
-							text : '新增',
-							iconCls : 'comments_addIcon',
-							handler : function() {
-								addKeywordWindow.show();
+		region : 'center',
+		id : 'keywordGrid',
+		height : 500,
+		stripeRows : true, // 斑马线
+		frame : true,
+		// autoWidth : true,
+		autoScroll : true,
+		store : keywordStore,
+		loadMask : {
+			msg : '正在加载表格数据,请稍等...'
+		},
+		bbar : bbar,
+		sm : sm,
+		colModel : cm,
+		tbar : [{
+					text : '新增',
+					iconCls : 'comments_addIcon',
+					handler : function() {
+						addKeywordWindow.show();
+					}
+				}, {
+					text : '刷新',
+					iconCls : 'arrow_refreshIcon',
+					handler : function() {
+						keywordStore.reload();
+					}
+				}, {
+					text : "无需分类",
+					iconCls : 'deleteIcon',
+					handler : function() { // 按钮响应函数
+						var rows = keywordGrid.getSelectionModel()
+								.getSelections();
+						if (rows.length > 0) {
+							var rowdata = rows[0].data;
+							var keyid = rowdata.keywordId;
+							var oldCategoryId = rowdata.categoryId;
+							var isUpdate = checkUpdateStatus(keyid);
+							if (isUpdate) {
+								Ext.Msg.show({
+											title : '提示',
+											msg : '确认操作？',
+											buttons : Ext.Msg.YESNO,
+											fn : function(ans) {
+												if (ans == 'yes') {
+													rowdata.executable = false;
+													// 修改后提交，用于改变内存中的值
+													rows[0].commit();
+													unBinding(keyid,
+															oldCategoryId);
+												}
+											}
+										});
+							} else {
+								Ext.Msg.alert("提示", "不能进行该操作，可能任务进行中");
+								return;
 							}
-						}, {
-							text : '刷新',
-							iconCls : 'arrow_refreshIcon',
-							handler : function() {
-								keywordStore.reload();
-							}
-						}, {
-							text : "无需分类",
-							iconCls : 'deleteIcon',
-							handler : function() { // 按钮响应函数
-								var rows = keywordGrid.getSelectionModel()
-										.getSelections();
-								if (rows.length > 0) {
-									var rowdata = rows[0].data;
-									var keyid = rowdata.keywordId;
-									var oldCategoryId = rowdata.categoryId;
-									var isUpdate = checkUpdateStatus(keyid);
-									if (isUpdate) {
-										Ext.Msg.show({
-													title : '提示',
-													msg : '确认操作？',
-													buttons : Ext.Msg.YESNO,
-													fn : function(ans) {
-														if (ans == 'yes') {
-															rowdata.executable = false;
-															// 修改后提交，用于改变内存中的值
-															rows[0].commit();
-															unBinding(keyid,
-																	oldCategoryId);
-														}
-													}
-												});
-									} else {
-										Ext.Msg.alert("提示", "不能进行该操作，可能任务进行中");
-										return;
-									}
-								} else {
-									Ext.Msg.alert("提示", "请至少选择一条记录");
-									return;
-								}
-							}
-						}]
-			});
+						} else {
+							Ext.Msg.alert("提示", "请至少选择一条记录");
+							return;
+						}
+					}
+				}],
+		onCellClick : function(grid, rowIndex, columnIndex, e) {
+			var buttons = e.target.defaultValue;
+			var record = grid.getStore().getAt(rowIndex);
+			var data = record.data;
+			// 找出表格中‘配置’按钮
+			if (buttons == '解除') {
+				var keywordId = data.keywordId;
+				// TODO
+				Ext.Msg.show({
+					title : '提示',
+					msg : '确认解除？',
+					buttons : Ext.Msg.YESNO,
+					fn : function(ans) {
+						if (ans == 'yes') {
+							Ext.Ajax.request({
+										url : '../keyword/cancelcategory',
+										params : {
+											'keywordId' : keywordId
+										},
+										success : function(response) {
+											var result = Ext
+													.decode(response.responseText);
+											Ext.Msg.alert('提示', '操作成功');
+											return;
+										},
+										failure : function() {
+											Ext.Msg.alert('提示', '解除绑定失败');
+											return;
+										}
+									});
+							keywordStore.load();
+						}
+					}
+				});
+			}
+		}
+	});
 
 	// 注册事件
-	// keywordGrid.on('cellclick', keywordGrid.onCellClick, taskGrid);
+	keywordGrid.on('cellclick', keywordGrid.onCellClick, keywordGrid);
 
 	// 布局模型
 	var viewport = new Ext.Viewport({

@@ -136,4 +136,12 @@ public interface ICategoryKeyWordService {
 	 * @return
 	 */
 	int deleteCategory(Long... ids);
+
+	/**
+	 * 解除关键字无需分类的状态
+	 * 
+	 * @param keywordId
+	 * @return
+	 */
+	int cancelNoCategoryStatus(Long keywordId);
 }

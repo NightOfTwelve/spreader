@@ -142,4 +142,9 @@ public class KeywordDaoImpl implements IKeywordDao {
 		}
 		return sqlMap.queryForList("spreader_keyword.getKeywordIdByName", keyword);
 	}
+
+	@Override
+	public int clearCategoryByKeywordId(Long keywordId) {
+		return sqlMap.update("spreader_keyword.clearKeywordCategory", keywordId);
+	}
 }

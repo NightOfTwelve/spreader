@@ -58,15 +58,6 @@ public class UserInfoManageController extends BaseController {
 	@RequestMapping(value = "/userlist")
 	public String userInfoDtl(UserTagParamsDto utp) throws JsonGenerationException,
 			JsonMappingException, IOException {
-		// UserTagParamsDto utp = new UserTagParamsDto();
-		// utp.setMinFans(minFans);
-		// utp.setMaxFans(maxFans);
-		// utp.setId(id);
-		// utp.setMinRobotFans(minRobotFans);
-		// utp.setMaxRobotFans(maxRobotFans);
-		// utp.setNickName(nickName);
-		// utp.setTag(tag);
-		// utp.setIsRobot(isRobot);
 		Limit lit = this.initLimit(utp.getStart(), utp.getLimit());
 		PageResult<User> result = userService.findUserInfo(utp, lit);
 		return this.write(result);

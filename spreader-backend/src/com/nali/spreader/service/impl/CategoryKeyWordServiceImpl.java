@@ -240,4 +240,10 @@ public class CategoryKeyWordServiceImpl implements ICategoryKeyWordService {
 		}
 		return rows;
 	}
+
+	@Override
+	public int cancelNoCategoryStatus(Long keywordId) {
+		Assert.notNull(keywordId, "keywordId is null");
+		return this.keywordDao.clearCategoryByKeywordId(keywordId);
+	}
 }

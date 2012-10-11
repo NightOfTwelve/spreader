@@ -159,4 +159,12 @@ public interface IKeywordDao {
 	 * @return
 	 */
 	List<Long> getKeywordIdByName(String keyword);
+
+	/**
+	 * 清除关键字分类
+	 * 
+	 * @param keywordId
+	 * @return
+	 */
+	int clearCategoryByKeywordId(Long keywordId);
 }

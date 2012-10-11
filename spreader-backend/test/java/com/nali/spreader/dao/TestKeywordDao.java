@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.nali.spreader.data.Keyword;
+import com.nali.spreader.data.KeywordExample;
+import com.nali.spreader.data.KeywordExample.Criteria;
 import com.nali.spreader.dto.ContentKeywordInfoDto;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -16,6 +19,8 @@ import com.nali.spreader.dto.ContentKeywordInfoDto;
 public class TestKeywordDao {
 	@Autowired
 	private IKeywordDao keywordDao;
+	@Autowired
+	private ICrudKeywordDao crudKeywordDao;
 
 	@Test
 	public void testSelectContentKeywordByKids() {
@@ -31,5 +36,16 @@ public class TestKeywordDao {
 			String cname = dto.getCategoryName();
 			System.out.println(">>>>>>>>>>>>> keywrod:" + kname + ",category:" + cname);
 		}
+	}
+	
+	@Test
+	public void testUpdate() {
+		Keyword k = new Keyword();
+		k.setCategoryId(null);
+		KeywordExample ke = new KeywordExample();
+		Criteria c = ke.createCriteria();
+		c.andIdEqualTo(26L);
+		c.andCategoryIdEqualTo(-1L);
+		this.crudKeywordDao.updateByExampleSelective(k, ke);
 	}
 }
