@@ -91,10 +91,10 @@ public interface IUserDao {
 	/**
 	 * 获取用户的密码，必须是机器人
 	 * 
-	 * @param user
+	 * @param uid
 	 * @return
 	 */
-	String getUserPassword(User user);
+	String getUserPassword(Long uid);
 
 	/**
 	 * 更新用户微博数量

@@ -130,8 +130,8 @@ public class UserDao implements IUserDao {
 	}
 
 	@Override
-	public String getUserPassword(User user) {
-		return (String) this.sqlMap.queryForObject("spreader_user.queryUserPassword", user);
+	public String getUserPassword(Long uid) {
+		return (String) this.sqlMap.queryForObject("spreader_user.queryUserPassword", uid);
 	}
 
 	@Override
