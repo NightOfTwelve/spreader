@@ -7,6 +7,9 @@
 		<project>spreader-task-user</project>
 		<project>spreader-task-register</project>
 		<project>spreader-interface</project>
+		<project>dal-mongo</project>
+		<project>dal-x</project>
+		<project>dal-interface</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

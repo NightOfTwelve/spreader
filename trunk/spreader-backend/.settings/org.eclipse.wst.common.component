@@ -19,6 +19,15 @@
         <dependent-module archiveName="spreader-interface.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spreader-interface/spreader-interface">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="dal-mongo.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/dal-mongo/dal-mongo">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="dal-x.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/dal-x/dal-x">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="dal-interface.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/dal-interface/dal-interface">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="spreader-backend"/>
         <property name="java-output-path"/>
     </wb-module>
