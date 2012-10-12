@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -201,9 +200,13 @@ public class GlobalUserService implements IGlobalUserService {
 			user.setId(uid);
 		}
 		crudUserDao.updateByPrimaryKeySelective(user);
-
 		robotUser.setUid(uid);
-		crudRobotUserDao.insert(robotUser);
+		RobotUser robot = crudRobotUserDao.selectByPrimaryKey(uid);
+		if(robot != null) {
+			crudRobotUserDao.updateByPrimaryKeySelective(robotUser);
+		}else {
+			crudRobotUserDao.insert(robotUser);
+		}
 		return uid;
 	}
 
