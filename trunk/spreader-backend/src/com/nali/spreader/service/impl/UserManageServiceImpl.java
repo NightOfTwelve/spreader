@@ -250,6 +250,8 @@ public class UserManageServiceImpl implements IUserManageService {
 										Website.weibo.getId(), websiteUid);
 								// 已存在，设置isrobot true
 								if (existsUser != null) {
+									existsUser.setEmail(emailAccount);
+									existsUser.setNickName(nickName);
 									existsUser.setIsRobot(true);
 									kv.setValue(existsUser);
 								} else {
