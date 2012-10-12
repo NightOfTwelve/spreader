@@ -146,9 +146,7 @@ public class UserManageServiceImpl implements IUserManageService {
 		if (uid == null) {
 			throw new IllegalArgumentException("参数为空，无法获取用户密码");
 		} else {
-			User u = new User();
-			u.setId(uid);
-			pwd = this.userDao.getUserPassword(u);
+			pwd = this.userDao.getUserPassword(uid);
 		}
 		return pwd;
 	}

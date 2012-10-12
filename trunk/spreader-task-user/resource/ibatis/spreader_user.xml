@@ -461,15 +461,9 @@
 			</iterate>
 		</dynamic>
 	</select>
-	<select id="queryUserPassword" parameterClass="com.nali.spreader.data.User"
+	<select id="queryUserPassword" parameterClass="java.lang.Long"
 		resultClass="java.lang.String">
-		select a.pwd from spreader.tb_robot_register a
-		join
-		spreader.tb_robot_user b on b.robot_register_id = a.id
-		join
-		spreader.tb_user c on c.id = b.uid
-		where c.id = #id# and c.is_robot =
-		true
+		select login_pwd from  spreader.tb_robot_user where website_id = 1 and uid = #uid#
 	</select>
 	<update id="updateUserArticles" parameterClass="java.lang.Long">
 		update
