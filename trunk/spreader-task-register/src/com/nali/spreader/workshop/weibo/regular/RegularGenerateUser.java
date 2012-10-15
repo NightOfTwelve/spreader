@@ -26,14 +26,14 @@ public class RegularGenerateUser implements RegularAnalyzer, Configable<ConfigDt
 	private IRealManService realManService;
 	@AutowireProductLine
 	private TaskProduceLine<KeyValue<String, RealMan>> generateRobotUserInfo;
-	private ConfigDto dto;
+	private String email;
+	private int addCount;
+	private boolean useRealId;
 
 	@Override
 	public String work() {
-		int count=dto.getAddCount();
-		boolean useRealId = dto.isUseRealId();
-		String email = dto.getEmail();
 		List<RealMan> realMans = null;
+		int count = addCount;
 		if(useRealId) {
 			realMans = realManService.getEffectiveRealMan(count);
 			count = realMans.size();
@@ -42,19 +42,32 @@ public class RegularGenerateUser implements RegularAnalyzer, Configable<ConfigDt
 			KeyValue<String, RealMan> kv = new KeyValue<String, RealMan>(email, useRealId?realMans.get(i):null);
 			generateRobotUserInfo.send(kv);
 		}
-		return "预计生成：" + dto.getAddCount() +
-				"，实际生成：" + count;
+		return "预计生成：" + addCount +
+				"，实际生成：" + addCount;
 	}
 
 	@Override
 	public void init(ConfigDto dto) {
-		Assert.notNull(dto.getAddCount(), "email is null");
-		Assert.notNull(dto.getEmail(), "email is null");
-		Long actionId = SupportedEmails.getActionId(dto.getEmail());
-		if(actionId==null) {
-			throw new IllegalArgumentException("unsupported email:" + dto.getEmail());
+		Assert.notNull(dto.getAddCount(), "count is null");
+		boolean useCompanyEmail;
+		if(dto.getEmail()==null) {
+			email = dto.getCompanyEmail();
+			useCompanyEmail = true;
+		} else {
+			email = dto.getEmail();
+			useCompanyEmail = false;
 		}
-		this.dto = dto;
+		if(email==null) {
+			throw new IllegalArgumentException("email is null");
+		}
+		if(useCompanyEmail==false) {
+			Long actionId = SupportedEmails.getActionId(email);
+			if(actionId==null) {
+				throw new IllegalArgumentException("unsupported email:" + email);
+			}
+		}
+		addCount = dto.getAddCount();
+		useRealId = dto.isUseRealId();
 	}
 
 	
@@ -64,6 +77,8 @@ public class RegularGenerateUser implements RegularAnalyzer, Configable<ConfigDt
 		private Integer addCount;
 		@PropertyDescription("注册邮箱（163,126,yeah,china,gmail,yahoo）")
 		private String email;
+		@PropertyDescription("公司邮箱（mingshi123.net,mingxiao001.net,mingxiao123.net）")
+		private String companyEmail;
 		@PropertyDescription("是否采用真实身份证库")
 		private boolean useRealId=true;
 		public Integer getAddCount() {
@@ -83,6 +98,12 @@ public class RegularGenerateUser implements RegularAnalyzer, Configable<ConfigDt
 		}
 		public void setUseRealId(boolean useRealId) {
 			this.useRealId = useRealId;
+		}
+		public String getCompanyEmail() {
+			return companyEmail;
+		}
+		public void setCompanyEmail(String companyEmail) {
+			this.companyEmail = companyEmail;
 		}
 	}
 }

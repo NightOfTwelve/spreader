@@ -1,13 +1,14 @@
 package com.nali.spreader.workshop.weibo;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.exporter.MultiTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.service.IRobotRegisterService;
+import com.nali.spreader.service.impl.EmailRegister;
 import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.util.TxtFileUtil;
 import com.nali.spreader.util.random.AvgRandomer;
@@ -35,13 +37,16 @@ import com.nali.spreader.words.Txt;
 @ClassDescription("注册邮箱之后接着注册微博")
 public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Configable<Boolean>, MultiTypeTaskPassiveWorkshop<KeyValue<RobotRegister, String>, KeyValue<Long, String>> {
 	private static final String FILE_QUESTION_SERVICE = "txt/question.txt";
+	private static Logger logger = Logger.getLogger(RegisterRobotUserEmail.class);
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
+	private EmailRegister emailRegister = new EmailRegister();
 	
 	@AutowireProductLine
 	private TaskProduceLine<Long> registerWeiboAccount;
 	private Randomer<String> questions;
 	private Boolean registerWeibo = false;
+	private static Set<String> companyEmails = new HashSet<String>(Arrays.asList("mingshi123.net,mingxiao001.net,mingxiao123.net".split(",")));
 	
 	public RegisterRobotUserEmail() throws IOException {
 		super(MultiActionConfig.registerRobotUserEmail, Website.weibo, Channel.intervention);
@@ -64,48 +69,50 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Conf
 	@Override
 	public void work(KeyValue<RobotRegister, String> robotAndEmail, MultiTaskExporter exporter) {
 		RobotRegister robot = robotAndEmail.getKey();
-		exporter.setProperty("id", robot.getId());
-		exporter.setProperty("accounts", makeAccounts(robot));
-		exporter.setProperty("randomAccount", robot.getFullNamePinyinLower());
-		exporter.setProperty("question", questions.get());
-		exporter.setProperty("answer", robot.getFullName());
-		exporter.setProperty("firstName", robot.getLastName());//first/last颠倒问题
-		exporter.setProperty("lastName", robot.getFirstName());//first/last颠倒问题
-		exporter.setProperty("gender", robot.getGender());
-		exporter.setProperty("year", robot.getBirthdayYear());
-		exporter.setProperty("month", robot.getBirthdayMonth());
-		exporter.setProperty("date", robot.getBirthdayDay());
-		exporter.setProperty("pwd", robot.getPwd());
-
 		String emailCode = robotAndEmail.getValue();
-		exporter.setActionId(SupportedEmails.getActionId(emailCode));
-		exporter.setUid(User.UID_NOT_LOGIN);
-		exporter.setExpiredTime(SpecialDateUtil.afterNow(10));
-		exporter.send();
-	}
-
-	private List<String> makeAccounts(RobotRegister robot) {
-		List<String> rlt = new LinkedList<String>();
-		add(rlt, robot.getFirstNamePinyinLower()+"_"+robot.getBirthdayYear());
-		add(rlt, robot.getFirstNamePinyinLower()+robot.getBirthdayFull());
-		add(rlt, robot.getFullNamePinyinLower()+robot.getBirthdayFull());
-		add(rlt, robot.getFullNamePinyinLower()+robot.getBirthdayYear());
-		add(rlt, robot.getEnNameLower()+robot.getBirthdayFull());
-		add(rlt, robot.getEnNameLower()+robot.getBirthdayYear());
-		add(rlt, robot.getEnNameLower()+"_"+robot.getFirstNamePinyinLower());
-		add(rlt, robot.getLastNamePinyinLower()+"_"+(robot.getBirthdayMonth()*100+robot.getBirthdayDay()));
-		add(rlt, robot.getFirstNamePinyinLower()+"_"+robot.getLastNamePinyinLower());
-		rlt.remove(robot.getPwd().toLowerCase());
-		rlt = new ArrayList<String>(rlt);
-		Collections.shuffle(rlt);
-		return rlt;
-	}
-
-	private void add(List<String> names, String roughName) {
-		if(roughName.length()>18) {
-			roughName = roughName.substring(0, 18);
+		if(companyEmails.contains(emailCode)) {
+			List<String> emails = RobotUserInfoGenerator.makeEmailAccounts(robot);
+			String email = null;
+			String domain = emailCode;
+			for (int i = 0; i < emails.size(); i++) {
+				email = emails.get(i);
+				try {
+					boolean rlt = emailRegister.register(email, domain, "9nali");
+					if(rlt==true) {
+						break;
+					}
+				} catch (IOException e) {
+					logger.error(e, e);
+				}
+				email = null;
+			}
+			if(email!=null) {
+				robotRegisterService.updateEmail(robot.getId(), email + "@" + domain);
+				if(registerWeibo) {
+					registerWeiboAccount.send(robot.getId());
+				}
+			} else {
+				logger.error("generate robot email fail");
+			}
+		} else {
+			exporter.setProperty("id", robot.getId());
+			exporter.setProperty("accounts", RobotUserInfoGenerator.makeEmailAccounts(robot));
+			exporter.setProperty("randomAccount", robot.getFullNamePinyinLower());
+			exporter.setProperty("question", questions.get());
+			exporter.setProperty("answer", robot.getFullName());
+			exporter.setProperty("firstName", robot.getLastName());//first/last颠倒问题
+			exporter.setProperty("lastName", robot.getFirstName());//first/last颠倒问题
+			exporter.setProperty("gender", robot.getGender());
+			exporter.setProperty("year", robot.getBirthdayYear());
+			exporter.setProperty("month", robot.getBirthdayMonth());
+			exporter.setProperty("date", robot.getBirthdayDay());
+			exporter.setProperty("pwd", robot.getPwd());
+			
+			exporter.setActionId(SupportedEmails.getActionId(emailCode));
+			exporter.setUid(User.UID_NOT_LOGIN);
+			exporter.setExpiredTime(SpecialDateUtil.afterNow(10));
+			exporter.send();
 		}
-		names.add(roughName);
 	}
 
 	@Override
