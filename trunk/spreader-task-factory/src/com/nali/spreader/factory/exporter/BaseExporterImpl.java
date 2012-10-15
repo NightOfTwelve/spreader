@@ -12,6 +12,7 @@ import com.nali.spreader.factory.base.TaskMeta;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.model.Task;
 import com.nali.spreader.model.TaskContext;
+import com.nali.spreader.util.random.RandomUtil;
 
 public abstract class BaseExporterImpl<TM extends TaskMeta> implements Exporter<TM> {
 	private static final int CONTEXT_ADDITIONAL_EXPIRED_DAYS = 2;
@@ -19,6 +20,7 @@ public abstract class BaseExporterImpl<TM extends TaskMeta> implements Exporter<
 	private static Logger logger = Logger.getLogger(BaseExporterImpl.class);
 	private static final ContentSerializer DEFAULT_CONTENT_SERIALIZER=new JacksonSerializer();
 	private final TM taskMeta;
+	private boolean popplePriority=true;
 	private ContentSerializer contentSerializer = DEFAULT_CONTENT_SERIALIZER;
 	private IResultInfo resultInfo;
 	private int basePriority=DEFAULT_PRIORITY;
@@ -130,7 +132,7 @@ public abstract class BaseExporterImpl<TM extends TaskMeta> implements Exporter<
 			clientTask.setActionId(getActionId());
 			clientTask.setTaskType(taskMeta.getTaskType());
 			clientTask.setTaskCode(taskMeta.getCode());
-			clientTask.setBasePriority(basePriority);
+			clientTask.setBasePriority(popplePriority());
 			clientTask.setContents(contentString);
 			clientTask.setStartTime(startTime);
 			clientTask.setExpireTime(expiredTime);
@@ -144,6 +146,15 @@ public abstract class BaseExporterImpl<TM extends TaskMeta> implements Exporter<
 		}
 	}
 	
+	private Integer popplePriority() {
+		if(popplePriority) {
+			int fix = Math.max(basePriority/100, 10);
+			return basePriority + RandomUtil.random.nextInt(fix);
+		} else {
+			return basePriority;
+		}
+	}
+
 	@Override
 	public void send(Long uid, Date expiredTime) {
 		setUid(uid);
