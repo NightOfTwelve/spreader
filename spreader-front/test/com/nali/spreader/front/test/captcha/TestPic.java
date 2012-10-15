@@ -2,6 +2,7 @@ package com.nali.spreader.front.test.captcha;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.nali.spreader.dao.ICaptchaDao;
 import com.nali.spreader.dao.ICrudCaptchaDao;
 import com.nali.spreader.model.Captcha;
 import com.nali.spreader.model.CaptchaExample;
@@ -20,10 +22,24 @@ import com.nali.spreader.util.SpecialDateUtil;
 public class TestPic {
 	@Autowired
 	private ICrudCaptchaDao captchaDao;
-
+	@Autowired
+	private ICaptchaDao captchaDao2;
+	
+	@Test
+	public void testSave() throws Exception {
+		Captcha captcha = new Captcha();
+		captcha.setData("null".getBytes());
+		captcha.setPostClient(1L);
+		captcha.setExpireTime(new Date());
+		captcha.setSeq(1);
+		captcha.setTaskId(1L);
+		Long id = captchaDao2.insertCaptcha(captcha);
+		System.out.println(id);
+	}
+	
 	@Test
 	public void testClientIdOut() throws Exception {
-		Long clientId = 22L;
+		Long clientId = 20L;
 		CaptchaExample example = new CaptchaExample();
 		example.createCriteria().andHandleClientEqualTo(clientId).andTypeEqualTo(0)
 			.andExpireTimeGreaterThan(SpecialDateUtil.afterToday(0)).andExpireTimeLessThan(SpecialDateUtil.afterToday(1));
@@ -41,7 +57,7 @@ public class TestPic {
 	@Test
 	public void testTaskIdOut() throws Exception {
 		CaptchaExample example = new CaptchaExample();
-		example.createCriteria().andTaskIdEqualTo(13054554L);
+		example.createCriteria().andTaskIdEqualTo(23714896L);
 		out("C:\\Documents and Settings\\sam\\桌面\\captcha-out2\\", example);
 	}
 	
