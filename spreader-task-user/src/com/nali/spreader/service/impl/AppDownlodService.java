@@ -22,7 +22,7 @@ import com.nali.spreader.service.IAppDownlodService;
 
 @Service
 public class AppDownlodService implements IAppDownlodService {
-	private static final Pattern itunesUrlPattern = Pattern.compile("http://itunes.apple.com/(\\w+)/app/.+?/id(\\d+)(\\?.*)?");
+	private static final Pattern itunesUrlPattern = Pattern.compile("https?://itunes.apple.com/(\\w+)/app/.+?/id(\\d+)(\\?.*)?");
 
 	private static Logger logger = Logger.getLogger(AppDownlodService.class);
 	@Autowired
