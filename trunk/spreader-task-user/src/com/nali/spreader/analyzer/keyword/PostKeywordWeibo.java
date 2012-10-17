@@ -1,5 +1,6 @@
 package com.nali.spreader.analyzer.keyword;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,7 @@ import com.nali.spreader.service.IRobotContentService;
 import com.nali.spreader.service.IUserGroupFacadeService;
 import com.nali.spreader.util.random.RandomUtil;
 import com.nali.spreader.util.random.Randomer;
+import com.nali.spreader.workshop.other.PostWeiboContent;
 
 @Component
 @ClassDescription("关键字·发微博")
@@ -91,6 +93,9 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 				for (Long cid : sendContent) {
 					Content c = this.contentService.getContentById(cid);
 					c.setUid(uid);
+					if(DateUtils.getFragmentInHours(postTime, Calendar.DATE) < PostWeiboContent.POST_START_HOUR) {
+						postTime = DateUtils.setHours(postTime, PostWeiboContent.POST_START_HOUR);
+					}
 					WeiboContentDto param = WeiboContentDto.getWeiboContentDto(uid, c, postTime);
 					postTime = DateUtils.addMinutes(postTime, postInterval);
 					this.postWeiboContent.send(param);
