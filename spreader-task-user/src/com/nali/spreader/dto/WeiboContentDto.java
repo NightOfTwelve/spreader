@@ -20,6 +20,7 @@ public class WeiboContentDto implements Serializable {
 	private Long robotUid;
 	private String text;
 	private Date postTime;
+	private boolean forceTime=false;//强制发帖时间
 
 	/**
 	 * 构造一个发微博的DTO
@@ -85,5 +86,13 @@ public class WeiboContentDto implements Serializable {
 
 	public void setPostTime(Date postTime) {
 		this.postTime = postTime;
+	}
+
+	public boolean isForceTime() {
+		return forceTime;
+	}
+
+	public void setForceTime(boolean forceTime) {
+		this.forceTime = forceTime;
 	}
 }

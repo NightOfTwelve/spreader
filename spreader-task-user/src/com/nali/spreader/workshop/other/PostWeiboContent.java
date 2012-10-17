@@ -1,7 +1,9 @@
 package com.nali.spreader.workshop.other;
 
+import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,11 +20,11 @@ import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.Input;
 import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserService;
-import com.nali.spreader.util.SpecialDateUtil;
 
 @Component
 public class PostWeiboContent extends SingleTaskMachineImpl implements
 		PassiveWorkshop<KeyValue<Long, String>, KeyValue<Long, Long>> {
+	public static final int POST_START_HOUR = 9;
 	private static Logger logger = Logger.getLogger(PostWeiboContent.class);
 	@Autowired
 	private IGlobalUserService globalUserService;
@@ -37,16 +39,7 @@ public class PostWeiboContent extends SingleTaskMachineImpl implements
 	public void work(KeyValue<Long, String> data, SingleTaskExporter exporter) {
 		Long uid = data.getKey();
 		String text = data.getValue();
-		work(uid, text, null, null, null, null, exporter);
-	}
-
-	@Input
-	public void work(SingleTaskExporter exporter, KeyValue<KeyValue<Long, String>, Date> data) {
-		KeyValue<Long, String> param = data.getKey();
-		Long uid = param.getKey();
-		String text = param.getValue();
-		Date startTime = data.getValue();
-		work(uid, text, null, null, null, startTime, exporter);
+		work(uid, text, null, null, null, null, exporter, false);
 	}
 
 	@Input
@@ -57,11 +50,11 @@ public class PostWeiboContent extends SingleTaskMachineImpl implements
 		Long uid = dto.getRobotUid();
 		String text = dto.getText();
 		Date postTime = dto.getPostTime();
-		work(uid, text, audioUrl, videoUrl, picUrl, postTime, exporter);
+		work(uid, text, audioUrl, videoUrl, picUrl, postTime, exporter, dto.isForceTime());
 	}
 
 	private void work(Long uid, String text, String audioUrl, String videoUrl, String picUrl,
-			Date startTime, SingleTaskExporter exporter) {
+			Date startTime, SingleTaskExporter exporter, boolean forceTime) {
 		exporter.setProperty("id", uid);
 		exporter.setProperty("content", text);
 		exporter.setProperty("audioUrl", audioUrl);
@@ -69,13 +62,20 @@ public class PostWeiboContent extends SingleTaskMachineImpl implements
 		exporter.setProperty("picUrl", picUrl);
 		User user = globalUserService.getUserById(uid);
 		exporter.setProperty("nickname", user.getNickName());
-		if (startTime != null) {
-			exporter.setTimes(startTime, SpecialDateUtil.afterToday(3));
-			exporter.setUid(uid);
-			exporter.send();
-		} else {
-			exporter.send(uid, SpecialDateUtil.afterToday(3));
+		setTimes(startTime, exporter, forceTime);
+		exporter.setUid(uid);
+		exporter.send();
+	}
+	
+	private static void setTimes(Date startTime, SingleTaskExporter exporter, boolean forceTime) {
+		if (startTime == null) {
+			startTime = new Date();
 		}
+		if(forceTime==false && DateUtils.getFragmentInHours(startTime, Calendar.DATE)<POST_START_HOUR) {
+			startTime = DateUtils.setHours(startTime, POST_START_HOUR);
+		}
+		Date expiredTime = DateUtils.ceiling(startTime, Calendar.DATE);
+		exporter.setTimes(startTime, expiredTime);
 	}
 
 	@Override
