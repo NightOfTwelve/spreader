@@ -230,7 +230,7 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 	}
 
 	@Override
-	public List<Long> queryPostContents(PostWeiboContentDto param) {
+	public List<Long> queryPostContentIds(PostWeiboContentDto param) {
 		Assert.notNull(param, "PostWeiboContentDto is null");
 		List<ExpressionValue<Criteria>> criteriaList = new ArrayList<ExpressionValue<Criteria>>();
 		Long[] keywords = param.getKeywords();
@@ -358,5 +358,95 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 			}
 		}
 		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Map<String, Long>> queryPostContents(PostWeiboContentDto param) {
+		Assert.notNull(param, "PostWeiboContentDto is null");
+		List<ExpressionValue<Criteria>> criteriaList = new ArrayList<ExpressionValue<Criteria>>();
+		Long[] keywords = param.getKeywords();
+		Long[] uids = param.getUids();
+		Boolean isPic = param.getIsPic();
+		Boolean isAudio = param.getIsAudio();
+		Boolean isVideo = param.getIsVideo();
+		Range<Integer> atCount = param.getAtCount();
+		Range<Integer> contentLength = param.getContentLength();
+		Range<Date> pubDate = param.getPubDate();
+		Range<Integer> refCount = param.getRefCount();
+		Range<Integer> replyCount = param.getReplyCount();
+		if (ArrayUtils.isNotEmpty(keywords)) {
+			criteriaList.add(new ExpressionValue<Criteria>("keywords", Criteria.in, keywords));
+		}
+		if (uids != null) {
+			criteriaList.add(new ExpressionValue<Criteria>("uid", Criteria.in, uids));
+		}
+		if (Boolean.TRUE.equals(isPic)) {
+			criteriaList.add(new ExpressionValue<Criteria>("picUrl", Criteria.ne, null));
+		}
+		if (Boolean.TRUE.equals(isAudio)) {
+			criteriaList.add(new ExpressionValue<Criteria>("audioUrl", Criteria.ne, null));
+		}
+		if (Boolean.TRUE.equals(isVideo)) {
+			criteriaList.add(new ExpressionValue<Criteria>("videoUrl", Criteria.ne, null));
+		}
+		if (atCount != null) {
+			if (atCount.getGte() != null) {
+				criteriaList.add(new ExpressionValue<Criteria>("atCount", Criteria.gte, atCount
+						.getGte()));
+			}
+			if (atCount.getLte() != null) {
+				criteriaList.add(new ExpressionValue<Criteria>("atCount", Criteria.lte, atCount
+						.getLte()));
+			}
+		}
+		if (contentLength != null) {
+			if (contentLength.getGte() != null) {
+				criteriaList.add(new ExpressionValue<Criteria>("contentLength", Criteria.gte,
+						contentLength.getGte()));
+			}
+			if (contentLength.getLte() != null) {
+				criteriaList.add(new ExpressionValue<Criteria>("contentLength", Criteria.lte,
+						contentLength.getLte()));
+			}
+		}
+		if (pubDate != null) {
+			if (pubDate.getGte() != null) {
+				criteriaList.add(new ExpressionValue<Criteria>("pubDate", Criteria.gte, pubDate
+						.getGte()));
+			}
+		}
+		if (refCount != null) {
+			if (refCount.getGte() != null) {
+				criteriaList.add(new ExpressionValue<Criteria>("refCount", Criteria.gte, refCount
+						.getGte()));
+			}
+			if (refCount.getLte() != null) {
+				criteriaList.add(new ExpressionValue<Criteria>("refCount", Criteria.lte, refCount
+						.getLte()));
+			}
+		}
+		if (replyCount != null) {
+			if (replyCount.getGte() != null) {
+				criteriaList.add(new ExpressionValue<Criteria>("replyCount", Criteria.gte,
+						replyCount.getGte()));
+			}
+			if (replyCount.getLte() != null) {
+				criteriaList.add(new ExpressionValue<Criteria>("replyCount", Criteria.lte,
+						replyCount.getLte()));
+			}
+		}
+		ExpressionValue[] tmp = new ExpressionValue[criteriaList.size()];
+		List<Map<String, Object>> tmpList = this.dalTemplate.select(
+				"dal.selectCidAndUidOrderByUid", criteriaList.toArray(tmp));
+		List<Map<String, Long>> result = new ArrayList<Map<String, Long>>();
+		if (!CollectionUtils.isEmpty(tmpList)) {
+			for (Map<String, Object> m : tmpList) {
+				Map<String, Long> map = CollectionUtils.newHashMap(2);
+				map.put("contentId", (Long) m.get("id"));
+				map.put("uid", (Long) m.get("uid"));
+				result.add(map);
+			}
+		}
+		return result;
 	}
 }

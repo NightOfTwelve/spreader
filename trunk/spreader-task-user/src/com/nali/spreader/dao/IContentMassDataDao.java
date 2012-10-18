@@ -1,6 +1,7 @@
 package com.nali.spreader.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.nali.spreader.config.ContentQueryParamsDto;
 import com.nali.spreader.data.Content;
@@ -94,7 +95,15 @@ public interface IContentMassDataDao {
 	 * @param param
 	 * @return
 	 */
-	List<Long> queryPostContents(PostWeiboContentDto param);
+	List<Long> queryPostContentIds(PostWeiboContentDto param);
+
+	/**
+	 * 筛选微博
+	 * 
+	 * @param param
+	 * @return
+	 */
+	List<Map<String, Long>> queryPostContents(PostWeiboContentDto param);
 
 	/**
 	 * 获取某条内容的所有关键字 mongodb方式

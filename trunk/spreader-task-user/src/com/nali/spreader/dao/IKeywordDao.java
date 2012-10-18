@@ -1,6 +1,7 @@
 package com.nali.spreader.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
@@ -167,4 +168,12 @@ public interface IKeywordDao {
 	 * @return
 	 */
 	int clearCategoryByKeywordId(Long keywordId);
+
+	/**
+	 * 获取所有用户的关键字并按关键字排序
+	 * 
+	 * @param uids
+	 * @return
+	 */
+	List<Map<String, Long>> selectUserKeywordByUids(List<Long> uids);
 }
