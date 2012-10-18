@@ -22,7 +22,7 @@ import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.workshop.notice.FetchNotice;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@ContextConfiguration("220-application-context-test.xml")
 public class TestFetchNotice {
 	@Autowired
 	private FetchNotice fetch;

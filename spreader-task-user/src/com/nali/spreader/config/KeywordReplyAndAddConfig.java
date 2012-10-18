@@ -10,27 +10,31 @@ import com.nali.spreader.dto.PostWeiboContentDto;
 import com.nali.spreader.factory.config.desc.PropertyDescription;
 
 /**
- * 发微博策略配置
+ * 关键字查出微博并执行回复和关注的配置
  * 
  * @author xiefei
  * 
  */
-public class PostWeiboConfig implements Serializable {
-
-	private static final long serialVersionUID = -2026989726899802843L;
-	// 默认发送间隔
-	public static final int DEFAULT_INTERVAL = 5;
-	// 默认发帖数量
-	public static final int DEFAULT_POSTNUM_GTE = 1;
-	public static final int DEFAULT_POSTNUM_LTE = 5;
-	// 默认新鲜度为2天前(分钟)
-	public static final int DEFAULT_EFFTIME = 2880;
+public class KeywordReplyAndAddConfig implements Serializable {
+	private static final long serialVersionUID = 2331722293272578783L;
+	// 默认被关注上限
+	public static final int DEFAULT_ADD_LIMIT = 1;
+	// 默认执行关注的上限
+	public static final int DEFAULT_EXECU_ADD_LIMIT = 1;
 	@PropertyDescription("关键字")
 	private List<String> keywords;
-	@PropertyDescription("分类")
-	private List<String> categories;
 	@PropertyDescription("新鲜度(分钟)")
 	private Integer effective;
+	@PropertyDescription("关注后是否需要回复微博")
+	private Boolean needReply;
+	@PropertyDescription("回复微博的间隔时间(分钟)")
+	private Integer postInterval;
+	@PropertyDescription("机器人执行关注的间隔时间(分钟)")
+	private Integer addInterval;
+	@PropertyDescription("微博作者被关注的次数上限")
+	private Integer addCount;
+	@PropertyDescription("机器人执行关注的次数上线")
+	private Integer execuAddCount;
 	@PropertyDescription("是否包含图片")
 	private Boolean isPic;
 	@PropertyDescription("是否包含音频")
@@ -41,27 +45,16 @@ public class PostWeiboConfig implements Serializable {
 	private Range<Integer> atCount;
 	@PropertyDescription("内容长度")
 	private Range<Integer> contentLength;
-	@PropertyDescription("操作的微博数")
-	private Range<Integer> postNumber;
-	@PropertyDescription("发送间隔(分钟)")
-	private Integer postInterval;
-	@PropertyDescription("加v类型")
-	private Integer vType;
-	@PropertyDescription("粉丝数")
-	private Range<Long> fans;
-	@PropertyDescription("文章数")
-	private Range<Long> articles;
 	@PropertyDescription("转发数")
 	private Range<Integer> refCount;
 	@PropertyDescription("回复数")
 	private Range<Integer> replyCount;
+	@PropertyDescription("语句（留空则使用默认语句回复）")
+	private List<String> words;
 
-	public PostWeiboContentDto getPostWeiboContentDto(Long[] keywords, Long[] uids) {
+	public PostWeiboContentDto getPostWeiboContentDto(Long[] keywords) {
 		PostWeiboContentDto query = new PostWeiboContentDto();
 		query.setKeywords(keywords);
-		if(uids!=null) {
-			query.setUids(uids);
-		}
 		// 是否图片
 		query.setIsPic(this.getIsPic());
 		// 是否音频
@@ -83,28 +76,12 @@ public class PostWeiboConfig implements Serializable {
 		return query;
 	}
 
-	public Range<Integer> getRefCount() {
-		return refCount;
+	public Integer getAddInterval() {
+		return addInterval;
 	}
 
-	public void setRefCount(Range<Integer> refCount) {
-		this.refCount = refCount;
-	}
-
-	public Range<Integer> getReplyCount() {
-		return replyCount;
-	}
-
-	public void setReplyCount(Range<Integer> replyCount) {
-		this.replyCount = replyCount;
-	}
-
-	public Range<Integer> getContentLength() {
-		return contentLength;
-	}
-
-	public void setContentLength(Range<Integer> contentLength) {
-		this.contentLength = contentLength;
+	public void setAddInterval(Integer addInterval) {
+		this.addInterval = addInterval;
 	}
 
 	public Integer getPostInterval() {
@@ -115,28 +92,36 @@ public class PostWeiboConfig implements Serializable {
 		this.postInterval = postInterval;
 	}
 
-	public Integer getvType() {
-		return vType;
+	public Boolean getNeedReply() {
+		return needReply;
 	}
 
-	public void setvType(Integer vType) {
-		this.vType = vType;
+	public void setNeedReply(Boolean needReply) {
+		this.needReply = needReply;
 	}
 
-	public Range<Long> getFans() {
-		return fans;
+	public List<String> getWords() {
+		return words;
 	}
 
-	public void setFans(Range<Long> fans) {
-		this.fans = fans;
+	public void setWords(List<String> words) {
+		this.words = words;
 	}
 
-	public Range<Long> getArticles() {
-		return articles;
+	public Integer getAddCount() {
+		return addCount;
 	}
 
-	public void setArticles(Range<Long> articles) {
-		this.articles = articles;
+	public void setAddCount(Integer addCount) {
+		this.addCount = addCount;
+	}
+
+	public Integer getExecuAddCount() {
+		return execuAddCount;
+	}
+
+	public void setExecuAddCount(Integer execuAddCount) {
+		this.execuAddCount = execuAddCount;
 	}
 
 	public List<String> getKeywords() {
@@ -147,28 +132,12 @@ public class PostWeiboConfig implements Serializable {
 		this.keywords = keywords;
 	}
 
-	public List<String> getCategories() {
-		return categories;
-	}
-
-	public void setCategories(List<String> categories) {
-		this.categories = categories;
-	}
-
 	public Integer getEffective() {
 		return effective;
 	}
 
 	public void setEffective(Integer effective) {
 		this.effective = effective;
-	}
-
-	public Range<Integer> getAtCount() {
-		return atCount;
-	}
-
-	public void setAtCount(Range<Integer> atCount) {
-		this.atCount = atCount;
 	}
 
 	public Boolean getIsPic() {
@@ -195,11 +164,35 @@ public class PostWeiboConfig implements Serializable {
 		this.isVideo = isVideo;
 	}
 
-	public Range<Integer> getPostNumber() {
-		return postNumber;
+	public Range<Integer> getAtCount() {
+		return atCount;
 	}
 
-	public void setPostNumber(Range<Integer> postNumber) {
-		this.postNumber = postNumber;
+	public void setAtCount(Range<Integer> atCount) {
+		this.atCount = atCount;
+	}
+
+	public Range<Integer> getContentLength() {
+		return contentLength;
+	}
+
+	public void setContentLength(Range<Integer> contentLength) {
+		this.contentLength = contentLength;
+	}
+
+	public Range<Integer> getRefCount() {
+		return refCount;
+	}
+
+	public void setRefCount(Range<Integer> refCount) {
+		this.refCount = refCount;
+	}
+
+	public Range<Integer> getReplyCount() {
+		return replyCount;
+	}
+
+	public void setReplyCount(Range<Integer> replyCount) {
+		this.replyCount = replyCount;
 	}
 }

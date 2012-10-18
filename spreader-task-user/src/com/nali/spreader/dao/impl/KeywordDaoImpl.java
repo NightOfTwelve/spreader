@@ -3,6 +3,7 @@ package com.nali.spreader.dao.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,5 +147,13 @@ public class KeywordDaoImpl implements IKeywordDao {
 	@Override
 	public int clearCategoryByKeywordId(Long keywordId) {
 		return sqlMap.update("spreader_keyword.clearKeywordCategory", keywordId);
+	}
+
+	@Override
+	public List<Map<String, Long>> selectUserKeywordByUids(List<Long> uids) {
+		if (CollectionUtils.isEmpty(uids)) {
+			return new ArrayList<Map<String, Long>>();
+		}
+		return this.sqlMap.queryForList("spreader_keyword.selectUserKeywordByUids", uids);
 	}
 }

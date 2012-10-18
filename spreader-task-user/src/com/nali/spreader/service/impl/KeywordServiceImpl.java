@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -94,8 +95,10 @@ public class KeywordServiceImpl implements IKeywordService {
 	@Override
 	public Set<Long> createMergerKeyword(List<String> keywords, List<String> categories) {
 		Set<Long> result = new HashSet<Long>();
-		for (String keyword : keywords) {
-			result.add(getOrAssignKeywordIdByName(keyword));
+		if (!CollectionUtils.isEmpty(keywords)) {
+			for (String keyword : keywords) {
+				result.add(getOrAssignKeywordIdByName(keyword));
+			}
 		}
 		result.addAll(keywordDao.selectKeywordIdsByCategories(categories));
 		return result;
@@ -143,5 +146,10 @@ public class KeywordServiceImpl implements IKeywordService {
 			}
 		}
 		return allKeyword;
+	}
+
+	@Override
+	public List<Map<String, Long>> findUsersKeyword(List<Long> uids) {
+		return this.keywordDao.selectUserKeywordByUids(uids);
 	}
 }

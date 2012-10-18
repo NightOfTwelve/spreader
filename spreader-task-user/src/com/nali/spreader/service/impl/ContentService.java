@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -308,7 +309,7 @@ public class ContentService implements IContentService {
 
 	@Override
 	public List<Long> findContentIdByPostContentDto(PostWeiboContentDto dto) {
-		return this.contentMassDataDao.queryPostContents(dto);
+		return this.contentMassDataDao.queryPostContentIds(dto);
 	}
 
 	@Override
@@ -342,5 +343,10 @@ public class ContentService implements IContentService {
 			return this.keywordDao.selectContentKeywordByKids(keywordList);
 		}
 		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Map<String, Long>> findContentByPostContentDto(PostWeiboContentDto dto) {
+		return this.contentMassDataDao.queryPostContents(dto);
 	}
 }

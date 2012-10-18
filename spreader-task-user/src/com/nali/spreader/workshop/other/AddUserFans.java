@@ -1,5 +1,6 @@
 package com.nali.spreader.workshop.other;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -54,13 +55,29 @@ public class AddUserFans extends SingleTaskMachineImpl implements PassiveWorksho
 	public void work(KeyValue<Long, Long> data, SingleTaskExporter exporter) {
 		Long robotId = data.getKey();
 		Long uid = data.getValue();
-		
+		work(robotId,uid,null,exporter);
+	}
+	
+	@Input
+	public void work(AddFansDto dto, SingleTaskExporter exporter) {
+		Long robotId = dto.getRobotUid();
+		Long uid = dto.getUid();
+		Date startTime = dto.getStartTime();
+		work(robotId, uid, startTime, exporter);
+	}
+	
+	private void work(Long robotId,Long uid,Date startTime,SingleTaskExporter exporter) {
 		exporter.setProperty("id", robotId);
 		exporter.setProperty("uid", uid);
 		exporter.setProperty("websiteUid", globalUserService.getWebsiteUid(uid));
-		exporter.send(robotId, SpecialDateUtil.afterToday(3));
+		if(startTime==null) {
+			startTime = new Date();
+		}
+		exporter.setTimes(startTime, SpecialDateUtil.afterToday(3));
+		exporter.setUid(robotId);
+		exporter.send();
 	}
-
+	
 	@Override
 	public void handleResult(Date updateTime, KeyValue<Long, KeyValue<Long,Boolean>> data) {
 		Long id = data.getKey();
@@ -78,4 +95,35 @@ public class AddUserFans extends SingleTaskMachineImpl implements PassiveWorksho
 		}
 	}
 	
+	public static class AddFansDto implements Serializable {
+		private static final long serialVersionUID = 1971385349701314435L;
+		public static final Integer DEFAULT_ADD_FANS_INTERVAL = 3;
+		private Long uid;
+		private Long robotUid;
+		private Date startTime;
+
+		public Long getUid() {
+			return uid;
+		}
+
+		public void setUid(Long uid) {
+			this.uid = uid;
+		}
+
+		public Long getRobotUid() {
+			return robotUid;
+		}
+
+		public void setRobotUid(Long robotUid) {
+			this.robotUid = robotUid;
+		}
+
+		public Date getStartTime() {
+			return startTime;
+		}
+
+		public void setStartTime(Date startTime) {
+			this.startTime = startTime;
+		}
+	}
 }

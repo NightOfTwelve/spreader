@@ -159,6 +159,14 @@
 			#keywordIds[]#
 		</iterate>
 	</select>
+	<select id="selectUserKeywordByUids" parameterClass="java.util.List"
+		resultClass="java.util.HashMap">
+		select tag_id as keyword,uid from spreader.tb_user_tag where uid 
+		<iterate prepend="in" open="(" close=")" conjunction=",">
+			#uids[]#
+		</iterate>
+		order by keyword
+	</select>
 	<select id="selectKeywordIdsByCategories" parameterClass="java.util.List"
 		resultClass="java.lang.Long">
 		select kw.id from spreader.tb_keyword kw

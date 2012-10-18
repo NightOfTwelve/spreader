@@ -1,6 +1,7 @@
 package com.nali.spreader.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.nali.spreader.data.Category;
@@ -79,4 +80,12 @@ public interface IKeywordService {
 	 * @return
 	 */
 	Long[] createSendKeywordList(Set<Long> set, Long uid);
+
+	/**
+	 * 获取所有用户的关键字并按关键字排序
+	 * 
+	 * @param uids
+	 * @return
+	 */
+	List<Map<String, Long>> findUsersKeyword(List<Long> uids);
 }

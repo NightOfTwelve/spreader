@@ -23,7 +23,7 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
-				<value>com/nali/spreader/service/mongo/220-jdbc.properties</value>
+				<value>com/nali/spreader/test/work/220-jdbc.properties</value>
 				<value>classpath:urls.properties</value>
 				<value>classpath:env.properties</value>
 			</list>
@@ -157,7 +157,7 @@
 		</property>
 	</bean>
 
-	<import resource="161-application-dal-context.xml" />
+	<import resource="220-application-dal-context.xml" />
 
 	<bean id="identityService" class="com.nali.spreader.test.identity.MockIdentityService"></bean>
 

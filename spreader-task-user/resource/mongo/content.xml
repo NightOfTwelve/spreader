@@ -46,6 +46,16 @@
 		<property name="from" value="content" />
 		<property name="orderBy" value="-id" />
 	</bean>
+	<bean id="dal.selectCidAndUidOrderByUid" class="com.nali.dal.statement.query.SelectStatement">
+		<property name="select">
+			<list>
+				<value>id</value>	
+				<value>uid</value>
+			</list>
+		</property>
+		<property name="from" value="content" />
+		<property name="orderBy" value="uid" />
+	</bean>
 	<bean id="dal.selectContentId" class="com.nali.dal.statement.query.SelectStatement">
 		<property name="select">
 			<list>

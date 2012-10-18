@@ -501,7 +501,7 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 					}],
 			onCellClick : function(grid, rowIndex, columnIndex, e) {
 				var selesm = grid.getSelectionModel().getSelections();
-				if(selesm.length==0){
+				if (selesm.length == 0) {
 					return;
 				}
 				var userid = selesm[0].data.id;
@@ -704,7 +704,7 @@ sinaUserGrid.on('cellclick', sinaUserGrid.onCellClick, sinaUserGrid);
 
 sinaUserGrid.on('celldblclick', function(grid, rowIndex, columnIndex, e) {
 			var sms = grid.selModel.selections.items[0];
-			if(sms == undefined){
+			if (sms == undefined) {
 				return;
 			}
 			var selectData = sms.data;
@@ -852,17 +852,14 @@ var expUserWin = new Ext.Window({
 						text : '关闭',
 						iconCls : 'deleteIcon',
 						handler : function() {
-							Ext.Msg.confirm('警告','此操作会导致帐号删除，请确认是否已经复制帐号信息，取消请按‘否’',function op(btn)   
-						     {   
-						        if (btn == 'yes')   
-						        {    
-						        	expUserWin.hide();
-						        }    
-						        else  
-						        {   
-						        	return; 
-						        }     
-						    });		
+							Ext.Msg.confirm('提示', '请确认是否已经复制帐号信息', function op(
+											btn) {
+										if (btn == 'yes') {
+											expUserWin.hide();
+										} else {
+											return;
+										}
+									});
 						}
 					}]
 		});
@@ -946,20 +943,26 @@ var updateUserTagWin = new Ext.Window({
  * 导出用户信息
  */
 function expUserInfo() {
-	var expArray = getSelectUsers();
-	var rows = [];
-	if (expArray.length > 0) {
-		for (var i = 0; i < expArray.length; i++) {
-			var uid = expArray[i];
-			rows.push(uid);
-		}
-	} else {
-		Ext.Msg.alert("提示", "请至少选择一个用户");
-		return;
-	}
-	expUserStore.setBaseParam('uids', rows);
-	expUserStore.load();
-	expUserWin.show();
+	Ext.Msg.confirm('警告', '此操作会导致帐号删除，是否确认导出？，取消请按‘否’', function op(btn) {
+				if (btn == 'yes') {
+					var expArray = getSelectUsers();
+					var rows = [];
+					if (expArray.length > 0) {
+						for (var i = 0; i < expArray.length; i++) {
+							var uid = expArray[i];
+							rows.push(uid);
+						}
+					} else {
+						Ext.Msg.alert("提示", "请至少选择一个用户");
+						return;
+					}
+					expUserStore.setBaseParam('uids', rows);
+					expUserStore.load();
+					expUserWin.show();
+				} else {
+					return;
+				}
+			});
 }
 
 /**

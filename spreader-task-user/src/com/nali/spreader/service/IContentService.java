@@ -2,6 +2,7 @@ package com.nali.spreader.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.nali.common.pagination.PageResult;
@@ -55,6 +56,14 @@ public interface IContentService {
 	 * @return
 	 */
 	List<Long> findContentIdByPostContentDto(PostWeiboContentDto dto);
+
+	/**
+	 * 获取内容集合
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	List<Map<String, Long>> findContentByPostContentDto(PostWeiboContentDto dto);
 
 	/**
 	 * 获取内容的长度
