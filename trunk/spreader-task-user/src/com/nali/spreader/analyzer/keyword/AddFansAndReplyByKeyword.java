@@ -116,17 +116,22 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 				Long uid = uc.getUid();
 				List<Long> contents = uc.getContents();
 				Map<Long, Set<Long>> existsReyply = new HashMap<Long, Set<Long>>();
+				Map<Long, Set<Long>> existsAdd = new HashMap<Long, Set<Long>>();
 				while (avg.hasNext()) {
 					List<ItemCount<Long>> items = avg.next();
 					for (ItemCount<Long> item : items) {
 						Long robotId = item.getItem();
+						int count = item.getCount();
 						Long contentId = RandomUtil.randomItem(contents);
-						addFans(robotId, uid, addTime);
-						if (needReply) {
-							existsReyply = replyWeibo(robotId, contentId, existsReyply, postTime);
-							postTime = DateUtils.addMinutes(postTime, postInterval);
+						if (count > 0) {
+							existsAdd = addFans(uid, robotId, existsAdd, addTime);
+							if (needReply) {
+								existsReyply = replyWeibo(robotId, contentId, existsReyply,
+										postTime);
+								postTime = DateUtils.addMinutes(postTime, postInterval);
+							}
+							addTime = DateUtils.addMinutes(addTime, addInterval);
 						}
-						addTime = DateUtils.addMinutes(addTime, addInterval);
 					}
 				}
 			}
@@ -134,22 +139,22 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	}
 
 	/**
-	 * 判断是否需要回复微博，必须满足2个条件，1.是否配置了需要回复微博 ;2.机器人是否回复过某条微博
+	 * 判断是否需要生成任务
 	 * 
 	 * @param robotId
 	 * @param contentId
 	 * @param existsMap
 	 * @return
 	 */
-	private boolean isExistsContent(Long robotId, Long contentId, Map<Long, Set<Long>> existsMap) {
-		if (!existsMap.containsKey(robotId)) {
+	private boolean isExists(Long toId, Long execuId, Map<Long, Set<Long>> existsMap) {
+		if (!existsMap.containsKey(toId)) {
 			return false;
 		} else {
-			Set<Long> set = existsMap.get(robotId);
+			Set<Long> set = existsMap.get(toId);
 			if (set == null) {
 				return false;
 			}
-			return set.contains(contentId);
+			return set.contains(execuId);
 		}
 	}
 
@@ -163,7 +168,7 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	 */
 	private Map<Long, Set<Long>> replyWeibo(Long robotId, Long contentId,
 			Map<Long, Set<Long>> exists, Date startTime) {
-		if (!isExistsContent(robotId, contentId, exists)) {
+		if (!isExists(robotId, contentId, exists)) {
 			replyWeibo(robotId, contentId, replyWords.get(), startTime);
 			Set<Long> set = exists.get(robotId);
 			if (set == null) {
@@ -193,12 +198,35 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	}
 
 	/**
+	 * 记录已经生成该机器人是否已经关注了该用户的任务
+	 * 
+	 * @param uid
+	 * @param robotId
+	 * @param exists
+	 * @param startTime
+	 * @return
+	 */
+	private Map<Long, Set<Long>> addFans(Long uid, Long robotId, Map<Long, Set<Long>> exists,
+			Date startTime) {
+		if (!isExists(uid, robotId, exists)) {
+			addFans(uid, robotId, startTime);
+			Set<Long> set = exists.get(uid);
+			if (set == null) {
+				set = new HashSet<Long>();
+			}
+			set.add(robotId);
+			exists.put(uid, set);
+		}
+		return exists;
+	}
+
+	/**
 	 * 机器人执行加粉的操作
 	 * 
 	 * @param robotId
 	 * @param uid
 	 */
-	private void addFans(Long robotId, Long uid, Date addStartTime) {
+	private void addFans(Long uid, Long robotId, Date addStartTime) {
 		AddUserFans.AddFansDto dto = new AddUserFans.AddFansDto();
 		dto.setRobotUid(robotId);
 		dto.setUid(uid);
