@@ -1,4 +1,4 @@
-package com.nali.spreader.service.mongo;
+package com.nali.spreader.test.work;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import com.nali.spreader.util.avg.AverageHelper;
 import com.nali.spreader.util.avg.ItemCount;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("161-application-context-test.xml")
+@ContextConfiguration("220-application-context-test.xml")
 public class TestAverage {
 	private static final String KEY_USER_NUMBER = "userNumber";
 	private static final String KEY_ROBOT_USER_NUMBER = "robotUserNumber";
@@ -25,10 +25,10 @@ public class TestAverage {
 	@Test
 	public void test() {
 		Map<String, Integer> execuParams = CollectionUtils.newHashMap(4);
-		execuParams.put(KEY_USER_NUMBER, 5);
-		execuParams.put(KEY_ADD_FANS_LIMIT, 4);
-		execuParams.put(KEY_ROBOT_USER_NUMBER, 3);
-		execuParams.put(KEY_EXECU_ADD_FANS_LIMIT, 5);
+		execuParams.put(KEY_USER_NUMBER, 1);
+		execuParams.put(KEY_ADD_FANS_LIMIT, 2);
+		execuParams.put(KEY_ROBOT_USER_NUMBER, 5);
+		execuParams.put(KEY_EXECU_ADD_FANS_LIMIT, 4);
 
 		Integer robotUserNumber = execuParams.get(KEY_ROBOT_USER_NUMBER);
 		Integer execuLimit = execuParams.get(KEY_EXECU_ADD_FANS_LIMIT);
