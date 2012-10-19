@@ -184,7 +184,7 @@
 				#websiteId#
 			</isNotNull>
 		</dynamic>
-		 	order by id desc
+		order by id desc
 		<isNotNull property="lit">
 			limit $lit.offset$,$lit.maxRows$
 		</isNotNull>
@@ -229,6 +229,10 @@
 			</isNotEmpty>
 			<isNotNull prepend="and" property="isRobot">
 				u.is_robot = #isRobot#
+			</isNotNull>
+			<isNotNull prepend="and" property="websiteId">
+				u.website_id =
+				#websiteId#
 			</isNotNull>
 		</dynamic>
 	</select>
@@ -383,7 +387,8 @@
 	</select>
 	<select id="queryNickNameByWebsiteUid" parameterClass="java.util.HashMap"
 		resultClass="java.lang.String">
-		select nick_name From spreader.tb_user where website_id = #websiteId# and website_uid = #websiteUid#
+		select nick_name From spreader.tb_user where website_id =
+		#websiteId# and website_uid = #websiteUid#
 	</select>
 	<select id="queryUidsByProperties" parameterClass="java.util.HashMap"
 		resultClass="long">
@@ -463,7 +468,8 @@
 	</select>
 	<select id="queryUserPassword" parameterClass="java.lang.Long"
 		resultClass="java.lang.String">
-		select login_pwd from  spreader.tb_robot_user where website_id = 1 and uid = #uid#
+		select login_pwd from spreader.tb_robot_user where
+		website_id = 1 and uid = #uid#
 	</select>
 	<update id="updateUserArticles" parameterClass="java.lang.Long">
 		update

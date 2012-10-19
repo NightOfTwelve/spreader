@@ -55,6 +55,7 @@ var userSinaForm = new Ext.form.FormPanel({
 										xtype : 'combo',
 										store : isRobotStore,
 										id : 'isRobot',
+										name : 'isRobot',
 										hiddenName : 'isRobot',
 										valueField : 'ID',
 										editable : false,
@@ -93,7 +94,7 @@ var userSinaForm = new Ext.form.FormPanel({
 							layout : "form",
 							items : [{
 										xtype : "numberfield",
-										fieldLabel : "粉丝数大于",
+										fieldLabel : "粉丝数大于等于",
 										name : 'minFans'
 									}]
 						}, {
@@ -101,7 +102,7 @@ var userSinaForm = new Ext.form.FormPanel({
 							layout : "form",
 							items : [{
 										xtype : "numberfield",
-										fieldLabel : "粉丝数小于",
+										fieldLabel : "粉丝数小于等于",
 										name : 'maxFans'
 									}]
 						}]
@@ -112,7 +113,7 @@ var userSinaForm = new Ext.form.FormPanel({
 									layout : "form",
 									items : [{
 												xtype : "numberfield",
-												fieldLabel : "机器人粉丝数大于",
+												fieldLabel : "机器人粉丝数大于等于",
 												name : 'minRobotFans'
 											}]
 								}, {
@@ -120,7 +121,7 @@ var userSinaForm = new Ext.form.FormPanel({
 									layout : "form",
 									items : [{
 												xtype : "numberfield",
-												fieldLabel : "机器人粉丝数小于",
+												fieldLabel : "机器人粉丝数小于等于",
 												name : 'maxRobotFans'
 											}]
 								}]
@@ -139,8 +140,8 @@ var userSinaForm = new Ext.form.FormPanel({
 							.getValue();
 					var tag = tform.findField("tag").getValue();
 					var isRobot = tform.findField("isRobot").getValue();
-					// var websiteId = selectWebSiteComboUtil.getValue();
-					var websiteId = tform.findField('websiteId').getValue();
+					var websiteId = Ext.getCmp('selectWebSiteComboUtil')
+							.getValue();
 					var num = numtext.getValue();
 					sinaUserStore.setBaseParam('nickName', Ext
 									.isEmpty(nickName) ? null : nickName);
@@ -235,6 +236,7 @@ sinaUserStore.on('beforeload', function() {
 			var pmaxRobotFans = pfrom.findField("maxRobotFans").getValue();
 			var ptag = pfrom.findField("tag").getValue();
 			var isRobot = pfrom.findField("isRobot").getValue();
+			var websiteId = Ext.getCmp('selectWebSiteComboUtil').getValue();
 			var limit = numtext.getValue();
 			this.baseParams = {
 				nickName : Ext.isEmpty(pnickName) ? null : pnickName,
@@ -244,7 +246,8 @@ sinaUserStore.on('beforeload', function() {
 				maxRobotFans : pmaxRobotFans,
 				tag : Ext.isEmpty(ptag) ? null : ptag,
 				limit : Ext.isEmpty(limit) ? number : Number(limit),
-				isRobot : isRobot
+				isRobot : isRobot,
+				websiteId : websiteId
 			};
 		});
 // 导入excel文件窗口
