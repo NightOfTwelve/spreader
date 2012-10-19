@@ -112,13 +112,16 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 			Average<Long> avg = AverageHelper.selectAverageByParam(execuParams, execuData);
 			Date addTime = new Date();
 			Date postTime = new Date();
-			for (UserContentsDto uc : readyData) {
-				Long uid = uc.getUid();
-				List<Long> contents = uc.getContents();
-				Map<Long, Set<Long>> existsReyply = new HashMap<Long, Set<Long>>();
-				Map<Long, Set<Long>> existsAdd = new HashMap<Long, Set<Long>>();
-				while (avg.hasNext()) {
-					List<ItemCount<Long>> items = avg.next();
+			Set<UserContentsDto> ucExists = new HashSet<UserContentsDto>();
+			while (avg.hasNext()) {
+				List<ItemCount<Long>> items = avg.next();
+				List<UserContentsDto> workData = RandomUtil.randomItems(readyData, ucExists, 1);
+				if (!CollectionUtils.isEmpty(workData)) {
+					UserContentsDto uc = workData.get(0);
+					Long uid = uc.getUid();
+					List<Long> contents = uc.getContents();
+					Map<Long, Set<Long>> existsReyply = new HashMap<Long, Set<Long>>();
+					Map<Long, Set<Long>> existsAdd = new HashMap<Long, Set<Long>>();
 					for (ItemCount<Long> item : items) {
 						Long robotId = item.getItem();
 						int count = item.getCount();
@@ -133,6 +136,7 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 							addTime = DateUtils.addMinutes(addTime, addInterval);
 						}
 					}
+					ucExists.add(uc);
 				}
 			}
 		}
