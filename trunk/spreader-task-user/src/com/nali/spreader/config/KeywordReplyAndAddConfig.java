@@ -33,7 +33,7 @@ public class KeywordReplyAndAddConfig implements Serializable {
 	private Integer addInterval;
 	@PropertyDescription("微博作者被关注的次数上限")
 	private Integer addCount;
-	@PropertyDescription("机器人执行关注的次数上线")
+	@PropertyDescription("机器人执行关注的次数上限")
 	private Integer execuAddCount;
 	@PropertyDescription("是否包含图片")
 	private Boolean isPic;
