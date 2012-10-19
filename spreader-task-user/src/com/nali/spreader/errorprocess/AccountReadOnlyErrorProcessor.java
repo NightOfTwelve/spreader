@@ -13,8 +13,8 @@ import com.nali.spreader.service.IGlobalRobotUserService;
 import com.nali.spreader.service.IGlobalUserService;
 
 @Component
-public class AccountLimitedErrorProcessor extends DefaultErrorProcessor<Long> {
-	private static Logger logger = Logger.getLogger(AccountLimitedErrorProcessor.class);
+public class AccountReadOnlyErrorProcessor extends DefaultErrorProcessor<Long> {
+	private static Logger logger = Logger.getLogger(AccountReadOnlyErrorProcessor.class);
 	@Autowired
 	private IGlobalRobotUserService globalRobotUserService;
 	@Autowired
@@ -22,7 +22,7 @@ public class AccountLimitedErrorProcessor extends DefaultErrorProcessor<Long> {
 	
 	@Override
 	public String getErrorCode() {
-		return TaskErrorCode.accountLimited.getCode();
+		return TaskErrorCode.accountReadOnly.getCode();
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class AccountLimitedErrorProcessor extends DefaultErrorProcessor<Long> {
 		if(!uid.equals(userId)) {
 			throw new IllegalArgumentException("uid!=userId, uid:"+uid+", userId:"+userId);
 		}
-		logger.warn("account limited:" + uid);
+		logger.warn("account readOnly:" + uid);
 		globalRobotUserService.accountLimited(uid);
 		globalUserService.removeUser(uid);
 	}
