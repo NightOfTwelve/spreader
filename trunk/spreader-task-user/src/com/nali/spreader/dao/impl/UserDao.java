@@ -21,6 +21,7 @@ import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
 import com.nali.spreader.dto.FilterUserDto;
 import com.nali.spreader.dto.PostWeiboContentDto;
+import com.nali.spreader.dto.UserQueryParamDto;
 
 @Repository
 public class UserDao implements IUserDao {
@@ -160,5 +161,10 @@ public class UserDao implements IUserDao {
 	@Override
 	public String queryNickNameByWebsiteUid(Map<String, Object> param) {
 		return (String) sqlMap.queryForObject("spreader_user.queryNickNameByWebsiteUid", param);
+	}
+
+	@Override
+	public List<Long> queryAttenLimitUids(UserQueryParamDto param) {
+		return sqlMap.queryForList("spreader_user.queryAttenLimitUids", param);
 	}
 }

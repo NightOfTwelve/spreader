@@ -66,4 +66,13 @@ public interface IGlobalUserService {
 	 * @return
 	 */
 	String getNickNameByWebsiteUid(Integer websiteId,Long websiteUid);
+
+	/**
+	 * 获取符合关注上限的用户ID
+	 * 
+	 * @param uids
+	 * @param attenLimit
+	 * @return
+	 */
+	List<Long> getAttenLimitUids(List<Long> uids, Long attenLimit);
 }

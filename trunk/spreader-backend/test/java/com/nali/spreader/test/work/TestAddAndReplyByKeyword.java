@@ -1,9 +1,12 @@
 package com.nali.spreader.test.work;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +18,12 @@ import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.analyzer.keyword.AddFansAndReplyByKeyword;
 import com.nali.spreader.config.KeywordReplyAndAddConfig;
 import com.nali.spreader.dto.UserContentsDto;
+import com.nali.spreader.model.ReplyDto;
+import com.nali.spreader.util.avg.Average;
+import com.nali.spreader.util.avg.AverageHelper;
+import com.nali.spreader.util.avg.ItemCount;
+import com.nali.spreader.util.random.RandomUtil;
+import com.nali.spreader.workshop.other.AddUserFans;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("161-lts-application-context-test.xml")
@@ -34,12 +43,11 @@ public class TestAddAndReplyByKeyword {
 		config.setEffective(28800);
 		config.setAddCount(5);
 		config.setExecuAddCount(3);
-		config.setPostInterval(17);
+		config.setExecuInterval(5);
 		addFansAndReplyByKeyword.setFromUserGroup(362L);
 		addFansAndReplyByKeyword.init(config);
 		addFansAndReplyByKeyword.work();
 	}
-	
 	
 	List<Map<String, Long>> getTestData() {
 		List<Map<String, Long>> data = new ArrayList<Map<String, Long>>();
