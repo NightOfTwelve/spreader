@@ -411,6 +411,7 @@
 		<module>../spreader-backend</module>
 		<module>../spreader-task-factory</module>
 		<module>../spreader-task-register</module>
+		<module>../spreader-user-group</module>
 		<module>../spreader-task-user</module>
 
 		<module>../spreader-front</module>
