@@ -33,6 +33,7 @@ import com.nali.spreader.data.UserTagExample;
 import com.nali.spreader.data.WeiboAppeal;
 import com.nali.spreader.data.WeiboAppealExample;
 import com.nali.spreader.dto.FilterUserDto;
+import com.nali.spreader.dto.UserQueryParamDto;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IGlobalRobotUserService;
 import com.nali.spreader.service.IGlobalUserService;
@@ -202,9 +203,9 @@ public class GlobalUserService implements IGlobalUserService {
 		crudUserDao.updateByPrimaryKeySelective(user);
 		robotUser.setUid(uid);
 		RobotUser robot = crudRobotUserDao.selectByPrimaryKey(uid);
-		if(robot != null) {
+		if (robot != null) {
 			crudRobotUserDao.updateByPrimaryKeySelective(robotUser);
-		}else {
+		} else {
 			crudRobotUserDao.insert(robotUser);
 		}
 		return uid;
@@ -316,7 +317,8 @@ public class GlobalUserService implements IGlobalUserService {
 
 	@Override
 	public Long[] findPostContentUids(Integer vType, Range<Long> fans, Range<Long> articles) {
-		if (vType == null && (fans == null || fans.checkAllNull()) && (articles == null || articles.checkAllNull())) {
+		if (vType == null && (fans == null || fans.checkAllNull())
+				&& (articles == null || articles.checkAllNull())) {
 			return null;
 		}
 		FilterUserDto query = new FilterUserDto();
@@ -343,5 +345,17 @@ public class GlobalUserService implements IGlobalUserService {
 		param.put("websiteId", websiteId);
 		param.put("websiteUid", websiteUid);
 		return this.userDao.queryNickNameByWebsiteUid(param);
+	}
+
+	@Override
+	public List<Long> getAttenLimitUids(List<Long> uids, Long attenLimit) {
+		List<Long> result = new ArrayList<Long>();
+		if (!CollectionUtils.isEmpty(uids)) {
+			UserQueryParamDto param = new UserQueryParamDto();
+			param.setAttentionLimit(attenLimit);
+			param.setUids(uids);
+			result = this.userDao.queryAttenLimitUids(param);
+		}
+		return result;
 	}
 }

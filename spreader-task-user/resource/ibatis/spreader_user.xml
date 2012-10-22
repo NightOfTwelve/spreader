@@ -385,6 +385,20 @@
 			<include refid="propertiesWhere" />
 		</dynamic>
 	</select>
+	<select id="queryAttenLimitUids" parameterClass="com.nali.spreader.dto.UserQueryParamDto"
+		resultClass="java.lang.Long">
+		select id from spreader.tb_user where website_id = 1 and is_robot = true 
+		<isNotEmpty prepend="and" property="uids">
+			 id in
+			<iterate open="(" close=")" property="uids"
+				conjunction=",">
+				#uids[]#
+			</iterate>
+		</isNotEmpty>
+		<isNotNull prepend="and" property="attentionLimit">
+			attentions &lt;= #attentionLimit# 
+		</isNotNull>
+	</select>
 	<select id="queryNickNameByWebsiteUid" parameterClass="java.util.HashMap"
 		resultClass="java.lang.String">
 		select nick_name From spreader.tb_user where website_id =

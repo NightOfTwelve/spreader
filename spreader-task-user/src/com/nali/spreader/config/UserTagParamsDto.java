@@ -16,11 +16,11 @@ public class UserTagParamsDto implements Serializable {
 	// 用户ID
 	private Long id;
 	// 粉丝数
-	private Integer minFans;
-	private Integer maxFans;
+	private Long minFans;
+	private Long maxFans;
 	// 机器人粉丝数
-	private Integer minRobotFans;
-	private Integer maxRobotFans;
+	private Long minRobotFans;
+	private Long maxRobotFans;
 	// 分类
 	private String tag;
 	// 昵称
@@ -83,35 +83,35 @@ public class UserTagParamsDto implements Serializable {
 		this.id = id;
 	}
 
-	public Integer getMinFans() {
+	public Long getMinFans() {
 		return minFans;
 	}
 
-	public void setMinFans(Integer minFans) {
+	public void setMinFans(Long minFans) {
 		this.minFans = minFans;
 	}
 
-	public Integer getMaxFans() {
+	public Long getMaxFans() {
 		return maxFans;
 	}
 
-	public void setMaxFans(Integer maxFans) {
+	public void setMaxFans(Long maxFans) {
 		this.maxFans = maxFans;
 	}
 
-	public Integer getMinRobotFans() {
+	public Long getMinRobotFans() {
 		return minRobotFans;
 	}
 
-	public void setMinRobotFans(Integer minRobotFans) {
+	public void setMinRobotFans(Long minRobotFans) {
 		this.minRobotFans = minRobotFans;
 	}
 
-	public Integer getMaxRobotFans() {
+	public Long getMaxRobotFans() {
 		return maxRobotFans;
 	}
 
-	public void setMaxRobotFans(Integer maxRobotFans) {
+	public void setMaxRobotFans(Long maxRobotFans) {
 		this.maxRobotFans = maxRobotFans;
 	}
 

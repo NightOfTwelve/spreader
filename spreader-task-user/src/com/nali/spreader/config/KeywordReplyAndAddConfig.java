@@ -23,17 +23,19 @@ public class KeywordReplyAndAddConfig implements Serializable {
 	public static final int DEFAULT_EXECU_ADD_LIMIT = 1;
 	@PropertyDescription("关键字")
 	private List<String> keywords;
+	@PropertyDescription("关键字分类")
+	private List<String> categories;
 	@PropertyDescription("新鲜度(分钟)")
 	private Integer effective;
 	@PropertyDescription("关注后是否需要回复微博")
 	private Boolean needReply;
-	@PropertyDescription("回复微博的间隔时间(分钟)")
-	private Integer postInterval;
-	@PropertyDescription("机器人执行关注的间隔时间(分钟)")
-	private Integer addInterval;
-	@PropertyDescription("微博作者被关注的次数上限")
+	@PropertyDescription("机器人执行关注并回复的间隔时间(分钟)")
+	private Integer execuInterval;
+	@PropertyDescription("机器人已关注的次数上限(超过此上限该机器人不再分派任务)")
+	private Long attentionLimit;
+	@PropertyDescription("微博作者被关注的次数上限(单次)")
 	private Integer addCount;
-	@PropertyDescription("机器人执行关注的次数上限")
+	@PropertyDescription("机器人执行关注的次数上限(单次)")
 	private Integer execuAddCount;
 	@PropertyDescription("是否包含图片")
 	private Boolean isPic;
@@ -76,20 +78,28 @@ public class KeywordReplyAndAddConfig implements Serializable {
 		return query;
 	}
 
-	public Integer getAddInterval() {
-		return addInterval;
+	public Long getAttentionLimit() {
+		return attentionLimit;
 	}
 
-	public void setAddInterval(Integer addInterval) {
-		this.addInterval = addInterval;
+	public void setAttentionLimit(Long attentionLimit) {
+		this.attentionLimit = attentionLimit;
 	}
 
-	public Integer getPostInterval() {
-		return postInterval;
+	public List<String> getCategories() {
+		return categories;
 	}
 
-	public void setPostInterval(Integer postInterval) {
-		this.postInterval = postInterval;
+	public void setCategories(List<String> categories) {
+		this.categories = categories;
+	}
+
+	public Integer getExecuInterval() {
+		return execuInterval;
+	}
+
+	public void setExecuInterval(Integer execuInterval) {
+		this.execuInterval = execuInterval;
 	}
 
 	public Boolean getNeedReply() {

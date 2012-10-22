@@ -12,6 +12,7 @@ import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
 import com.nali.spreader.dto.FilterUserDto;
 import com.nali.spreader.dto.PostWeiboContentDto;
+import com.nali.spreader.dto.UserQueryParamDto;
 
 public interface IUserDao {
 
@@ -127,4 +128,13 @@ public interface IUserDao {
 	 * @return
 	 */
 	String queryNickNameByWebsiteUid(Map<String, Object> param);
+
+	/**
+	 * 查询集合中关注数小于某个上限的用户
+	 * 
+	 * @param uids
+	 * @param attenLimit
+	 * @return
+	 */
+	List<Long> queryAttenLimitUids(UserQueryParamDto param);
 }

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.analyzer.other.Words;
 import com.nali.spreader.config.KeywordReplyAndAddConfig;
-import com.nali.spreader.config.PostWeiboConfig;
 import com.nali.spreader.dto.KeywordUserDto;
 import com.nali.spreader.dto.UserContentsDto;
 import com.nali.spreader.factory.TaskProduceLine;
@@ -28,6 +27,7 @@ import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
 import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.model.ReplyDto;
 import com.nali.spreader.service.IContentService;
+import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IKeywordService;
 import com.nali.spreader.service.IUserGroupFacadeService;
 import com.nali.spreader.util.avg.Average;
@@ -46,10 +46,13 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	private Integer addLimit;
 	private Integer execuAddLimit;
 	private Set<Long> keywords;
+	private List<String> categories;
+	private Long attentionLimit;
 	private Boolean needReply;
-	private Integer postInterval;
-	private Integer addInterval;
+	private Integer execuInterval;
 	private Randomer<String> replyWords;
+	@Autowired
+	private IGlobalUserService globalUserService;
 	@Autowired
 	private IContentService contentService;
 	@Autowired
@@ -111,7 +114,6 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 			execuParams.put(AverageHelper.KEY_EXECU_ADD_FANS_LIMIT, this.execuAddLimit);
 			Average<Long> avg = AverageHelper.selectAverageByParam(execuParams, execuData);
 			Date addTime = new Date();
-			Date postTime = new Date();
 			Set<UserContentsDto> ucExists = new HashSet<UserContentsDto>();
 			while (avg.hasNext()) {
 				List<ItemCount<Long>> items = avg.next();
@@ -129,11 +131,9 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 						if (count > 0) {
 							existsAdd = addFans(uid, robotId, existsAdd, addTime);
 							if (needReply) {
-								existsReyply = replyWeibo(robotId, contentId, existsReyply,
-										postTime);
-								postTime = DateUtils.addMinutes(postTime, postInterval);
+								existsReyply = replyWeibo(robotId, contentId, existsReyply, addTime);
 							}
-							addTime = DateUtils.addMinutes(addTime, addInterval);
+							addTime = DateUtils.addMinutes(addTime, execuInterval);
 						}
 					}
 					ucExists.add(uc);
@@ -242,14 +242,12 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	public void init(KeywordReplyAndAddConfig config) {
 		this.config = config;
 		List<String> configKeywords = this.config.getKeywords();
-		keywords = this.keywordService.createMergerKeyword(configKeywords, null);
-		postInterval = config.getPostInterval();
-		if (postInterval == null || postInterval <= 0) {
-			postInterval = PostWeiboConfig.DEFAULT_INTERVAL;
-		}
-		addInterval = config.getAddInterval();
-		if (addInterval == null || addInterval <= 0) {
-			addInterval = AddUserFans.AddFansDto.DEFAULT_ADD_FANS_INTERVAL;
+		categories = this.config.getCategories();
+		keywords = this.keywordService.createMergerKeyword(configKeywords, categories);
+		execuInterval = config.getExecuInterval();
+		attentionLimit = config.getAttentionLimit();
+		if (execuInterval == null || execuInterval <= 0) {
+			execuInterval = AddUserFans.AddFansDto.DEFAULT_ADD_FANS_INTERVAL;
 		}
 		needReply = config.getNeedReply();
 		// 默认需要回复
@@ -283,7 +281,8 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 			GrouppedUser gu = iter.next();
 			list.add(gu.getUid());
 		}
-		return list;
+		List<Long> resutl = this.globalUserService.getAttenLimitUids(list, attentionLimit);
+		return resutl;
 	}
 
 	/**
