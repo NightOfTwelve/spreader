@@ -28,6 +28,9 @@
         <dependent-module archiveName="dal-interface.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/dal-interface/dal-interface">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="spreader-user-group.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spreader-user-group/spreader-user-group">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="spreader-backend"/>
         <property name="java-output-path"/>
     </wb-module>

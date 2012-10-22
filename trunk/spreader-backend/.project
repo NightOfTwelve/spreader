@@ -10,6 +10,7 @@
 		<project>dal-mongo</project>
 		<project>dal-x</project>
 		<project>dal-interface</project>
+		<project>spreader-user-group</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
