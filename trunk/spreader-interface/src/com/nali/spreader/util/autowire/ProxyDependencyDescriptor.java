@@ -1,6 +1,7 @@
 package com.nali.spreader.util.autowire;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.core.MethodParameter;
@@ -31,6 +32,10 @@ public class ProxyDependencyDescriptor extends DependencyDescriptor {
 			throw new IllegalStateException("dependencyType has not been setted");
 		}
 		return dependencyType;
+	}
+	
+	public Type getGenericDependencyType() {
+		return (getField() != null ? getField().getGenericType() : getMethodParameter().getGenericParameterType());
 	}
 
 	public void setDependencyType(Class<?> dependencyType) {
