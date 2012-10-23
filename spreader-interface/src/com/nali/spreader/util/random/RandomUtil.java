@@ -60,13 +60,6 @@ public class RandomUtil {
 	}
 	
 	/**
-	 * 不修改exists并且判断null版
-	 */
-	public static<E> List<E> randomItemsUnmodify(List<E> allList, Collection<E> exists, int count) {
-		return randomItems(allList, exists==null?new HashSet<E>():new HashSet<E>(exists),count);
-	}
-
-	/**
 	 * 洗牌allList版，注意：必须使用RandomAccess的list
 	 */
 	public static<E> List<E> randomItemsShuffle(List<E> allList, Set<E> exists, int count) {
@@ -95,35 +88,74 @@ public class RandomUtil {
 		}
 		return list.set(first, list.set(second, list.get(first)));
 	}
+
+	/**
+	 * 随机取n个不重复元素
+	 */
+	public static<E> List<E> randomItems(List<E> allList, Collection<E> exists, int count) {
+		return randomItems(allList, new HashSet<E>(exists), count);
+	}
 	
 	/**
 	 * 随机取n个不重复元素
-	 * E 必须在set里可以排重
-	 * @param exists 必须不能为空，并且会被修改
 	 */
 	public static<E> List<E> randomItems(List<E> allList, Set<E> exists, int count) {
-		Random rand = random;
 		if (count >= allList.size() - exists.size()) {
-			List<E> cp = new ArrayList<E>(allList.size());
-			for (E e : allList) {
-				if(!exists.contains(e)) {
-					cp.add(e);
-				}
-			}
-			if(cp.size()<=count) {
-				Collections.shuffle(cp, rand);
-				return cp;
-			} else {
-				allList = cp;
-			}
+			return randomItemsCopy(allList, exists, count);
 		}
-		ArrayList<E> rlt=new ArrayList<E>(count);
+		return randomItemsReadOnly(allList, exists, count);
+	}
+	
+	public static<E> List<E> randomItemsFillExistsSet(List<E> allList, Set<E> exists, int count) {
+		ArrayList<E> rlt=new ArrayList<E>(Math.min(count, allList.size()));
 		for (int i = 0; i < count;) {
-			E e = randomItem(allList, rand);
+			E e = randomItem(allList, random);
 			if(!exists.contains(e)) {
 				i++;
 				exists.add(e);
 				rlt.add(e);
+			}
+		}
+		return rlt;
+	}
+	
+	public static<E> List<E> randomItemsCopy(List<E> allList, Set<E> exists, int count) {
+		List<E> cp = new ArrayList<E>(allList.size());
+		for (E e : allList) {
+			if(!exists.contains(e)) {
+				cp.add(e);
+			}
+		}
+		Collections.shuffle(cp, random);
+		if(cp.size()<=count) {
+			return cp;
+		} else {
+			return cp.subList(0, count);
+		}
+	
+	}
+	
+	public static<E> List<E> randomItemsReadOnly(List<E> allList, Set<E> exists, int count) {
+		ArrayList<E> rlt=new ArrayList<E>(count);
+		HashSet<Integer> existIdxs=new HashSet<Integer>((int) Math.floor(count/0.75));
+		int size = allList.size();
+		int fetchCount = 0;
+		for (int i = count * 5; i > 0 ; i--) {
+			int idx = random.nextInt(size);
+			if(existIdxs.contains(idx)) {
+				continue;
+			}
+			existIdxs.add(idx);
+			E e = allList.get(idx);
+			if(!exists.contains(e)) {
+				rlt.add(e);
+				fetchCount++;
+				if(fetchCount==count) {
+					break;
+				}
+			}
+			if(existIdxs.size()==size) {
+				break;
 			}
 		}
 		return rlt;

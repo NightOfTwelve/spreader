@@ -92,7 +92,7 @@ public class ReplyAndForward extends UserGroupExtendedBeanImpl implements Regula
 				existsContent.addAll(existsForwardContent);
 			}
 			// 随机取出发送的微博内容
-			List<Long> sendContent = RandomUtil.randomItemsUnmodify(allContent, existsContent, postRandom.get());
+			List<Long> sendContent = RandomUtil.randomItems(allContent, existsContent, postRandom.get());
 			if (!CollectionUtils.isEmpty(sendContent)) {
 				WeightRandomer<Integer> wr = getReplyAndForwardWeight(replyRandomer.get(), forwardRandomer.get());
 				Set<Long> contentUidSet = new HashSet<Long>();

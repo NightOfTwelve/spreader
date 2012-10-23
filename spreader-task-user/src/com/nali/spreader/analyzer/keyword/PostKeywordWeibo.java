@@ -86,7 +86,7 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 			List<Long> existsContent = this.robotContentService.findRelatedContentId(uid,
 					RobotContent.TYPE_POST);
 			// 随机取出发送的微博内容
-			List<Long> sendContent = RandomUtil.randomItemsUnmodify(allContent, existsContent,
+			List<Long> sendContent = RandomUtil.randomItems(allContent, existsContent,
 					this.postRandom.get());
 			Date postTime = new Date();
 			if (!CollectionUtils.isEmpty(sendContent)) {
