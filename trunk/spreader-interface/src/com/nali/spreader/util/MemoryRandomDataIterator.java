@@ -10,7 +10,7 @@ public abstract class MemoryRandomDataIterator<T, E> extends DataIterator<E>{
 	
 	public MemoryRandomDataIterator (long upperCount, int batchSize, List<T> ids, Set<T>  excludeIds) {
 		super(0, batchSize);
-		randomIds = RandomUtil.randomItemsUnmodify(ids, excludeIds, (int)upperCount);
+		randomIds = RandomUtil.randomItems(ids, excludeIds, (int)upperCount);
 		count = randomIds.size();
 	}
 	
