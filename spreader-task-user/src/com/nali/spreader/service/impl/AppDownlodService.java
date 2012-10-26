@@ -43,10 +43,14 @@ public class AppDownlodService implements IAppDownlodService {
 			example.setOrderByClause("uid");
 			example.setLimit(Limit.newInstanceForLimit(0, count));
 			if(lastUid!=null) {
-				example.createCriteria().andWebsiteIdEqualTo(websiteId)
+				example.createCriteria()
+					.andAccountStateEqualTo(RobotUser.ACCOUNT_STATE_NORMAL)
+					.andWebsiteIdEqualTo(websiteId)
 					.andUidGreaterThan(lastUid);
 			} else {
-				example.createCriteria().andWebsiteIdEqualTo(websiteId);
+				example.createCriteria()
+					.andAccountStateEqualTo(RobotUser.ACCOUNT_STATE_NORMAL)
+					.andWebsiteIdEqualTo(websiteId);
 			}
 			robots = crudRobotUserDao.selectByExample(example);
 			if(robots.size()==0) {
