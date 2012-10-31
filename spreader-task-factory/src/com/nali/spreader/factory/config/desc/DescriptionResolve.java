@@ -72,7 +72,7 @@ public class DescriptionResolve {
 	public static ConfigDefinition get(Class<?> clazz) {
 		ConfigDefinition configDefinition = cached.get(clazz);
 		if(configDefinition==null) {
-			configDefinition = resolve(clazz, getGenericInfo(clazz, null));
+			configDefinition = resolve(clazz, getGenericInfo(clazz, null), true);
 			if(clazz.getTypeParameters().length==0) {
 				cached.put(clazz, configDefinition);
 			}
@@ -80,7 +80,7 @@ public class DescriptionResolve {
 		return configDefinition;
 	}
 
-	private static ConfigDefinition resolve(Class<?> leafClazz, GenericInfo<?> genericInfo) {
+	private static ConfigDefinition resolve(Class<?> leafClazz, GenericInfo<?> genericInfo, boolean forceDescription) {
 		ArrayList<ObjectProperty> properties = new ArrayList<ObjectProperty>();
 		ObjectDefinition objectDefinition = new ObjectDefinition(properties);
 		Class<?> clazz=leafClazz;
@@ -97,12 +97,17 @@ public class DescriptionResolve {
 				if(annotation!=null) {
 					name = annotation.value();
 					desc = annotation.description();
+				} else {
+					if(forceDescription) {
+						continue;
+					}
 				}
+				
 				if(name==null) {
 					name = propName;
 				}
 				
-				ConfigDefinition fieldDefinition = getComponentDefinition(field.getGenericType(), genericInfo);
+				ConfigDefinition fieldDefinition = getComponentDefinition(field.getGenericType(), genericInfo, forceDescription);
 				ObjectProperty property = new ObjectProperty(name, propName, fieldDefinition);
 				if(desc!=null) {
 					property.setDescription(desc);
@@ -135,7 +140,7 @@ public class DescriptionResolve {
 		throw new IllegalStateException("not found genericArgument, parameterizedType:" + parameterizedType + ", superClazz:" + superClazz);
 	}
 	
-	private static ConfigDefinition getComponentDefinition(Type genericType, GenericInfo<?> genericInfo) {
+	private static ConfigDefinition getComponentDefinition(Type genericType, GenericInfo<?> genericInfo, boolean forceDescription) {
 		Type type = genericInfo.resolveComponentGenericType(genericType);
 		if (type instanceof Class) {
 			Class<?> clazz = (Class<?>) type;
@@ -161,18 +166,18 @@ public class DescriptionResolve {
 			Class<?> clazz = (Class<?>) pt.getRawType();
 			if (Collection.class.isAssignableFrom(clazz)) {
 				Type componentType = getGenericArgument(Collection.class, 0, pt);
-				return new CollectionDefinition(getComponentDefinition(componentType, genericInfo));
+				return new CollectionDefinition(getComponentDefinition(componentType, genericInfo, forceDescription));
 			}
 			if (Map.class.isAssignableFrom(clazz)) {
 				Type keyComponentType = getGenericArgument(Map.class, 0, pt);
 				Type valueComponentType = getGenericArgument(Map.class, 1, pt);
-				return new MapDefinition(getComponentDefinition(keyComponentType, genericInfo), getComponentDefinition(valueComponentType, genericInfo));
+				return new MapDefinition(getComponentDefinition(keyComponentType, genericInfo, forceDescription), getComponentDefinition(valueComponentType, genericInfo, forceDescription));
 			}
 			GenericInfo<?> componentGenericInfo = getGenericInfo(clazz, pt.getActualTypeArguments());
-			return resolve(clazz, componentGenericInfo);
+			return resolve(clazz, componentGenericInfo, forceDescription);
 		} else if (type instanceof GenericArrayType) {
 			GenericArrayType gt = (GenericArrayType) type;
-			return new CollectionDefinition(getComponentDefinition(gt.getGenericComponentType(), genericInfo));
+			return new CollectionDefinition(getComponentDefinition(gt.getGenericComponentType(), genericInfo, forceDescription));
 		} else {
 			throw new IllegalArgumentException("unknown type:" + type);
 		}
