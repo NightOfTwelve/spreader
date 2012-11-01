@@ -2,6 +2,7 @@ package com.nali.spreader.analyzer.keyword;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +23,6 @@ import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
-import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.model.RobotContent;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IGlobalUserService;
@@ -72,12 +72,11 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 			throw new IllegalArgumentException("gid is null");
 		}
 		// 获取分组下所有用户
-		Iterator<GrouppedUser> iter = this.userGroupFacadeService.queryAllGrouppedUser(gid);
+		Iterator<Long> iter = this.userGroupFacadeService.queryAllGrouppedUser(gid);
 		Long[] uids = this.globalUserService.findPostContentUids(this.config.getvType(),
 				this.config.getFans(), this.config.getArticles());
 		while (iter.hasNext()) {
-			GrouppedUser gu = iter.next();
-			Long uid = gu.getUid();
+			Long uid = iter.next();
 			// 获取所有的微博内容
 			Long[] sendKeywords = this.keywordService.createSendKeywordList(allKeywords, uid);
 			List<Long> allContent = this.contentService.findContentIdByPostContentDto(this.config
@@ -86,14 +85,14 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 			List<Long> existsContent = this.robotContentService.findRelatedContentId(uid,
 					RobotContent.TYPE_POST);
 			// 随机取出发送的微博内容
-			List<Long> sendContent = RandomUtil.randomItems(allContent, existsContent,
-					this.postRandom.get());
+			List<Long> sendContent = RandomUtil.randomItemsReadOnly(allContent, new HashSet<Long>(
+					existsContent), this.postRandom.get());
 			Date postTime = new Date();
 			if (!CollectionUtils.isEmpty(sendContent)) {
 				for (Long cid : sendContent) {
 					Content c = this.contentService.getContentById(cid);
 					c.setUid(uid);
-					if(DateUtils.getFragmentInHours(postTime, Calendar.DATE) < PostWeiboContent.POST_START_HOUR) {
+					if (DateUtils.getFragmentInHours(postTime, Calendar.DATE) < PostWeiboContent.POST_START_HOUR) {
 						postTime = DateUtils.setHours(postTime, PostWeiboContent.POST_START_HOUR);
 					}
 					WeiboContentDto param = WeiboContentDto.getWeiboContentDto(uid, c, postTime);

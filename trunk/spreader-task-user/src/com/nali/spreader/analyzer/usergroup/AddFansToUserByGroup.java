@@ -20,7 +20,6 @@ import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
-import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserGroupFacadeService;
 import com.nali.spreader.util.random.NumberRandomer;
@@ -66,19 +65,18 @@ public class AddFansToUserByGroup extends UserGroupExtendedBeanImpl implements R
 		// 关注用户组ID
 		Long toGroup = this.getToUserGroup();
 		// 获取所有关注用户
-		Iterator<GrouppedUser> toIterator = this.userGroupFacadeService.queryAllGrouppedUser(toGroup);
+		Iterator<Long> toIterator = this.userGroupFacadeService.queryAllGrouppedUser(toGroup);
 		while (toIterator.hasNext()) {
-			GrouppedUser togu = toIterator.next();
+			Long toUid = toIterator.next();
 			int randomLimit = random.get();
-			Long toUid = togu.getUid();
 			// 获取所有的粉丝
 			List<Long> relationList = this.globalUserService.findRelationUserId(toUid,
 					UserRelation.TYPE_ATTENTION, true);
 			// 排重
 			Set<Long> relationSet = new HashSet<Long>(relationList);
 			// 随机获取粉丝组成员
-			Iterator<User> fromIterator = this.userGroupFacadeService.queryLimitedRandomGrouppedUser(
-					fromGroup, randomLimit, relationSet);
+			Iterator<User> fromIterator = this.userGroupFacadeService
+					.queryLimitedRandomGrouppedUser(fromGroup, randomLimit, relationSet);
 			while (fromIterator.hasNext()) {
 				User fromUser = fromIterator.next();
 				Long fromUid = fromUser.getId();

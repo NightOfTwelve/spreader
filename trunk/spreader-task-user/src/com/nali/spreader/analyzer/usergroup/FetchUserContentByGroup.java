@@ -1,6 +1,7 @@
 package com.nali.spreader.analyzer.usergroup;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -18,9 +19,7 @@ import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
-import com.nali.spreader.group.service.IUserGroupService;
-import com.nali.spreader.model.GrouppedUser;
-import com.nali.spreader.util.DataIterator;
+import com.nali.spreader.group.service.IUserGroupInfoService;
 import com.nali.spreader.util.random.Randomer;
 
 @Component
@@ -31,7 +30,7 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 			.getLogger(FetchUserContentByGroup.class);
 	private Date lastFetchTime;
 	@Autowired
-	private IUserGroupService userGroupService;
+	private IUserGroupInfoService userGroupService;
 	@AutowireProductLine
 	private TaskProduceLine<FetchUserWeiboDto> fetchWeiboContent;
 	private Randomer<Integer> keywordRandom;
@@ -53,34 +52,28 @@ public class FetchUserContentByGroup extends UserGroupExtendedBeanImpl implement
 			time = new Date();
 		}
 		this.lastFetchTime = time;
-		this.keywordRandom = ConfigDataUtil.createGteLteRandomer(config.getRandomKeywordsRange(), false);
+		this.keywordRandom = ConfigDataUtil.createGteLteRandomer(config.getRandomKeywordsRange(),
+				false);
 	}
 
 	@Override
 	public String work() {
 		Long gid = this.getFromUserGroup();
 		if (gid != null) {
-			DataIterator<GrouppedUser> data = this.userGroupService.queryGrouppedUserIterator(gid,
-					100);
-			List<String> keywords = ConfigDataUtil.getKeywords(config.getKeywords(), config.getRandomKeywords(), keywordRandom);
+			Iterator<Long> data = this.userGroupService.queryGrouppedUserIterator(gid);
+			List<String> keywords = ConfigDataUtil.getKeywords(config.getKeywords(),
+					config.getRandomKeywords(), keywordRandom);
 			if (data.hasNext()) {
-				List<GrouppedUser> list = data.next();
-				if (list.size() > 0) {
-					for (GrouppedUser gu : list) {
-						if (gu != null) {
-							Long uid = gu.getUid();
-							FetchUserWeiboDto sendDto = new FetchUserWeiboDto();
-							sendDto.setUid(uid);
-							sendDto.setKeywords(keywords);
-							sendDto.setLastFetchTime(lastFetchTime);
-							fetchWeiboContent.send(sendDto);
-						}
-					}
-				}
+				Long uid = data.next();
+				FetchUserWeiboDto sendDto = new FetchUserWeiboDto();
+				sendDto.setUid(uid);
+				sendDto.setKeywords(keywords);
+				sendDto.setLastFetchTime(lastFetchTime);
+				fetchWeiboContent.send(sendDto);
+			} else {
+				logger.error("爬取用户组ID为Null");
+				throw new IllegalArgumentException();
 			}
-		} else {
-			logger.error("爬取用户组ID为Null");
-			throw new IllegalArgumentException();
 		}
 		return null;
 	}
