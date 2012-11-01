@@ -50,8 +50,6 @@ public class UserGroupManageController extends BaseController {
 	private IUserGroupPropertyService userGroupPropertyService;
 	@Autowired
 	private IGlobalUserService globalUserService;
-	// 手动分组类型
-	private static final Integer GROUPTYPE_MANUAL = 2;
 
 	/**
 	 * 初始化页面
@@ -106,8 +104,7 @@ public class UserGroupManageController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/grouplist")
 	public String queryAllUserGroup(Integer websiteid, String gname, Integer gtype,
-			Integer propVal, Date fromModifiedTime, Date toModifiedTime, Integer start,
-			Integer limit) {
+			Date fromModifiedTime, Date toModifiedTime, Integer start, Integer limit) {
 		Website website = null;
 		if (websiteid != null) {
 			website = Website.valueOf(websiteid);
@@ -116,12 +113,9 @@ public class UserGroupManageController extends BaseController {
 		if (gtype != null) {
 			userGroupType = UserGroupType.valueOf(gtype);
 		}
-		if (propVal == null) {
-			propVal = 0;
-		}
 		Limit lit = this.initLimit(start, limit);
 		PageResult<UserGroup> result = userGroupService.queryUserGroups(website, gname,
-				userGroupType, propVal, fromModifiedTime, toModifiedTime, lit);
+				userGroupType, fromModifiedTime, toModifiedTime, lit);
 		return this.write(result);
 	}
 
@@ -147,10 +141,7 @@ public class UserGroupManageController extends BaseController {
 			UserGroup group = userGroupPropertyService.assembleUserGroup(
 					Website.valueOf(websiteid), gname, description, UserGroupType.valueOf(gtype),
 					dto);
-			// 如果是手动分组propVale=-1
-			if (group != null && GROUPTYPE_MANUAL.equals(gtype)) {
-				group.setPropVal(-1);
-			}
+			group.setPropVal(null);
 			try {
 				long gid = this.userGroupPropertyService.createGroup(group);
 				if (gid > 0) {
@@ -231,8 +222,7 @@ public class UserGroupManageController extends BaseController {
 					PropertyExpressionDTO.class);
 			String jsonPexp = this.userGroupPropertyService.toJson(dto);
 			group.setPropExp(jsonPexp);
-			// TODO
-			group.setPropVal(-1);
+			group.setPropVal(null);
 			userGroupPropertyService.updateUserGroup(group);
 			result.put("success", true);
 		}
