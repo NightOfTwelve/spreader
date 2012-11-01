@@ -113,7 +113,7 @@ public interface IUserGroupInfoService {
 	String refreshGroupUsers(Long gid);
 
 	/**
-	 * 查询所有的UserGroup
+	 * 查询所有的UserGroup，按gtype降序排列
 	 * 
 	 * @return
 	 */
