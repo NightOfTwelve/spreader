@@ -25,7 +25,6 @@ import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
-import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.model.ReplyDto;
 import com.nali.spreader.model.RobotContent;
 import com.nali.spreader.service.IContentService;
@@ -74,16 +73,19 @@ public class ReplyAndForward extends UserGroupExtendedBeanImpl implements Regula
 	@Override
 	public String work() {
 		Long gid = getFromUserGroup();
-		Iterator<GrouppedUser> iter = userGroupFacadeService.queryAllGrouppedUser(gid);
-		Long[] uids = globalUserService.findPostContentUids(config.getvType(), config.getFans(), config.getArticles());
+		Iterator<Long> iter = userGroupFacadeService.queryAllGrouppedUser(gid);
+		Long[] uids = globalUserService.findPostContentUids(config.getvType(), config.getFans(),
+				config.getArticles());
 		while (iter.hasNext()) {
-			GrouppedUser gu = iter.next();
-			Long uid = gu.getUid();
+			Long uid = iter.next();
 			Long[] sendKeywords = keywordService.createSendKeywordList(allKeywords, uid);
-			List<Long> allContent = contentService.findContentIdByPostContentDto(config.getPostWeiboContentDto(sendKeywords, uids));
+			List<Long> allContent = contentService.findContentIdByPostContentDto(config
+					.getPostWeiboContentDto(sendKeywords, uids));
 			// 排除掉的内容
-			List<Long> existsReplyContent = robotContentService.findRelatedContentId(uid, RobotContent.TYPE_REPLY);
-			List<Long> existsForwardContent = robotContentService.findRelatedContentId(uid, RobotContent.TYPE_FORWARD);
+			List<Long> existsReplyContent = robotContentService.findRelatedContentId(uid,
+					RobotContent.TYPE_REPLY);
+			List<Long> existsForwardContent = robotContentService.findRelatedContentId(uid,
+					RobotContent.TYPE_FORWARD);
 			List<Long> existsContent = new ArrayList<Long>();
 			if (!CollectionUtils.isEmpty(existsReplyContent)) {
 				existsContent.addAll(existsReplyContent);
@@ -92,9 +94,11 @@ public class ReplyAndForward extends UserGroupExtendedBeanImpl implements Regula
 				existsContent.addAll(existsForwardContent);
 			}
 			// 随机取出发送的微博内容
-			List<Long> sendContent = RandomUtil.randomItems(allContent, existsContent, postRandom.get());
+			List<Long> sendContent = RandomUtil.randomItemsReadOnly(allContent, new HashSet<Long>(
+					existsContent), postRandom.get());
 			if (!CollectionUtils.isEmpty(sendContent)) {
-				WeightRandomer<Integer> wr = getReplyAndForwardWeight(replyRandomer.get(), forwardRandomer.get());
+				WeightRandomer<Integer> wr = getReplyAndForwardWeight(replyRandomer.get(),
+						forwardRandomer.get());
 				Set<Long> contentUidSet = new HashSet<Long>();
 				Date postTime = new Date();
 				for (Long contentId : sendContent) {
@@ -142,7 +146,7 @@ public class ReplyAndForward extends UserGroupExtendedBeanImpl implements Regula
 		if (postInterval == null) {
 			postInterval = PostWeiboConfig.DEFAULT_INTERVAL;
 		}
-		if(config.getWords()==null || config.getWords().size()==0) {
+		if (config.getWords() == null || config.getWords().size() == 0) {
 			replyWords = Words.defaultReplyWords;
 		} else {
 			replyWords = new AvgRandomer<String>(config.getWords());

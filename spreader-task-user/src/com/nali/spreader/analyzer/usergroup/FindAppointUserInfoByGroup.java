@@ -17,7 +17,6 @@ import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
-import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.service.IUserGroupFacadeService;
 import com.nali.spreader.service.IUserService;
 
@@ -52,19 +51,16 @@ public class FindAppointUserInfoByGroup extends UserGroupExtendedBeanImpl implem
 			logger.error("爬去指定分组用户信息失败,分组ID为null");
 			throw new IllegalArgumentException();
 		} else {
-			Iterator<GrouppedUser> iter = this.userGroupService.queryAllGrouppedUser(gid);
+			Iterator<Long> iter = this.userGroupService.queryAllGrouppedUser(gid);
 			while (iter.hasNext()) {
-				GrouppedUser gu = iter.next();
-				if (gu != null) {
-					Long uid = gu.getUid();
-					User user = this.userService.findUserById(uid);
-					Date updateDate = user.getUpdateTime();
-					if (updateDate == null) {
+				Long uid = iter.next();
+				User user = this.userService.findUserById(uid);
+				Date updateDate = user.getUpdateTime();
+				if (updateDate == null) {
+					fetchWeiboUserMainPage.send(uid);
+				} else {
+					if (updateDate.before(lastUpdateTime)) {
 						fetchWeiboUserMainPage.send(uid);
-					} else {
-						if (updateDate.before(lastUpdateTime)) {
-							fetchWeiboUserMainPage.send(uid);
-						}
 					}
 				}
 			}

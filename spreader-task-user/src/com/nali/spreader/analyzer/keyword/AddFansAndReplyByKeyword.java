@@ -24,7 +24,6 @@ import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
-import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.model.ReplyDto;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IGlobalUserService;
@@ -71,7 +70,7 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	@Override
 	public String work() {
 		Long gid = getFromUserGroup();
-		Iterator<GrouppedUser> iter = userGroupFacadeService.queryAllGrouppedUser(gid);
+		Iterator<Long> iter = userGroupFacadeService.queryAllGrouppedUser(gid);
 		List<Long> robotIdList = getUidsByIterator(iter);
 		if (!CollectionUtils.isEmpty(keywords)) {
 			this.execue(keywords, robotIdList);
@@ -275,11 +274,10 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	 * @param iter
 	 * @return
 	 */
-	private List<Long> getUidsByIterator(Iterator<GrouppedUser> iter) {
+	private List<Long> getUidsByIterator(Iterator<Long> iter) {
 		List<Long> list = new ArrayList<Long>();
 		while (iter.hasNext()) {
-			GrouppedUser gu = iter.next();
-			list.add(gu.getUid());
+			list.add(iter.next());
 		}
 		List<Long> resutl = this.globalUserService.getAttenLimitUids(list, attentionLimit);
 		return resutl;
