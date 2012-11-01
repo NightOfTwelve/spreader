@@ -102,8 +102,7 @@ public interface IUserGroupInfoService {
 	 * @return
 	 */
 	PageResult<UserGroup> queryUserGroups(Website website, String gname,
-			UserGroupType userGroupType, int propVal, Date fromModifiedTime, Date toModifiedTime,
-			Limit limit);
+			UserGroupType userGroupType, Date fromModifiedTime, Date toModifiedTime, Limit limit);
 
 	/**
 	 * 刷新用户分组中的用户

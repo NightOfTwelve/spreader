@@ -58,14 +58,14 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 
 	@Override
 	public PageResult<UserGroup> queryUserGroups(Website website, String gname,
-			UserGroupType userGroupType, int propVal, Date fromModifiedTime, Date toModifiedTime,
+			UserGroupType userGroupType, Date fromModifiedTime, Date toModifiedTime,
 			Limit limit) {
-		int count = this.userGroupDao.getUserGroupCount(website, gname, userGroupType, propVal,
+		int count = this.userGroupDao.getUserGroupCount(website, gname, userGroupType,
 				fromModifiedTime, toModifiedTime);
 		List<UserGroup> userGroupList = Collections.emptyList();
 		if (count > 0) {
 			userGroupList = this.userGroupDao.queryUserGroups(website, gname, userGroupType,
-					propVal, fromModifiedTime, toModifiedTime, limit);
+					 fromModifiedTime, toModifiedTime, limit);
 		}
 		return new PageResult<UserGroup>(userGroupList, limit, count);
 	}
