@@ -323,7 +323,6 @@ Ext.onReady(function() {
 //						}
 						store.setBaseParam('gtype', gtype);
 						store.setBaseParam('websiteid', websiteid);
-						store.setBaseParam('propVal', -1);
 						store.setBaseParam('gname', groupName);
 						store.setBaseParam('fromModifiedTime', tstime != null
 										&& tstime != '' ? new Date(tstime)
