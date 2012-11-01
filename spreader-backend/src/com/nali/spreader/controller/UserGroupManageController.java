@@ -182,18 +182,22 @@ public class UserGroupManageController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/genpropexp")
-	public String generatePropExp(Long gid) throws AssembleException {
+	public String generatePropExp(Long gid) {
 		ConfigDefinition def = null;
 		ConfigableInfo configableInfo = null;
 		Object data = null;
 		if (gid != null && gid > 0) {
 			UserGroup usergroup = this.userGroupService.queryUserGroup(gid);
 			if (usergroup != null) {
-				String propexp = usergroup.getPropExp();
-				data = userGroupPropertyService.toExpression(propexp);
-				def = DescriptionResolve.get(PropertyExpressionDTO.class);
-				configableInfo = DescriptionResolve.getConfigableInfo(PropertyExpressionDTO.class,
-						usergroup.getGname());
+				try {
+					String propexp = usergroup.getPropExp();
+					data = userGroupPropertyService.toExpression(propexp);
+					def = DescriptionResolve.get(PropertyExpressionDTO.class);
+					configableInfo = DescriptionResolve.getConfigableInfo(
+							PropertyExpressionDTO.class, usergroup.getGname());
+				} catch (AssembleException e) {
+					logger.error("Can't parse string to PropertyExpressionDTO , gid=" + gid, e);
+				}
 			}
 		}
 		return this.write(new UserGroupExpTreeDto(configableInfo, def, data));
