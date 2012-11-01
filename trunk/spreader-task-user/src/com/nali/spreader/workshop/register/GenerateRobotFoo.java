@@ -55,7 +55,7 @@ public class GenerateRobotFoo implements PassiveAnalyzer<Long>, Configable<Named
 		if(gname==null) {
 			throw new IllegalArgumentException("missing group name");
 		}
-		PageResult<UserGroup> userGroups = userGroupService.queryUserGroups(Website.weibo, gname, UserGroupType.dynamic, 0, null, null, Limit.newInstanceForLimit(0, 1));
+		PageResult<UserGroup> userGroups = userGroupService.queryUserGroups(Website.weibo, gname, UserGroupType.dynamic, null, null, Limit.newInstanceForLimit(0, 1));
 		if(userGroups.getList().size()==0) {
 			throw new IllegalArgumentException("cannot find group:" + gname);
 		}
