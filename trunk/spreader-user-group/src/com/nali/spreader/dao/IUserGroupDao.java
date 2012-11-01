@@ -10,12 +10,12 @@ import com.nali.spreader.model.UserGroup;
 
 public interface IUserGroupDao {
 	List<UserGroup> queryUserGroups(Website website, String gname, UserGroupType userGroupType,
-			int propVal, Date fromModifiedTime, Date toModifiedTime, Limit limit);
-
-	int getUserGroupCount(Website website, String gname, UserGroupType userGroupType, int propVal,
-			Date fromModifiedTime, Date toModifiedTime);
+			 Date fromModifiedTime, Date toModifiedTime, Limit limit);
 
 	List<Long> queryUserGroupByLimit(Limit limit);
 
 	List<Long> queryAllUserGroup();
+
+	int getUserGroupCount(Website website, String gname, UserGroupType userGroupType,
+			Date fromModifiedTime, Date toModifiedTime);
 }

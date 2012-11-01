@@ -22,12 +22,13 @@ public class UserGroupDao implements IUserGroupDao {
 	@Autowired
 	private SqlMapClientTemplate sqlMap;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<UserGroup> queryUserGroups(Website website, String gname,
-			UserGroupType userGroupType, int propVal, Date fromModifiedTime, Date toModifiedTime,
+			UserGroupType userGroupType, Date fromModifiedTime, Date toModifiedTime,
 			Limit limit) {
 		Map<String, Object> parameterMap = CollectionUtils.newHashMap(7);
-		this.assembleParamterMap(parameterMap, website, gname, userGroupType, propVal,
+		this.assembleParamterMap(parameterMap, website, gname, userGroupType, 
 				fromModifiedTime, toModifiedTime);
 
 		if (limit != null) {
@@ -39,16 +40,16 @@ public class UserGroupDao implements IUserGroupDao {
 
 	@Override
 	public int getUserGroupCount(Website website, String gname, UserGroupType userGroupType,
-			int propVal, Date fromModifiedTime, Date toModifiedTime) {
+			 Date fromModifiedTime, Date toModifiedTime) {
 		Map<String, Object> parameterMap = CollectionUtils.newHashMap(6);
-		this.assembleParamterMap(parameterMap, website, gname, userGroupType, propVal,
+		this.assembleParamterMap(parameterMap, website, gname, userGroupType,
 				fromModifiedTime, toModifiedTime);
 		return (Integer) this.sqlMap.queryForObject(
 				"spreader_user_group.getUserGroupCountByCriteria", parameterMap);
 	}
 
 	private void assembleParamterMap(Map<String, Object> parameterMap, Website website,
-			String gname, UserGroupType userGroupType, int propVal, Date fromModifiedTime,
+			String gname, UserGroupType userGroupType, Date fromModifiedTime,
 			Date toModifiedTime) {
 		if (website != null) {
 			parameterMap.put("website", website.getId());
@@ -60,10 +61,6 @@ public class UserGroupDao implements IUserGroupDao {
 
 		if (userGroupType != null) {
 			parameterMap.put("gtype", userGroupType.getTypeVal());
-		}
-
-		if (propVal > 0) {
-			parameterMap.put("propVal", propVal);
 		}
 
 		if (fromModifiedTime != null) {
