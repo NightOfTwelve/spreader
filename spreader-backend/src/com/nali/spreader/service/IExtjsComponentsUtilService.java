@@ -7,8 +7,8 @@ import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.data.Category;
 import com.nali.spreader.data.User;
-import com.nali.spreader.data.UserGroup;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
+import com.nali.spreader.model.UserGroup;
 
 /**
  * Extjs相关控件的Service
