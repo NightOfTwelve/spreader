@@ -420,6 +420,86 @@
 			limit $limit.offset$,$limit.maxRows$
 		</isNotNull>
 	</select>
+	<select id="queryDynamicUsers" parameterClass="com.nali.spreader.group.exp.PropertyExpressionDTO" resultClass="java.lang.Long">
+		select id from spreader.tb_user u
+		<dynamic prepend="where">
+				<!-- 文章数 -->
+			<isNotNull prepend="and" property="articles.gte">
+	  			<![CDATA[ u.articles>= #articles.gte#]]>
+			</isNotNull>
+			<isNotNull prepend="and" property="articles.lte">
+	  			<![CDATA[ u.articles<= #articles.lte#]]>
+			</isNotNull>
+	
+			<!-- 关注数 -->
+			<isNotNull prepend="and" property="attentions.gte">
+	  			<![CDATA[ u.attentions>= #attentions.gte#]]>
+			</isNotNull>
+			<isNotNull prepend="and" property="attentions.lte">
+	  			<![CDATA[ u.attentions<= #attentions.lte#]]>
+			</isNotNull>
+	
+			<!-- 城市 -->
+			<isNotEmpty prepend="and" property="city">
+				u.city = #city#
+			</isNotEmpty>
+	
+			<!-- 粉丝数 -->
+			<isNotNull prepend="and" property="fans.gte">
+	  		  <![CDATA[ u.fans>= #fans.gte#]]>
+			</isNotNull>
+			<isNotNull prepend="and" property="fans.lte">
+	  		  <![CDATA[ u.fans<= #fans.lte#]]>
+			</isNotNull>
+	
+			<!-- 性别 -->
+			<isNotNull prepend="and" property="gender">
+				u.gender = #gender#
+			</isNotNull>
+	
+			<!-- 是否机器人 -->
+			<isNotNull prepend="and" property="isRobot">
+				u.is_robot = #isRobot#
+			</isNotNull>
+	
+			<!-- 国家 -->
+			<isNotEmpty prepend="and" property="nationality">
+				u.nationality =
+				#nationality#
+			</isNotEmpty>
+	
+			<!-- 昵称 -->
+			<isNotEmpty prepend="and" property="nickName">
+				u.nick_name = #nickName#
+			</isNotEmpty>
+	
+			<!-- 省份 -->
+			<isNotEmpty prepend="and" property="province">
+				u.province = #province#
+			</isNotEmpty>
+	
+			<!-- 机器人粉丝数 -->
+			<isNotNull prepend="and" property="robotFans.gte">
+	  		  <![CDATA[ u.robot_fans>= #robotFans.gte#]]>
+			</isNotNull>
+			<isNotNull prepend="and" property="robotFans.lte">
+	  		  <![CDATA[ u.robot_fans<= #robotFans.lte#]]>
+			</isNotNull>
+	
+			<!-- 是否V认证 -->
+			<isNotNull prepend="and" property="vType">
+				u.v_type = #vType#
+			</isNotNull>
+	
+			<!-- 目标网站 -->
+			<isNotNull prepend="and" property="websiteId">
+				u.website_id = #websiteId#
+			</isNotNull>
+		</dynamic>
+		<isNotNull property="lit">
+			limit $lit.offset$,$lit.maxRows$
+		</isNotNull>
+	</select>
 	<select id="queryPostContentUids" parameterClass="com.nali.spreader.dto.FilterUserDto"
 		resultClass="java.lang.Long">
 		select id from spreader.tb_user
