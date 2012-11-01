@@ -9,14 +9,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.nali.spreader.data.CtrlPolicy;
-import com.nali.spreader.group.service.ICtrlPolicyService;
 import com.nali.spreader.util.time.TimeUnit;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:application-context-test.xml" })
 public class CtrlPolicyTest {
 	@Autowired
-	private ICtrlPolicyService ctrlPolicyService;
+//	private ICtrlPolicyService ctrlPolicyService;
 
 	@Test
 	public void testCreateCtrlPolicy(){
@@ -29,6 +28,6 @@ public class CtrlPolicyTest {
 		ctrlPolicy.setTimeunit(TimeUnit.HOUR.getVal());
 		ctrlPolicy.setUnitCount(3);
 		ctrlPolicy.setCount(5);
-		this.ctrlPolicyService.createCtrlPolicy(ctrlPolicy);
+//		this.ctrlPolicyService.createCtrlPolicy(ctrlPolicy);
 	}
 }

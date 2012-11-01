@@ -220,85 +220,87 @@ Ext.onReady(function() {
 											width : 150
 										}]
 							}]
-				}, {
-					xtype : 'fieldset',
-					title : '属性筛选',
-					autoHeight : true,
-					animCollapse : true,
-					layout : 'form',
-					collapsed : false,
-					collapsible : true,
-					items : [{
-								xtype : 'checkboxgroup',
-								fieldLabel : '条件',
-								name : 'propValBox',
-								items : [{
-											boxLabel : '分类',
-											value : 1,
-											name : 'category'
-										}, {
-											boxLabel : '评分',
-											value : 2,
-											name : 'score'
-										}, {
-											boxLabel : '粉丝数',
-											value : 4,
-											name : 'fans'
-										}, {
-											boxLabel : '关注数',
-											value : 8,
-											name : 'attentions'
-										}, {
-											boxLabel : '文章数',
-											value : 16,
-											name : 'articles'
-										}, {
-											boxLabel : '性别',
-											value : 32,
-											name : 'gender'
-										}, {
-											boxLabel : '机器人粉丝数',
-											value : 64,
-											name : 'robotFans'
-										}, {
-											boxLabel : '星座',
-											value : 128,
-											name : 'constellation'
-										}, {
-											boxLabel : '出生日期',
-											value : 256,
-											name : 'birthDay'
-										}, {
-											boxLabel : '是否机器人',
-											value : 512,
-											name : 'isRobot'
-										}, {
-											boxLabel : '是否认证',
-											value : 1024,
-											name : 'vType'
-										}, {
-											boxLabel : '昵称',
-											value : 2048,
-											name : 'nickName'
-										}, {
-											boxLabel : '国家',
-											value : 4096,
-											name : 'nationality'
-										}, {
-											boxLabel : '省份',
-											value : 8192,
-											name : 'province'
-										}, {
-											boxLabel : '城市',
-											value : 16384,
-											name : 'city'
-										}, {
-											boxLabel : '个人简介',
-											value : 32768,
-											name : 'introduction'
-										}]
-							}]
-				}],
+				}
+//				, {
+//					xtype : 'fieldset',
+//					title : '属性筛选',
+//					autoHeight : true,
+//					animCollapse : true,
+//					layout : 'form',
+//					collapsed : false,
+//					collapsible : true,
+//					items : [{
+//								xtype : 'checkboxgroup',
+//								fieldLabel : '条件',
+//								name : 'propValBox',
+//								items : [{
+//											boxLabel : '分类',
+//											value : 1,
+//											name : 'category'
+//										}, {
+//											boxLabel : '评分',
+//											value : 2,
+//											name : 'score'
+//										}, {
+//											boxLabel : '粉丝数',
+//											value : 4,
+//											name : 'fans'
+//										}, {
+//											boxLabel : '关注数',
+//											value : 8,
+//											name : 'attentions'
+//										}, {
+//											boxLabel : '文章数',
+//											value : 16,
+//											name : 'articles'
+//										}, {
+//											boxLabel : '性别',
+//											value : 32,
+//											name : 'gender'
+//										}, {
+//											boxLabel : '机器人粉丝数',
+//											value : 64,
+//											name : 'robotFans'
+//										}, {
+//											boxLabel : '星座',
+//											value : 128,
+//											name : 'constellation'
+//										}, {
+//											boxLabel : '出生日期',
+//											value : 256,
+//											name : 'birthDay'
+//										}, {
+//											boxLabel : '是否机器人',
+//											value : 512,
+//											name : 'isRobot'
+//										}, {
+//											boxLabel : '是否认证',
+//											value : 1024,
+//											name : 'vType'
+//										}, {
+//											boxLabel : '昵称',
+//											value : 2048,
+//											name : 'nickName'
+//										}, {
+//											boxLabel : '国家',
+//											value : 4096,
+//											name : 'nationality'
+//										}, {
+//											boxLabel : '省份',
+//											value : 8192,
+//											name : 'province'
+//										}, {
+//											boxLabel : '城市',
+//											value : 16384,
+//											name : 'city'
+//										}, {
+//											boxLabel : '个人简介',
+//											value : 32768,
+//											name : 'introduction'
+//										}]
+//							}]
+//				}
+				],
 				buttonAlign : "center",
 				buttons : [{
 					text : "查询",
@@ -311,17 +313,17 @@ Ext.onReady(function() {
 						var groupName = tform.findField('groupName').getValue();
 						var gtype = tform.findField('gtype').getValue();
 						var websiteid = tform.findField('websiteId').getValue();
-						var propField = tform.findField('propValBox')
-								.getValue();
-						var propValue = 0;
-						if (propField.length > 0) {
-							for (var i = 0; i < propField.length; i++) {
-								propValue += propField[i].value;
-							}
-						}
+//						var propField = tform.findField('propValBox')
+//								.getValue();
+//						var propValue = 0;
+//						if (propField.length > 0) {
+//							for (var i = 0; i < propField.length; i++) {
+//								propValue += propField[i].value;
+//							}
+//						}
 						store.setBaseParam('gtype', gtype);
 						store.setBaseParam('websiteid', websiteid);
-						store.setBaseParam('propVal', propValue);
+						store.setBaseParam('propVal', -1);
 						store.setBaseParam('gname', groupName);
 						store.setBaseParam('fromModifiedTime', tstime != null
 										&& tstime != '' ? new Date(tstime)
@@ -408,6 +410,13 @@ Ext.onReady(function() {
 				header : '添加成员',
 				renderer : function showbutton() {
 					var returnStr = "<input type='button' value='添加'/>";
+					return returnStr;
+				},
+				width : 100
+			}, {
+				header : '刷新分组成员',
+				renderer : function showbutton() {
+					var returnStr = "<input type='button' value='刷新'/>";
 					return returnStr;
 				},
 				width : 100
@@ -518,6 +527,34 @@ Ext.onReady(function() {
 						});
 					}
 				}, '-', {
+					text : '刷新分组成员',// TODO
+					iconCls : 'page_refreshIcon',
+					handler : function() {
+						var gids = [];
+						var rows = userGroupGrid.getSelectionModel()
+								.getSelections();
+						if (rows.length > 0) {
+							for (var i = 0; i < rows.length; i++) {
+								var gid = rows[i].data.gid;
+								gids.push(gid);
+							}
+						} else {
+							Ext.Msg.alert("提示", "请至少选择一个分组");
+							return;
+						}
+						Ext.Msg.confirm('警告',
+								'此操作会刷新选中分组的所有成员，可能执行时间较长，是否继续操作？',
+								function op(btn) {
+									if (btn == 'yes') {
+										refreshSelectUsers(gids);
+										Ext.Msg
+												.alert("提示",
+														"任务已发送后台，请稍后查看执行结果");
+									}
+									return;
+								});
+					}
+				}, '-', {
 					text : '刷新',
 					iconCls : 'arrow_refreshIcon',
 					handler : function() {
@@ -546,6 +583,18 @@ Ext.onReady(function() {
 				selectUserStore.setBaseParam('gid', GUSERGROUPID);
 				deleteUserStore.load();
 				selectUserStore.load();
+			}
+			if (buttons == '刷新') {
+				// TODO
+				Ext.Msg.confirm('警告', '此操作会刷新该分组的所有成员，可能执行时间较长，是否继续操作？',
+						function op(btn) {
+							if (btn == 'yes') {
+								var groupId = data.gid;
+								refreshUsers(groupId);
+								Ext.Msg.alert("提示", "任务已发送后台，请稍后查看执行结果");
+							}
+							return;
+						});
 			}
 		}
 	});
@@ -867,25 +916,25 @@ Ext.onReady(function() {
 	// 定义表格数据源
 	var selectUserStore = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
-							url : '../usergroup/selectuserlist'
+							url : '../usergroup/selectuserlist?_time='+new Date().getTime()
 						}),
 				reader : new Ext.data.JsonReader({
 							totalProperty : 'totalCount',
 							root : 'list'
 						}, [{
-									name : 'user.id'
+									name : 'id'
 								}, {
-									name : 'user.websiteId'
+									name : 'websiteId'
 								}, {
-									name : 'user.isRobot'
+									name : 'isRobot'
 								}, {
 									name : 'manual'
 								}, {
-									name : 'user.nickName'
+									name : 'nickName'
 								}, {
-									name : 'user.gender'
+									name : 'gender'
 								}, {
-									name : 'user.realName'
+									name : 'realName'
 								}]),
 				autoLoad : {
 					params : {
@@ -901,25 +950,25 @@ Ext.onReady(function() {
 	var selectcm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(),
 			selectsm, {
 				header : '编号',
-				dataIndex : 'user.id',
+				dataIndex : 'id',
 				width : 80
 			}, {
 				header : '昵称',
-				dataIndex : 'user.nickName',
+				dataIndex : 'nickName',
 				width : 100
 			}, {
 				header : '性别',
-				dataIndex : 'user.gender',
+				dataIndex : 'gender',
 				renderer : renderGender,
 				width : 80
 			}, {
 				header : '网站',
-				dataIndex : 'user.websiteId',
+				dataIndex : 'websiteId',
 				renderer : renderWebsiteType,
 				width : 100
 			}, {
 				header : '机器人',
-				dataIndex : 'user.isRobot',
+				dataIndex : 'isRobot',
 				renderer : rendTrueFalse,
 				width : 80
 			}, {
@@ -929,7 +978,7 @@ Ext.onReady(function() {
 				width : 80
 			}, {
 				header : '真名',
-				dataIndex : 'user.realName',
+				dataIndex : 'realName',
 				width : 80
 			}]);
 	// 页数
@@ -1050,7 +1099,7 @@ Ext.onReady(function() {
 					listeners : {
 						specialkey : function(field, e) {
 							if (e.getKey() == Ext.EventObject.ENTER) {
-								// queryRoleItem();
+								// queryRoleItem(); TODO
 							}
 						}
 					},
@@ -1363,6 +1412,48 @@ Ext.onReady(function() {
 				return dname;
 			}
 		}
+	}
+	/**
+	 * 刷新某个分组的成员
+	 */
+	function refreshUsers(gid) {
+		Ext.Ajax.request({
+					url : '../usergroup/refreshuser?_time'
+							+ new Date().getTime(),
+					params : {
+						gid : gid
+					},
+					success : function(response) {
+						var result = Ext.decode(response.responseText);
+						Ext.Msg.alert("提示", result);
+						return;
+					},
+					failure : function() {
+						Ext.Msg.alert("提示", "后台异常");
+						return;
+					}
+				});
+	}
+	/**
+	 * 刷新指定分组的成员
+	 */
+	function refreshSelectUsers(gids) {
+		Ext.Ajax.request({
+					url : '../usergroup/refreshselectusers?_time'
+							+ new Date().getTime(),
+					params : {
+						gids : gids
+					},
+					success : function(response) {
+						var result = Ext.decode(response.responseText);
+						Ext.Msg.alert("提示", result);
+						return;
+					},
+					failure : function() {
+						Ext.Msg.alert("提示", "后台异常");
+						return;
+					}
+				});
 	}
 	var viewport = new Ext.Viewport({
 				layout : 'border',

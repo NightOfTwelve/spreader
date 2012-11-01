@@ -2,6 +2,7 @@ package com.nali.spreader.controller;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonParseException;
@@ -18,20 +19,19 @@ import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.controller.basectrl.BaseController;
-import com.nali.spreader.data.UserGroup;
-import com.nali.spreader.dto.GroupUserDto;
+import com.nali.spreader.data.User;
 import com.nali.spreader.factory.config.desc.ConfigDefinition;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.factory.config.desc.DescriptionResolve;
-import com.nali.spreader.group.assembler.UserGroupAssembler;
 import com.nali.spreader.group.exception.AssembleException;
 import com.nali.spreader.group.exception.UserGroupException;
-import com.nali.spreader.group.exp.PropertyExpParser;
-import com.nali.spreader.group.exp.PropertyExpression;
 import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
-import com.nali.spreader.group.service.IUserGroupService;
+import com.nali.spreader.group.service.IUserGroupInfoService;
+import com.nali.spreader.group.service.IUserGroupPropertyService;
 import com.nali.spreader.model.GrouppedUser;
+import com.nali.spreader.model.UserGroup;
+import com.nali.spreader.service.IGlobalUserService;
 
 /**
  * 用户分组管理controller
@@ -45,11 +45,11 @@ public class UserGroupManageController extends BaseController {
 	private static final MessageLogger logger = LoggerFactory
 			.getLogger(UserGroupManageController.class);
 	@Autowired
-	private IUserGroupService userGroupService;
+	private IUserGroupInfoService userGroupService;
 	@Autowired
-	private UserGroupAssembler userGroupAssembler;
+	private IUserGroupPropertyService userGroupPropertyService;
 	@Autowired
-	private PropertyExpParser expParser;
+	private IGlobalUserService globalUserService;
 	// 手动分组类型
 	private static final Integer GROUPTYPE_MANUAL = 2;
 
@@ -60,6 +60,37 @@ public class UserGroupManageController extends BaseController {
 	 */
 	public String init() {
 		return "/show/main/UserGroupManageShow";
+	}
+
+	/**
+	 * 刷新指定分组的用户
+	 * 
+	 * @param gid
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/refreshuser")
+	public String refreshUser(Long gid) {
+		String message = this.userGroupService.refreshGroupUsers(gid);
+		return this.write(message);
+	}
+
+	/**
+	 * 刷新选中的分组用户
+	 * 
+	 * @param gids
+	 * @return
+	 */
+
+	@ResponseBody
+	@RequestMapping(value = "/refreshselectusers")
+	public String refreshSelectUser(Long... gids) {
+		if (gids != null) {
+			for (Long gid : gids) {
+				this.userGroupService.refreshGroupUsers(gid);
+			}
+		}
+		return this.write("已执行");
 	}
 
 	/**
@@ -113,14 +144,15 @@ public class UserGroupManageController extends BaseController {
 		result.put("gid", null);
 		if (gtype != null && websiteid != null) {
 			PropertyExpressionDTO dto = new PropertyExpressionDTO();
-			UserGroup group = userGroupAssembler.assembleUserGroup(Website.valueOf(websiteid),
-					gname, description, UserGroupType.valueOf(gtype), dto);
+			UserGroup group = userGroupPropertyService.assembleUserGroup(
+					Website.valueOf(websiteid), gname, description, UserGroupType.valueOf(gtype),
+					dto);
 			// 如果是手动分组propVale=-1
 			if (group != null && GROUPTYPE_MANUAL.equals(gtype)) {
 				group.setPropVal(-1);
 			}
 			try {
-				long gid = this.userGroupService.createGroup(group);
+				long gid = this.userGroupPropertyService.createGroup(group);
 				if (gid > 0) {
 					result.put("success", true);
 					result.put("gid", gid);
@@ -145,7 +177,7 @@ public class UserGroupManageController extends BaseController {
 	@RequestMapping(value = "/checkname")
 	public String checkGroupName(String gname) {
 		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
-		Boolean flg = userGroupService.checkUserGroupUniqueByName(gname);
+		Boolean flg = userGroupPropertyService.checkUserGroupUniqueByName(gname);
 		result.put("success", flg);
 		return this.write(result);
 	}
@@ -167,8 +199,7 @@ public class UserGroupManageController extends BaseController {
 			UserGroup usergroup = this.userGroupService.queryUserGroup(gid);
 			if (usergroup != null) {
 				String propexp = usergroup.getPropExp();
-				PropertyExpression pexp = this.userGroupAssembler.toExpression(propexp);
-				data = new PropertyExpressionDTO(pexp);
+				data = userGroupPropertyService.toExpression(propexp);
 				def = DescriptionResolve.get(PropertyExpressionDTO.class);
 				configableInfo = DescriptionResolve.getConfigableInfo(PropertyExpressionDTO.class,
 						usergroup.getGname());
@@ -198,12 +229,11 @@ public class UserGroupManageController extends BaseController {
 			UserGroup group = userGroupService.queryUserGroup(gid);
 			PropertyExpressionDTO dto = this.getObjectMapper().readValue(propexp,
 					PropertyExpressionDTO.class);
-			PropertyExpression pexp = new PropertyExpression(dto);
-			String jsonPexp = this.userGroupAssembler.toJson(pexp);
+			String jsonPexp = this.userGroupPropertyService.toJson(dto);
 			group.setPropExp(jsonPexp);
-			int propVal = expParser.parsePropVal(dto);
-			group.setPropVal(propVal);
-			userGroupService.updateUserGroup(group);
+			// TODO
+			group.setPropVal(-1);
+			userGroupPropertyService.updateUserGroup(group);
 			result.put("success", true);
 		}
 		return this.write(result);
@@ -220,11 +250,12 @@ public class UserGroupManageController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/selectuserlist")
 	public String queryGrouppedUserList(Long gid, Integer start, Integer limit) {
-		PageResult<GroupUserDto> result = null;
+		PageResult<User> result = null;
 		if (gid != null && gid > 0) {
 			Limit lit = this.initLimit(start, limit);
-			PageResult<GrouppedUser> gu = this.userGroupService.queryGrouppedUsers(gid, lit);
-			result = this.userGroupService.queryGroupUserDtoData(gu, lit);
+			PageResult<Long> uidPage = this.userGroupService.queryGrouppedUsers(gid, lit);
+			List<User> uList = this.globalUserService.getUserMapByUids(uidPage.getList());
+			result = new PageResult<User>(uList, lit, uidPage.getTotalCount());
 		}
 		return this.write(result);
 	}
@@ -241,11 +272,11 @@ public class UserGroupManageController extends BaseController {
 	@RequestMapping(value = "/deleteuserlist")
 	public String queryDeleteUserList(Long gid, Integer start, Integer limit) {
 		PageResult<GrouppedUser> pr = null;
-
-		if (gid != null && gid > 0) {
-			Limit lit = this.initLimit(start, limit);
-			pr = this.userGroupService.queryExcludeUsers(gid, lit);
-		}
+		// TODO
+		// if (gid != null && gid > 0) {
+		// Limit lit = this.initLimit(start, limit);
+		// pr = this.userGroupService.queryExcludeUsers(gid, lit);
+		// }
 		return this.write(pr);
 	}
 
@@ -285,7 +316,7 @@ public class UserGroupManageController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/deleteuser")
-	public String deleteGrouppedUser(Long gid, long[] uids) {
+	public String deleteGrouppedUser(Long gid, Long[] uids) {
 		Map<String, Object> result = CollectionUtils.newHashMap(2);
 		result.put("success", false);
 		if (gid != null && uids.length > 0) {
@@ -315,18 +346,19 @@ public class UserGroupManageController extends BaseController {
 	public String rollbackDeleteUser(Long gid, long[] uids) {
 		Map<String, Object> result = CollectionUtils.newHashMap(2);
 		result.put("success", false);
-		if (gid != null && uids.length > 0) {
-			try {
-				this.userGroupService.rollbackExcludeUsers(gid, uids);
-				result.put("success", true);
-				result.put("message", "还原成功");
-			} catch (UserGroupException e) {
-				logger.debug("后台数据存储异常", e);
-				result.put("message", "后台数据存储异常,还原失败");
-			}
-		} else {
-			result.put("message", "gid为空不能还原用户,还原失败");
-		}
+		// TODO
+		// if (gid != null && uids.length > 0) {
+		// try {
+		// this.userGroupService.rollbackExcludeUsers(gid, uids);
+		// result.put("success", true);
+		// result.put("message", "还原成功");
+		// } catch (UserGroupException e) {
+		// logger.debug("后台数据存储异常", e);
+		// result.put("message", "后台数据存储异常,还原失败");
+		// }
+		// } else {
+		// result.put("message", "gid为空不能还原用户,还原失败");
+		// }
 		return this.write(result);
 	}
 

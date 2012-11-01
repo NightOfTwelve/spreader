@@ -12,8 +12,8 @@ import com.nali.log.impl.LoggerFactory;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.Category;
 import com.nali.spreader.data.User;
-import com.nali.spreader.data.UserGroup;
 import com.nali.spreader.model.StrategyGroup;
+import com.nali.spreader.model.UserGroup;
 import com.nali.spreader.service.IExtjsComponentsUtilService;
 import com.nali.spreader.service.IStrategyGroupService;
 
