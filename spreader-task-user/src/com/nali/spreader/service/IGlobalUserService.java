@@ -75,4 +75,14 @@ public interface IGlobalUserService {
 	 * @return
 	 */
 	List<Long> getAttenLimitUids(List<Long> uids, Long attenLimit);
+
+	/**
+	 * 将uid转换成Map<Long,User>
+	 * 
+	 * @param data
+	 * @return
+	 */
+	List<User> getUserMapByUids(List<Long> data);
+	
+	List<User> getUsersByIds(List<Long> uids);
 }

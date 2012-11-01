@@ -1,6 +1,7 @@
 package com.nali.spreader.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -357,5 +358,27 @@ public class GlobalUserService implements IGlobalUserService {
 			result = this.userDao.queryAttenLimitUids(param);
 		}
 		return result;
+	}
+
+	@Override
+	public List<User> getUserMapByUids(List<Long> data) {
+		List<User> result = new ArrayList<User>();
+		if (!CollectionUtils.isEmpty(data)) {
+			for (Long uid : data) {
+				User user = this.crudUserDao.selectByPrimaryKey(uid);
+				result.add(user);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public List<User> getUsersByIds(List<Long> uids) {
+		if (CollectionUtils.isEmpty(uids)) {
+			return Collections.emptyList();
+		}
+		UserExample example = new UserExample();
+		example.createCriteria().andIdIn(uids);
+		return this.crudUserDao.selectByExample(example);
 	}
 }
