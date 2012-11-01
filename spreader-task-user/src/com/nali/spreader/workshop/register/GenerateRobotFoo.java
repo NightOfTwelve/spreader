@@ -11,16 +11,16 @@ import com.nali.spreader.config.NamedGroupUserAddFansDto;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
-import com.nali.spreader.data.UserGroup;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.passive.PassiveAnalyzer;
 import com.nali.spreader.group.meta.UserGroupType;
-import com.nali.spreader.group.service.IUserGroupService;
+import com.nali.spreader.group.service.IUserGroupInfoService;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.model.PriorityData;
+import com.nali.spreader.model.UserGroup;
 import com.nali.spreader.service.IUserGroupFacadeService;
 import com.nali.spreader.util.random.NumberRandomer;
 
@@ -29,7 +29,7 @@ import com.nali.spreader.util.random.NumberRandomer;
 public class GenerateRobotFoo implements PassiveAnalyzer<Long>, Configable<NamedGroupUserAddFansDto> {
 	private static final int basePriority = ClientTask.BASE_PRIORITY_MAX+1;
 	@Autowired
-	private IUserGroupService userGroupService;
+	private IUserGroupInfoService userGroupService;
 	@Autowired
 	private IUserGroupFacadeService userGroupFacadeService;
 	@AutowireProductLine
