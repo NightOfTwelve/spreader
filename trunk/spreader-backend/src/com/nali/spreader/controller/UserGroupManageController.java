@@ -191,12 +191,16 @@ public class UserGroupManageController extends BaseController {
 			if (usergroup != null) {
 				try {
 					String propexp = usergroup.getPropExp();
-					data = userGroupPropertyService.toExpression(propexp);
+					try {
+						data = userGroupPropertyService.toExpression(propexp);
+					} catch (AssembleException e) {
+						logger.error("Can't parse string to PropertyExpressionDTO , gid=" + gid, e);
+					}
 					def = DescriptionResolve.get(PropertyExpressionDTO.class);
 					configableInfo = DescriptionResolve.getConfigableInfo(
 							PropertyExpressionDTO.class, usergroup.getGname());
-				} catch (AssembleException e) {
-					logger.error("Can't parse string to PropertyExpressionDTO , gid=" + gid, e);
+				} catch (Exception e) {
+					logger.error("show Property fail ,gid=" + gid, e);
 				}
 			}
 		}
