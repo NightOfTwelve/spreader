@@ -42,7 +42,7 @@ public class TestUsergroupInfoService {
 	}
 
 	public void testRefreshGroupUsers() {
-		String msg = groupInfoService.refreshGroupUsers(10002L);
+		 boolean msg = groupInfoService.refreshGroupUsers(10002L);
 		System.out.println(msg);
 		List<Long> list = groupInfoService.queryMemoryGrouppedUids(10002L, 20, null);
 		logger.debug(list);
@@ -102,7 +102,7 @@ public class TestUsergroupInfoService {
 	}
 
 	private Iterator<Long> getTestDataIterator(Long gid) {
-		String msg = groupInfoService.refreshGroupUsers(10002L);
+		boolean msg = groupInfoService.refreshGroupUsers(10002L);
 		System.err.println(msg);
 		Iterator<Long> iter = groupInfoService.queryGrouppedUserIterator(gid);
 		return iter;
