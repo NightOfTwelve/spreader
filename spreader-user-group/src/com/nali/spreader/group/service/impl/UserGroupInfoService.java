@@ -83,10 +83,10 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 		Assert.notNull(gid, " queryGrouppedUsers gid is null");
 		Assert.notNull(limit, " queryGrouppedUsers limit is null");
 		int count = grouppedUserDao.countGroupUidsSize(gid);
-		int startIndex = limit.offset;
 		int endIndex = Math.min(limit.offset + limit.maxRows, count);
-		startIndex = Math.min(startIndex, endIndex - 1);
-		List<Long> list = grouppedUserDao.queryAllGroupUidsByLimit(gid, startIndex, endIndex);
+		int startIndex = Math.min(limit.offset, endIndex - 1);
+		List<Long> list = grouppedUserDao.queryAllGroupUidsByLimit(gid, startIndex < 0 ? 0
+				: startIndex, endIndex);
 		return new PageResult<Long>(list, limit, count);
 	}
 
@@ -343,7 +343,7 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 		Assert.notNull(gid, " gid is null");
 		Assert.notNull(limit, " limit is null");
 		Set<Long> set = this.manualUserDao.queryManualUsers(gid);
-		if (set != null) {
+		if (!CollectionUtils.isEmpty(set)) {
 			List<Long> list = new ArrayList<Long>(set);
 			int count = list.size();
 			int endIndex = Math.min(limit.offset + limit.maxRows, count);

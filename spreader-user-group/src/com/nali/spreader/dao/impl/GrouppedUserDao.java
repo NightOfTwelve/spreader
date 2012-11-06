@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Repository;
 
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.dao.IGrouppedUserDao;
 
 @Repository
@@ -44,12 +45,15 @@ public class GrouppedUserDao implements IGrouppedUserDao {
 
 	@Override
 	public void addUserCollection(Long gid, Collection<Long> uids) {
-		if (uids != null) {
+		if (!CollectionUtils.isEmpty(uids)) {
 			Iterator<Long> it = uids.iterator();
 			while (it.hasNext()) {
 				Long uid = it.next();
 				addGroupUsers(gid, uid);
 			}
+		} else {
+			String tmpKey = getTmpGroupUsersKey(gid);
+			groupUsers.put(tmpKey, new ArrayList<Long>());
 		}
 	}
 
