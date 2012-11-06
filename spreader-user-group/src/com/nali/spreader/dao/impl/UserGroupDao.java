@@ -25,11 +25,10 @@ public class UserGroupDao implements IUserGroupDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<UserGroup> queryUserGroups(Website website, String gname,
-			UserGroupType userGroupType, Date fromModifiedTime, Date toModifiedTime,
-			Limit limit) {
+			UserGroupType userGroupType, Date fromModifiedTime, Date toModifiedTime, Limit limit) {
 		Map<String, Object> parameterMap = CollectionUtils.newHashMap(7);
-		this.assembleParamterMap(parameterMap, website, gname, userGroupType, 
-				fromModifiedTime, toModifiedTime);
+		this.assembleParamterMap(parameterMap, website, gname, userGroupType, fromModifiedTime,
+				toModifiedTime);
 
 		if (limit != null) {
 			parameterMap.put("limit", limit);
@@ -40,17 +39,16 @@ public class UserGroupDao implements IUserGroupDao {
 
 	@Override
 	public int getUserGroupCount(Website website, String gname, UserGroupType userGroupType,
-			 Date fromModifiedTime, Date toModifiedTime) {
+			Date fromModifiedTime, Date toModifiedTime) {
 		Map<String, Object> parameterMap = CollectionUtils.newHashMap(6);
-		this.assembleParamterMap(parameterMap, website, gname, userGroupType,
-				fromModifiedTime, toModifiedTime);
+		this.assembleParamterMap(parameterMap, website, gname, userGroupType, fromModifiedTime,
+				toModifiedTime);
 		return (Integer) this.sqlMap.queryForObject(
 				"spreader_user_group.getUserGroupCountByCriteria", parameterMap);
 	}
 
 	private void assembleParamterMap(Map<String, Object> parameterMap, Website website,
-			String gname, UserGroupType userGroupType, Date fromModifiedTime,
-			Date toModifiedTime) {
+			String gname, UserGroupType userGroupType, Date fromModifiedTime, Date toModifiedTime) {
 		if (website != null) {
 			parameterMap.put("website", website.getId());
 		}
@@ -82,5 +80,10 @@ public class UserGroupDao implements IUserGroupDao {
 	@Override
 	public List<Long> queryAllUserGroup() {
 		return this.sqlMap.queryForList("spreader_user_group.queryAllUserGroup");
+	}
+
+	@Override
+	public List<Map<String, Long>> selectUserGroupExcludeOrderGid() {
+		return this.sqlMap.queryForList("spreader_user_group.selectUserGroupExcludeOrderGid");
 	}
 }
