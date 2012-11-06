@@ -33,10 +33,26 @@ public class GroupUsersJob {
 	}
 
 	private void refreshAllGroupUsers() {
-		List<Long> allGroups = this.userGroupInfoService.queryAllUserGroup();
-		if (!CollectionUtils.isEmpty(allGroups)) {
-			for (Long gid : allGroups) {
+		List<Long> queryGroups = this.userGroupInfoService.queryAllUserGroup();
+		List<Long> dependGroups = this.userGroupInfoService.getAllGroupDependData(null);
+		refreshDependGroupUsers(dependGroups);
+		refreshQueryGroupUsers(queryGroups, dependGroups);
+	}
+
+	private void refreshDependGroupUsers(List<Long> depend) {
+		if (!CollectionUtils.isEmpty(depend)) {
+			for (Long gid : depend) {
 				userGroupInfoService.refreshGroupUsers(gid);
+			}
+		}
+	}
+
+	private void refreshQueryGroupUsers(List<Long> query, List<Long> depend) {
+		if (!CollectionUtils.isEmpty(query)) {
+			for (Long gid : query) {
+				if (!depend.contains(gid)) {
+					userGroupInfoService.refreshGroupUsers(gid);
+				}
 			}
 		}
 	}

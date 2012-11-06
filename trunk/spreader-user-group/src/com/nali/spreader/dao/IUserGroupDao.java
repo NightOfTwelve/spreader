@@ -2,6 +2,7 @@ package com.nali.spreader.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.nali.common.model.Limit;
 import com.nali.spreader.constants.Website;
@@ -18,4 +19,6 @@ public interface IUserGroupDao {
 
 	int getUserGroupCount(Website website, String gname, UserGroupType userGroupType,
 			Date fromModifiedTime, Date toModifiedTime);
+	
+	List<Map<String,Long>> selectUserGroupExcludeOrderGid();
 }

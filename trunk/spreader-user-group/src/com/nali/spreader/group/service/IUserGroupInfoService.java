@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
@@ -62,7 +64,7 @@ public interface IUserGroupInfoService {
 	 * @param gid
 	 * @param uids
 	 */
-	void removeManualUsers(long gid, long... uids);
+	void removeManualUsers(Long gid, Long... uids);
 
 	/**
 	 * 添加手动映射的用户
@@ -109,7 +111,15 @@ public interface IUserGroupInfoService {
 	 * 
 	 * @param gid
 	 */
-	String refreshGroupUsers(Long gid);
+	boolean refreshGroupUsers(Long gid);
+
+	/**
+	 * 按依赖顺序加载用户分组
+	 * 
+	 * @param gid
+	 * @return
+	 */
+	boolean refreshGroupUsersDependOrder(Long gid);
 
 	/**
 	 * 查询所有的UserGroup，按gtype降序排列
@@ -117,4 +127,45 @@ public interface IUserGroupInfoService {
 	 * @return
 	 */
 	List<Long> queryAllUserGroup();
+
+	/**
+	 * 检查排除分组的依赖顺序，异常则失败
+	 * 
+	 * @param gid
+	 * @param newExclude
+	 * @return
+	 */
+	boolean checkExcludeGroups(Long gid, Map<Long, List<Long>> newExclude);
+
+	/**
+	 * 更新排除的分组
+	 * 
+	 * @param gid
+	 * @param excludeGids
+	 */
+	void updateGroupExclude(Long gid, List<Long> excludeGids);
+
+	/**
+	 * 查询出所有排除分组的user
+	 * 
+	 * @param excludeGids
+	 * @return
+	 */
+	Set<Long> queryExcludeGroupUsers(List<Long> excludeGids);
+
+	/**
+	 * 获取所有的分组依赖顺序
+	 * 
+	 * @param newExclude
+	 * @return
+	 */
+	List<Long> getAllGroupDependData(Map<Long, List<Long>> newExclude);
+
+	/**
+	 * 查询所有手动分组的用户
+	 * 
+	 * @param gid
+	 * @return
+	 */
+	PageResult<Long> getManualUsersPageData(Long gid, Limit limit);
 }

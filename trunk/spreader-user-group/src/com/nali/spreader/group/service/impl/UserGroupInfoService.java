@@ -1,12 +1,15 @@
 package com.nali.spreader.group.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -23,16 +26,20 @@ import com.nali.common.serialization.json.JsonParseException;
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.dao.ICrudUserGroupDao;
+import com.nali.spreader.dao.ICrudUserGroupExcludeDao;
 import com.nali.spreader.dao.IDynamicUserDao;
 import com.nali.spreader.dao.IGrouppedUserDao;
 import com.nali.spreader.dao.IManualUserDao;
 import com.nali.spreader.dao.IUserGroupDao;
 import com.nali.spreader.group.exception.AssembleException;
 import com.nali.spreader.group.exp.PropertyExpressionDTO;
-import com.nali.spreader.group.meta.RefreshStatus;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.group.service.IUserGroupInfoService;
 import com.nali.spreader.model.UserGroup;
+import com.nali.spreader.model.UserGroupExclude;
+import com.nali.spreader.model.UserGroupExcludeExample;
+import com.nali.spreader.model.UserGroupExcludeExample.Criteria;
+import com.nali.spreader.util.DependencyAnalyzer;
 import com.nali.spreader.util.random.RandomUtil;
 
 @Service
@@ -50,6 +57,8 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 	private IManualUserDao manualUserDao;
 	@Autowired
 	private IDynamicUserDao dynamicUserDao;
+	@Autowired
+	private ICrudUserGroupExcludeDao crudUserGroupExcludeDao;
 
 	@Override
 	public UserGroup queryUserGroup(long gid) {
@@ -58,14 +67,13 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 
 	@Override
 	public PageResult<UserGroup> queryUserGroups(Website website, String gname,
-			UserGroupType userGroupType, Date fromModifiedTime, Date toModifiedTime,
-			Limit limit) {
+			UserGroupType userGroupType, Date fromModifiedTime, Date toModifiedTime, Limit limit) {
 		int count = this.userGroupDao.getUserGroupCount(website, gname, userGroupType,
 				fromModifiedTime, toModifiedTime);
 		List<UserGroup> userGroupList = Collections.emptyList();
 		if (count > 0) {
 			userGroupList = this.userGroupDao.queryUserGroups(website, gname, userGroupType,
-					 fromModifiedTime, toModifiedTime, limit);
+					fromModifiedTime, toModifiedTime, limit);
 		}
 		return new PageResult<UserGroup>(userGroupList, limit, count);
 	}
@@ -90,7 +98,7 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 	}
 
 	@Override
-	public void removeManualUsers(long gid, long... uids) {
+	public void removeManualUsers(Long gid, Long... uids) {
 		for (long uid : uids) {
 			manualUserDao.removeManualUser(gid, uid);
 		}
@@ -102,38 +110,35 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 	}
 
 	@Override
-	public String refreshGroupUsers(Long gid) {
+	public boolean refreshGroupUsers(Long gid) {
 		Assert.notNull(gid, "gid is null");
-		String message;
+		boolean result = false;
 		UserGroup group = this.crudUserGroupDao.selectByPrimaryKey(gid);
-		if (group == null) {
-			message = RefreshStatus.groupNotFound.getName() + ",gid=" + gid;
-		}
-		if (grouppedUserDao.tryLock(gid)) {
-			try {
-				Integer gType = group.getGtype();
-				Set<Long> manualUsers = manualUserDao.queryManualUsers(gid);
-				grouppedUserDao.addUserCollection(gid, manualUsers);
-				if (gType.intValue() == UserGroupType.dynamic.getTypeVal()) {
-					PropertyExpressionDTO dto = getPropertyExpressionDTO(gid);
-					batchSaveDynamicUser(dto, manualUsers, gid);
+		if (group != null) {
+			if (grouppedUserDao.tryLock(gid)) {
+				try {
+					Integer gType = group.getGtype();
+					Set<Long> manualUsers = manualUserDao.queryManualUsers(gid);
+					grouppedUserDao.addUserCollection(gid, manualUsers);
+					if (gType.intValue() == UserGroupType.dynamic.getTypeVal()) {
+						PropertyExpressionDTO dto = getPropertyExpressionDTO(gid);
+						List<Long> excludeGids = dto.getExcludeGids();
+						Set<Long> excludeUsers = this.queryExcludeGroupUsers(excludeGids);
+						manualUsers.addAll(excludeUsers);
+						batchSaveDynamicUser(dto, manualUsers, gid);
+					}
+					grouppedUserDao.replaceUserList(gid);
+					result = true;
+				} catch (Exception e) {
+					logger.error("refreshGroupUsers exception", e);
+				} catch (AssembleException e) {
+					logger.error("Can't parse string to property expression", e);
+				} finally {
+					grouppedUserDao.unLock(gid);
 				}
-				grouppedUserDao.replaceUserList(gid);
-				message = RefreshStatus.success.getName();
-
-			} catch (Exception e) {
-				message = RefreshStatus.exception.getName();
-				logger.error("refreshGroupUsers exception", e);
-			} catch (AssembleException e) {
-				message = RefreshStatus.exception.getName();
-				logger.error("Can't parse string to property expression", e);
-			} finally {
-				grouppedUserDao.unLock(gid);
 			}
-		} else {
-			message = RefreshStatus.refreshing.getName();
 		}
-		return message;
+		return result;
 	}
 
 	/**
@@ -224,5 +229,128 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 	@Override
 	public List<Long> queryAllUserGroup() {
 		return this.userGroupDao.queryAllUserGroup();
+	}
+
+	@Override
+	public boolean checkExcludeGroups(Long gid, Map<Long, List<Long>> newExclude) {
+		Map<Long, List<Long>> dependency = getGroupDependencyData(newExclude);
+		try {
+			DependencyAnalyzer<Long> da = new DependencyAnalyzer<Long>(dependency);
+			da.getDependsOrder(gid);
+			return true;
+		} catch (DependencyAnalyzer.AssemblingException e) {
+			logger.error(" group:" + gid + " dependency exception", e);
+			return false;
+		}
+	}
+
+	private Map<Long, List<Long>> getGroupDependencyData(Map<Long, List<Long>> newExclude) {
+		List<Map<String, Long>> data = this.userGroupDao.selectUserGroupExcludeOrderGid();
+		Map<Long, List<Long>> readyMap = new HashMap<Long, List<Long>>();
+		if (CollectionUtils.isEmpty(data)) {
+			return readyMap;
+		}
+		List<Long> list = new ArrayList<Long>();
+		for (int i = 0; i < data.size(); i++) {
+			Map<String, Long> map = data.get(i);
+			Long groupKeyId = map.get("gid");
+			Long itemKeyId = map.get("excludegid");
+			if (!readyMap.containsKey(groupKeyId)) {
+				list = new ArrayList<Long>();
+			}
+			list.add(itemKeyId);
+			readyMap.put(groupKeyId, list);
+		}
+		if (newExclude != null) {
+			if (!newExclude.isEmpty()) {
+				List<Long> gidList = new ArrayList<Long>(newExclude.keySet());
+				Long gid = gidList.get(0);
+				if (readyMap.containsKey(gid)) {
+					readyMap.get(gid).addAll(newExclude.get(gid));
+				} else {
+					readyMap.putAll(newExclude);
+				}
+			}
+		}
+		return readyMap;
+	}
+
+	public static void main(String[] args) {
+		Map<Long, Long> m = new HashMap<Long, Long>();
+		System.out.println(m.isEmpty());
+	}
+
+	@Override
+	public void updateGroupExclude(Long gid, List<Long> excludeGids) {
+		Assert.notNull(gid, "gid is null");
+		UserGroupExcludeExample exp = new UserGroupExcludeExample();
+		Criteria c = exp.createCriteria();
+		c.andGidEqualTo(gid);
+		crudUserGroupExcludeDao.deleteByExample(exp);
+		if (excludeGids != null) {
+			for (Long eGid : excludeGids) {
+				UserGroupExclude ue = new UserGroupExclude();
+				ue.setGid(gid);
+				ue.setExcludeGid(eGid);
+				crudUserGroupExcludeDao.insertSelective(ue);
+			}
+		}
+	}
+
+	@Override
+	public Set<Long> queryExcludeGroupUsers(List<Long> excludeGids) {
+		Set<Long> data = new HashSet<Long>();
+		if (excludeGids != null) {
+			for (Long excGid : excludeGids) {
+				data.addAll(this.manualUserDao.queryManualUsers(excGid));
+			}
+		}
+		return data;
+	}
+
+	@Override
+	public boolean refreshGroupUsersDependOrder(Long gid) {
+		Assert.notNull(gid, "gid is null");
+		boolean result = false;
+		Map<Long, List<Long>> dependMap = getGroupDependencyData(null);
+		DependencyAnalyzer<Long> da = new DependencyAnalyzer<Long>(dependMap);
+		List<Long> load = da.getDependsOrder(gid);
+		try {
+			for (Long group : load) {
+				refreshGroupUsers(group);
+			}
+			result = true;
+		} catch (Exception e) {
+			logger.error("分组刷新失败", e);
+		}
+		return result;
+	}
+
+	@Override
+	public List<Long> getAllGroupDependData(Map<Long, List<Long>> newExclude) {
+		Map<Long, List<Long>> dependency = getGroupDependencyData(newExclude);
+		try {
+			DependencyAnalyzer<Long> da = new DependencyAnalyzer<Long>(dependency);
+			return da.getDependsOrder();
+		} catch (DependencyAnalyzer.AssemblingException e) {
+			logger.error(" dependency exception", e);
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public PageResult<Long> getManualUsersPageData(Long gid, Limit limit) {
+		Assert.notNull(gid, " gid is null");
+		Assert.notNull(limit, " limit is null");
+		Set<Long> set = this.manualUserDao.queryManualUsers(gid);
+		if (set != null) {
+			List<Long> list = new ArrayList<Long>(set);
+			int count = list.size();
+			int endIndex = Math.min(limit.offset + limit.maxRows, count);
+			int startIndex = Math.min(limit.offset, endIndex - 1);
+			return new PageResult<Long>(list.subList(startIndex, endIndex), limit, count);
+		} else {
+			return new PageResult<Long>(Collections.<Long> emptyList(), limit, 0);
+		}
 	}
 }

@@ -19,4 +19,6 @@ public class DynamicUserDao implements IDynamicUserDao {
 	public List<Long> queryDynamicUsers(PropertyExpressionDTO dto) {
 		return sqlMap.queryForList("spreader_user.queryDynamicUsers", dto);
 	}
+	
+	
 }

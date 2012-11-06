@@ -50,4 +50,9 @@
 			<include refid="userGroupCriteria"/>
 		</dynamic>	
 	</select>
+	
+	<select id="selectUserGroupExcludeOrderGid" resultClass="java.util.HashMap">
+		select gid,exclude_gid as excludegid from spreader.tb_user_group_exclude 
+			order by gid
+	</select>
 </sqlMap>
