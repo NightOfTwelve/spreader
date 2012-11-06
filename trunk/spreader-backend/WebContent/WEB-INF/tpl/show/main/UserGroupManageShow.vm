@@ -2,10 +2,6 @@
 <html>
 <head>
 <title>用户分组管理</title>
-<script>
-	//全局用户分组ID
-	GUSERGROUPID = null;
-</script>
 #parse("/show/comm/PublicInclude.vm")
 #parse("/show/comm/DateTimeFieldInclude.vm")
 #parse("/show/comm/FunctionsInclude.vm")

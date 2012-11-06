@@ -2,6 +2,7 @@ package com.nali.spreader.controller;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,6 @@ import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.group.service.IUserGroupInfoService;
 import com.nali.spreader.group.service.IUserGroupPropertyService;
-import com.nali.spreader.model.GrouppedUser;
 import com.nali.spreader.model.UserGroup;
 import com.nali.spreader.service.IGlobalUserService;
 
@@ -69,7 +69,10 @@ public class UserGroupManageController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/refreshuser")
 	public String refreshUser(Long gid) {
-		String message = this.userGroupService.refreshGroupUsers(gid);
+		String message = "分组刷新失败";
+		if (this.userGroupService.refreshGroupUsersDependOrder(gid)) {
+			message = "分组刷新成功";
+		}
 		return this.write(message);
 	}
 
@@ -222,12 +225,22 @@ public class UserGroupManageController extends BaseController {
 	@RequestMapping(value = "/updategroup")
 	public String updateGroupData(Long gid, String propexp) throws AssembleException,
 			JsonParseException, JsonMappingException, IOException {
-		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
+		Map<String, Object> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
 		if (gid != null && gid > 0) {
 			UserGroup group = userGroupService.queryUserGroup(gid);
 			PropertyExpressionDTO dto = this.getObjectMapper().readValue(propexp,
 					PropertyExpressionDTO.class);
+			List<Long> excludeGids = dto.getExcludeGids();
+			if (!CollectionUtils.isEmpty(excludeGids)) {
+				Map<Long, List<Long>> excMap = new HashMap<Long, List<Long>>();
+				excMap.put(gid, excludeGids);
+				if (!userGroupService.checkExcludeGroups(gid, excMap)) {
+					result.put("error", "排除分组设置异常，请重新设置");
+					this.write(result);
+				}
+			}
+			userGroupService.updateGroupExclude(gid, excludeGids);
 			String jsonPexp = this.userGroupPropertyService.toJson(dto);
 			group.setPropExp(jsonPexp);
 			group.setPropVal(null);
@@ -249,33 +262,13 @@ public class UserGroupManageController extends BaseController {
 	@RequestMapping(value = "/selectuserlist")
 	public String queryGrouppedUserList(Long gid, Integer start, Integer limit) {
 		PageResult<User> result = null;
-		if (gid != null && gid > 0) {
+		if (gid != null) {
 			Limit lit = this.initLimit(start, limit);
 			PageResult<Long> uidPage = this.userGroupService.queryGrouppedUsers(gid, lit);
 			List<User> uList = this.globalUserService.getUserMapByUids(uidPage.getList());
 			result = new PageResult<User>(uList, lit, uidPage.getTotalCount());
 		}
 		return this.write(result);
-	}
-
-	/**
-	 * 查询已删除用户列表
-	 * 
-	 * @param gid
-	 * @param start
-	 * @param Limit
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/deleteuserlist")
-	public String queryDeleteUserList(Long gid, Integer start, Integer limit) {
-		PageResult<GrouppedUser> pr = null;
-		// TODO
-		// if (gid != null && gid > 0) {
-		// Limit lit = this.initLimit(start, limit);
-		// pr = this.userGroupService.queryExcludeUsers(gid, lit);
-		// }
-		return this.write(pr);
 	}
 
 	/**
@@ -319,7 +312,7 @@ public class UserGroupManageController extends BaseController {
 		result.put("success", false);
 		if (gid != null && uids.length > 0) {
 			try {
-				this.userGroupService.removeUsers(gid, uids);
+				this.userGroupService.removeManualUsers(gid, uids);
 				result.put("success", true);
 				result.put("message", "删除成功");
 			} catch (UserGroupException e) {
@@ -329,34 +322,6 @@ public class UserGroupManageController extends BaseController {
 		} else {
 			result.put("message", "gid为空不能删除用户,删除失败");
 		}
-		return this.write(result);
-	}
-
-	/**
-	 * 还原删除的用户
-	 * 
-	 * @param gid
-	 * @param uids
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/rollbackuser")
-	public String rollbackDeleteUser(Long gid, long[] uids) {
-		Map<String, Object> result = CollectionUtils.newHashMap(2);
-		result.put("success", false);
-		// TODO
-		// if (gid != null && uids.length > 0) {
-		// try {
-		// this.userGroupService.rollbackExcludeUsers(gid, uids);
-		// result.put("success", true);
-		// result.put("message", "还原成功");
-		// } catch (UserGroupException e) {
-		// logger.debug("后台数据存储异常", e);
-		// result.put("message", "后台数据存储异常,还原失败");
-		// }
-		// } else {
-		// result.put("message", "gid为空不能还原用户,还原失败");
-		// }
 		return this.write(result);
 	}
 
@@ -376,6 +341,25 @@ public class UserGroupManageController extends BaseController {
 				this.userGroupService.deleteUserGroup(gid);
 			}
 			result.put("success", true);
+		}
+		return this.write(result);
+	}
+
+	/**
+	 * 查询手工分组的用户
+	 * 
+	 * @param gid
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/manualusers")
+	public String queryManualUsers(Long gid, Integer start, Integer limit) {
+		PageResult<User> result = null;
+		if (gid != null && gid > 0) {
+			Limit lit = this.initLimit(start, limit);
+			PageResult<Long> uidPage = this.userGroupService.getManualUsersPageData(gid, lit);
+			List<User> uList = this.globalUserService.getUserMapByUids(uidPage.getList());
+			result = new PageResult<User>(uList, lit, uidPage.getTotalCount());
 		}
 		return this.write(result);
 	}

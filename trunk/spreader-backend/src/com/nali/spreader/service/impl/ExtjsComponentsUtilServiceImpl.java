@@ -35,8 +35,8 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 	private ICrudUserGroupDao crudUserGroupDao;
 	@Autowired
 	private ICrudCategoryDao crudCategoryDao;
-//	@Autowired
-//	private IConfigService<Long> regularConfigService;
+	@Autowired
+	private IConfigService<Long> regularConfigService;
 
 	@Override
 	public PageResult<User> findUserByName(String name, Limit limit) {
@@ -92,15 +92,15 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 
 	public List<ConfigableInfo> getAllStrategyDisplayName() {
 		List<ConfigableInfo> data = new ArrayList<ConfigableInfo>();
-//		List<ConfigableInfo> normalList = regularConfigService
-//				.listConfigableInfo(ConfigableType.normal);
-//		data.addAll(normalList);
-//		List<ConfigableInfo> systemList = regularConfigService
-//				.listConfigableInfo(ConfigableType.system);
-//		data.addAll(systemList);
-//		List<ConfigableInfo> noticeList = regularConfigService
-//				.listConfigableInfo(ConfigableType.noticeRelated);
-//		data.addAll(noticeList);
+		List<ConfigableInfo> normalList = regularConfigService
+				.listConfigableInfo(ConfigableType.normal);
+		data.addAll(normalList);
+		List<ConfigableInfo> systemList = regularConfigService
+				.listConfigableInfo(ConfigableType.system);
+		data.addAll(systemList);
+		List<ConfigableInfo> noticeList = regularConfigService
+				.listConfigableInfo(ConfigableType.noticeRelated);
+		data.addAll(noticeList);
 		return data;
 	}
 }

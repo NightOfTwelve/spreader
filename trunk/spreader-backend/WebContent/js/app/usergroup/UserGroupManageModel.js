@@ -1,4 +1,8 @@
 Ext.onReady(function() {
+	// 用户分组ID的全局隐藏域
+	var groupIdHidden = new Ext.form.Hidden({
+				name : 'groupIdHidden'
+			});
 	// 用户数组
 	var userArray = [];
 	var userGroupPropExpRoot = new Ext.tree.AsyncTreeNode({
@@ -49,7 +53,7 @@ Ext.onReady(function() {
 					listeners : {
 						"beforeload" : function(treeloader, node) {
 							treeloader.baseParams = {
-								gid : GUSERGROUPID
+								gid : groupIdHidden.getValue()
 							};
 						}
 					}
@@ -122,7 +126,6 @@ Ext.onReady(function() {
 	};
 	// 添加子节点事件实现
 	function appendNodeAction(node) {
-		// var selectedNode = stgtree.getSelectionModel().getSelectedNode();
 		if (node.isLeaf()) {
 			node.leaf = false;
 		}
@@ -132,15 +135,6 @@ Ext.onReady(function() {
 		}
 		var newNode = node.appendChild(node.attributes.getChildConfig());
 		node.attributes.children.push(newNode);
-		// newNode.parentNode.reload();
-		// var newNode = node.attributes.getChildConfig;
-		// newNode.parentNode.expand(true, true, function() {
-		// // stgtree.getSelectionModel().select(newNode);
-		// setTimeout(function() {
-		// treeEditor.editNode = newNode;
-		// treeEditor.startEdit(newNode.ui.textNode);
-		// }, 10);
-		// });// 将上级树形展开
 	}
 	/**
 	 * 分组类型的COMB的数据源
@@ -220,87 +214,7 @@ Ext.onReady(function() {
 											width : 150
 										}]
 							}]
-				}
-//				, {
-//					xtype : 'fieldset',
-//					title : '属性筛选',
-//					autoHeight : true,
-//					animCollapse : true,
-//					layout : 'form',
-//					collapsed : false,
-//					collapsible : true,
-//					items : [{
-//								xtype : 'checkboxgroup',
-//								fieldLabel : '条件',
-//								name : 'propValBox',
-//								items : [{
-//											boxLabel : '分类',
-//											value : 1,
-//											name : 'category'
-//										}, {
-//											boxLabel : '评分',
-//											value : 2,
-//											name : 'score'
-//										}, {
-//											boxLabel : '粉丝数',
-//											value : 4,
-//											name : 'fans'
-//										}, {
-//											boxLabel : '关注数',
-//											value : 8,
-//											name : 'attentions'
-//										}, {
-//											boxLabel : '文章数',
-//											value : 16,
-//											name : 'articles'
-//										}, {
-//											boxLabel : '性别',
-//											value : 32,
-//											name : 'gender'
-//										}, {
-//											boxLabel : '机器人粉丝数',
-//											value : 64,
-//											name : 'robotFans'
-//										}, {
-//											boxLabel : '星座',
-//											value : 128,
-//											name : 'constellation'
-//										}, {
-//											boxLabel : '出生日期',
-//											value : 256,
-//											name : 'birthDay'
-//										}, {
-//											boxLabel : '是否机器人',
-//											value : 512,
-//											name : 'isRobot'
-//										}, {
-//											boxLabel : '是否认证',
-//											value : 1024,
-//											name : 'vType'
-//										}, {
-//											boxLabel : '昵称',
-//											value : 2048,
-//											name : 'nickName'
-//										}, {
-//											boxLabel : '国家',
-//											value : 4096,
-//											name : 'nationality'
-//										}, {
-//											boxLabel : '省份',
-//											value : 8192,
-//											name : 'province'
-//										}, {
-//											boxLabel : '城市',
-//											value : 16384,
-//											name : 'city'
-//										}, {
-//											boxLabel : '个人简介',
-//											value : 32768,
-//											name : 'introduction'
-//										}]
-//							}]
-//				}
-				],
+				}],
 				buttonAlign : "center",
 				buttons : [{
 					text : "查询",
@@ -313,14 +227,6 @@ Ext.onReady(function() {
 						var groupName = tform.findField('groupName').getValue();
 						var gtype = tform.findField('gtype').getValue();
 						var websiteid = tform.findField('websiteId').getValue();
-//						var propField = tform.findField('propValBox')
-//								.getValue();
-//						var propValue = 0;
-//						if (propField.length > 0) {
-//							for (var i = 0; i < propField.length; i++) {
-//								propValue += propField[i].value;
-//							}
-//						}
 						store.setBaseParam('gtype', gtype);
 						store.setBaseParam('websiteid', websiteid);
 						store.setBaseParam('gname', groupName);
@@ -562,29 +468,28 @@ Ext.onReady(function() {
 				}],
 		bbar : bbar,
 		onCellClick : function(grid, rowIndex, columnIndex, e) {
-			GUSERGROUPID = null;
+			groupIdHidden.setValue(null);
 			var buttons = e.target.defaultValue;
 			var record = grid.getStore().getAt(rowIndex);
 			var data = record.data;
 			// 找出表格中‘配置’按钮
 			if (buttons == '配置') {
 				var gname = data.gname;
-				GUSERGROUPID = data.gid;
+				groupIdHidden.setValue(data.gid);
 				editstgWindow.title = gname;
 				editstgWindow.show();
 			}
 			if (buttons == '添加') {
-				GUSERGROUPID = data.gid;
+				groupIdHidden.setValue(data.gid);
 				Ext.getCmp("groupinfo").setText(data.gname + ',编号:'
-						+ GUSERGROUPID);
+						+ groupIdHidden.getValue());
 				addGroupUserWindow.show();
-				deleteUserStore.setBaseParam('gid', GUSERGROUPID);
-				selectUserStore.setBaseParam('gid', GUSERGROUPID);
-				deleteUserStore.load();
+				selectUserStore.setBaseParam('gid', groupIdHidden.getValue());
+				allUserStore.setBaseParam('gid', groupIdHidden.getValue());
 				selectUserStore.load();
+				allUserStore.load();
 			}
 			if (buttons == '刷新') {
-				// TODO
 				Ext.Msg.confirm('警告', '此操作会刷新该分组的所有成员，可能执行时间较长，是否继续操作？',
 						function op(btn) {
 							if (btn == 'yes') {
@@ -600,22 +505,6 @@ Ext.onReady(function() {
 	// 注册事件
 	userGroupGrid.on('cellclick', userGroupGrid.onCellClick, userGroupGrid);
 
-	/**
-	 * 创建新增事件ComboBox
-	 */
-	// 创建ComboBox数据源，支持Ajax取值
-	// var stgCmbStore = new Ext.data.Store({
-	// // 代理模式
-	// proxy : new Ext.data.HttpProxy({
-	// url : '../dispsys/combstore'
-	// }),
-	// // 读取模式
-	// reader : new Ext.data.JsonReader({}, [{
-	// name : 'name'
-	// }, {
-	// name : 'displayName'
-	// }])
-	// });
 	// 分组类型COMB
 	var gtypeCombo = new Ext.form.ComboBox({
 				hiddenName : 'gtype',
@@ -716,7 +605,7 @@ Ext.onReady(function() {
 					text : '确定', // 按钮文本
 					iconCls : 'tbar_synchronizeIcon', // 按钮图标
 					handler : function() { // 按钮响应函数
-						GUSERGROUPID = null;
+						groupIdHidden.setValue(null);
 						var addForm = addGroupCmbForm.getForm();
 						// 分组类型
 						var gtype = gtypeCombo.getValue();
@@ -743,7 +632,7 @@ Ext.onReady(function() {
 										var result = Ext
 												.decode(response.responseText);
 										if (result.success) {
-											GUSERGROUPID = result.gid;
+											groupIdHidden.setValue(result.gid);
 											// 如果是手工分组不弹出属性编辑
 											if (gtype != 2) {
 												editstgWindow.show();
@@ -879,7 +768,7 @@ Ext.onReady(function() {
 											url : '../usergroup/adduser?_time'
 													+ new Date().getTime(),
 											params : {
-												gid : GUSERGROUPID,
+												gid : groupIdHidden.getValue(),
 												uids : userArray
 											},
 											success : function(response) {
@@ -889,13 +778,15 @@ Ext.onReady(function() {
 														result.message);
 												cleanParams();
 												selectUserStore.setBaseParam(
-														'gid', GUSERGROUPID);
+														'gid', groupIdHidden
+																.getValue());
 												selectUserStore.reload();
 											},
 											failure : function() {
 												cleanParams();
 												selectUserStore.setBaseParam(
-														'gid', GUSERGROUPID);
+														'gid', groupIdHidden
+																.getValue());
 												selectUserStore.reload();
 												Ext.Msg.alert("提示", "添加失败");
 											}
@@ -915,7 +806,8 @@ Ext.onReady(function() {
 	// 定义表格数据源
 	var selectUserStore = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
-							url : '../usergroup/selectuserlist?_time='+new Date().getTime()
+							url : '../usergroup/manualusers?_time='
+									+ new Date().getTime()
 						}),
 				reader : new Ext.data.JsonReader({
 							totalProperty : 'totalCount',
@@ -939,7 +831,7 @@ Ext.onReady(function() {
 					params : {
 						start : 0,
 						limit : 20,
-						gid : GUSERGROUPID
+						gid : groupIdHidden.getValue()
 					}
 				}
 			});
@@ -968,11 +860,6 @@ Ext.onReady(function() {
 			}, {
 				header : '机器人',
 				dataIndex : 'isRobot',
-				renderer : rendTrueFalse,
-				width : 80
-			}, {
-				header : '手工添加',
-				dataIndex : 'manual',
 				renderer : rendTrueFalse,
 				width : 80
 			}, {
@@ -1021,6 +908,7 @@ Ext.onReady(function() {
 		autoScroll : true,
 		split : true,
 		store : selectUserStore,
+		title : '手动添加的用户',
 		loadMask : {
 			msg : '正在加载表格数据,请稍等...'
 		},
@@ -1038,7 +926,7 @@ Ext.onReady(function() {
 						.getSelections();
 				if (rows.length > 0) {
 					for (var i = 0; i < rows.length; i++) {
-						var uid = rows[i].data['user.id'];
+						var uid = rows[i].data['id'];
 						delUserArray.push(uid);
 					}
 				} else {
@@ -1055,7 +943,7 @@ Ext.onReady(function() {
 										url : '../usergroup/deleteuser?_time'
 												+ new Date().getTime(),
 										params : {
-											gid : GUSERGROUPID,
+											gid : groupIdHidden.getValue(),
 											uids : delUserArray
 										},
 										success : function(response) {
@@ -1063,19 +951,13 @@ Ext.onReady(function() {
 													.decode(response.responseText);
 											Ext.Msg.alert("提示", result.message);
 											selectUserStore.setBaseParam('gid',
-													GUSERGROUPID);
-											deleteUserStore.setBaseParam('gid',
-													GUSERGROUPID);
+													groupIdHidden.getValue());
 											selectUserStore.reload();
-											deleteUserStore.reload();
 										},
 										failure : function() {
 											selectUserStore.setBaseParam('gid',
-													GUSERGROUPID);
-											deleteUserStore.setBaseParam('gid',
-													GUSERGROUPID);
+													groupIdHidden.getValue());
 											selectUserStore.reload();
-											deleteUserStore.reload();
 											Ext.Msg.alert("提示", "删除失败");
 										}
 									});
@@ -1084,106 +966,99 @@ Ext.onReady(function() {
 				});
 			}
 		}, '-', {
-			text : '刷新',
+			text : '更新用户',
 			iconCls : 'arrow_refreshIcon',
 			handler : function() {
-				selectUserStore.setBaseParam('gid', GUSERGROUPID);
-				selectUserStore.reload();
-			}
-		}, '-', new Ext.form.TextField({
-					id : 'queryDelUserForm',
-					name : 'queryDelUserForm',
-					emptyText : '请输入昵称',
-					enableKeyEvents : true,
-					listeners : {
-						specialkey : function(field, e) {
-							if (e.getKey() == Ext.EventObject.ENTER) {
-								// queryRoleItem(); TODO
+				Ext.Msg.confirm('警告', '此操作会刷新该分组的所有成员，可能执行时间较长，是否继续操作？',
+						function op(btn) {
+							if (btn == 'yes') {
+								refreshUsers(groupIdHidden.getValue());
+								Ext.Msg
+										.alert("提示",
+												"任务已发送后台，请稍后点击【刷新列表】查看执行结果");
 							}
-						}
-					},
-					width : 130
-				}), {
-			text : '查询',
-			iconCls : 'previewIcon',
+							return;
+						});
+			}
+		}, '-', {
+			text : '刷新列表',
+			iconCls : 'arrow_refreshIcon',
 			handler : function() {
-				// queryRoleItem();
+				selectUserStore.setBaseParam('gid', groupIdHidden.getValue());
+				allUserStore.setBaseParam('gid', groupIdHidden.getValue());
+				selectUserStore.reload();
+				allUserStore.reload();
 			}
 		}],
 		bbar : selectbbar
 	});
+
 	// 定义表格数据源
-	var deleteUserStore = new Ext.data.Store({
+	var allUserStore = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
-							url : '../usergroup/deleteuserlist'
+							url : '../usergroup/selectuserlist?_time='
+									+ new Date().getTime()
 						}),
 				reader : new Ext.data.JsonReader({
 							totalProperty : 'totalCount',
 							root : 'list'
 						}, [{
-									name : 'user.id'
+									name : 'id'
 								}, {
-									name : 'user.websiteId'
+									name : 'websiteId'
 								}, {
-									name : 'user.isRobot'
+									name : 'isRobot'
 								}, {
-									name : 'manual'
+									name : 'nickName'
 								}, {
-									name : 'user.nickName'
+									name : 'gender'
 								}, {
-									name : 'user.gender'
-								}, {
-									name : 'user.realName'
+									name : 'realName'
 								}]),
 				autoLoad : {
 					params : {
 						start : 0,
 						limit : 20,
-						gid : GUSERGROUPID
+						gid : groupIdHidden.getValue()
 					}
 				}
 			});
-	// 已经删除的USER列表
-	var deletesm = new Ext.grid.CheckboxSelectionModel();
+	// 已经选择的USER列表
+	var allUserSm = new Ext.grid.CheckboxSelectionModel();
 	// 定义表格列CM
-	var deletecm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(),
-			deletesm, {
+	var allUserCm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(),
+			selectsm, {
 				header : '编号',
-				dataIndex : 'user.id',
+				dataIndex : 'id',
 				width : 80
 			}, {
 				header : '昵称',
-				dataIndex : 'user.nickName',
+				dataIndex : 'nickName',
 				width : 100
 			}, {
 				header : '性别',
-				dataIndex : 'user.gender',
+				dataIndex : 'gender',
 				renderer : renderGender,
 				width : 80
 			}, {
 				header : '网站',
-				dataIndex : 'user.websiteId',
+				dataIndex : 'websiteId',
 				renderer : renderWebsiteType,
 				width : 100
 			}, {
 				header : '机器人',
-				dataIndex : 'user.isRobot',
-				renderer : rendTrueFalse,
-				width : 80
-			}, {
-				header : '手工添加',
-				dataIndex : 'manual',
+				dataIndex : 'isRobot',
 				renderer : rendTrueFalse,
 				width : 80
 			}, {
 				header : '真名',
-				dataIndex : 'user.realName',
+				dataIndex : 'realName',
 				width : 80
 			}]);
 	// 页数
-	var deletenumber = 20;
-	var deletenumtext = new Ext.form.TextField({
-				id : 'deletenumbermaxpage',
+	var allUserNumber = 20;
+	var allUserNumtext = new Ext.form.TextField({
+				id : 'allUserNumtext',
 				width : 60,
 				emptyText : '每页条数',
 				// 激活键盘事件
@@ -1191,13 +1066,13 @@ Ext.onReady(function() {
 				listeners : {
 					specialKey : function(field, e) {
 						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							deletebbar.pageSize = parseInt(deletenumber
+							allUserbbar.pageSize = parseInt(allUserNumber
 									.getValue());
-							deletenumber = parseInt(deletenumtext.getValue());
-							deleteUserStore.reload({
+							allUserNumber = parseInt(allUserNumtext.getValue());
+							allUserStore.reload({
 										params : {
 											start : 0,
-											limit : deletebbar.pageSize
+											limit : allUserbbar.pageSize
 										}
 									});
 						}
@@ -1206,90 +1081,33 @@ Ext.onReady(function() {
 			});
 
 	// 分页菜单
-	var deletebbar = new Ext.PagingToolbar({
-				pageSize : deletenumber,
-				store : deleteUserStore,
+	var allUserbbar = new Ext.PagingToolbar({
+				pageSize : allUserNumber,
+				store : allUserStore,
 				displayInfo : true,
 				displayMsg : '显示{0}条到{1}条,共{2}条',
 				emptyMsg : "没有符合条件的记录",
-				items : ['-', '&nbsp;&nbsp;', deletenumtext]
+				items : ['-', '&nbsp;&nbsp;', allUserNumtext]
 			});
 
 	// 用户分组列表
-	var deleteUserGroupGrid = new Ext.grid.GridPanel({
-		region : 'center',
-		autoScroll : true,
-		split : true,
-		store : deleteUserStore,
-		loadMask : {
-			msg : '正在加载表格数据,请稍等...'
-		},
-		// stripeRows : true,
-		frame : true,
-		// autoExpandColumn : 'remark',
-		sm : deletesm,
-		cm : deletecm,
-		tbar : [{
-			text : '还原',
-			iconCls : 'database_refreshIcon',
-			handler : function() {
-				var rollbackUserArray = [];
-				var rows = deleteUserGroupGrid.getSelectionModel()
-						.getSelections();
-				if (rows.length > 0) {
-					for (var i = 0; i < rows.length; i++) {
-						var uid = rows[i].data['user.id'];
-						rollbackUserArray.push(uid);
-					}
-				}
-				Ext.Msg.show({
-					title : '确认信息',
-					msg : '确定还原?',
-					buttons : Ext.Msg.YESNO,
-					fn : function(ans) {
-						if (ans == 'yes') {
-							Ext.Ajax.request({
-										url : '../usergroup/rollbackuser?_time'
-												+ new Date().getTime(),
-										params : {
-											gid : GUSERGROUPID,
-											uids : rollbackUserArray
-										},
-										success : function(response) {
-											var result = Ext
-													.decode(response.responseText);
-											Ext.Msg.alert("提示", result.message);
-											selectUserStore.setBaseParam('gid',
-													GUSERGROUPID);
-											deleteUserStore.setBaseParam('gid',
-													GUSERGROUPID);
-											selectUserStore.reload();
-											deleteUserStore.reload();
-										},
-										failure : function() {
-											selectUserStore.setBaseParam('gid',
-													GUSERGROUPID);
-											deleteUserStore.setBaseParam('gid',
-													GUSERGROUPID);
-											selectUserStore.reload();
-											deleteUserStore.reload();
-											Ext.Msg.alert("提示", "还原失败");
-										}
-									});
-						}
-					}
-				});
-			}
-		}, '-', {
-			text : '刷新',
-			iconCls : 'arrow_refreshIcon',
-			handler : function() {
-				deleteUserStore.setBaseParam('gid', GUSERGROUPID);
-				deleteUserStore.reload();
-			}
-		}],
-		bbar : deletebbar
-	});
+	var allUserGrid = new Ext.grid.GridPanel({
+				region : 'center',
+				autoScroll : true,
+				title : '该分组下所有的用户',
+				split : true,
+				store : allUserStore,
+				loadMask : {
+					msg : '正在加载表格数据,请稍等...'
+				},
+				// stripeRows : true,
+				frame : true,
+				// autoExpandColumn : 'remark',
+				sm : allUserSm,
+				cm : allUserCm,
+				bbar : allUserbbar
+			});
+
 	// 手工添加成员的窗口组件
 	var addGroupUserWindow = new Ext.Window({
 				layout : 'border',
@@ -1311,14 +1129,14 @@ Ext.onReady(function() {
 				items : [{
 							region : 'west',
 							split : true,
-							width : 500,
+							width : 600,
 							layout : 'border',
 							items : [addUserSelectCmbForm, selectUserGroupGrid]
 						}, {
 							region : 'center',
 							split : true,
 							layout : 'border',
-							items : [deleteUserGroupGrid]
+							items : [allUserGrid]
 						}],
 				buttons : [{
 							text : '关闭',
