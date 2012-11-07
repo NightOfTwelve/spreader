@@ -44,14 +44,6 @@ public interface IUserGroupInfoService {
 	Iterator<Long> queryGrouppedUserIterator(long gid);
 
 	/**
-	 * 根据UID删除某个分组的用户
-	 * 
-	 * @param gid
-	 * @param uids
-	 */
-	void removeUsers(Long gid, Long... uids);
-
-	/**
 	 * 删除一个用户分组
 	 * 
 	 * @param gid

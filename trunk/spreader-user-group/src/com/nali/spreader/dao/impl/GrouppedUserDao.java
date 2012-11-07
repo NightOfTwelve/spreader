@@ -104,8 +104,8 @@ public class GrouppedUserDao implements IGrouppedUserDao {
 	}
 
 	@Override
-	public void deleteGroupUidsByGid(Long gid, List<Long> uids) {
-		String key = getGroupUsersKey(gid);
+	public void deleteTmpGroupUidsByGid(Long gid, List<Long> uids) {
+		String key = getTmpGroupUsersKey(gid);
 		List<Long> allUids = groupUsers.get(key);
 		allUids.removeAll(uids);
 	}

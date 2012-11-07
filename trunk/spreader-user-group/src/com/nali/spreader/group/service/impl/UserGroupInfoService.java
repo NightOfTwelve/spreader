@@ -1,7 +1,6 @@
 package com.nali.spreader.group.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -124,8 +122,13 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 						PropertyExpressionDTO dto = getPropertyExpressionDTO(gid);
 						List<Long> excludeGids = dto.getExcludeGids();
 						Set<Long> excludeUsers = this.queryExcludeGroupUsers(excludeGids);
+						// TODO
 						manualUsers.addAll(excludeUsers);
 						batchSaveDynamicUser(dto, manualUsers, gid);
+						Long[] excludeArr = new Long[excludeUsers.size()];
+						this.removeManualUsers(gid, excludeUsers.toArray(excludeArr));
+						grouppedUserDao.deleteTmpGroupUidsByGid(gid, new ArrayList<Long>(
+								excludeUsers));
 					}
 					grouppedUserDao.replaceUserList(gid);
 					result = true;
@@ -194,15 +197,6 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 			return this.jsonSerializer.toBean(cfgStr, PropertyExpressionDTO.class);
 		} catch (JsonParseException e) {
 			throw new AssembleException("Can't parse string to property expression: " + cfgStr, e);
-		}
-	}
-
-	@Override
-	public void removeUsers(Long gid, Long... uids) {
-		Assert.notNull(gid, " gid is null");
-		if (ArrayUtils.isNotEmpty(uids)) {
-			List<Long> deleteUids = Arrays.asList(uids);
-			grouppedUserDao.deleteGroupUidsByGid(gid, deleteUids);
 		}
 	}
 

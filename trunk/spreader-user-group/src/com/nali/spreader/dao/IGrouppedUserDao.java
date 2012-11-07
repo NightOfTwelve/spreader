@@ -60,7 +60,7 @@ public interface IGrouppedUserDao {
 	 * @param uids
 	 * @return
 	 */
-	void deleteGroupUidsByGid(Long gid, List<Long> uids);
+	void deleteTmpGroupUidsByGid(Long gid, List<Long> uids);
 
 	/**
 	 * 将临时的数据替换成正式数据，并删除临时数据
