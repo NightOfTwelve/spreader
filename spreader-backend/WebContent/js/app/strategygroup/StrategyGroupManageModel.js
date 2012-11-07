@@ -1006,7 +1006,6 @@ Ext.onReady(function() {
 						strategyIdHidden.setValue(stgSelectCombo2.getValue());
 						strategyNameHidden
 								.setValue(stgSelectCombo2.lastSelectionText);
-						editstgWindow.title = strategyNameHidden.getValue();
 						editstgWindow.show();
 						stgCmbWindow.hide();
 					}
@@ -1373,8 +1372,6 @@ Ext.onReady(function() {
 							groupNameHidden.setValue(gname);
 							groupNoteHidden.setValue(gnote);
 							groupTypeHidden.setValue(gType);
-							editstgWindow.title = gname;
-							compGroupWindow.title = gname;
 							// 设置新建的分组ID
 							getCompGroupId(groupTypeHidden.getValue(),
 									groupNameHidden.getValue(), groupNoteHidden
