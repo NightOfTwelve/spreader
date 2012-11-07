@@ -22,7 +22,7 @@ Ext.onReady(function() {
 					text : '保存修改',
 					iconCls : 'addIcon',
 					handler : function() {
-						userGroupSubmitTreeData(userGroupPropExpTree, store);
+						userGroupSubmitTreeData(userGroupPropExpTree, store,groupIdHidden.getValue());
 					}
 				}],
 		loader : new Ext.tree.TreeLoader({
