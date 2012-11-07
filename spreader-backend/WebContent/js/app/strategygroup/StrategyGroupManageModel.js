@@ -1324,8 +1324,10 @@ Ext.onReady(function() {
 			});
 	// 弹出前事件
 	compGroupWindow.on('show', function() {
-				// objIdHidden.setValue(null);
-				store.setBaseParam('jobType', 'normal');
+				var wtext = '【分组名】:' + groupNameHidden.getValue() + ',【编号】:'
+						+ groupIdHidden.getValue() + ',【说明】：'
+						+ groupNoteHidden.getValue();
+				Ext.getCmp('groupinfo').setText(wtext);
 				stgdispgridform.form.reset();
 			});
 	// 弹出窗口
@@ -1574,11 +1576,14 @@ Ext.onReady(function() {
 		params['groupName'] = groupName;
 		params['groupNote'] = groupNote;
 		Ext.Ajax.request({
-					url : '../strategydisp/newgroupid',
+					url : '../strategydisp/newgroupid?_time='
+							+ new Date().getTime(),
+					async : false,
 					success : function(response, opts) {
 						var result = Ext.util.JSON
 								.decode(response.responseText);
 						groupIdHidden.setValue(result.groupId);
+						store.setBaseParam('jobType', 'normal');
 						store.setBaseParam('groupId', groupIdHidden.getValue());
 						store.load();
 					},
