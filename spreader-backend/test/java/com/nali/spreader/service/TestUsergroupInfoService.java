@@ -87,7 +87,6 @@ public class TestUsergroupInfoService {
 
 	public void testRemoveUsers() {
 		Long[] dArr = { 3161L, 3162L, 3163L, 3165L, 3166L, 3167L, 3168L };
-		groupInfoService.removeUsers(10002L, dArr);
 	}
 
 	@Test

@@ -130,7 +130,7 @@ function strategySubmitTreeData(stgtree) {
 /**
  * 用户分组提交树的数据对象
  */
-function userGroupSubmitTreeData(userGroupPropExpTree, store) {
+function userGroupSubmitTreeData(userGroupPropExpTree, store,gid) {
 	// 获取ROOT数组
 	var treearray = userGroupPropExpTree.root.childNodes;
 	// 循环ROOT数组
@@ -140,7 +140,7 @@ function userGroupSubmitTreeData(userGroupPropExpTree, store) {
 		Ext.Ajax.request({
 					url : '../usergroup/updategroup',
 					params : {
-						'gid' : GUSERGROUPID,
+						'gid' : gid,
 						'propexp' : submitStr
 					},
 					scope : userGroupPropExpTree,
