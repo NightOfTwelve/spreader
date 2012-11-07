@@ -1098,7 +1098,8 @@ Ext.onReady(function() {
 	// 定义表格数据源
 	var store = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
-							url : '../strategydisp/stgdispgridstore'
+							url : '../strategydisp/stgdispgridstore?_time='
+									+ new Date().getTime()
 						}),
 				reader : new Ext.data.JsonReader({
 							totalProperty : 'cnt',
@@ -1324,6 +1325,7 @@ Ext.onReady(function() {
 	// 弹出前事件
 	compGroupWindow.on('show', function() {
 				// objIdHidden.setValue(null);
+				store.setBaseParam('jobType', 'normal');
 				stgdispgridform.form.reset();
 			});
 	// 弹出窗口
