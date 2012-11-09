@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -139,6 +140,10 @@ public class UidBackupPool {
 		}
 		return uids;
 	}
+	@Override
+	public String toString() {
+		return nodeQueue.getNodes().toString();
+	}
 }
 
 class OwnerQueue extends NodeQueue<UidPoolNodeOwner> {}
@@ -237,6 +242,10 @@ class UidNodeQueue extends NodeQueue<UidPoolNode> {
 		return poll;
 	}
 	
+	public Set<UidPoolNode> getNodes() {
+		return nodes;
+	}
+	
 }
 
 class UidPoolNode extends Node<UidPoolNode> {
@@ -275,6 +284,13 @@ class UidPoolNode extends Node<UidPoolNode> {
 			return uid.equals(target.uid);
 		}
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "<" + uid +
+				"," + owner.getClientId() +
+				">";
 	}
 }
 

@@ -82,7 +82,7 @@ public class ActiveClient {
 			return new AssignedTasks(normal, anyone, notLogin);
 		}
 		if(nextStage()==false) {
-			logger.info("no more task for " + clientId);
+			logger.info(config.taskType + " no more task for " + clientId);
 		}
 		return getTasks();
 	}

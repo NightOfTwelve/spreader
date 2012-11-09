@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
+import org.codehaus.jackson.type.JavaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +26,7 @@ public class RemoteTaskService implements IRemoteTaskService {//TODO 减少queue
 	@Autowired
 	private ITaskService taskService;
 	private ObjectMapper objectMapper=new ObjectMapper();
+	private JavaType maptype=objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class);
 
 	@Override
 	public List<ClientTask> askForTasks() {
@@ -40,7 +41,7 @@ public class RemoteTaskService implements IRemoteTaskService {//TODO 减少queue
 		for (ClientTask task : taskList) {
 			String contents = task.getContents();
 			try {
-				Map<String, Object> contentObjects = objectMapper.readValue(contents, TypeFactory.mapType(HashMap.class, String.class, Object.class));
+				Map<String, Object> contentObjects = objectMapper.readValue(contents, maptype);
 				task.setContentObjects(contentObjects);
 				task.setContents(null);
 			} catch (IOException e) {

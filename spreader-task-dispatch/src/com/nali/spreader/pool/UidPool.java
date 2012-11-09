@@ -191,6 +191,15 @@ public class UidPool extends AbstractUidPool {
 					sb.append("\r\n").append(entry.getKey())
 					.append('\t').append(toString(entry.getValue().getUsedUids()));
 				}
+				sb.append("\r\n\r\nbackup:\r\n").append(backupPool);
+				sb.append("\r\n\r\nprior:\r\n")
+					.append(priorityStage.peekStage()).append("\r\n")
+					.append(priorityStage.peekFree()).append("\r\n")
+					.append(priorityStage.peekWeak()).append("\r\n");
+				sb.append("\r\nnormal:\r\n")
+				.append(normalStage.peekStage()).append("\r\n")
+				.append(normalStage.peekFree()).append("\r\n")
+				.append(normalStage.peekWeak()).append("\r\n");
 				return sb.toString();
 			} else {
 				ActiveClient activeClient = activeClients.get(clientId);

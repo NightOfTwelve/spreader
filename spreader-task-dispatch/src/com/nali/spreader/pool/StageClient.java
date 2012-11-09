@@ -26,4 +26,9 @@ public class StageClient {
 		}
 		return boundUidActionCountList;
 	}
+
+	@Override
+	public String toString() {
+		return "reserve:"+reserveUidActionCountList+",bound:"+boundUidActionCountList;
+	}
 }
