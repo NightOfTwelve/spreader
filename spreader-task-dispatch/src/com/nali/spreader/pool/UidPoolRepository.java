@@ -1,4 +1,4 @@
-package com.nali.spreader.service;
+package com.nali.spreader.pool;
 
 import java.util.List;
 import java.util.Map;
@@ -20,10 +20,14 @@ public class UidPoolRepository {
 	}
 
 	public void setUidPools(Map<TaskType, UidPool> uidPools) {
-		this.uidPools = CollectionUtils.newHashMap(uidPools.size());
+		Map<Integer, UidPool> temp = CollectionUtils.newHashMap(uidPools.size());
 		for (Entry<TaskType, UidPool> entry : uidPools.entrySet()) {
-			this.uidPools.put(entry.getKey().getId(), entry.getValue());
+			temp.put(entry.getKey().getId(), entry.getValue());
 		}
+		this.uidPools = temp;
 	}
 
+	public String peek(Integer taskType, Long clientId) {//for check
+		return uidPools.get(taskType).peek(clientId);
+	}
 }

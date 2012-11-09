@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nali.spreader.cronjob.UidPoolRefresh;
 import com.nali.spreader.front.ClientContext;
 import com.nali.spreader.model.ClientTask;
+import com.nali.spreader.pool.UidPoolRepository;
 import com.nali.spreader.remote.IRemoteTaskService;
 
 @RequestMapping("/test")
@@ -17,6 +19,23 @@ import com.nali.spreader.remote.IRemoteTaskService;
 public class TestDispatchController {
 	@Autowired
 	private IRemoteTaskService remoteTaskService;
+	@Autowired
+	private UidPoolRepository uidPoolRepository;
+	@Autowired
+	private UidPoolRefresh uidPoolRefresh;
+	
+	@ResponseBody
+	@RequestMapping("/pool/{taskType}")
+	public String peekUidPool(@PathVariable Integer taskType) {
+		return uidPoolRepository.peek(taskType, null);
+	}
+	@ResponseBody
+	@RequestMapping("/channel/cfg/{taskType}/{uidSize}/{fetchSize}")
+	public String peekUidPool(@PathVariable Integer taskType, @PathVariable Integer uidSize,
+			@PathVariable Integer fetchSize) {
+		uidPoolRefresh.config(taskType, uidSize, fetchSize);
+		return "succcess";
+	}
 	
 	@ResponseBody
 	@RequestMapping("/askForTasks/{taskType}/{clientId}/uid")

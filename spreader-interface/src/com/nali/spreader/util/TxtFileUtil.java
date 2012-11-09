@@ -166,6 +166,7 @@ public class TxtFileUtil {
 		try {
 			String line;
 			while ((line = reader.readLine())!=null) {
+				line=line.trim();
 				if("".equals(line)) {
 					continue;
 				}

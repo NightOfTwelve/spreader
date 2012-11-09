@@ -2,10 +2,10 @@ package com.nali.spreader.constants;
 
 public enum TaskType {//TODO @see Channel
 	//一般来说服务端fetchsize等于客户端(取任务缓存，线程数，线程池缓存)相加再加1
-	weiboNormal(101, 12, 100),//客户端配置 1, 5, 5 (取任务缓存，线程数，线程池缓存)
+	weiboNormal(101, 12, 3, 100),//客户端配置 1, 5, 5 (取任务缓存，线程数，线程池缓存)
 	weiboRegister(102, 1),
 	weiboInstant(103, 1),
-	weiboFetch(104, 22, 300),//客户端配置 1, 10, 10 (取任务缓存，线程数，线程池缓存)
+	weiboFetch(104, 22, 5, 300),//客户端配置 1, 10, 10 (取任务缓存，线程数，线程池缓存)
 	
 	appNormal(201, 1),
 	appSlow(202, 1),
@@ -13,16 +13,18 @@ public enum TaskType {//TODO @see Channel
 	private Integer id;
 	//front
 	private int passiveFetchSize;
+	private int uidSize;
 	private int minPriorityTaskCount;
 	//backend
 	
 	private TaskType(Integer id, int passiveFetchSize) {
-		this(id, passiveFetchSize, 50);
+		this(id, passiveFetchSize, 5, 50);
 	}
 
-	private TaskType(Integer id, int passiveFetchSize, int minPriorityTaskCount) {
+	private TaskType(Integer id, int passiveFetchSize, int uidSize, int minPriorityTaskCount) {
 		this.id = id;
 		this.passiveFetchSize = passiveFetchSize;
+		this.uidSize = uidSize;
 		this.minPriorityTaskCount = minPriorityTaskCount;
 	}
 	public int getFetchSize() {//TODO
@@ -42,5 +44,9 @@ public enum TaskType {//TODO @see Channel
 	}
 	public int getMinPriorityTaskCount() {
 		return minPriorityTaskCount;
+	}
+
+	public int getUidSize() {
+		return uidSize;
 	}
 }

@@ -13,13 +13,15 @@ import java.util.NoSuchElementException;
  * @author sam Created on 2011-7-22
  */
 public class Average<T> implements Iterator<List<ItemCount<T>>> {//TOOD batchsize支持小数
+	private static final Average<Object> EMPTY = new Average<Object>(null, 0);
 	private int leftBatch;
 	private SortedItems<CountDetail<T>> sortedItemCounts;
 	private int batchUnAverage;
 	private int bigs;
 	
+	@SuppressWarnings("unchecked")
 	public static <T> Average<T> empty() {
-		return new Average<T>(null, 0);
+		return (Average<T>) EMPTY;
 	}
 	
 	public static <T> Average<T> startFromBatchCount(List<ItemCount<T>> items, int batchCount) {
