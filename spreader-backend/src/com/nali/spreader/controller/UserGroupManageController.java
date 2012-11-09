@@ -70,7 +70,7 @@ public class UserGroupManageController extends BaseController {
 	@RequestMapping(value = "/refreshuser")
 	public String refreshUser(Long gid) {
 		String message = "分组刷新失败";
-		if (this.userGroupService.refreshGroupUsersDependOrder(gid)) {
+		if (this.userGroupService.refreshGroupUsers(gid)) {
 			message = "分组刷新成功";
 		}
 		return this.write(message);
