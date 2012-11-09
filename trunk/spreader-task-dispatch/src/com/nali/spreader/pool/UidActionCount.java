@@ -24,5 +24,9 @@ public class UidActionCount {
 	public void setActionCounts(List<ItemCount<Long>> actionCounts) {
 		this.actionCounts = actionCounts;
 	}
+	@Override
+	public String toString() {
+		return uid.toString();
+	}
 
 }

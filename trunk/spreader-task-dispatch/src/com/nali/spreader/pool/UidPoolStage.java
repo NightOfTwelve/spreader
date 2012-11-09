@@ -183,5 +183,27 @@ public class UidPoolStage {
 	public Lock getUidBindLock() {
 		return uidBindLock;
 	}
+	public String peekFree() {//for check
+		if(freeUidActionCount==null) {
+			return "not init:" + uidActionCountMap.keySet();
+		}
+		return freeUidActionCount.toString();
+	}
+	public String peekStage() {//for check
+		if(clientsMap==null) {
+			return "not init";
+		}
+		StringBuilder sb = new StringBuilder();
+		for (Entry<Long, StageClient> entry : clientsMap.entrySet()) {
+			sb.append(entry.getKey()).append('\t').append(entry.getValue()).append("\r\n");
+		}
+		return sb.toString();
+	}
+	public String peekWeak() {
+		if(weakReservedUids==null) {
+			return "not init";
+		}
+		return weakReservedUids.toString();
+	}
 	
 }

@@ -182,9 +182,9 @@ public class UidPoolRefresh {
 	private ChannelConfig getChannelConfig(TaskType taskType) {
 		KeyValuePair<Integer, Integer> uidSizeAndFetchSize = channelConfigMap.get(taskType.getId());
 		if(uidSizeAndFetchSize!=null) {
-			return new ChannelConfig(uidSizeAndFetchSize.getKey(), uidSizeAndFetchSize.getValue());
+			return new ChannelConfig(taskType.getId(), uidSizeAndFetchSize.getKey(), uidSizeAndFetchSize.getValue());
 		}
-		return new ChannelConfig(taskType.getUidSize(), taskType.getFetchSize());
+		return new ChannelConfig(taskType.getId(), taskType.getUidSize(), taskType.getFetchSize());
 	}
 	
 	private class TempData {
