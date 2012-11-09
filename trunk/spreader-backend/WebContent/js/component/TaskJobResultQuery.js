@@ -1,3 +1,9 @@
+var taskIdHidden = new Ext.form.Hidden({
+			name : 'taskIdHidden'
+		});
+var statusHidden = new Ext.form.Hidden({
+			name : 'statusHidden'
+		});
 // 执行结果列表的store
 var jobResultStore = new Ext.data.Store({
 			proxy : new Ext.data.HttpProxy({
@@ -31,6 +37,7 @@ var resultgridsm = new Ext.grid.CheckboxSelectionModel({
 				// 选择事件
 				rowselect : function(model, rowIndex, record) {
 					var resultId = record.get('id');
+					taskIdHidden.setValue(resultId);
 					// 先清除缓存
 					statusCountStore.removeAll();
 					statusCountStore.setBaseParam('resultId', resultId);
@@ -222,28 +229,135 @@ var taskgridcm2 = new Ext.grid.ColumnModel([{
 // });
 // Task统计列表
 var taskGrid = new Ext.grid.GridPanel({
-	region : 'center',
-	split : true,
-	id : 'taskGrid',
-	store : statusCountStore,
-	cm : taskgridcm2
-		// ,
-		// view : new Ext.grid.GroupingView({
-		// forceFit : true,
-		// startCollapsed : true, // 默认收起
-		// groupTextTpl : '{text} ({[values.rs.length]} {[values.rs.length > 1 ?
-		// "Items" : "Task"]})'
-		// }),
-		// bbar : taskBbar
-		// ,
-		// fbar : ['->', {
-		// text : 'Clear Grouping',
-		// iconCls : 'icon-clear-group',
-		// handler : function() {
-		// taskDtlStore.clearGrouping();
-		// }
-		// }]
-	})
+			region : 'west',
+			width : 150,
+			split : true,
+			id : 'taskGrid',
+			store : statusCountStore,
+			cm : taskgridcm2,
+			// ,
+			// view : new Ext.grid.GroupingView({
+			// forceFit : true,
+			// startCollapsed : true, // 默认收起
+			// groupTextTpl : '{text} ({[values.rs.length]} {[values.rs.length >
+			// 1 ?
+			// "Items" : "Task"]})'
+			// }),
+			// bbar : taskBbar
+			// ,
+			// fbar : ['->', {
+			// text : 'Clear Grouping',
+			// iconCls : 'icon-clear-group',
+			// handler : function() {
+			// taskDtlStore.clearGrouping();
+			// }
+			// }]
+			onCellClick : function(grid, rowIndex, columnIndex, e) {
+				var butname = e.target.defaultValue;
+				var record = grid.getStore().getAt(rowIndex);
+				var data = record.data;
+				var status = data.status;
+				var taskId = taskIdHidden.getValue();
+				statusHidden.setValue(status);
+				resultStore.setBaseParam('resultId', taskId);
+				resultStore.setBaseParam('status', status);
+				resultStore.load();
+			}
+		});
+taskGrid.on('cellclick', taskGrid.onCellClick, taskGrid);
+
+var resultStore = new Ext.data.Store({
+			proxy : new Ext.data.HttpProxy({
+						url : '/spreader-front/taskexecue/taskresult?_time='
+								+ new Date().getTime()
+					}),
+			reader : new Ext.data.JsonReader({
+						root : 'list',
+						totalProperty : 'totalCount'
+					}, [{
+								name : 'uid'
+							}, {
+								name : 'clientId'
+							}, {
+								name : 'clientTaskId'
+							}, {
+								name : 'taskCode'
+							}, {
+								name : 'executedTime'
+							}, {
+								name : 'executeStatus'
+							}])
+		});
+
+// 翻页排序时带上查询条件
+resultStore.on('beforeload', function() {
+			this.baseParams = {
+				resultId : taskIdHidden.getValue(),
+				status : statusHidden.getValue()
+			};
+		});
+var resultcm = new Ext.grid.ColumnModel([{
+			header : '任务ID',
+			dataIndex : 'clientTaskId',
+			width : 100
+		}, {
+			header : '用户ID',
+			dataIndex : 'uid',
+			width : 100
+		}, {
+			header : '任务代码',
+			dataIndex : 'taskCode',
+			renderer : rendDispNameWorkShopFn,
+			width : 100
+		}, {
+			header : '客户端',
+			dataIndex : 'clientId',
+			renderer : renderTaskStatus,
+			width : 80
+		}, {
+			header : '执行时间',
+			dataIndex : 'executedTime',
+			renderer : renderDateHis,
+			width : 100
+		}, {
+			header : '返回状态',
+			dataIndex : 'executeStatus',
+			width : 100
+		}]);
+
+var resultBbar = new Ext.PagingToolbar({
+			pageSize : 20,
+			store : resultStore,
+			displayInfo : true,
+			displayMsg : '显示{0}条到{1}条,共{2}条',
+			emptyMsg : "没有符合条件的记录"
+		});
+// Task统计列表
+var resultGrid = new Ext.grid.GridPanel({
+			region : 'center',
+			split : true,
+			id : 'resultGrid',
+			store : resultStore,
+			cm : resultcm,
+			bbar : resultBbar,
+			onCellClick : function(grid, rowIndex, columnIndex, e) {
+				var buttons = e.target.defaultValue;
+				var record = grid.getStore().getAt(rowIndex);
+				var data = record.data;
+				var taskCode = data.taskCode;
+				var clientTaskId = data.clientTaskId;
+				var viewData = getResultData(clientTaskId);
+				if (excludeTaskCodeFn(taskCode)) {
+					if (taskCode == 'replyWeibo') {
+						settingTaskCommentWeiboForm(viewData);
+					}
+				} else {
+					settingTaskDefaultSource(viewData);
+				}
+			}
+		});
+
+resultGrid.on('cellclick', resultGrid.onCellClick, resultGrid);
 // task
 var taskWindow = new Ext.Window({
 	title : '<span class="commoncss">执行情况查询</span>', // 窗口标题
@@ -251,7 +365,7 @@ var taskWindow = new Ext.Window({
 	closeAction : 'hide',
 	modal : true,
 	layout : 'border', // 设置窗口布局模式
-	width : 600, // 窗口宽度
+	width : 750, // 窗口宽度
 	height : 500, // 窗口高度
 	// closable : true, // 是否可关闭
 	collapsible : true, // 是否可收缩
@@ -260,11 +374,96 @@ var taskWindow = new Ext.Window({
 	constrain : true, // 设置窗口是否可以溢出父容器
 	pageY : 20, // 页面定位Y坐标
 	pageX : document.documentElement.clientWidth / 2 - 300 / 2, // 页面定位X坐标
-	items : [jobResultGrid, taskGrid]
+	items : [jobResultGrid, {
+				region : 'center',
+				layout : 'border',
+				items : [taskGrid, resultGrid]
+			}]
 		// 嵌入的表单面板
 	});
 taskWindow.on('show', function() {
 			jobResultStore.removeAll();
 			jobResultStore.reload();
 			statusCountStore.removeAll();
+			resultStore.removeAll();
 		});
+/**
+ * 渲染任务名称
+ * 
+ * @param {}
+ *            value
+ * @return {}
+ */
+function rendDispNameWorkShopFn(value) {
+	var list = {
+		'fetchWeiboStarUser' : '爬取明星微博',
+		'fetchWeiboUserMainPage' : '爬取用户主页',
+		'fetchUserAttentions' : '爬取用户关注',
+		'registerWeibo' : '注册微博',
+		'activeWeibo' : '激活微博帐号',
+		'fetchWeiboContent' : '爬取指定微博',
+		'postWeiboContent' : '发微博',
+		'addUserFans' : '加粉',
+		'forwardWeiboContent' : '转发微博',
+		'replyWeibo' : '回复微博',
+		'uploadAvatar' : '上传头像',
+		'addWeiboTag' : '添加微博标签',
+		'updateRobotUserInfo' : '更新机器人信息',
+		'firstTimeGuide' : '首次引导',
+		'weiboAppeal' : '微博申诉',
+		'confirmWeiboAppeal' : '确认微博申诉',
+		'fetchKeywordEntrance' : '爬取关键字入口',
+		'fetchKeyword' : '爬取关键字',
+		'fetchKeywordContent' : '根据关键字爬取内容',
+		'fetchNotice' : '爬取消息',
+		'registerApple' : '注册苹果帐号',
+		'activeApp' : '激活应用',
+		'downloadApp' : '下载应用',
+		'registerWebApple' : '网页注册苹果',
+		'registerCnApple' : '苹果中国区注册',
+		'commentApple' : '评论-苹果'
+	};
+	for (var idx in list) {
+		var tmp = list[idx];
+		if (value == idx) {
+			return tmp;
+		}
+	}
+}
+
+function excludeTaskCodeFn(value) {
+	var list = {
+		'replyWeibo' : '回复微博'
+	};
+	for (var idx in list) {
+		var tmp = list[idx];
+		if (value == idx) {
+			return tmp;
+		}
+	}
+}
+/**
+ * 获取contents
+ * 
+ * @param {}
+ *            id
+ * @return {}
+ */
+function getResultData(id) {
+	var data = null;
+	Ext.Ajax.request({
+				url : '/spreader-front/taskexecue/contents?_time='
+						+ new Date().getTime(),
+				params : {
+					'clientTaskId' : id
+				},
+				async : false,
+				success : function(response) {
+					var result = Ext.decode(response.responseText);
+					data = result;
+				},
+				failure : function() {
+				}
+			});
+	return data;
+}
