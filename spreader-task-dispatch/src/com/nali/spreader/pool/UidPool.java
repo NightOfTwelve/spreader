@@ -164,9 +164,10 @@ public class UidPool extends AbstractUidPool {
 	
 	private void init() {
 		long expireTime = System.currentTimeMillis() - clientExpiredTime;
-		priorityStage = new UidPoolStage(backupPool, expireTime, priorityNormalSize, priorityTasks,
+		long expireRemoveTime = System.currentTimeMillis() - clientExpiredTime*2;
+		priorityStage = new UidPoolStage(backupPool, expireTime, expireRemoveTime, priorityNormalSize, priorityTasks,
 				priorityAnyoneAverage, priorityNotLoginAverage, activeClients);
-		normalStage = new UidPoolStage(backupPool, expireTime, normalSize, tasks,
+		normalStage = new UidPoolStage(backupPool, expireTime, expireRemoveTime, normalSize, tasks,
 				anyoneAverage, notLoginAverage, activeClients);
 		priorityStage.setNextStage(normalStage);
 		priorityStage.init(true);

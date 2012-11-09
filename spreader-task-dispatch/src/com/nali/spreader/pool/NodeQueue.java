@@ -15,6 +15,14 @@ public class NodeQueue<T extends Node<T>> {
 		}
 		node.leave();
 	}
+	
+	public void removeWithFollowers(T node) {
+		if (node == head) {
+			head = null;
+		}
+		last=node.prev;
+		node.cutPrev();
+	}
 
 	public void addFirst(T node) {
 		if (head == null) {
@@ -87,6 +95,20 @@ public class NodeQueue<T extends Node<T>> {
 			next = null;
 			prev = null;
 		}
+		
+		private void cutPrev() {
+			if (prev != null) {
+				prev.next = null;
+			}
+			prev = null;
+		}
+		
+//		private void cutNext() {
+//			if (next != null) {
+//				next.prev = null;
+//			}
+//			next = null;
+//		}
 
 		public T getNext() {
 			return next;

@@ -57,8 +57,7 @@ public class UidPoolRefresh {
 		uidPools = CollectionUtils.newHashMap(TaskType.values().length);
 		executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(TaskType.values().length);
 		for (TaskType taskType : TaskType.values()) {
-			int clientUidSize = 10;//TODO parameterize
-			UidBackupPool uidBackup = new UidBackupPool(clientUidSize*30, -1);
+			UidBackupPool uidBackup = new UidBackupPool(-1, taskType.getUidBackupPoolSize());
 			UidPool uidPool = new UidPool();
 			uidPool.initForOrigin(uidBackup, getChannelConfig(taskType));
 			uidPools.put(taskType, uidPool);
