@@ -9,4 +9,6 @@ public interface IManualUserDao {
 	void addManualUsers(long gid, long uid);
 
 	Set<Long> queryManualUsers(Long gid);
+	
+	void removeManualGroupUsers(long gid);
 }
