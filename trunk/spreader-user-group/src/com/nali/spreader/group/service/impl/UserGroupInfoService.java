@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,40 +106,47 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 	@Override
 	public void deleteUserGroup(long gid) {
 		this.crudUserGroupDao.deleteByPrimaryKey(gid);
+		this.manualUserDao.removeManualGroupUsers(gid);
 	}
 
 	@Override
 	public boolean refreshGroupUsers(Long gid) {
 		Assert.notNull(gid, "gid is null");
 		boolean result = false;
-		UserGroup group = this.crudUserGroupDao.selectByPrimaryKey(gid);
-		if (group != null) {
-			if (grouppedUserDao.tryLock(gid)) {
-				try {
-					Integer gType = group.getGtype();
-					Set<Long> manualUsers = manualUserDao.queryManualUsers(gid);
-					grouppedUserDao.addUserCollection(gid, manualUsers);
-					if (gType.intValue() == UserGroupType.dynamic.getTypeVal()) {
-						PropertyExpressionDTO dto = getPropertyExpressionDTO(gid);
-						List<Long> excludeGids = dto.getExcludeGids();
-						Set<Long> excludeUsers = this.queryExcludeGroupUsers(excludeGids);
-						// TODO
-						manualUsers.addAll(excludeUsers);
-						batchSaveDynamicUser(dto, manualUsers, gid);
-						Long[] excludeArr = new Long[excludeUsers.size()];
-						this.removeManualUsers(gid, excludeUsers.toArray(excludeArr));
-						grouppedUserDao.deleteTmpGroupUidsByGid(gid, new ArrayList<Long>(
-								excludeUsers));
+		ReentrantLock lock = new ReentrantLock();
+		if (lock.tryLock()) {
+			try {
+				UserGroup group = this.crudUserGroupDao.selectByPrimaryKey(gid);
+				if (group != null) {
+					if (grouppedUserDao.tryLock(gid)) {
+						try {
+							Integer gType = group.getGtype();
+							Set<Long> manualUsers = manualUserDao.queryManualUsers(gid);
+							grouppedUserDao.addUserCollection(gid, manualUsers);
+							if (gType.intValue() == UserGroupType.dynamic.getTypeVal()) {
+								PropertyExpressionDTO dto = getPropertyExpressionDTO(gid);
+								List<Long> excludeGids = dto.getExcludeGids();
+								Set<Long> excludeUsers = this.queryExcludeGroupUsers(excludeGids);
+								manualUsers.addAll(excludeUsers);
+								batchSaveDynamicUser(dto, manualUsers, gid);
+								Long[] excludeArr = new Long[excludeUsers.size()];
+								this.removeManualUsers(gid, excludeUsers.toArray(excludeArr));
+								grouppedUserDao.deleteTmpGroupUidsByGid(gid, new ArrayList<Long>(
+										excludeUsers));
+							}
+							grouppedUserDao.replaceUserList(gid);
+							result = true;
+						} catch (Exception e) {
+							logger.error("refreshGroupUsers exception", e);
+						} catch (AssembleException e) {
+							logger.error("Can't parse string to property expression", e);
+						} finally {
+							grouppedUserDao.unLock(gid);
+						}
 					}
-					grouppedUserDao.replaceUserList(gid);
-					result = true;
-				} catch (Exception e) {
-					logger.error("refreshGroupUsers exception", e);
-				} catch (AssembleException e) {
-					logger.error("Can't parse string to property expression", e);
-				} finally {
-					grouppedUserDao.unLock(gid);
 				}
+			} finally {
+				lock.unlock();
 			}
 		}
 		return result;
