@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -27,9 +28,12 @@ import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.TaskType;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.model.UserTaskCount;
+import com.nali.spreader.pool.ChannelConfig;
+import com.nali.spreader.pool.UidBackupPool;
+import com.nali.spreader.pool.UidPool;
+import com.nali.spreader.pool.UidPoolRepository;
 import com.nali.spreader.service.IUidPoolService;
-import com.nali.spreader.service.UidPool;
-import com.nali.spreader.service.UidPoolRepository;
+import com.nali.spreader.util.KeyValuePair;
 import com.nali.spreader.util.PerformanceLogger;
 
 @Component
@@ -46,15 +50,24 @@ public class UidPoolRefresh {
 	private Lock mainLock = new ReentrantLock();
 	private TempData tempData;
 	private int date = -1;
+	private Map<Integer, KeyValuePair<Integer, Integer>> channelConfigMap = new ConcurrentHashMap<Integer, KeyValuePair<Integer,Integer>>();
 	
 	@PostConstruct
 	public void init() {
 		uidPools = CollectionUtils.newHashMap(TaskType.values().length);
 		executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(TaskType.values().length);
 		for (TaskType taskType : TaskType.values()) {
-			uidPools.put(taskType, new UidPool());
+			int clientUidSize = 10;//TODO parameterize
+			UidBackupPool uidBackup = new UidBackupPool(clientUidSize*30, -1);
+			UidPool uidPool = new UidPool();
+			uidPool.initForOrigin(uidBackup, getChannelConfig(taskType));
+			uidPools.put(taskType, uidPool);
 		}
 		work();
+	}
+	
+	public void config(Integer taskType, Integer uidSize, Integer fetchSize) {
+		channelConfigMap.put(taskType, new KeyValuePair<Integer, Integer>(uidSize, fetchSize));
 	}
 
 	public void work() {
@@ -154,7 +167,7 @@ public class UidPoolRefresh {
 			
 			//assignAllTasks
 			newPool.assignAllTasks(tempData.countTaskAll(taskType.getId()));
-			newPool.bindTaskToClients(uidPool);
+			newPool.initFromOld(uidPool, getChannelConfig(taskType));
 			
 			uidPools.put(taskType, newPool);
 		}
@@ -164,6 +177,14 @@ public class UidPoolRefresh {
 			return clientTask==null?null:clientTask.getPriority();
 		}
 
+	}
+	
+	private ChannelConfig getChannelConfig(TaskType taskType) {
+		KeyValuePair<Integer, Integer> uidSizeAndFetchSize = channelConfigMap.get(taskType.getId());
+		if(uidSizeAndFetchSize!=null) {
+			return new ChannelConfig(uidSizeAndFetchSize.getKey(), uidSizeAndFetchSize.getValue());
+		}
+		return new ChannelConfig(taskType.getUidSize(), taskType.getFetchSize());
 	}
 	
 	private class TempData {
