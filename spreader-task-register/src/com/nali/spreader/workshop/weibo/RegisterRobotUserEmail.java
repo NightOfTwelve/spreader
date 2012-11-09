@@ -1,12 +1,9 @@
 package com.nali.spreader.workshop.weibo;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +43,6 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Conf
 	private TaskProduceLine<Long> registerWeiboAccount;
 	private Randomer<String> questions;
 	private Boolean registerWeibo = false;
-	private static Set<String> companyEmails = new HashSet<String>(Arrays.asList("mingshi123.net,mingxiao001.net,mingxiao123.net".split(",")));
 	
 	public RegisterRobotUserEmail() throws IOException {
 		super(MultiActionConfig.registerRobotUserEmail, Website.weibo, Channel.intervention);
@@ -70,7 +66,7 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Conf
 	public void work(KeyValue<RobotRegister, String> robotAndEmail, MultiTaskExporter exporter) {
 		RobotRegister robot = robotAndEmail.getKey();
 		String emailCode = robotAndEmail.getValue();
-		if(companyEmails.contains(emailCode)) {
+		if(SupportedEmails.COMPANY_EMAILS.contains(emailCode)) {
 			List<String> emails = RobotUserInfoGenerator.makeEmailAccounts(robot);
 			String email = null;
 			String domain = emailCode;

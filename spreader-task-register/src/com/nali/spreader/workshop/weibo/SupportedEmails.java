@@ -3,6 +3,7 @@ package com.nali.spreader.workshop.weibo;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.util.TxtFileUtil;
@@ -10,11 +11,14 @@ import com.nali.spreader.words.Txt;
 
 public class SupportedEmails {
 	private static final String FILE_ACTION_ID = "txt/email.txt";
+	private static final String COMPANY_EMAIL_FILE = "txt/company-email.txt";
 	private static Map<String, Long> emailActionIds;
+	public static final Set<String> COMPANY_EMAILS;
 
 	static {
 		try {
 			initEmailISPsRandomer();
+			COMPANY_EMAILS=TxtFileUtil.read(Txt.getUrl(COMPANY_EMAIL_FILE));
 		} catch (IOException e) {
 			throw new Error(e);
 		}
