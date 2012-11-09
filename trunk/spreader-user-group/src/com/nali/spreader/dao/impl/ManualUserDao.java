@@ -35,4 +35,10 @@ public class ManualUserDao implements IManualUserDao {
 		String key = getManualGroupKey(gid);
 		return redisTemplate.opsForZSet().reverseRange(key, 0, -1);
 	}
+
+	@Override
+	public void removeManualGroupUsers(long gid) {
+		String key = getManualGroupKey(gid);
+		redisTemplate.delete(key);
+	}
 }
