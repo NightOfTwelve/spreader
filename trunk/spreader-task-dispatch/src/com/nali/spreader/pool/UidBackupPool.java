@@ -16,12 +16,10 @@ import com.nali.spreader.pool.NodeQueue.Node;
 public class UidBackupPool {
 	private UidNodeQueue nodeQueue;
 	private OwnerQueues ownerQueues;
-	private int poolLimit;
 	
 	public UidBackupPool(int clientLimit, int clientRemoveSize, int poolLimit) {
 		super();
-		this.poolLimit = poolLimit;
-		nodeQueue = new UidNodeQueue();
+		nodeQueue = new UidNodeQueue(poolLimit);
 		ownerQueues = new OwnerQueues(clientLimit, clientRemoveSize);
 	}
 	public UidBackupPool(int clientLimit, int poolLimit) {
@@ -73,10 +71,23 @@ public class UidBackupPool {
 		if(uidNode==null) {
 			return false;
 		}
+		removeUidNode(uidNode);
+		return true;
+	}
+	
+	public void trim(long maxTime) {
+		UidPoolNode uidNode = nodeQueue.trim(maxTime);
+		while(uidNode!=null) {
+			UidPoolNodeOwner owner = uidNode.getOwner();
+			ownerQueues.remove(owner);
+			uidNode=uidNode.getNext();
+		}
+	}
+	
+	private void removeUidNode(UidPoolNode uidNode) {
 		nodeQueue.remove(uidNode);
 		UidPoolNodeOwner owner = uidNode.getOwner();
 		ownerQueues.remove(owner);
-		return true;
 	}
 	
 	public Iterator<BoundUid> descendingIterator() {
@@ -85,7 +96,16 @@ public class UidBackupPool {
 			
 			@Override
 			public void remove() {
-				throw new UnsupportedOperationException();
+				UidPoolNode target;
+				if(node==null) {
+					target=nodeQueue.getHead();
+				} else {
+					target=node.getNext();
+				}
+				if(target==null) {
+					throw new IllegalStateException();
+				}
+				removeUidNode(target);
 			}
 			
 			@Override
@@ -111,7 +131,16 @@ public class UidBackupPool {
 			
 			@Override
 			public void remove() {
-				throw new UnsupportedOperationException();
+				UidPoolNode target;
+				if(node==null) {
+					target=nodeQueue.getLast();
+				} else {
+					target=node.getPrev();
+				}
+				if(target==null) {
+					throw new IllegalStateException();
+				}
+				removeUidNode(target);
 			}
 			
 			@Override
@@ -195,7 +224,32 @@ class OwnerQueues {
 class UidNodeQueue extends NodeQueue<UidPoolNode> {
 	private static Logger logger = Logger.getLogger(UidBackupPool.class);
 	private RetrievableHashSet<UidPoolNode> nodes = new RetrievableHashSet<UidPoolNode>();
+	private final int poolLimit;
 	
+	public UidNodeQueue(int poolLimit) {
+		this.poolLimit = poolLimit;
+	}
+
+	public UidPoolNode trim(long maxTime) {
+		if(poolLimit<=0) {
+			return null;
+		}
+		UidPoolNode start = null;
+		UidPoolNode current = getLast();
+		while(current!=null && current.getTime() <= maxTime) {
+			if(nodes.size()<=poolLimit) {
+				break;
+			}
+			nodes.remove(current);
+			start = current;
+			current = current.getPrev();
+		}
+		if(start!=null) {
+			removeWithFollowers(start);
+		}
+		return start;
+	}
+
 	public UidPoolNode pollLast(long maxTime) {
 		UidPoolNode last = getLast();
 		if(last==null || last.getTime() > maxTime) {

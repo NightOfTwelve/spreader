@@ -22,6 +22,7 @@ public class UidPoolStage {
 	private static Logger logger = Logger.getLogger(UidPoolStage.class);
 	private UidBackupPool backupPool;
 	private long expireTime;
+	private long expireRemoveTime;
 	private int normalFetchSize;
 	private Map<Long, List<ItemCount<Long>>> uidActionCountMap;
 	private Average<Long> anyoneAverage;
@@ -36,11 +37,12 @@ public class UidPoolStage {
 	private boolean isInited;
 	private UidPoolStage nextStage;
 
-	public UidPoolStage(UidBackupPool backupPool, long expireTime, int normalFetchSize, Map<Long, List<ItemCount<Long>>> uidActionCountMap,
+	public UidPoolStage(UidBackupPool backupPool, long expireTime, long expireRemoveTime, int normalFetchSize, Map<Long, List<ItemCount<Long>>> uidActionCountMap,
 			Average<Long> anyoneAverage, Average<Long> notLoginAverage, Map<Long, ActiveClient> activeClients) {
 		super();
 		this.backupPool = backupPool;
 		this.expireTime = expireTime;
+		this.expireRemoveTime = expireRemoveTime;
 		this.normalFetchSize = normalFetchSize;
 		this.uidActionCountMap = uidActionCountMap;
 		this.anyoneAverage = anyoneAverage;
@@ -126,6 +128,9 @@ public class UidPoolStage {
 				}
 			}
 			stageClient.setBoundUidActionCountList(boundUidActionCountList);
+		}
+		if(forceBackup) {
+			backupPool.trim(expireRemoveTime);
 		}
 	}
 
