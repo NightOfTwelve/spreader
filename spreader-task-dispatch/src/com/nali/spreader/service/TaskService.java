@@ -5,17 +5,21 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import com.nali.common.model.Limit;
+import com.nali.common.pagination.PageResult;
 import com.nali.spreader.dao.ICrudClientErrorDao;
 import com.nali.spreader.dao.ICrudClientTaskDao;
 import com.nali.spreader.dao.ICrudClientTaskLogDao;
 import com.nali.spreader.dao.ICrudTaskBatchDao;
 import com.nali.spreader.dao.ITaskDao;
+import com.nali.spreader.dto.TaskResultDto;
 import com.nali.spreader.model.ClientError;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.model.ClientTaskExample;
@@ -223,4 +227,24 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 		crudClientErrorDao.insert(clientError);
 	}
 
+	@Override
+	public PageResult<TaskResultDto> getTaskResultPageData(Long resultId, int status, Limit limit) {
+		Assert.notNull(resultId, "resultId is null");
+		List<TaskResultDto> list = taskDao.selectTaskResult(resultId, status, limit);
+		int count = taskDao.countTaskResultDto(resultId, status);
+		return new PageResult<TaskResultDto>(list, limit, count);
+	}
+
+	@Override
+	public String getClientTaskContents(Long clientTaskId) {
+		Assert.notNull(clientTaskId, "clientTaskId is null");
+		ClientTask ct = crudClientTaskDao.selectByPrimaryKey(clientTaskId);
+		if (ct != null) {
+			String content = ct.getContents();
+			if (content != null) {
+				return content;
+			}
+		}
+		return StringUtils.EMPTY;
+	}
 }

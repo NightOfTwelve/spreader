@@ -77,4 +77,26 @@
 			select LAST_INSERT_ID() as value
 		</selectKey>
 	</insert>
+	<select id="selectTaskResult" parameterClass="java.util.HashMap" resultClass="com.nali.spreader.dto.TaskResultDto">
+		select b.client_id as clientId,
+		if(l.executed_time is null,b.assign_time,executed_time) as executedTime,
+		if((ct.batch_id + ct.status) is null, '未返回','未返回') as executeStatus,
+		ct.uid as uid,
+		ct.task_code as taskCode,
+		ct.id as clientTaskId
+		from tb_task t left join tb_client_task ct on t.id=ct.id 
+		left join tb_task_batch b on b.id=ct.batch_id 
+		left join tb_client_task_log l on t.id=l.task_id
+		where t.result_id=#resultId# and t.status=#taskStatus#
+		<isNotNull property="litmit">
+			limit $limit.offset$,$limit.maxRows$ 
+		</isNotNull>
+	</select>
+	<select id="countTaskResultDto" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select count(*) cnt
+		from tb_task t left join tb_client_task ct on t.id=ct.id 
+		left join tb_task_batch b on b.id=ct.batch_id 
+		left join tb_client_task_log l on t.id=l.task_id
+		where t.result_id=#resultId# and t.status=#taskStatus#
+	</select>
 </sqlMap>

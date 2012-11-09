@@ -2,12 +2,16 @@ package com.nali.spreader.dao.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.nali.common.model.Limit;
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.dao.ITaskDao;
+import com.nali.spreader.dto.TaskResultDto;
 import com.nali.spreader.model.ActiveTaskDto;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.model.TaskBatch;
@@ -55,5 +59,23 @@ public class TaskDao implements ITaskDao {
 	@Override
 	public int refreshPriority(String priorityExpression) {
 		return sqlMap.update("spreader.refreshPriority", priorityExpression);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TaskResultDto> selectTaskResult(Long resultId,int status,Limit limit) {
+		Map<String, Object> param = CollectionUtils.newHashMap(3);
+		param.put("resultId", resultId);
+		param.put("taskStatus", status);
+		param.put("limit", limit);
+		return sqlMap.queryForList("spreader.selectTaskResult", param);
+	}
+
+	@Override
+	public int countTaskResultDto(Long resultId, int status) {
+		Map<String, Object> param = CollectionUtils.newHashMap(2);
+		param.put("resultId", resultId);
+		param.put("taskStatus", status);
+		return (Integer) sqlMap.queryForObject("spreader.countTaskResultDto", param);
 	}
 }
