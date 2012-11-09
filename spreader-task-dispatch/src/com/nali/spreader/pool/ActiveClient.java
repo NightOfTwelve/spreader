@@ -68,13 +68,13 @@ public class ActiveClient {
 		List<ItemCount<UidAction>> normal = getNormal();
 		List<ItemCount<Long>> anyone = linkedStage.getAnyone();
 		List<ItemCount<Long>> notLogin = linkedStage.getNotLogin();
-		if(normal.size()+anyone.size()+notLogin.size()>0) {
+		if(countUidAction(normal)+countTask(anyone)+countTask(notLogin)>0) {
 			if(logger.isInfoEnabled()) {
 				if(normal.size()+anyone.size()+notLogin.size() < config.allFetchSize -1) {
 					logger.info("not fully fetch, clientId:" + clientId +
-							",normal.size():" + normal.size() +
-							",anyone.size():" + anyone.size() +
-							",notLogin.size():" + notLogin.size() +
+							",normal:" + countUidAction(normal) +
+							",anyone:" + countTask(anyone) +
+							",notLogin:" + countTask(notLogin) +
 							",allFetchSize:" + config.allFetchSize
 							);
 				}
@@ -85,6 +85,28 @@ public class ActiveClient {
 			logger.info(config.taskType + " no more task for " + clientId);
 		}
 		return getTasks();
+	}
+	
+	private int countUidAction(List<ItemCount<UidAction>> uidActionCounts) {
+		if(uidActionCounts.size()==0) {
+			return 0;
+		}
+		int count=0;
+		for (ItemCount<UidAction> uidActionCount : uidActionCounts) {
+			count += uidActionCount.getCount();
+		}
+		return count;
+	}
+
+	private int countTask(List<ItemCount<Long>> actionCounts) {
+		if(actionCounts.size()==0) {
+			return 0;
+		}
+		int count=0;
+		for (ItemCount<Long> itemCount : actionCounts) {
+			count += itemCount.getCount();
+		}
+		return count;
 	}
 	
 	private boolean end() {
