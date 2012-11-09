@@ -27,7 +27,7 @@ public class TestDispatchController {
 	@ResponseBody
 	@RequestMapping("/pool/{taskType}")
 	public String peekUidPool(@PathVariable Integer taskType) {
-		return uidPoolRepository.peek(taskType, null);
+		return "<pre>\r\n" + uidPoolRepository.peek(taskType, null) + "\r\n</pre>";
 	}
 	@ResponseBody
 	@RequestMapping("/channel/cfg/{taskType}/{uidSize}/{fetchSize}")
