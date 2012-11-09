@@ -1,0 +1,6 @@
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/ux/grouptab/css/GroupTab.css')" />
+<br />
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/ux/grouptab/GroupTab.js'))"></script>
+<br />
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/ux/grouptab/GroupTabPanel.js'))"></script>
+<br />

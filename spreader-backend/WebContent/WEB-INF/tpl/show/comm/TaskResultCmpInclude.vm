@@ -1,0 +1,4 @@
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/TaskCommentCmp.js'))"></script>
+<br />
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/TaskResultDefaultCmp.js'))"></script>
+<br />
