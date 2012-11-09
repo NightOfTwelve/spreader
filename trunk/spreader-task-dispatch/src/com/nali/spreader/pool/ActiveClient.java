@@ -68,13 +68,16 @@ public class ActiveClient {
 		List<ItemCount<UidAction>> normal = getNormal();
 		List<ItemCount<Long>> anyone = linkedStage.getAnyone();
 		List<ItemCount<Long>> notLogin = linkedStage.getNotLogin();
-		if(countUidAction(normal)+countTask(anyone)+countTask(notLogin)>0) {
+		int normalCount = countUidAction(normal);
+		int anyoneCount = countTask(anyone);
+		int notLoginCount = countTask(notLogin);
+		if(normalCount+anyoneCount+notLoginCount>0) {
 			if(logger.isInfoEnabled()) {
-				if(normal.size()+anyone.size()+notLogin.size() < config.allFetchSize -1) {
+				if(normalCount+anyoneCount+notLoginCount < config.allFetchSize -1) {
 					logger.info("not fully fetch, clientId:" + clientId +
-							",normal:" + countUidAction(normal) +
-							",anyone:" + countTask(anyone) +
-							",notLogin:" + countTask(notLogin) +
+							",normal:" + normalCount +
+							",anyone:" + anyoneCount +
+							",notLogin:" + notLoginCount +
 							",allFetchSize:" + config.allFetchSize
 							);
 				}
