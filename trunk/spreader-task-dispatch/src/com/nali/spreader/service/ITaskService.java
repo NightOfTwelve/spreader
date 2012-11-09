@@ -3,6 +3,9 @@ package com.nali.spreader.service;
 import java.util.Date;
 import java.util.List;
 
+import com.nali.common.model.Limit;
+import com.nali.common.pagination.PageResult;
+import com.nali.spreader.dto.TaskResultDto;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.model.TaskError;
 import com.nali.spreader.model.TaskResult;
@@ -33,5 +36,9 @@ public interface ITaskService {
 	void assignToBatch(List<ClientTask> tasks, Integer taskType, Date expireTime);
 
 	void reportError(TaskError error);
+	
+	PageResult<TaskResultDto> getTaskResultPageData(Long resultId,int status,Limit limit);
+	
+	String getClientTaskContents(Long clientTaskId);
 
 }

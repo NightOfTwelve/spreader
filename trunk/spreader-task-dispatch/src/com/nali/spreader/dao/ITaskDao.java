@@ -3,6 +3,8 @@ package com.nali.spreader.dao;
 import java.util.Date;
 import java.util.List;
 
+import com.nali.common.model.Limit;
+import com.nali.spreader.dto.TaskResultDto;
 import com.nali.spreader.model.ActiveTaskDto;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.model.TaskBatch;
@@ -25,4 +27,7 @@ public interface ITaskDao {
 
 	int refreshPriority(String priorityExpression);
 
+	List<TaskResultDto> selectTaskResult(Long resultId, int status, Limit limit);
+	
+	int countTaskResultDto(Long resultId, int status);
 }
