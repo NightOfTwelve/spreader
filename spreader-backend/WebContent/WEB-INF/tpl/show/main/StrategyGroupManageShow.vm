@@ -3,7 +3,6 @@
 <head>
 <title>策略分组管理</title>
 #parse("/show/comm/PublicInclude.vm")
-#parse("/show/comm/GroupTabCmpInclude.vm")
 #parse("/show/comm/DateTimeFieldInclude.vm")
 #parse("/show/comm/My97DateInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/SelectUserGroupCombo.js'))"></script>

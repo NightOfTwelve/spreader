@@ -250,7 +250,8 @@ Ext.onReady(function() {
 	// 定义表格数据源
 	var store = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
-							url : '../usergroup/grouplist'
+							url : '../usergroup/grouplist?_time='
+									+ new Date().getTime()
 						}),
 				reader : new Ext.data.JsonReader({
 							totalProperty : 'totalCount',
@@ -426,11 +427,11 @@ Ext.onReady(function() {
 											} else {
 												Ext.Msg.alert("提示", "删除失败");
 											}
-											store.reload();
+											store.load();
 										},
 										failure : function() {
 											Ext.Msg.alert("提示", "删除失败");
-											store.reload();
+											store.load();
 										}
 									});
 								}
@@ -469,7 +470,7 @@ Ext.onReady(function() {
 					text : '刷新',
 					iconCls : 'arrow_refreshIcon',
 					handler : function() {
-						store.reload();
+						store.load();
 					}
 				}],
 		bbar : bbar,
@@ -490,10 +491,6 @@ Ext.onReady(function() {
 				Ext.getCmp("groupinfo").setText(data.gname + ',编号:'
 						+ groupIdHidden.getValue());
 				addGroupUserWindow.show();
-				selectUserStore.setBaseParam('gid', groupIdHidden.getValue());
-				allUserStore.setBaseParam('gid', groupIdHidden.getValue());
-				selectUserStore.load();
-				allUserStore.load();
 			}
 			if (buttons == '刷新') {
 				Ext.Msg.confirm('警告', '此操作会刷新该分组的所有成员，可能执行时间较长，是否继续操作？',
@@ -770,33 +767,35 @@ Ext.onReady(function() {
 						buttons : Ext.Msg.YESNO,
 						fn : function(ans) {
 							if (ans == 'yes') {
-								Ext.Ajax.request({
-											url : '../usergroup/adduser?_time'
-													+ new Date().getTime(),
-											params : {
-												gid : groupIdHidden.getValue(),
-												uids : userArray
-											},
-											success : function(response) {
-												var result = Ext
-														.decode(response.responseText);
-												Ext.Msg.alert("提示",
-														result.message);
-												cleanParams();
-												selectUserStore.setBaseParam(
-														'gid', groupIdHidden
-																.getValue());
-												selectUserStore.reload();
-											},
-											failure : function() {
-												cleanParams();
-												selectUserStore.setBaseParam(
-														'gid', groupIdHidden
-																.getValue());
-												selectUserStore.reload();
-												Ext.Msg.alert("提示", "添加失败");
-											}
-										});
+								if (userArray != null && userArray.length > 0) {
+									Ext.Ajax.request({
+										url : '../usergroup/adduser?_time'
+												+ new Date().getTime(),
+										params : {
+											gid : groupIdHidden.getValue(),
+											uids : userArray
+										},
+										success : function(response) {
+											var result = Ext
+													.decode(response.responseText);
+											Ext.Msg.alert("提示", result.message);
+											cleanParams();
+											selectUserStore.setBaseParam('gid',
+													groupIdHidden.getValue());
+											selectUserStore.reload();
+										},
+										failure : function() {
+											cleanParams();
+											selectUserStore.setBaseParam('gid',
+													groupIdHidden.getValue());
+											selectUserStore.reload();
+											Ext.Msg.alert("提示", "添加失败");
+										}
+									});
+								} else {
+									Ext.Msg.alert("提示", "至少添加一个用户");
+									return;
+								}
 							}
 						}
 					});
@@ -825,21 +824,12 @@ Ext.onReady(function() {
 								}, {
 									name : 'isRobot'
 								}, {
-									name : 'manual'
-								}, {
 									name : 'nickName'
 								}, {
 									name : 'gender'
 								}, {
 									name : 'realName'
-								}]),
-				autoLoad : {
-					params : {
-						start : 0,
-						limit : 20,
-						gid : groupIdHidden.getValue()
-					}
-				}
+								}])
 			});
 	// 已经选择的USER列表
 	var selectsm = new Ext.grid.CheckboxSelectionModel();
@@ -856,17 +846,17 @@ Ext.onReady(function() {
 			}, {
 				header : '性别',
 				dataIndex : 'gender',
-				renderer : renderGender,
+				// renderer : renderGender,
 				width : 80
 			}, {
 				header : '网站',
 				dataIndex : 'websiteId',
-				renderer : renderWebsiteType,
+				// renderer : renderWebsiteType,
 				width : 100
 			}, {
 				header : '机器人',
 				dataIndex : 'isRobot',
-				renderer : rendTrueFalse,
+				// renderer : rendTrueFalse,
 				width : 80
 			}, {
 				header : '真名',
@@ -958,12 +948,12 @@ Ext.onReady(function() {
 											Ext.Msg.alert("提示", result.message);
 											selectUserStore.setBaseParam('gid',
 													groupIdHidden.getValue());
-											selectUserStore.reload();
+											selectUserStore.load();
 										},
 										failure : function() {
 											selectUserStore.setBaseParam('gid',
 													groupIdHidden.getValue());
-											selectUserStore.reload();
+											selectUserStore.load();
 											Ext.Msg.alert("提示", "删除失败");
 										}
 									});
@@ -992,8 +982,8 @@ Ext.onReady(function() {
 			handler : function() {
 				selectUserStore.setBaseParam('gid', groupIdHidden.getValue());
 				allUserStore.setBaseParam('gid', groupIdHidden.getValue());
-				selectUserStore.reload();
-				allUserStore.reload();
+				selectUserStore.load();
+				allUserStore.load();
 			}
 		}],
 		bbar : selectbbar
@@ -1020,20 +1010,13 @@ Ext.onReady(function() {
 									name : 'gender'
 								}, {
 									name : 'realName'
-								}]),
-				autoLoad : {
-					params : {
-						start : 0,
-						limit : 20,
-						gid : groupIdHidden.getValue()
-					}
-				}
+								}])
 			});
 	// 已经选择的USER列表
 	var allUserSm = new Ext.grid.CheckboxSelectionModel();
 	// 定义表格列CM
 	var allUserCm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(),
-			selectsm, {
+			allUserSm, {
 				header : '编号',
 				dataIndex : 'id',
 				width : 80
@@ -1152,9 +1135,15 @@ Ext.onReady(function() {
 							}
 						}]
 			});
-	// show事件，需先删除组件，再重新创建PPTGRID
+	// show事件，需先删除组件，再重新创建PPTGRID //TODO
 	addGroupUserWindow.on('show', function() {
 				cleanParams();
+				selectUserStore.removeAll();
+				allUserStore.removeAll();
+				selectUserStore.setBaseParam('gid', groupIdHidden.getValue());
+				allUserStore.setBaseParam('gid', groupIdHidden.getValue());
+				selectUserStore.load();
+				allUserStore.load();
 			});
 	// show事件，需先删除组件，再重新创建PPTGRID
 	editstgWindow.on('show', function() {

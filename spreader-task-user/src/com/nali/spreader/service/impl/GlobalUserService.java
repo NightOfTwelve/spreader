@@ -366,7 +366,9 @@ public class GlobalUserService implements IGlobalUserService {
 		if (!CollectionUtils.isEmpty(data)) {
 			for (Long uid : data) {
 				User user = this.crudUserDao.selectByPrimaryKey(uid);
-				result.add(user);
+				if(user!=null) {
+					result.add(user);
+				}
 			}
 		}
 		return result;
