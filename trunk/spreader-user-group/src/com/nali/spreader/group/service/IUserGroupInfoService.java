@@ -160,4 +160,6 @@ public interface IUserGroupInfoService {
 	 * @return
 	 */
 	PageResult<Long> getManualUsersPageData(Long gid, Limit limit);
+	
+	boolean isDependency(Long gid);
 }
