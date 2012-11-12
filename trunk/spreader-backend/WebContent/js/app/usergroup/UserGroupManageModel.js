@@ -19,12 +19,13 @@ Ext.onReady(function() {
 		rootVisible : true,
 		root : userGroupPropExpRoot,
 		tbar : [{
-					text : '保存修改',
-					iconCls : 'addIcon',
-					handler : function() {
-						userGroupSubmitTreeData(userGroupPropExpTree, store,groupIdHidden.getValue());
-					}
-				}],
+			text : '保存修改',
+			iconCls : 'addIcon',
+			handler : function() {
+				userGroupSubmitTreeData(userGroupPropExpTree, store,
+						groupIdHidden.getValue());
+			}
+		}],
 		loader : new Ext.tree.TreeLoader({
 					dataUrl : '../usergroup/genpropexp?time='
 							+ new Date().getTime(),
@@ -415,8 +416,13 @@ Ext.onReady(function() {
 										success : function(response) {
 											var result = Ext
 													.decode(response.responseText);
+											var dependMsg = result.message;
 											if (result.success) {
-												Ext.Msg.alert("提示", "删除成功");
+												var msg = "删除成功!";
+												if (!Ext.isEmpty(dependMsg)) {
+													msg = msg + dependMsg;
+												}
+												Ext.Msg.alert("提示", msg);
 											} else {
 												Ext.Msg.alert("提示", "删除失败");
 											}
