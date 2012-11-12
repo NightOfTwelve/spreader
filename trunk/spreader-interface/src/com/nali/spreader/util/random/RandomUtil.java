@@ -136,9 +136,12 @@ public class RandomUtil {
 	}
 	
 	public static<E> List<E> randomItemsReadOnly(List<E> allList, Set<E> exists, int count) {
+		int size = allList.size();
+		if(size==0) {
+			return Collections.emptyList();
+		}
 		ArrayList<E> rlt=new ArrayList<E>(count);
 		HashSet<Integer> existIdxs=new HashSet<Integer>((int) Math.floor(count/0.75));
-		int size = allList.size();
 		int fetchCount = 0;
 		for (int i = count * 5; i > 0 ; i--) {
 			int idx = random.nextInt(size);
