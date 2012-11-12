@@ -1,6 +1,7 @@
 package com.nali.spreader.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -334,11 +335,20 @@ public class UserGroupManageController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/removegroup")
 	public String deleteUserGroup(long[] gids) {
-		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
+		Map<String, Object> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
+		result.put("message", "");
+		List<Long> dependGroup = new ArrayList<Long>();
 		if (gids != null && gids.length > 0) {
 			for (long gid : gids) {
-				this.userGroupService.deleteUserGroup(gid);
+				if (this.userGroupService.isDependency(gid)) {
+					dependGroup.add(gid);
+				} else {
+					this.userGroupService.deleteUserGroup(gid);
+				}
+			}
+			if (dependGroup.size() > 0) {
+				result.put("message", "分组编号:" + dependGroup.toString() + " 因在其它分组中有排除关系，不能删除");
 			}
 			result.put("success", true);
 		}
