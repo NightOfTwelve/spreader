@@ -355,4 +355,16 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 			return new PageResult<Long>(Collections.<Long> emptyList(), limit, 0);
 		}
 	}
+
+	@Override
+	public boolean isDependency(Long gid) {
+		UserGroupExcludeExample example = new UserGroupExcludeExample();
+		Criteria c = example.createCriteria();
+		c.andExcludeGidEqualTo(gid);
+		List<UserGroupExclude> list = this.crudUserGroupExcludeDao.selectByExample(example);
+		if (list.size() > 0) {
+			return true;
+		}
+		return false;
+	}
 }
