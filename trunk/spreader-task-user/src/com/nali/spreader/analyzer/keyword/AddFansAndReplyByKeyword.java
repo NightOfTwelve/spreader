@@ -99,10 +99,10 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	private void execue(Set<Long> keywords, List<Long> robots) {
 		Long[] opArray = new Long[keywords.size()];
 		Long[] keywordArray = keywords.toArray(opArray);
-		List<Map<String, Long>> allContent = this.contentService
-				.findContentByPostContentDto(this.config.getPostWeiboContentDto(keywordArray));
+		List<Map<String, Long>> allContent = this.contentService//TODO 不要为了写代码方便随便用this.
+				.findContentByPostContentDto(this.config.getPostWeiboContentDto(keywordArray));//TODO service不要随便返回map类型，没人知道key是什么，同理dao也不要随便返回map给service
 		List<UserContentsDto> readyData = this.getUserContentsDtoData(allContent);
-		if (!CollectionUtils.isEmpty(readyData)) {
+		if (!CollectionUtils.isEmpty(readyData)) {//TODO 不要整天判断isEmpty，自己返回的集合了还不信任，或者用if empty return的方法，避免后面一直缩进
 			Integer userCount = readyData.size();
 			List<ItemCount<Long>> execuData = AverageHelper.getItemCounts(this.execuAddLimit,
 					robots);
@@ -111,7 +111,7 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 			execuParams.put(AverageHelper.KEY_ROBOT_USER_NUMBER, robots.size());
 			execuParams.put(AverageHelper.KEY_ADD_FANS_LIMIT, this.addLimit);
 			execuParams.put(AverageHelper.KEY_EXECU_ADD_FANS_LIMIT, this.execuAddLimit);
-			Average<Long> avg = AverageHelper.selectAverageByParam(execuParams, execuData);
+			Average<Long> avg = AverageHelper.selectAverageByParam(execuParams, execuData);//TODO 传个坑爹的map什么意思，调方法前set，调了又get，大家还要商量好key
 			Date addTime = new Date();
 			Set<UserContentsDto> ucExists = new HashSet<UserContentsDto>();
 			while (avg.hasNext()) {
@@ -127,7 +127,7 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 						Long robotId = item.getItem();
 						int count = item.getCount();
 						Long contentId = RandomUtil.randomItem(contents);
-						if (count > 0) {
+						if (count > 0) {//TODO 到这里都缩进了n层没法阅读了
 							existsAdd = addFans(uid, robotId, existsAdd, addTime);
 							if (needReply) {
 								existsReyply = replyWeibo(robotId, contentId, existsReyply, addTime);
@@ -218,7 +218,7 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 				set = new HashSet<Long>();
 			}
 			set.add(robotId);
-			exists.put(uid, set);
+			exists.put(uid, set);//TODO put移到new HashSet之后
 		}
 		return exists;
 	}
@@ -291,7 +291,7 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	 */
 	private List<UserContentsDto> getUserContentsDtoData(List<Map<String, Long>> data) {
 		List<UserContentsDto> result = new ArrayList<UserContentsDto>();
-		Map<Long, Set<Long>> map = getTransformData(data, "uid", "contentId");
+		Map<Long, Set<Long>> map = getTransformData(data, "uid", "contentId");//TODO 这个地方调用是错的，你的data必须按uid排序过才能用这个方法
 		if (map == null) {
 			return result;
 		}
@@ -347,11 +347,12 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	 */
 	private Map<Long, Set<Long>> getTransformData(List<Map<String, Long>> data, String groupKey,
 			String itemKey) {
+		//TODO 分层不清楚很糟糕，你所有的逻辑都在analyzer这一层来写，service就给你传dao的数据用，每次analyzer都写过几百行，你这个方法严重依赖于dao的排序
 		Map<Long, Set<Long>> readyMap = new HashMap<Long, Set<Long>>();
 		if (CollectionUtils.isEmpty(data)) {
 			return readyMap;
 		}
-		Set<Long> contentSet = new HashSet<Long>();
+		Set<Long> contentSet = new HashSet<Long>();//TODO 下面这一段写的冗余了，而且不是每次contentSet都要被put，初始化的new白new了
 		for (int i = 0; i < data.size(); i++) {
 			Map<String, Long> map = data.get(i);
 			Long groupKeyId = map.get(groupKey);
