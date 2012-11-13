@@ -562,8 +562,7 @@
 	</select>
 	<select id="queryUserPassword" parameterClass="java.lang.Long"
 		resultClass="java.lang.String">
-		select login_pwd from spreader.tb_robot_user where
-		website_id = 1 and uid = #uid#
+		select login_pwd from spreader.tb_robot_user where uid = #uid#
 	</select>
 	<update id="updateUserArticles" parameterClass="java.lang.Long">
 		update
