@@ -19,4 +19,6 @@ public interface IGlobalRobotUserService {
 
 	void accountLimited(Long uid);
 
+	void accountPwdError(Long uid);
+
 }
