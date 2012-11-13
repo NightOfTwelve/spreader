@@ -18,9 +18,7 @@ public class EmailRegister {
 	private Map<String, String> cookies;
 
 	public boolean register(String email, String domain, String pwd) throws IOException {
-		if(cookies==null) {
-			login();
-		}
+		checkLogin();
 		Connection connection = Jsoup.connect("http://mail.9nali.com/iredadmin/create/user")
 				.data("username", email)
 				.data("newpw", pwd)
@@ -52,9 +50,7 @@ public class EmailRegister {
 	}
 	
 	public void del(String user, String domain) throws IOException {//for test
-		if(cookies==null) {
-			login();
-		}
+		checkLogin();
 		Connection connection = Jsoup.connect("http://mail.9nali.com/iredadmin/users/" + domain)
 				.data("action", "delete")
 				.data("cur_page", "1")
@@ -63,7 +59,7 @@ public class EmailRegister {
 				.followRedirects(false)
 				.timeout(3000)
 				.method(Method.POST);
-		Response res = connection.execute();
+		Response res = execute(connection);
 		if(res.statusCode() != HttpURLConnection.HTTP_SEE_OTHER) {
 			throw new IOException("del failed:statusCode=" + res.statusCode());
 		}
@@ -72,17 +68,25 @@ public class EmailRegister {
 		}
 	}
 	
-	private void login() throws IOException {
-		Connection connection = Jsoup.connect("http://mail.9nali.com/iredadmin/login")
-				.data("username", adminUser)
-				.data("password", adminPwd)
-				.timeout(3000)
-				.method(Method.POST);
-		Response res = execute(connection);
-		if(res.body().indexOf(adminUser)!=-1) {
-			cookies = res.cookies();
-		} else {
-			throw new IOException("login failed:\r\n" + res.body());
+	private void checkLogin() throws IOException {
+		if(cookies!=null) {
+			return;
+		}
+		synchronized (this) {
+			if(cookies!=null) {
+				return;
+			}
+			Connection connection = Jsoup.connect("http://mail.9nali.com/iredadmin/login")
+					.data("username", adminUser)
+					.data("password", adminPwd)
+					.timeout(3000)
+					.method(Method.POST);
+			Response res = execute(connection);
+			if(res.body().indexOf(adminUser)!=-1) {
+				cookies = res.cookies();
+			} else {
+				throw new IOException("login failed:\r\n" + res.body());
+			}
 		}
 	}
 

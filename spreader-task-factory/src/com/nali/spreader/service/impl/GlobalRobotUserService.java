@@ -43,6 +43,11 @@ public class GlobalRobotUserService implements IGlobalRobotUserService {
 	public void accountLimited(Long uid) {
 		changeAccountStatus(uid, RobotUser.ACCOUNT_STATE_LIMITED);
 	}
+
+	@Override
+	public void accountPwdError(Long uid) {
+		changeAccountStatus(uid, RobotUser.ACCOUNT_STATE_PWD_ERROR);
+	}
 	
 	@Override
 	public void changeAccountStatus(Long uid, Integer status) {

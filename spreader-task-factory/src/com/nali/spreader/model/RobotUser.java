@@ -9,6 +9,7 @@ public class RobotUser extends BaseModel implements Serializable {
     public static final Integer ACCOUNT_STATE_DISABLE=2;
     public static final Integer ACCOUNT_STATE_EXPORT=3;
     public static final Integer ACCOUNT_STATE_LIMITED=4;
+	public static final Integer ACCOUNT_STATE_PWD_ERROR=5;
     
     private Integer gender;
     

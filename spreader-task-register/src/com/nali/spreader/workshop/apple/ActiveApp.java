@@ -1,8 +1,10 @@
 package com.nali.spreader.workshop.apple;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,18 +25,21 @@ import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IAppRegisterService;
 import com.nali.spreader.service.IRobotRegisterService;
+import com.nali.spreader.service.impl.EmailRegister;
 import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.words.AppleNickname;
 
 @Component
 public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassiveWorkshop<Long, Boolean> {
-	private static final long RECEIVE_DELAY = 1000*60*10;
+	private static Logger logger = Logger.getLogger(ActiveApp.class);
+	private static final long RECEIVE_DELAY = 1000*60*30;
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
 	@Autowired
 	private IAppRegisterService appRegisterService;
 	@AutowireProductLine
 	private TaskProduceLine<KeyValue<RobotUser, User>> generateAppAccount;
+	private EmailRegister emailRegister = new EmailRegister();
 
 	public ActiveApp() {
 		super(SimpleActionConfig.activeApp, Website.apple, Channel.normal);
@@ -62,6 +67,7 @@ public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassive
 	public void handleResult(Date updateTime, Boolean resultObject, Map<String, Object> contextContents, Long uid) {
 		Long registerId = (Long) contextContents.get("id");
 		RobotRegister robotRegister = robotRegisterService.get(registerId);
+		String email = robotRegister.getEmail();
 		AppUdid appUdid = appRegisterService.getAppUdid(registerId);
 		RegAddress regAddress = appRegisterService.getRegAddress(registerId);
 		RobotUser robotUser = new RobotUser();
@@ -69,7 +75,7 @@ public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassive
 		robotUser.setAccountState(RobotUser.ACCOUNT_STATE_NORMAL);
 		robotUser.setWebsiteId(websiteId);
 		robotUser.setWebsiteUid(registerId);
-		robotUser.setLoginName(robotRegister.getEmail()+"#"+appUdid.getUdid());//not use email
+		robotUser.setLoginName(email+"#"+appUdid.getUdid());//not use email
 		robotUser.setLoginPwd(appUdid.getPwd());
 		robotUser.setGender(robotRegister.getGender());
 		User user = new User();
@@ -79,12 +85,18 @@ public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassive
 		user.setProvince(regAddress.getProvince());
 		user.setCity(regAddress.getCity());
 		user.setConstellation(robotRegister.getConstellation());
-		user.setEmail(robotRegister.getEmail());
+		user.setEmail(email);
 		user.setGender(robotRegister.getGender());
 		user.setIntroduction(robotRegister.getIntroduction());
 		user.setNickName(AppleNickname.genNickname(robotRegister));
 		user.setRealName(robotRegister.getFullName());
 		user.setNationality(regAddress.getNationality());
+		String[] splits = email.split("@");
+		try {
+			emailRegister.del(splits[0], splits[1]);
+		} catch (IOException e) {
+			logger.error(e, e);
+		}
 		generateAppAccount.send(new KeyValue<RobotUser, User>(robotUser, user));
 	}
 
