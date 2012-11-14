@@ -225,6 +225,19 @@ function renderTextColor(text, color) {
 	}
 }
 /**
+ * 未分配状态的渲染
+ * 
+ * @param {}
+ *            value
+ */
+function renderAssignTaskResultStatus(value) {
+	if (value == '未执行') {
+		return renderTextColor(value, 'red');
+	} else {
+		return renderTextColor(value, 'green');
+	}
+}
+/**
  * 格式化任务执行结果状态
  * 
  * @param {}

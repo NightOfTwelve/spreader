@@ -258,6 +258,16 @@ var taskGrid = new Ext.grid.GridPanel({
 				var data = record.data;
 				var status = data.status;
 				var taskId = taskIdHidden.getValue();
+				if (status != 0) {
+					resultGrid.colModel.setHidden(5, true);
+				} else {
+					resultGrid.colModel.setHidden(5, false);
+				}
+				if (status != 2) {
+					resultGrid.colModel.setHidden(6, true);
+				} else {
+					resultGrid.colModel.setHidden(6, false);
+				}
 				statusHidden.setValue(status);
 				resultStore.setBaseParam('resultId', taskId);
 				resultStore.setBaseParam('status', status);
@@ -286,6 +296,8 @@ var resultStore = new Ext.data.Store({
 								name : 'executedTime'
 							}, {
 								name : 'executeStatus'
+							}, {
+								name : 'errorCode'
 							}])
 		});
 
@@ -322,6 +334,12 @@ var resultcm = new Ext.grid.ColumnModel([{
 		}, {
 			header : '返回状态',
 			dataIndex : 'executeStatus',
+			renderer : renderAssignTaskResultStatus,
+			width : 100
+		}, {
+			header : '错误代码',
+			dataIndex : 'errorCode',
+			renderer : rendErrorCodeMsgFn,
 			width : 100
 		}]);
 
