@@ -291,7 +291,7 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	 */
 	private List<UserContentsDto> getUserContentsDtoData(List<Map<String, Long>> data) {
 		List<UserContentsDto> result = new ArrayList<UserContentsDto>();
-		Map<Long, Set<Long>> map = getTransformData(data, "uid", "contentId");//TODO 这个地方调用是错的，你的data必须按uid排序过才能用这个方法
+		Map<Long, Set<Long>> map = getTransformData(data, "uid", "contentId");
 		if (map == null) {
 			return result;
 		}
@@ -318,7 +318,7 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	 */
 	private List<KeywordUserDto> getKeywordUserDtoData(List<Map<String, Long>> data) {
 		List<KeywordUserDto> result = new ArrayList<KeywordUserDto>();
-		Map<Long, Set<Long>> map = getTransformData(data, "keyword", "users");
+		Map<Long, Set<Long>> map = getTransformData(data, "keyword", "uid");
 		if (map == null) {
 			return result;
 		}
