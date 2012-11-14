@@ -18,6 +18,16 @@ public class TaskResultDto implements Serializable {
 	private Date executedTime;
 
 	private String executeStatus;
+	
+	private String errorCode;
+	
+	public String getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
+	}
 
 	public Long getUid() {
 		return uid;

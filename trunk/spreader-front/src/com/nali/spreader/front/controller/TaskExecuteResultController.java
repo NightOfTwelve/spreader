@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.spreader.constants.TaskErrorCode;
 import com.nali.spreader.dto.TaskResultDto;
 import com.nali.spreader.service.ITaskService;
 
@@ -46,6 +47,7 @@ public class TaskExecuteResultController {
 		return objectMapper.writeValueAsString(data);
 	}
 
+	@SuppressWarnings("unchecked")
 	@ResponseBody
 	@RequestMapping(value = "/contents")
 	public String taskContents(Long clientTaskId) throws JsonParseException, JsonMappingException,
@@ -53,5 +55,11 @@ public class TaskExecuteResultController {
 		String contents = taskService.getClientTaskContents(clientTaskId);
 		Map<String, Object> m = objectMapper.readValue(contents, HashMap.class);
 		return objectMapper.writeValueAsString(m);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/errorcode")
+	public String errorCode() throws JsonGenerationException, JsonMappingException, IOException {
+		return objectMapper.writeValueAsString(TaskErrorCode.msgMap);
 	}
 }
