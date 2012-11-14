@@ -1,4 +1,5 @@
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/extgridselect.css')" />
+<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/FixComboBug.css')" />
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/extjs3/resources/css/ext-all.css')" />
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/ext_icon.css')" />
 <script>
