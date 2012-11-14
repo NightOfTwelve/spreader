@@ -82,8 +82,9 @@
 		if(l.executed_time is null,b.assign_time,executed_time) as executedTime,
 		case t.status when 1 then '成功' 
   		when 2 then '失败'  
-   		when 0 then (case ct.batch_id when null then '未执行' else '未返回' end) else '失败'
+   		when 0 then (case when ct.batch_id is null then '未执行' else '未返回' end) else '失败'
   		end as executeStatus,
+  		l.error_code as errorCode,
 		ct.uid as uid,
 		ct.task_code as taskCode,
 		ct.id as clientTaskId
