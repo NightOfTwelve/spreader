@@ -6,10 +6,12 @@
 #parse("/show/comm/DateTimeFieldInclude.vm")
 #parse("/show/comm/My97DateInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/SelectUserGroupCombo.js'))"></script>
-#parse("/show/comm/TaskJobResultQueryInclude.vm")
-#parse("/show/comm/TaskResultCmpInclude.vm")
 #parse("/show/comm/StrategyDisplayNameCmpInclude.vm")
 #parse("/show/comm/WebsiteSelectCmpInclude.vm")
+#parse("/show/comm/TimeUnitsTriggerCmpInclude.vm")
+#parse("/show/comm/TaskErrorCodeCmpInclude.vm")
+#parse("/show/comm/TaskJobResultQueryInclude.vm")
+#parse("/show/comm/TaskResultCmpInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/strategygroup/StrategyGroupManageModel.js'))"></script>
 #parse("/show/comm/FunctionsInclude.vm")
 </head>
