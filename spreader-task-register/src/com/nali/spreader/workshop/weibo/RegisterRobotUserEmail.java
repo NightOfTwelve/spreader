@@ -73,7 +73,10 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Conf
 			for (int i = 0; i < emails.size(); i++) {
 				email = emails.get(i);
 				try {
-					boolean rlt = emailRegister.register(email, domain, robot.getPwd());
+					boolean rlt = robotRegisterService.addUsingEmail(email);
+					if(rlt==false) {
+						rlt = emailRegister.register(email, domain, robot.getPwd());
+					}
 					if(rlt==true) {
 						break;
 					}

@@ -1,8 +1,9 @@
 package com.nali.spreader.dao;
 
+import java.util.List;
+
 import com.nali.spreader.data.RegAddress;
 import com.nali.spreader.data.RegAddressExample;
-import java.util.List;
 
 public interface ICrudRegAddressDao {
     /**

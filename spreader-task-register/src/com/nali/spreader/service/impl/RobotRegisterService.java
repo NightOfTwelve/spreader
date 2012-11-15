@@ -3,10 +3,13 @@ package com.nali.spreader.service.impl;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.nali.spreader.dao.ICrudEmailUsingDao;
 import com.nali.spreader.dao.ICrudRobotRegisterDao;
 import com.nali.spreader.dao.IRobotRegisterDao;
+import com.nali.spreader.data.EmailUsing;
 import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.data.RobotRegisterExample;
 import com.nali.spreader.service.IRobotRegisterService;
@@ -17,6 +20,8 @@ public class RobotRegisterService implements IRobotRegisterService {
 	private ICrudRobotRegisterDao crudRobotRegisterDao;
 	@Autowired
 	private IRobotRegisterDao robotRegisterDao;
+	@Autowired
+	private ICrudEmailUsingDao crudEmailUsingDao;
 
 	@Override
 	public int countNoEmail() {
@@ -72,6 +77,18 @@ public class RobotRegisterService implements IRobotRegisterService {
 			throw new IllegalArgumentException("object or id cannot be null");
 		}
 		crudRobotRegisterDao.updateByPrimaryKeySelective(robotRegister);
+	}
+	
+	@Override
+	public boolean addUsingEmail(String email) {
+		EmailUsing record = new EmailUsing();
+		record.setEmail(email);
+		try {
+			crudEmailUsingDao.insert(record);
+			return true;
+		} catch (DuplicateKeyException e) {
+			return false;
+		}
 	}
 
 }

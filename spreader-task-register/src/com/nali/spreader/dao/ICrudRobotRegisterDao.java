@@ -1,8 +1,9 @@
 package com.nali.spreader.dao;
 
+import java.util.List;
+
 import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.data.RobotRegisterExample;
-import java.util.List;
 
 public interface ICrudRobotRegisterDao {
 
