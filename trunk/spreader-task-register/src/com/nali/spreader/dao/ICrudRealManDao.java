@@ -1,8 +1,9 @@
 package com.nali.spreader.dao;
 
+import java.util.List;
+
 import com.nali.spreader.data.RealMan;
 import com.nali.spreader.data.RealManExample;
-import java.util.List;
 
 public interface ICrudRealManDao {
     /**

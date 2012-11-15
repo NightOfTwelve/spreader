@@ -1,8 +1,9 @@
 package com.nali.spreader.dao;
 
+import java.util.List;
+
 import com.nali.spreader.data.AppUdid;
 import com.nali.spreader.data.AppUdidExample;
-import java.util.List;
 
 public interface ICrudAppUdidDao {
 

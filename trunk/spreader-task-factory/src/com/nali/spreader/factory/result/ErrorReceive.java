@@ -136,11 +136,18 @@ public class ErrorReceive {
 
 	static class ErrorHandler {
 		private Map<String, ErrorProcessor> processors = new HashMap<String, ErrorProcessor>();
+		private ErrorProcessor defaultProcessor;
 		void replaceProcessor(ErrorProcessor processor) {
 			processors.put(processor.getErrorCode(), processor);
 		}
 		void addProcessor(ErrorProcessor processor) {
-			ErrorProcessor old = processors.put(processor.getErrorCode(), processor);
+			ErrorProcessor old;
+			if(processor.getErrorCode()==null) {
+				old = defaultProcessor;
+				defaultProcessor = processor;
+			} else {
+				old = processors.put(processor.getErrorCode(), processor);
+			}
 			if(old!=null) {
 				TaskMeta taskMeta = processor.getTaskMeta();
 				String taskCode = taskMeta==null?null:taskMeta.getCode();
@@ -151,7 +158,11 @@ public class ErrorReceive {
 		}
 		ErrorProcessor getErrorProcessor(TaskError error) {
 			String errorCode = error.getErrorCode();
-			return processors.get(errorCode);
+			ErrorProcessor errorProcessor = processors.get(errorCode);
+			if(errorProcessor==null) {
+				return defaultProcessor;//get default processor
+			}
+			return errorProcessor;
 		}
 	}
 }

@@ -18,4 +18,5 @@ public interface IRobotRegisterService {
 	void removeRegisteringAccount(Integer websiteId, Long registerId);
 	String getRegisteringAccount(Integer websiteId, Long registerId);
 	RobotRegister get(Long id);
+	boolean addUsingEmail(String email);
 }

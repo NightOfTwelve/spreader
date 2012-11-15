@@ -1,6 +1,5 @@
 package com.nali.spreader.dao;
 
-import com.nali.spreader.data.RobotRegister;
 
 public interface IRobotRegisterDao {
 
