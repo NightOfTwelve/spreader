@@ -75,10 +75,16 @@ public class PostKeywordWeibo extends UserGroupExtendedBeanImpl implements Regul
 		Iterator<Long> iter = this.userGroupFacadeService.queryAllGrouppedUser(gid);
 		Long[] uids = this.globalUserService.findPostContentUids(this.config.getvType(),
 				this.config.getFans(), this.config.getArticles());
+		Long[] sendKeywords = allKeywords.toArray(new Long[allKeywords.size()]);
 		while (iter.hasNext()) {
 			Long uid = iter.next();
 			// 获取所有的微博内容
-			Long[] sendKeywords = this.keywordService.createSendKeywordList(allKeywords, uid);
+			if (sendKeywords.length == 0) {
+				sendKeywords = keywordService.userKeywordArray(uid);
+				if (sendKeywords.length == 0) {
+					sendKeywords = keywordService.defaultKeywordArray();
+				}
+			}
 			List<Long> allContent = this.contentService.findContentIdByPostContentDto(this.config
 					.getPostWeiboContentDto(sendKeywords, uids));
 			// 已发送的内容
