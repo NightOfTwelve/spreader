@@ -467,6 +467,14 @@ Ext.onReady(function() {
 									layout : 'fit',
 									split : true,
 									autoScroll : true,
+									tools : [{
+												id : "help",
+												handler : function() {
+													// TODO
+													var win = getHelpEnumCmp();
+													win.show();
+												}
+											}],
 									title : '策略属性',
 									id : 'pptgridmanage'
 								}, {

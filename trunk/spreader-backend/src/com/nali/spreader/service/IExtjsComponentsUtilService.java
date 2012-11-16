@@ -6,6 +6,7 @@ import java.util.Map;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.data.Category;
+import com.nali.spreader.data.HelpEnumInfo;
 import com.nali.spreader.data.User;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.model.UserGroup;
@@ -45,6 +46,15 @@ public interface IExtjsComponentsUtilService {
 	PageResult<Category> findCategoryByName(String name, Limit limit);
 
 	/**
+	 * 模糊查询枚举的帮助信息
+	 * 
+	 * @param enumName
+	 * @param limit
+	 * @return
+	 */
+	PageResult<HelpEnumInfo> findHelpEnumInfoByName(String enumName, Limit limit);
+
+	/**
 	 * 获取所有website
 	 * 
 	 * @return
@@ -57,4 +67,12 @@ public interface IExtjsComponentsUtilService {
 	 * @return
 	 */
 	List<ConfigableInfo> getAllStrategyDisplayName();
+
+	/**
+	 * 添加一条枚举记录
+	 * 
+	 * @param help
+	 * @return
+	 */
+	void updateEnum(HelpEnumInfo help);
 }

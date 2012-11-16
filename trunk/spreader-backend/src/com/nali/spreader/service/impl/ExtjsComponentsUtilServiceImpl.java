@@ -7,16 +7,20 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.dao.ICrudCategoryDao;
+import com.nali.spreader.dao.ICrudHelpEnumInfoDao;
 import com.nali.spreader.dao.ICrudUserDao;
 import com.nali.spreader.dao.ICrudUserGroupDao;
 import com.nali.spreader.data.Category;
 import com.nali.spreader.data.CategoryExample;
+import com.nali.spreader.data.HelpEnumInfo;
+import com.nali.spreader.data.HelpEnumInfoExample;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserExample;
 import com.nali.spreader.data.UserExample.Criteria;
@@ -37,6 +41,8 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 	private ICrudCategoryDao crudCategoryDao;
 	@Autowired
 	private IConfigService<Long> regularConfigService;
+	@Autowired
+	private ICrudHelpEnumInfoDao crudHelpEnumInfoDao;
 
 	@Override
 	public PageResult<User> findUserByName(String name, Limit limit) {
@@ -102,5 +108,38 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 				.listConfigableInfo(ConfigableType.noticeRelated);
 		data.addAll(noticeList);
 		return data;
+	}
+
+	@Override
+	public PageResult<HelpEnumInfo> findHelpEnumInfoByName(String enumName, Limit limit) {
+		HelpEnumInfoExample exp = new HelpEnumInfoExample();
+		com.nali.spreader.data.HelpEnumInfoExample.Criteria c = exp.createCriteria();
+		if (StringUtils.isNotBlank(enumName)) {
+			c.andEnumNameLike("%" + enumName + "%");
+		}
+		exp.setOrderByClause(" sort_id ");
+		exp.setLimit(limit);
+		List<HelpEnumInfo> list = crudHelpEnumInfoDao.selectByExample(exp);
+		int count = crudHelpEnumInfoDao.countByExample(exp);
+		return new PageResult<HelpEnumInfo>(list, limit, count);
+	}
+
+	@Override
+	public void updateEnum(HelpEnumInfo help) {
+		Assert.notNull(help, " HelpEnumInfo is null");
+		String name = help.getEnumName();
+		String values = help.getEnumValues();
+		if (StringUtils.isBlank(name)) {
+			throw new IllegalArgumentException(" EnumName is blank ");
+		}
+		if (StringUtils.isBlank(values)) {
+			throw new IllegalArgumentException(" EnumValues is blank ");
+		}
+		Long id = help.getId();
+		if (id == null) {
+			crudHelpEnumInfoDao.insertSelective(help);
+		} else {
+			crudHelpEnumInfoDao.updateByPrimaryKey(help);
+		}
 	}
 }

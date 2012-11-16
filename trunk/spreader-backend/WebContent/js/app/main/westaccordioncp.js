@@ -103,6 +103,11 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "报表查询",
 									leaf : true,
 									url : '../taskreport/init'
+								},{
+									id : 'helpManage',
+									text : "帮助信息维护",
+									leaf : true,
+									url : '../help/init'
 								}]
 					}),
 			// 添加监听事件

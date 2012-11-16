@@ -73,13 +73,17 @@ public interface IKeywordService {
 	List<String> createMergerKeywordName(List<String> keywords, List<String> categories);
 
 	/**
-	 * 创建发送的关键字列表
-	 * 
-	 * @param list
+	 * 查询用户本身关键字
 	 * @param uid
 	 * @return
 	 */
-	Long[] createSendKeywordList(Set<Long> set, Long uid);
+	Long[] userKeywordArray(Long uid);
+	
+	/**
+	 * 默认关键字列表
+	 * @return
+	 */
+	Long[] defaultKeywordArray();
 
 	/**
 	 * 获取所有用户的关键字并按关键字排序

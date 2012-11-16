@@ -33,7 +33,16 @@ public class UserTagParamsDto implements Serializable {
 	private Integer websiteId;
 	private Integer start;
 	private Integer limit;
+	private Long websiteUid;
 	private Limit lit;
+
+	public Long getWebsiteUid() {
+		return websiteUid;
+	}
+
+	public void setWebsiteUid(Long websiteUid) {
+		this.websiteUid = websiteUid;
+	}
 
 	public Integer getStart() {
 		return start;
