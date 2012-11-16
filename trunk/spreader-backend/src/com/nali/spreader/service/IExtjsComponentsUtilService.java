@@ -75,4 +75,11 @@ public interface IExtjsComponentsUtilService {
 	 * @return
 	 */
 	void updateEnum(HelpEnumInfo help);
+
+	/**
+	 * 删除enum
+	 * 
+	 * @param id
+	 */
+	void deleteEnum(Long id);
 }

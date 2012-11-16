@@ -470,7 +470,6 @@ Ext.onReady(function() {
 									tools : [{
 												id : "help",
 												handler : function() {
-													// TODO
 													var win = getHelpEnumCmp();
 													win.show();
 												}
@@ -1357,11 +1356,20 @@ Ext.onReady(function() {
 						var tform = addGroupForm.getForm();
 						var gname = tform.findField("groupName").getValue();
 						var gnote = tform.findField("description").getValue();
+						if (Ext.isEmpty(gType)) {
+							Ext.Msg.alert('提示', '必须选择分组类型');
+							return;
+						}
 						// 清除所有隐藏域的信息
 						cleanHidden();
 						cleanCreateTrigger();
 						// 简单分组
 						if (gType == 1) {
+							var stgId = stgSelectCombo.getValue();
+							if (Ext.isEmpty(stgId)) {
+								Ext.Msg.alert('提示', '必须选择策略类型');
+								return;
+							}
 							strategyIdHidden
 									.setValue(stgSelectCombo.getValue());
 							strategyNameHidden
@@ -1369,8 +1377,13 @@ Ext.onReady(function() {
 							groupNameHidden
 									.setValue(stgSelectCombo.lastSelectionText);
 							groupNoteHidden.setValue(gnote);
+
 							editstgWindow.show();
 						} else {
+							if (Ext.isEmpty(gname)) {
+								Ext.Msg.alert('提示', '必须填写分组名称');
+								return;
+							}
 							// 复杂分组
 							groupNameHidden.setValue(gname);
 							groupNoteHidden.setValue(gnote);

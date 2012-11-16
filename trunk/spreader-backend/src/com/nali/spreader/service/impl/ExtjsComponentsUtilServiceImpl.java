@@ -142,4 +142,10 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 			crudHelpEnumInfoDao.updateByPrimaryKey(help);
 		}
 	}
+
+	@Override
+	public void deleteEnum(Long id) {
+		Assert.notNull(id, " id is null");
+		crudHelpEnumInfoDao.deleteByPrimaryKey(id);
+	}
 }
