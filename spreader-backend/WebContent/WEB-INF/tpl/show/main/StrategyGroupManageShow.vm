@@ -7,6 +7,7 @@
 #parse("/show/comm/My97DateInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/component/SelectUserGroupCombo.js'))"></script>
 #parse("/show/comm/StrategyDisplayNameCmpInclude.vm")
+#parse("/show/comm/HelpEnumCmpInclude.vm")
 #parse("/show/comm/WebsiteSelectCmpInclude.vm")
 #parse("/show/comm/TimeUnitsTriggerCmpInclude.vm")
 #parse("/show/comm/TaskErrorCodeCmpInclude.vm")

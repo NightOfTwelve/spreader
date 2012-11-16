@@ -105,25 +105,6 @@ public class KeywordServiceImpl implements IKeywordService {
 	}
 
 	@Override
-	public Long[] createSendKeywordList(Set<Long> set, Long uid) {
-		Set<Long> sendKeywords;
-		// 如果设置的关键字列表无内容则查找用户本身的标签列表
-		if (CollectionUtils.isEmpty(set)) {
-			sendKeywords = new HashSet<Long>(this.keywordDao.selectKeywordByUserId(uid));
-			// 如果用户本身没有标签，则取默认列表
-			if (CollectionUtils.isEmpty(sendKeywords)) {
-				List<String> defKeyword = Arrays.asList(DEFAULT_KEYWORDS);
-				sendKeywords = new HashSet<Long>(
-						this.keywordDao.selectKeywordIdsByKeywords(defKeyword));
-			}
-		} else {
-			sendKeywords = set;
-		}
-		Long[] result = new Long[sendKeywords.size()];
-		return sendKeywords.toArray(result);
-	}
-
-	@Override
 	public List<String> findKeywordNamesByCategory(String category) {
 		if (StringUtils.isEmpty(category)) {
 			return Collections.emptyList();
@@ -151,5 +132,21 @@ public class KeywordServiceImpl implements IKeywordService {
 	@Override
 	public List<Map<String, Long>> findUsersKeyword(List<Long> uids) {
 		return this.keywordDao.selectUserKeywordByUids(uids);
+	}
+
+	@Override
+	public Long[] userKeywordArray(Long uid) {
+		Set<Long> sendKeywords = new HashSet<Long>(this.keywordDao.selectKeywordByUserId(uid));
+		Long[] result = new Long[sendKeywords.size()];
+		return sendKeywords.toArray(result);
+	}
+
+	@Override
+	public Long[] defaultKeywordArray() {
+		List<String> defKeyword = Arrays.asList(DEFAULT_KEYWORDS);
+		Set<Long> sendKeywords = new HashSet<Long>(
+				this.keywordDao.selectKeywordIdsByKeywords(defKeyword));
+		Long[] result = new Long[sendKeywords.size()];
+		return sendKeywords.toArray(result);
 	}
 }

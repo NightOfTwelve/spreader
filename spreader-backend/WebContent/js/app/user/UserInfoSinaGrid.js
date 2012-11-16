@@ -38,13 +38,14 @@ var userSinaForm = new Ext.form.FormPanel({
 			// collapsible : true,
 			frame : true,
 			id : 'userSinaForm',
+			split : true,
+			height : 220,
 			// border : true,
 			labelWidth : 90, // 标签宽度
 			frame : true,
 			labelAlign : 'right',
 			bodyStyle : 'padding:5 5 5 5',
 			buttonAlign : 'center',
-			height : 180,
 			items : [{ // 行1
 				layout : "column",
 				items : [{
@@ -124,6 +125,25 @@ var userSinaForm = new Ext.form.FormPanel({
 												fieldLabel : "机器人粉丝数小于等于",
 												name : 'maxRobotFans'
 											}]
+								}, {
+									columnWidth : .33,
+									layout : "form",
+									items : [{
+												xtype : "numberfield",
+												fieldLabel : "网站Uid",
+												name : 'websiteUid'
+											}]
+								}]
+					}, { // 行4
+						layout : "column",
+						items : [{
+									columnWidth : .33,
+									layout : "form",
+									items : [{
+												xtype : "numberfield",
+												fieldLabel : "Uid",
+												name : 'id'
+											}]
 								}]
 					}],
 			buttonAlign : "center",
@@ -134,6 +154,8 @@ var userSinaForm = new Ext.form.FormPanel({
 					var nickName = tform.findField("nickName").getValue();
 					var minFans = tform.findField("minFans").getValue();
 					var maxFans = tform.findField("maxFans").getValue();
+					var websiteUid = tform.findField("websiteUid").getValue();
+					var uid = tform.findField("id").getValue();
 					var minRobotFans = tform.findField("minRobotFans")
 							.getValue();
 					var maxRobotFans = tform.findField("maxRobotFans")
@@ -157,6 +179,8 @@ var userSinaForm = new Ext.form.FormPanel({
 									: Number(num));
 					sinaUserStore.setBaseParam('isRobot', isRobot);
 					sinaUserStore.setBaseParam('websiteId', websiteId);
+					sinaUserStore.setBaseParam('websiteUid', websiteUid);
+					sinaUserStore.setBaseParam('id', uid);
 					sinaUserStore.load();
 				}
 			}, {
@@ -234,6 +258,8 @@ sinaUserStore.on('beforeload', function() {
 			var pmaxFans = pfrom.findField("maxFans").getValue();
 			var pminRobotFans = pfrom.findField("minRobotFans").getValue();
 			var pmaxRobotFans = pfrom.findField("maxRobotFans").getValue();
+			var websiteUid = pfrom.findField("websiteUid").getValue();
+			var uid = pfrom.findField("id").getValue();
 			var ptag = pfrom.findField("tag").getValue();
 			var isRobot = pfrom.findField("isRobot").getValue();
 			var websiteId = Ext.getCmp('selectWebSiteComboUtil').getValue();
@@ -247,7 +273,9 @@ sinaUserStore.on('beforeload', function() {
 				tag : Ext.isEmpty(ptag) ? null : ptag,
 				limit : Ext.isEmpty(limit) ? number : Number(limit),
 				isRobot : isRobot,
-				websiteId : websiteId
+				websiteId : websiteId,
+				id : uid,
+				websiteUid : websiteUid
 			};
 		});
 // 导入excel文件窗口

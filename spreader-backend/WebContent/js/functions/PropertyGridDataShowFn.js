@@ -46,6 +46,7 @@ function renderPropertyGrid(node) {
 				autoScroll : true,
 				tbar : [{
 							id : 'commNodePropText',
+							xtype : 'tbtext',
 							text : ''
 						}]
 			})
@@ -95,6 +96,7 @@ function collectionRender(node) {
 				bodyStyle : 'overflow-x:visible;overflow-y:scroll',
 				tbar : [{
 							id : 'collNodeText',
+							xtype : 'tbtext',
 							text : ''
 						}, '-', {
 							text : renderTextColor('操作-->新增节点', 'lightseagreen'),
@@ -204,7 +206,8 @@ function createBooleanFiled(filedName) {
 				store : new Ext.data.ArrayStore({
 							id : 'isCons',
 							fields : ['id', 'name'],
-							data : [[true, "是"], [false, "否"], [NO_SELECT, "不限"]]
+							data : [[true, "是"], [false, "否"],
+									[NO_SELECT, "不限"]]
 						}),
 				listeners : {
 					expand : function() {
