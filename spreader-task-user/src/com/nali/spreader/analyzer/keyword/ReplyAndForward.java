@@ -11,7 +11,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.analyzer.other.Words;
 import com.nali.spreader.config.ConfigDataUtil;
 import com.nali.spreader.config.PostWeiboConfig;
@@ -76,49 +75,31 @@ public class ReplyAndForward extends UserGroupExtendedBeanImpl implements Regula
 		Iterator<Long> iter = userGroupFacadeService.queryAllGrouppedUser(gid);
 		Long[] uids = globalUserService.findPostContentUids(config.getvType(), config.getFans(),
 				config.getArticles());
+		Long[] sendKeywords = getKeywordArrays(allKeywords);
+		Set<Long> contentUidSet = new HashSet<Long>();
 		while (iter.hasNext()) {
 			Long uid = iter.next();
-			Long[] sendKeywords = keywordService.createSendKeywordList(allKeywords, uid);
+			if (sendKeywords.length == 0) {
+				sendKeywords = getUserKeyordArrays(uid);
+			}
 			List<Long> allContent = contentService.findContentIdByPostContentDto(config
 					.getPostWeiboContentDto(sendKeywords, uids));
 			// 排除掉的内容
-			List<Long> existsReplyContent = robotContentService.findRelatedContentId(uid,
-					RobotContent.TYPE_REPLY);
-			List<Long> existsForwardContent = robotContentService.findRelatedContentId(uid,
-					RobotContent.TYPE_FORWARD);
-			List<Long> existsContent = new ArrayList<Long>();
-			if (!CollectionUtils.isEmpty(existsReplyContent)) {
-				existsContent.addAll(existsReplyContent);
-			}
-			if (!CollectionUtils.isEmpty(existsForwardContent)) {
-				existsContent.addAll(existsForwardContent);
-			}
+			List<Long> existsContent = getExistsContent(uid);
 			// 随机取出发送的微博内容
 			List<Long> sendContent = RandomUtil.randomItemsReadOnly(allContent, new HashSet<Long>(
 					existsContent), postRandom.get());
-			if (!CollectionUtils.isEmpty(sendContent)) {
-				WeightRandomer<Integer> wr = getReplyAndForwardWeight(replyRandomer.get(),
-						forwardRandomer.get());
-				Set<Long> contentUidSet = new HashSet<Long>();
-				Date postTime = new Date();
-				for (Long contentId : sendContent) {
-					Content c = contentService.getContentById(contentId);
+			WeightRandomer<Integer> wr = getReplyAndForwardWeight(replyRandomer.get(),
+					forwardRandomer.get());
+			Date postTime = new Date();
+			for (Long contentId : sendContent) {
+				Content c = contentService.getContentById(contentId);
+				if (c != null) {
 					Long contentUid = c.getUid();
 					// 排重，同一作者的内容不重复操作
 					if (!contentUidSet.contains(contentUid)) {
 						Integer op = wr.get();
-						if (ReplyAndForwardConfig.REPLY.equals(op)) {// 回复
-							sendReplyWeibo(c, uid, false, postTime);
-							robotContentService.save(uid, contentId, RobotContent.TYPE_REPLY);
-						} else if (ReplyAndForwardConfig.FORWARD.equals(op)) {// 转发
-							ForwardDto dto = new ForwardDto(contentId, uid, postTime);
-							forwardWeiboContent.send(dto);
-							robotContentService.save(uid, contentId, RobotContent.TYPE_FORWARD);
-						} else if (ReplyAndForwardConfig.REPLYFORWARD.equals(op)) {// 回复并转发
-							sendReplyWeibo(c, uid, true, postTime);
-							robotContentService.save(uid, contentId, RobotContent.TYPE_REPLY);
-							robotContentService.save(uid, contentId, RobotContent.TYPE_FORWARD);
-						}
+						work(op, c, uid, postTime);
 						contentUidSet.add(contentUid);
 						postTime = DateUtils.addMinutes(postTime, postInterval);
 					}
@@ -126,6 +107,45 @@ public class ReplyAndForward extends UserGroupExtendedBeanImpl implements Regula
 			}
 		}
 		return null;
+	}
+
+	private void work(Integer op, Content c, Long uid, Date postTime) {
+		if (ReplyAndForwardConfig.REPLY.equals(op)) {// 回复
+			sendReplyWeibo(c, uid, false, postTime);
+			robotContentService.save(uid, c.getId(), RobotContent.TYPE_REPLY);
+		} else if (ReplyAndForwardConfig.FORWARD.equals(op)) {// 转发
+			ForwardDto dto = new ForwardDto(c.getId(), uid, postTime);
+			forwardWeiboContent.send(dto);
+			robotContentService.save(uid, c.getId(), RobotContent.TYPE_FORWARD);
+		} else if (ReplyAndForwardConfig.REPLYFORWARD.equals(op)) {// 回复并转发
+			sendReplyWeibo(c, uid, true, postTime);
+			robotContentService.save(uid, c.getId(), RobotContent.TYPE_REPLY);
+			robotContentService.save(uid, c.getId(), RobotContent.TYPE_FORWARD);
+		}
+	}
+
+	private Long[] getKeywordArrays(Set<Long> set) {
+		Long[] sizeArr = new Long[set.size()];
+		return set.toArray(sizeArr);
+	}
+
+	private Long[] getUserKeyordArrays(Long uid) {
+		Long[] arr = keywordService.userKeywordArray(uid);
+		if (arr.length == 0) {
+			return keywordService.defaultKeywordArray();
+		}
+		return arr;
+	}
+
+	private List<Long> getExistsContent(Long uid) {
+		List<Long> existsReplyContent = robotContentService.findRelatedContentId(uid,
+				RobotContent.TYPE_REPLY);
+		List<Long> existsForwardContent = robotContentService.findRelatedContentId(uid,
+				RobotContent.TYPE_FORWARD);
+		List<Long> existsContent = new ArrayList<Long>();
+		existsContent.addAll(existsReplyContent);
+		existsContent.addAll(existsForwardContent);
+		return existsContent;
 	}
 
 	@Override
