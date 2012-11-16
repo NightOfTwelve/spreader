@@ -33,6 +33,7 @@
   <sqlMap resource="ibatis/spreader_tb_email_using_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_real_man_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_user_group_exclude_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_help_enum_info_SqlMap.xml" />
   
   <!-- ×Ô¶¨Òå -->
   <sqlMap resource="ibatis/spreader_tb_photo.xml" />
