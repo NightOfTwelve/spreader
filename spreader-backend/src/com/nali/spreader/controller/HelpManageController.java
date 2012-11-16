@@ -36,4 +36,11 @@ public class HelpManageController extends BaseController {
 		extjsComponentsUtilService.updateEnum(help);
 		return null;
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "/deleteenum")
+	public String deleteEnum(Long id) {
+		extjsComponentsUtilService.deleteEnum(id);
+		return null;
+	}
 }

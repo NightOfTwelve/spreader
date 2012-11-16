@@ -96,107 +96,128 @@ Ext.onReady(function() {
 				items : ['-', '&nbsp;&nbsp;', numtext]
 			});
 	var grid = new Ext.grid.GridPanel({
-				store : store,
-				// width : 600,
-				margins : '0 5 5 5',
-				plugins : [editor],
-				bbar : bbar,
-				tbar : [{
-							iconCls : 'comments_addIcon',
-							text : '添加',
-							handler : function() {
-								var e = new HelpEnumInfo({
-											id : null,
-											enumName : '',
-											enumValues : '',
-											sortId : 1
-										});
-								editor.stopEditing();
-								store.insert(0, e);
-								grid.getView().refresh();
-								grid.getSelectionModel().selectRow(0);
-								editor.startEditing(0);
-							}
-						}, '-', {
-							ref : '../removeBtn',
-							iconCls : 'deleteIcon',
-							text : '删除',
-							disabled : true,
-							handler : function() {
-								editor.stopEditing();
-								var s = grid.getSelectionModel()
-										.getSelections();
-								for (var i = 0, r; r = s[i]; i++) {
-									store.remove(r);
+		store : store,
+		// width : 600,
+		margins : '0 5 5 5',
+		plugins : [editor],
+		bbar : bbar,
+		tbar : [{
+					iconCls : 'comments_addIcon',
+					text : '添加',
+					handler : function() {
+						var e = new HelpEnumInfo({
+									id : null,
+									enumName : '',
+									enumValues : '',
+									sortId : 1
+								});
+						editor.stopEditing();
+						store.insert(0, e);
+						grid.getView().refresh();
+						grid.getSelectionModel().selectRow(0);
+						editor.startEditing(0);
+					}
+				}, '-', {
+					ref : '../removeBtn',
+					iconCls : 'deleteIcon',
+					text : '删除',
+					disabled : true,
+					handler : function() {
+						editor.stopEditing();
+						var s = grid.getSelectionModel().getSelections();
+						var eid = s[0].data.id;
+						if (Ext.isEmpty(eid)) {
+							Ext.Msg.alert('提示', '请选择一行');
+							return;
+						} else {
+							Ext.Msg
+									.confirm(
+											'提示',
+											'<span style="color:red"><b>提示:</b></span><br>确定删除？',
+											function(btn, text) {
+												if (btn == 'yes') {
+													Ext.Ajax.request({
+														url : '../help/deleteenum',
+														method : 'post',
+														params : {
+															id : eid
+														},
+														success : function() {
+															Ext.Msg.alert('提示',
+																	'删除成功');
+															store.load();
+														}
+													});
+												}
+											});
+						}
+					}
+				}, '-', {
+					iconCls : 'page_refreshIcon',
+					text : '刷新',
+					handler : function() {
+						store.load();
+					}
+				}, '-', new Ext.form.TextField({
+							id : 'queryName',
+							name : 'queryName',
+							emptyText : '请输入分类名称',
+							enableKeyEvents : true,
+							listeners : {
+								specialkey : function(field, e) {
+									if (e.getKey() == Ext.EventObject.ENTER) {
+										var text = field.getValue();
+										store.setBaseParam('enumName', text);
+										store.load();
+									}
 								}
-							}
-						}, '-', {
-							iconCls : 'page_refreshIcon',
-							text : '刷新',
-							handler : function() {
-								store.load();
-							}
-						}, '-', new Ext.form.TextField({
-									id : 'queryName',
-									name : 'queryName',
-									emptyText : '请输入分类名称',
-									enableKeyEvents : true,
-									listeners : {
-										specialkey : function(field, e) {
-											if (e.getKey() == Ext.EventObject.ENTER) {
-												var text = field.getValue();
-												store.setBaseParam('enumName',
-														text);
-												store.load();
-											}
-										}
-									},
-									width : 130
-								}), '-', {
-							text : '查询',
-							iconCls : 'page_refreshIcon',
-							handler : function() {
-								var text = Ext.getCmp('queryName').getValue();
-								store.setBaseParam('enumName', text);
-								store.load();
-							}
-						}],
+							},
+							width : 130
+						}), '-', {
+					text : '查询',
+					iconCls : 'page_refreshIcon',
+					handler : function() {
+						var text = Ext.getCmp('queryName').getValue();
+						store.setBaseParam('enumName', text);
+						store.load();
+					}
+				}],
 
-				columns : [new Ext.grid.RowNumberer(), {
-							id : 'id',
-							header : '编号',
-							dataIndex : 'id',
-							width : 80,
-							sortable : false
-						}, {
-							header : '信息分类',
-							dataIndex : 'enumName',
-							width : 100,
-							sortable : false,
-							editor : {
-								xtype : 'textfield',
-								allowBlank : false
-							}
-						}, {
-							header : '分类说明',
-							dataIndex : 'enumValues',
-							width : 180,
-							sortable : false,
-							editor : {
-								xtype : 'textfield',
-								allowBlank : false
-							}
-						}, {
-							header : '排序号',
-							dataIndex : 'sortId',
-							width : 80,
-							sortable : true,
-							editor : {
-								xtype : 'numberfield',
-								allowBlank : true
-							}
-						}]
-			});
+		columns : [new Ext.grid.RowNumberer(), {
+					id : 'id',
+					header : '编号',
+					dataIndex : 'id',
+					width : 80,
+					sortable : false
+				}, {
+					header : '信息分类',
+					dataIndex : 'enumName',
+					width : 100,
+					sortable : false,
+					editor : {
+						xtype : 'textfield',
+						allowBlank : false
+					}
+				}, {
+					header : '分类说明',
+					dataIndex : 'enumValues',
+					width : 180,
+					sortable : false,
+					editor : {
+						xtype : 'textfield',
+						allowBlank : false
+					}
+				}, {
+					header : '排序号',
+					dataIndex : 'sortId',
+					width : 80,
+					sortable : true,
+					editor : {
+						xtype : 'numberfield',
+						allowBlank : true
+					}
+				}]
+	});
 	grid.getSelectionModel().on('selectionchange', function(sm) {
 				grid.removeBtn.setDisabled(sm.getCount() < 1);
 			});
