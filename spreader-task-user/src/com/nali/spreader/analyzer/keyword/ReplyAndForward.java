@@ -76,19 +76,23 @@ public class ReplyAndForward extends UserGroupExtendedBeanImpl implements Regula
 		Long[] uids = globalUserService.findPostContentUids(config.getvType(), config.getFans(),
 				config.getArticles());
 		Long[] sendKeywords = getKeywordArrays(allKeywords);
+		List<Long> allContent = contentService.findContentIdByPostContentDto(config
+				.getPostWeiboContentDto(sendKeywords, uids));
 		Set<Long> contentUidSet = new HashSet<Long>();
+		Set<Long> contentIdSet = new HashSet<Long>();
 		while (iter.hasNext()) {
 			Long uid = iter.next();
 			if (sendKeywords.length == 0) {
 				sendKeywords = getUserKeyordArrays(uid);
+				allContent = contentService.findContentIdByPostContentDto(config
+						.getPostWeiboContentDto(sendKeywords, uids));
 			}
-			List<Long> allContent = contentService.findContentIdByPostContentDto(config
-					.getPostWeiboContentDto(sendKeywords, uids));
 			// 排除掉的内容
-			List<Long> existsContent = getExistsContent(uid);
+			Set<Long> existsContent = getExistsContent(uid);
+			existsContent.addAll(contentIdSet);
 			// 随机取出发送的微博内容
-			List<Long> sendContent = RandomUtil.randomItemsReadOnly(allContent, new HashSet<Long>(
-					existsContent), postRandom.get());
+			List<Long> sendContent = RandomUtil.randomItemsReadOnly(allContent, existsContent,
+					postRandom.get());
 			WeightRandomer<Integer> wr = getReplyAndForwardWeight(replyRandomer.get(),
 					forwardRandomer.get());
 			Date postTime = new Date();
@@ -103,6 +107,7 @@ public class ReplyAndForward extends UserGroupExtendedBeanImpl implements Regula
 						contentUidSet.add(contentUid);
 						postTime = DateUtils.addMinutes(postTime, postInterval);
 					}
+					contentIdSet.add(c.getId());
 				}
 			}
 		}
@@ -137,7 +142,7 @@ public class ReplyAndForward extends UserGroupExtendedBeanImpl implements Regula
 		return arr;
 	}
 
-	private List<Long> getExistsContent(Long uid) {
+	private Set<Long> getExistsContent(Long uid) {
 		List<Long> existsReplyContent = robotContentService.findRelatedContentId(uid,
 				RobotContent.TYPE_REPLY);
 		List<Long> existsForwardContent = robotContentService.findRelatedContentId(uid,
@@ -145,7 +150,7 @@ public class ReplyAndForward extends UserGroupExtendedBeanImpl implements Regula
 		List<Long> existsContent = new ArrayList<Long>();
 		existsContent.addAll(existsReplyContent);
 		existsContent.addAll(existsForwardContent);
-		return existsContent;
+		return new HashSet<Long>(existsContent);
 	}
 
 	@Override
