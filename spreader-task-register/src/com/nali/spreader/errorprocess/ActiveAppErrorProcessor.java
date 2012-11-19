@@ -11,16 +11,15 @@ import org.springframework.stereotype.Component;
 import com.nali.spreader.data.RobotRegister;
 import com.nali.spreader.factory.result.SingleSpecifiedErrorProcessor;
 import com.nali.spreader.service.IRobotRegisterService;
-import com.nali.spreader.service.impl.EmailRegister;
+import com.nali.spreader.service.impl.LimitedEmailRegister;
 import com.nali.spreader.workshop.apple.ActiveApp;
 
 @Component
 public class ActiveAppErrorProcessor extends SingleSpecifiedErrorProcessor<Object, ActiveApp> {
 	private static Logger logger = Logger.getLogger(ActiveAppErrorProcessor.class);
-	private EmailRegister emailRegister = new EmailRegister();
+	private LimitedEmailRegister emailRegister = new LimitedEmailRegister();
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
-
 
 	@Override
 	public void handleError(Object errorObject, Map<String, Object> contextContents, Long uid, Date errorTime) {
@@ -34,7 +33,6 @@ public class ActiveAppErrorProcessor extends SingleSpecifiedErrorProcessor<Objec
 			logger.error(e, e);
 		}
 	}
-
 
 	@Override
 	public String getErrorCode() {
