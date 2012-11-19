@@ -23,7 +23,7 @@ import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.exporter.MultiTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.service.IRobotRegisterService;
-import com.nali.spreader.service.impl.EmailRegister;
+import com.nali.spreader.service.impl.LimitedEmailRegister;
 import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.util.TxtFileUtil;
 import com.nali.spreader.util.random.AvgRandomer;
@@ -37,7 +37,7 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Conf
 	private static Logger logger = Logger.getLogger(RegisterRobotUserEmail.class);
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
-	private EmailRegister emailRegister = new EmailRegister();
+	private LimitedEmailRegister emailRegister = new LimitedEmailRegister();
 	
 	@AutowireProductLine
 	private TaskProduceLine<Long> registerWeiboAccount;

@@ -25,7 +25,7 @@ import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IAppRegisterService;
 import com.nali.spreader.service.IRobotRegisterService;
-import com.nali.spreader.service.impl.EmailRegister;
+import com.nali.spreader.service.impl.LimitedEmailRegister;
 import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.words.AppleNickname;
 
@@ -39,7 +39,7 @@ public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassive
 	private IAppRegisterService appRegisterService;
 	@AutowireProductLine
 	private TaskProduceLine<KeyValue<RobotUser, User>> generateAppAccount;
-	private EmailRegister emailRegister = new EmailRegister();
+	private LimitedEmailRegister emailRegister = new LimitedEmailRegister();
 
 	public ActiveApp() {
 		super(SimpleActionConfig.activeApp, Website.apple, Channel.normal);
