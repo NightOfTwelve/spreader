@@ -74,7 +74,7 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Conf
 				email = emails.get(i);
 				try {
 					boolean rlt = robotRegisterService.addUsingEmail(email);
-					if(rlt==false) {
+					if(rlt==true) {
 						rlt = emailRegister.register(email, domain, robot.getPwd());
 					}
 					if(rlt==true) {
