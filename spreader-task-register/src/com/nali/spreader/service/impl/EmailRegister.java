@@ -12,7 +12,7 @@ import org.jsoup.Jsoup;
 
 public class EmailRegister {
 	private static Logger logger = Logger.getLogger(EmailRegister.class);
-	private static final int RETRY_TIME = 10;
+	private static final int RETRY_TIME = 5;
 	private String adminUser = "postmaster@9nali.com";
 	private String adminPwd = "jacky153246";
 	private Map<String, String> cookies;
@@ -38,8 +38,7 @@ public class EmailRegister {
 				return true;
 			} else if(rltLocation.indexOf("msg=ALREADY_EXISTS")!=-1) {
 				return false;
-			} else if(rltLocation.indexOf("msg=loginRequired")!=-1) {
-				cookies=null;
+			} else if(checkIsNeedLogin(res)) {
 				return register(email, domain, pwd);
 			} else {
 				throw new IOException("register failed:Location=" + rltLocation);
@@ -60,14 +59,25 @@ public class EmailRegister {
 				.timeout(3000)
 				.method(Method.POST);
 		Response res = execute(connection);
-		if(res.statusCode() != HttpURLConnection.HTTP_SEE_OTHER) {
-			throw new IOException("del failed:statusCode=" + res.statusCode());
-		}
 		if(res.header("Location").indexOf("msg=DELETED_SUCCESS")==-1) {
+			if(checkIsNeedLogin(res)) {
+				del(user, domain);
+				return;
+			}
 			throw new IOException("del failed:Location=" + res.header("Location"));
 		}
 	}
 	
+	private boolean checkIsNeedLogin(Response res) {
+		String location = res.header("Location");
+		if(location.indexOf("http://mail.9nali.com/iredadmin/login")!=-1 ||
+				location.indexOf("msg=loginRequired")!=-1) {
+			cookies=null;
+			return true;
+		}
+		return false;
+	}
+
 	private void checkLogin() throws IOException {
 		if(cookies!=null) {
 			return;
@@ -79,6 +89,7 @@ public class EmailRegister {
 			Connection connection = Jsoup.connect("http://mail.9nali.com/iredadmin/login")
 					.data("username", adminUser)
 					.data("password", adminPwd)
+					.data("save_pass", "yes")
 					.timeout(3000)
 					.method(Method.POST);
 			Response res = execute(connection);
