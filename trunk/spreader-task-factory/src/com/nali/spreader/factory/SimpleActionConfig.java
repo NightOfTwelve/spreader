@@ -31,6 +31,7 @@ public enum SimpleActionConfig {
 	registerWebApple(2005L),
 	registerCnApple(2006L),
 	commentApple(2007L),
+	returnVisitApple(2008L),
 	;
 	private Long actionId;
 	private String taskCode;
