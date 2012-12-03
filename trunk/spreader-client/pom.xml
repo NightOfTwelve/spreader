@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>spreader</artifactId>
+		<groupId>com.nali</groupId>
+		<version>1.0</version>
+		<relativePath>../spreader</relativePath>
+	</parent>
+	<groupId>com.nali.spreader</groupId>
+	<artifactId>spreader-client</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<dependencies>
+		<dependency>
+			<groupId>com.nali.spreader</groupId>
+			<artifactId>spreader-task-dispatch</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>resource</directory>
+			</resource>
+		</resources>
+	</build>
+</project>
