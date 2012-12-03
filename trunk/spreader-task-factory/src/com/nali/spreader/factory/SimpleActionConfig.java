@@ -32,6 +32,9 @@ public enum SimpleActionConfig {
 	registerCnApple(2006L),
 	commentApple(2007L),
 	returnVisitApple(2008L),
+	//ximalaya
+	registerXimalaya(3001L),
+	addFansXimalaya(3002L),
 	;
 	private Long actionId;
 	private String taskCode;
