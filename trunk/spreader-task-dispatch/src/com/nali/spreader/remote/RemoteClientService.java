@@ -15,7 +15,7 @@ public class RemoteClientService implements IRemoteClientService {
 	public void heartbeat() {
 		ClientContext context = ClientContext.getCurrentContext();
 		String token = context.getToken();
-		String ip = context.getRequest().getRemoteAddr();
+		String ip = context.getRemoteAddr();
 		clientService.logIp(token, ip);
 	}
 	

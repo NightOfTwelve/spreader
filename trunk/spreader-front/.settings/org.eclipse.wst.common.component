@@ -21,6 +21,9 @@
         <dependent-module archiveName="spreader-captcha.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spreader-captcha/spreader-captcha">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="spreader-client.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spreader-client/spreader-client">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="spreader-front"/>
         <property name="java-output-path"/>
     </wb-module>

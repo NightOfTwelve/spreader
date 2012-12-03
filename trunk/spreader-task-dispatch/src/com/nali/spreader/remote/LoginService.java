@@ -14,7 +14,7 @@ public class LoginService implements ILoginService {
 	@Override
 	public String login(String userName, String pwd) {
 		ClientContext context = ClientContext.getCurrentContext();
-		String ip = context.getRequest().getRemoteAddr();
+		String ip = context.getRemoteAddr();
 		return clientService.login(userName, pwd, ip);
 	}
 	

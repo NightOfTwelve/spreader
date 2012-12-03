@@ -419,6 +419,7 @@
 		<module>../spreader-captcha</module>
 		<module>../spreader-login-config</module>
 		<module>../spreader-task-dispatch</module>
+		<module>../spreader-client</module>
 
 		<module>../spreader-test</module>
 	</modules>
