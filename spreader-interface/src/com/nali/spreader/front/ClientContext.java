@@ -1,20 +1,18 @@
 package com.nali.spreader.front;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class ClientContext {
 	private final static ThreadLocal<ClientContext> tl=new ThreadLocal<ClientContext>();
 	private Long clientId;
 	private Integer taskType;
 	private String token;
-	private HttpServletRequest request;
+	private String remoteAddr;
 
-	public ClientContext(Long clientId, String token, Integer taskType, HttpServletRequest request) {
+	public ClientContext(Long clientId, String token, Integer taskType, String remoteAddr) {
 		super();
 		this.clientId = clientId;
 		this.token = token;
 		this.taskType = taskType;
-		this.request = request;
+		this.remoteAddr = remoteAddr;
 	}
 
 	public String getToken() {
@@ -53,12 +51,12 @@ public class ClientContext {
 		this.taskType = taskType;
 	}
 
-	public HttpServletRequest getRequest() {
-		return request;
+	public String getRemoteAddr() {
+		return remoteAddr;
 	}
 
-	public void setRequest(HttpServletRequest request) {
-		this.request = request;
+	public void setRemoteAddr(String remoteAddr) {
+		this.remoteAddr = remoteAddr;
 	}
 
 }

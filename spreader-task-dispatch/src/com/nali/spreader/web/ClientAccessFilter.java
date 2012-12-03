@@ -59,7 +59,7 @@ public class ClientAccessFilter implements Filter {
 				return;
 			}
 		}
-		ClientContext context = new ClientContext(clientId, token, taskType, (HttpServletRequest) request);
+		ClientContext context = new ClientContext(clientId, token, taskType, request.getRemoteAddr());
 		ClientContext.setCurrentContext(context);
 		try {
 			chain.doFilter(request, response);

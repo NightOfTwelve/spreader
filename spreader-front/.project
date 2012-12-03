@@ -8,6 +8,7 @@
 		<project>spreader-interface</project>
 		<project>spreader-login-config</project>
 		<project>spreader-captcha</project>
+		<project>spreader-client</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
