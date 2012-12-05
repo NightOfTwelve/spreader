@@ -151,13 +151,12 @@ public class TaskChannel implements Runnable {
 		@Override
 		public void run() {
 			ClientTask task = taskTrace.getTask();
-			ActionMethod actionMethod = actionMethodHolder.getActionMethod(task.getActionId());
 			Map<String, Object> contentObjects = task.getContentObjects();
 			Long uid = task.getUid();
-			Map<String, Object> userContext = userContextHolder.getUserContext(uid);
-			Object executeRlt;
 			try {
-				executeRlt = actionMethod.execute(contentObjects, userContext, uid);
+				ActionMethod actionMethod = actionMethodHolder.getActionMethod(task.getActionId());
+				Map<String, Object> userContext = userContextHolder.getUserContext(uid);
+				Object executeRlt = actionMethod.execute(contentObjects, userContext, uid);
 				taskTrace.success(executeRlt);
 			} catch (Exception e) {
 				logger.error("Exception on task:" + task.getId(), e);
