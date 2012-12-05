@@ -3,6 +3,7 @@ package com.nali.spreader.util;
 import java.util.List;
 import java.util.Set;
 
+import com.nali.spreader.util.collection.DataIterator;
 import com.nali.spreader.util.random.RandomUtil;
 
 public abstract class MemoryRandomDataIterator<T, E> extends DataIterator<E>{

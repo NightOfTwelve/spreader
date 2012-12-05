@@ -19,8 +19,8 @@ import com.nali.spreader.service.IRobotUserService;
 import com.nali.spreader.service.IRobotUserServiceFactory;
 import com.nali.spreader.service.IUserService;
 import com.nali.spreader.service.IUserServiceFactory;
-import com.nali.spreader.util.DataIterator;
 import com.nali.spreader.util.NumberUtil;
+import com.nali.spreader.util.collection.DataIterator;
 
 @Component
 @ClassDescription("爬取用户主页")

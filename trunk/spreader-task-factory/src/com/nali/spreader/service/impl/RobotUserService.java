@@ -11,7 +11,7 @@ import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.model.RobotUserExample;
 import com.nali.spreader.service.IRobotUserService;
 import com.nali.spreader.service.WebsiteBaseService;
-import com.nali.spreader.util.CachedIterator;
+import com.nali.spreader.util.collection.CachedIterator;
 
 public class RobotUserService extends WebsiteBaseService implements IRobotUserService {
 	@Autowired
