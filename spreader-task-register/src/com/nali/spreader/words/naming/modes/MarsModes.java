@@ -3,7 +3,7 @@ package com.nali.spreader.words.naming.modes;
 import java.util.Iterator;
 
 import com.nali.spreader.data.RobotRegister;
-import com.nali.spreader.util.WapperIterator;
+import com.nali.spreader.util.collection.WapperIterator;
 import com.nali.spreader.words.Mars;
 import com.nali.spreader.words.naming.Modes;
 

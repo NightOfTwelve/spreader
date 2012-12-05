@@ -16,9 +16,9 @@ import com.nali.spreader.data.User;
 import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.pool.ActiveClient.AssignedTasks;
 import com.nali.spreader.service.IUidPoolService;
-import com.nali.spreader.util.CycleIterator;
 import com.nali.spreader.util.OffReadWriteLock;
 import com.nali.spreader.util.avg.ItemCount;
+import com.nali.spreader.util.collection.CycleIterator;
 
 public class UidPool extends AbstractUidPool {
 	private static Logger logger = Logger.getLogger(UidPool.class);

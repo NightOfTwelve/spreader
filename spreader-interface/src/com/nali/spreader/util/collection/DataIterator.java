@@ -1,4 +1,4 @@
-package com.nali.spreader.util;
+package com.nali.spreader.util.collection;
 
 import java.util.Collections;
 import java.util.Iterator;
