@@ -135,7 +135,7 @@ public class TaskChannel implements Runnable {
 			sleepCount--;
 			return null;
 		}
-		List<ClientTask> tasks = remoteTaskService.askForTasks();
+		List<ClientTask> tasks = askForTasks();
 		if(tasks.size()==0) {
 			sleepCount = SLEEP_COUNT_WHEN_NO_TASKS;
 			return null;
@@ -143,7 +143,7 @@ public class TaskChannel implements Runnable {
 		tasksIter = tasks.iterator();
 		return tasksIter.next();
 	}
-	
+
 	private class TaskExecutor implements Runnable {
 		private final TaskTrace taskTrace;
 		public TaskExecutor(TaskTrace taskTrace) {
@@ -207,6 +207,23 @@ public class TaskChannel implements Runnable {
 			}
 		}
 		logger.error("fail to reportTask:" + rlts);
+	}
+	
+	private List<ClientTask> askForTasks() {
+		for (int i = 0; i < 5; i++) {
+			try {
+				return remoteTaskService.askForTasks();
+			} catch (Exception e) {
+				logger.error(e, e);
+			}
+			try {
+				Thread.sleep(1000*60);
+			} catch (InterruptedException e) {
+				logger.error(e, e);
+			}
+		}
+		logger.error("fail to askForTasks");
+		return Collections.emptyList();
 	}
 
 }
