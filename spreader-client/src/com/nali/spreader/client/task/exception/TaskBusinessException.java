@@ -9,7 +9,6 @@ public class TaskBusinessException extends CooldownException {
 	private Integer websiteId;
 	private String websiteErrorCode;
 	private String websiteErrorDesc;
-	private Long uid;
 	private String refererId;
 
 	public TaskBusinessException(String errorCode, Object errorData, String message, Throwable cause) {
@@ -54,14 +53,6 @@ public class TaskBusinessException extends CooldownException {
 
 	public void setWebsiteErrorDesc(String websiteErrorDesc) {
 		this.websiteErrorDesc = websiteErrorDesc;
-	}
-
-	public Long getUid() {
-		return uid;
-	}
-
-	public void setUid(Long uid) {
-		this.uid = uid;
 	}
 
 	public String getRefererId() {
