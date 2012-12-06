@@ -8,6 +8,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.nali.spreader.client.task.exception.TaskDataException;
+import com.nali.spreader.data.User;
 import com.nali.spreader.model.LoginConfig;
 import com.nali.spreader.remote.IRemoteLoginConfigService;
 
@@ -31,6 +32,12 @@ public class UserContextHolder {
 	}
 
 	public Map<String, Object> getUserContext(Long uid) {
+		if(uid.equals(User.UID_NOT_LOGIN)) {
+			return null;
+		}
+		if(uid.equals(User.UID_ANYONE)) {
+			throw new UnsupportedOperationException("uid anyone unsupported");
+		}
 		accessLock.lock();
 		try {
 			ContextUnit contextUnit = contexts.get(uid);
