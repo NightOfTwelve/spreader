@@ -106,6 +106,7 @@ public class TaskChannel implements Runnable {
 					RetryException retry = (RetryException) exception;
 					trace.retryWeight-=retry.getWeight();
 					if(trace.retryWeight>0) {
+						trace.cooldownTime = System.currentTimeMillis() + retry.getCooldownMillis();
 						errorQueue.offer(trace);
 						continue;
 					} else {

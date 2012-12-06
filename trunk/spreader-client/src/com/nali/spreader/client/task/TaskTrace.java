@@ -50,6 +50,7 @@ class TaskTrace implements Comparable<TaskTrace> {
 				error.setWebsiteErrorCode(be.getWebsiteErrorCode());
 				error.setWebsiteErrorDesc(be.getWebsiteErrorDesc());
 				error.setWebsiteId(be.getWebsiteId());
+				error.setRefererId(be.getRefererId());
 			} else {
 				errorCode = TaskErrorCode.runtimeException.getCode();
 				errorDesc = ExceptionUtils.getFullStackTrace(exception);
