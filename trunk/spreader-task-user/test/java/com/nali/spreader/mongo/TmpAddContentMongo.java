@@ -47,7 +47,7 @@ public class TmpAddContentMongo {
 				this.contentMassDataDao.insertContent(c);
 			}
 			rows = list.size();
-			start = start + limit + 1;
+			start = start + limit;
 			System.out.println("次数:" + i);
 			i++;
 		} while (rows > 0);
