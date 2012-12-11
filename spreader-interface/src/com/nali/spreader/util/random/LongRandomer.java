@@ -7,16 +7,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 
-public class NumberRandomer implements Randomer<Integer>,Cloneable {
+public class LongRandomer implements Randomer<Long>,Cloneable {
 	private static final int THRESHOLD = 10;
 	private Random random = RandomUtil.random;
-	private int base;
-	private int range;
+	private long base;
+	private long range;
 
 	/**
 	 * start包括，end不包括
 	 */
-	public NumberRandomer(int start, int end) {
+	public LongRandomer(long start, long end) {
 		if(end<=start) {
 			throw new IllegalArgumentException("end<=start, start:"+start+", end:"+end);
 		}
@@ -25,14 +25,14 @@ public class NumberRandomer implements Randomer<Integer>,Cloneable {
 	}
 
 	@Override
-	public Integer get() {
-		return base + random.nextInt(range);
+	public Long get() {
+		return base + RandomUtil.nextLong(range, random);
 	}
 
 	@Override
-	public NumberRandomer mirror() {
+	public LongRandomer mirror() {
 		try {
-			NumberRandomer clone = (NumberRandomer) clone();
+			LongRandomer clone = (LongRandomer) clone();
 			clone.random = new Random();
 			return clone;
 		} catch (CloneNotSupportedException e) {
@@ -41,22 +41,22 @@ public class NumberRandomer implements Randomer<Integer>,Cloneable {
 	}
 
 	@Override
-	public List<Integer> multiGet(int count) {
+	public List<Long> multiGet(int count) {
 		if(count>=range) {
-			List<Integer> rlt = new ArrayList<Integer>(range);
-			for (int i = 0; i < range; i++) {
+			List<Long> rlt = new ArrayList<Long>((int)range);
+			for (long i = 0; i < range; i++) {
 				rlt.add(i);
 			}
 			Collections.shuffle(rlt);
 			return rlt;
 		} else if (range / (range - count) > THRESHOLD) {
-			LinkedHashSet<Integer> ranges = getRanges(range - count);
-			List<Integer> exItems = new ArrayList<Integer>(ranges);
+			LinkedHashSet<Long> ranges = getRanges((int) (range - count));
+			List<Long> exItems = new ArrayList<Long>(ranges);
 			Collections.sort(exItems);
-			Iterator<Integer> exItemIter = exItems.iterator();
-			Integer exItem=pop(exItemIter);
-			List<Integer> rlt = new ArrayList<Integer>(count);
-			for (int i = 0; i < range; i++) {
+			Iterator<Long> exItemIter = exItems.iterator();
+			Long exItem=pop(exItemIter);
+			List<Long> rlt = new ArrayList<Long>(count);
+			for (long i = 0; i < range; i++) {
 				if(exItem!=null && exItem==i) {
 					exItem=pop(exItemIter);
 				} else {
@@ -66,7 +66,7 @@ public class NumberRandomer implements Randomer<Integer>,Cloneable {
 			Collections.shuffle(rlt);
 			return rlt;
 		} else {
-			return new ArrayList<Integer>(getRanges(count));
+			return new ArrayList<Long>(getRanges(count));
 		}
 	}
 
@@ -77,10 +77,10 @@ public class NumberRandomer implements Randomer<Integer>,Cloneable {
 		return null;
 	}
 
-	private LinkedHashSet<Integer> getRanges(int count) {
-		LinkedHashSet<Integer> rlt = new LinkedHashSet<Integer>();
+	private LinkedHashSet<Long> getRanges(int count) {
+		LinkedHashSet<Long> rlt = new LinkedHashSet<Long>();
 		for (int i = 0; i < count;) {
-			if(rlt.add(random.nextInt(range))) {
+			if(rlt.add(RandomUtil.nextLong(range, random))) {
 				i++;
 			}
 		}

@@ -13,13 +13,13 @@ import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
-import com.nali.spreader.util.random.NumberRandomer;
+import com.nali.spreader.util.random.LongRandomer;
 import com.nali.spreader.workshop.apple.ReturnVisitApplePassive.ReturnVisitDto;
 
 @Component
 @ClassDescription("apple回访时间（天）")
 public class ReturnVisitApplePassive extends SingleTaskMachineImpl implements PassiveWorkshop<ReturnVisitDto, Boolean>, Configable<Integer> {
-	private NumberRandomer millisRandomer;
+	private LongRandomer millisRandomer;
 	private long duringMillis = TimeUnit.DAYS.toMillis(7);
 
 	public ReturnVisitApplePassive() {
@@ -29,7 +29,7 @@ public class ReturnVisitApplePassive extends SingleTaskMachineImpl implements Pa
 	@Override
 	public void init(Integer dateCount) {
 		long millis = TimeUnit.DAYS.toMillis(dateCount);
-		millisRandomer = new NumberRandomer((int)millis*9/10, (int)millis*11/10 + 1);
+		millisRandomer = new LongRandomer(millis*9/10, millis*11/10 + 1);
 	}
 
 	@Override
