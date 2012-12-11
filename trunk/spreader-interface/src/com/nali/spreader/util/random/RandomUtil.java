@@ -163,4 +163,23 @@ public class RandomUtil {
 		}
 		return rlt;
 	}
+	
+	public static long nextLong(long n, Random random) {
+        if (n <= 0)
+            throw new IllegalArgumentException("n must be positive");
+
+        if ((n & -n) == n)  // i.e., n is a power of 2
+            return (n-1) & next(random);
+
+        long bits, val;
+        do {
+            bits = next(random);
+            val = bits % n;
+        } while (bits - val + (n-1) < 0);
+        return val;
+	}
+	
+	private static long next(Random random) {
+		return random.nextLong()>>>1;
+	}
 }
