@@ -1,5 +1,6 @@
 package com.nali.spreader.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +10,7 @@ import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
+import com.nali.spreader.constants.Website;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.Category;
 import com.nali.spreader.data.User;
@@ -67,12 +69,23 @@ public class ExtjsComponentsUtilController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/usercombo")
 	public String userComboxStore(String query, Integer start, Integer limit) {
-		if (start == null)
-			start = 0;
-		if (limit == null)
-			limit = 20;
-		Limit lit = Limit.newInstanceForLimit(start, limit);
-		PageResult<User> pr = this.extjsService.findUserByName(query, lit);
+		Limit lit = this.initLimit(start, limit);
+		int websiteId;
+		String name;
+		if (StringUtils.isBlank(query)) {
+			websiteId = 1;
+			name = null;
+		} else {
+			String[] str = StringUtils.trim(query).split("\\s+");
+			if (str.length < 2) {
+				websiteId = 1;
+				name = str[0];
+			} else {
+				websiteId = startLikeWebsite(str[0]);
+				name = StringUtils.trim(str[1]);
+			}
+		}
+		PageResult<User> pr = extjsService.findUserByNameAndWebsite(name, websiteId, lit);
 		return this.write(pr);
 	}
 
@@ -87,11 +100,7 @@ public class ExtjsComponentsUtilController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/usergroupcombo")
 	public String userGroupComboxStore(String query, Integer start, Integer limit) {
-		if (start == null)
-			start = 0;
-		if (limit == null)
-			limit = 20;
-		Limit lit = Limit.newInstanceForLimit(start, limit);
+		Limit lit = this.initLimit(start, limit);
 		PageResult<UserGroup> pr = this.extjsService.findUserGroupByName(query, lit);
 		return this.write(pr);
 	}
@@ -107,11 +116,7 @@ public class ExtjsComponentsUtilController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/categorycombo")
 	public String categoryComboxStore(String query, Integer start, Integer limit) {
-		if (start == null)
-			start = 0;
-		if (limit == null)
-			limit = 20;
-		Limit lit = Limit.newInstanceForLimit(start, limit);
+		Limit lit = this.initLimit(start, limit);
 		PageResult<Category> pr = this.extjsService.findCategoryByName(query, lit);
 		return this.write(pr);
 	}
@@ -141,5 +146,23 @@ public class ExtjsComponentsUtilController extends BaseController {
 	@RequestMapping(value = "/dispnames")
 	public String allStrategyDisplayName() {
 		return this.write(this.extjsService.getAllStrategyDisplayName());
+	}
+
+	/**
+	 * 根据字符串的首字符判断属于哪个website
+	 * 
+	 * @param str
+	 * @return
+	 */
+	private int startLikeWebsite(String str) {
+		if (StringUtils.isNotBlank(str)) {
+			for (Website w : Website.values()) {
+				String desc = StringUtils.left(w.getDescriptions()[0], 1);
+				if (str.startsWith(desc)) {
+					return w.getId();
+				}
+			}
+		}
+		return Website.weibo.getId();
 	}
 }

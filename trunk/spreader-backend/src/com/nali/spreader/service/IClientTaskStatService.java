@@ -20,7 +20,8 @@ public interface IClientTaskStatService {
 	 * @param param
 	 * @return
 	 */
-	PageResult<ClientTaskExcutionSummaryDto> queryClientTaskStatPageResult(ClientTaskSumQueryParamDto param);
+	PageResult<ClientTaskExcutionSummaryDto> queryClientTaskStatPageResult(
+			ClientTaskSumQueryParamDto param);
 
 	/**
 	 * 分页查询
@@ -30,5 +31,7 @@ public interface IClientTaskStatService {
 	 */
 	PageResult<ClientTaskaStatDetailDto> queryClientTaskaStatDetailPageResult(
 			ClientTaskStatDtlQueryParamDto param);
+
+	void clearTaskExpired(String table, String column, int days);
 
 }

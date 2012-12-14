@@ -2,11 +2,14 @@ package com.nali.spreader.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.dom4j.IllegalAddException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.dao.IClientTaskStatisticsDao;
+import com.nali.spreader.dto.ClearTaskParamDto;
 import com.nali.spreader.dto.ClientTaskExcutionSummaryDto;
 import com.nali.spreader.dto.ClientTaskStatDtlQueryParamDto;
 import com.nali.spreader.dto.ClientTaskSumQueryParamDto;
@@ -28,7 +31,8 @@ public class ClientTaskStatServiceImpl implements IClientTaskStatService {
 	public PageResult<ClientTaskExcutionSummaryDto> queryClientTaskStatPageResult(
 			ClientTaskSumQueryParamDto param) {
 		if (param != null) {
-			List<ClientTaskExcutionSummaryDto> list = this.statDao.findClientTaskStatisticsInfoList(param);
+			List<ClientTaskExcutionSummaryDto> list = this.statDao
+					.findClientTaskStatisticsInfoList(param);
 			int count = this.statDao.countClientTaskStatisticsInfo(param);
 			return new PageResult<ClientTaskExcutionSummaryDto>(list, param.getLimit(), count);
 		} else {
@@ -46,5 +50,20 @@ public class ClientTaskStatServiceImpl implements IClientTaskStatService {
 		} else {
 			throw new IllegalArgumentException("传入参数为null");
 		}
+	}
+
+	@Override
+	public void clearTaskExpired(String table, String column, int days) {
+		if (StringUtils.isBlank(table)) {
+			throw new IllegalAddException(" table is blank ");
+		}
+		if (StringUtils.isBlank(column)) {
+			throw new IllegalAddException(" column is blank ");
+		}
+		ClearTaskParamDto dto = new ClearTaskParamDto();
+		dto.setTables(table);
+		dto.setColumns(column);
+		dto.setDays(days);
+		statDao.deleteTaskData(dto);
 	}
 }
