@@ -68,13 +68,22 @@ public interface IGlobalUserService {
 	String getNickNameByWebsiteUid(Integer websiteId,Long websiteUid);
 
 	/**
-	 * 获取符合关注上限的用户ID
+	 * 在一批用户中筛选出符合关注上限的用户ID
 	 * 
 	 * @param uids
 	 * @param attenLimit
 	 * @return
 	 */
-	List<Long> getAttenLimitUids(List<Long> uids, Long attenLimit);
+	List<Long> getAttenLimitUids(Integer websiteId, List<Long> uids, Long attenLimit);
+
+	/**
+	 * 在一批用户中筛选出符合粉丝上限的用户ID
+	 * 
+	 * @param uids
+	 * @param fansLimit
+	 * @return
+	 */
+	List<Long> getFansLimitUids(Integer websiteId, List<Long> uids, Long fansLimit);
 
 	/**
 	 * 将uid转换成Map<Long,User>
@@ -85,4 +94,22 @@ public interface IGlobalUserService {
 	List<User> getUserMapByUids(List<Long> data);
 	
 	List<User> getUsersByIds(List<Long> uids);
+	
+	/**
+	 * 获取大于最后一次记录的ID
+	 * 
+	 * @param limit
+	 * @return
+	 */
+	List<Long> getUidsByLastUidAndLimit(int limit);
+	
+	void emptyLastUid();
+	
+	/**
+	 * 保存User并分配一个UID
+	 * 
+	 * @param user
+	 * @return
+	 */
+	Long saveUserAssignUid(User user);
 }

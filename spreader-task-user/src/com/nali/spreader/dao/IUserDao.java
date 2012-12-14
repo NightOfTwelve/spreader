@@ -12,7 +12,6 @@ import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
 import com.nali.spreader.dto.FilterUserDto;
 import com.nali.spreader.dto.PostWeiboContentDto;
-import com.nali.spreader.dto.UserQueryParamDto;
 
 public interface IUserDao {
 
@@ -136,5 +135,29 @@ public interface IUserDao {
 	 * @param attenLimit
 	 * @return
 	 */
-	List<Long> queryAttenLimitUids(UserQueryParamDto param);
+	List<Long> queryAttenLimitUids(Map<String,Object> param);
+	
+	/**
+	 * 查询符合粉丝数上限的用户
+	 * 
+	 * @param param
+	 * @return
+	 */
+	List<Long> queryFansLimitUids(Map<String, Object> param);
+	
+	/**
+	 * 设置最后一次获取的UID
+	 * 
+	 * @param uid
+	 */
+	void settingLastUid(Long uid);
+
+	/**
+	 * 获取最后一次设置的UID
+	 * 
+	 * @return
+	 */
+	Long getLastUid();
+	
+	List<Long> getUidsByLastUidAndLimit(Map<String,Object> param);
 }
