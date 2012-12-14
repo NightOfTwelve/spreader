@@ -1,5 +1,6 @@
 package com.nali.spreader.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -36,5 +37,25 @@ public class UserGroupFacadeService implements IUserGroupFacadeService {
 	@Override
 	public Iterator<User> queryLimitedRandomGrouppedUser(long gid, int limit) {
 		return queryLimitedRandomGrouppedUser(gid, limit, Collections.EMPTY_LIST);
+	}
+
+	@Override
+	public List<Long> getUids(Long gid) {
+		Iterator<Long> iter = queryAllGrouppedUser(gid);
+		return getUidsByIterator(iter);
+	}
+
+	/**
+	 * 获取用户分组中所有的用户ID
+	 * 
+	 * @param iter
+	 * @return
+	 */
+	private List<Long> getUidsByIterator(Iterator<Long> iter) {
+		List<Long> list = new ArrayList<Long>();
+		while (iter.hasNext()) {
+			list.add(iter.next());
+		}
+		return list;
 	}
 }

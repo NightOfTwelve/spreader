@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Component;
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.analyzer.other.Words;
 import com.nali.spreader.config.KeywordReplyAndAddConfig;
+import com.nali.spreader.constants.Website;
 import com.nali.spreader.dto.KeywordUserDto;
 import com.nali.spreader.dto.UserContentsDto;
 import com.nali.spreader.factory.TaskProduceLine;
@@ -70,14 +70,14 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	@Override
 	public String work() {
 		Long gid = getFromUserGroup();
-		Iterator<Long> iter = userGroupFacadeService.queryAllGrouppedUser(gid);
-		List<Long> robotIdList = getUidsByIterator(iter);
+		List<Long> groupUsers = userGroupFacadeService.getUids(gid);
+		List<Long> robotIdList = globalUserService.getAttenLimitUids(Website.weibo.getId(),
+				groupUsers, attentionLimit);
 		if (!CollectionUtils.isEmpty(keywords)) {
 			this.execue(keywords, robotIdList);
 		} else {
 			// 查找分组用户本身的关键字
-			List<Map<String, Long>> robotKeyword = this.keywordService
-					.findUsersKeyword(robotIdList);
+			List<Map<String, Long>> robotKeyword = keywordService.findUsersKeyword(robotIdList);
 			List<KeywordUserDto> data = this.getKeywordUserDtoData(robotKeyword);
 			for (KeywordUserDto dto : data) {
 				Long keyword = dto.getKeyword();
@@ -99,44 +99,37 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	private void execue(Set<Long> keywords, List<Long> robots) {
 		Long[] opArray = new Long[keywords.size()];
 		Long[] keywordArray = keywords.toArray(opArray);
-		List<Map<String, Long>> allContent = this.contentService//TODO 不要为了写代码方便随便用this.
-				.findContentByPostContentDto(this.config.getPostWeiboContentDto(keywordArray));//TODO service不要随便返回map类型，没人知道key是什么，同理dao也不要随便返回map给service
-		List<UserContentsDto> readyData = this.getUserContentsDtoData(allContent);
-		if (!CollectionUtils.isEmpty(readyData)) {//TODO 不要整天判断isEmpty，自己返回的集合了还不信任，或者用if empty return的方法，避免后面一直缩进
-			Integer userCount = readyData.size();
-			List<ItemCount<Long>> execuData = AverageHelper.getItemCounts(this.execuAddLimit,
-					robots);
-			Map<String, Integer> execuParams = CollectionUtils.newHashMap(4);
-			execuParams.put(AverageHelper.KEY_USER_NUMBER, userCount);
-			execuParams.put(AverageHelper.KEY_ROBOT_USER_NUMBER, robots.size());
-			execuParams.put(AverageHelper.KEY_ADD_FANS_LIMIT, this.addLimit);
-			execuParams.put(AverageHelper.KEY_EXECU_ADD_FANS_LIMIT, this.execuAddLimit);
-			Average<Long> avg = AverageHelper.selectAverageByParam(execuParams, execuData);//TODO 传个坑爹的map什么意思，调方法前set，调了又get，大家还要商量好key
-			Date addTime = new Date();
-			Set<UserContentsDto> ucExists = new HashSet<UserContentsDto>();
-			while (avg.hasNext()) {
-				List<ItemCount<Long>> items = avg.next();
-				List<UserContentsDto> workData = RandomUtil.randomItems(readyData, ucExists, 1);
-				if (!CollectionUtils.isEmpty(workData)) {
-					UserContentsDto uc = workData.get(0);
-					Long uid = uc.getUid();
-					List<Long> contents = uc.getContents();
-					Map<Long, Set<Long>> existsReyply = new HashMap<Long, Set<Long>>();
-					Map<Long, Set<Long>> existsAdd = new HashMap<Long, Set<Long>>();
-					for (ItemCount<Long> item : items) {
-						Long robotId = item.getItem();
-						int count = item.getCount();
-						Long contentId = RandomUtil.randomItem(contents);
-						if (count > 0) {//TODO 到这里都缩进了n层没法阅读了
-							existsAdd = addFans(uid, robotId, existsAdd, addTime);
-							if (needReply) {
-								existsReyply = replyWeibo(robotId, contentId, existsReyply, addTime);
-							}
-							addTime = DateUtils.addMinutes(addTime, execuInterval);
+		List<Map<String, Long>> allContent = contentService.findContentByPostContentDto(config
+				.getPostWeiboContentDto(keywordArray));
+		List<UserContentsDto> readyData = getUserContentsDtoData(allContent);
+		Integer userCount = readyData.size();
+		List<ItemCount<Long>> execuData = AverageHelper.getItemCounts(execuAddLimit, robots);
+		Average<Long> avg = AverageHelper.selectAverageByParam(userCount, robots.size(), addLimit,
+				execuAddLimit, execuData);
+		Date addTime = new Date();
+		Set<UserContentsDto> ucExists = new HashSet<UserContentsDto>();
+		while (avg.hasNext()) {
+			List<ItemCount<Long>> items = avg.next();
+			List<UserContentsDto> workData = RandomUtil.randomItems(readyData, ucExists, 1);
+			if (!CollectionUtils.isEmpty(workData)) {
+				UserContentsDto uc = workData.get(0);
+				Long uid = uc.getUid();
+				List<Long> contents = uc.getContents();
+				Map<Long, Set<Long>> existsReyply = new HashMap<Long, Set<Long>>();
+				Map<Long, Set<Long>> existsAdd = new HashMap<Long, Set<Long>>();
+				for (ItemCount<Long> item : items) {
+					Long robotId = item.getItem();
+					int count = item.getCount();
+					Long contentId = RandomUtil.randomItem(contents);
+					if (count > 0) {
+						existsAdd = addFans(uid, robotId, existsAdd, addTime);
+						if (needReply) {
+							existsReyply = replyWeibo(robotId, contentId, existsReyply, addTime);
 						}
+						addTime = DateUtils.addMinutes(addTime, execuInterval);
 					}
-					ucExists.add(uc);
 				}
+				ucExists.add(uc);
 			}
 		}
 	}
@@ -218,7 +211,7 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 				set = new HashSet<Long>();
 			}
 			set.add(robotId);
-			exists.put(uid, set);//TODO put移到new HashSet之后
+			exists.put(uid, set);
 		}
 		return exists;
 	}
@@ -266,21 +259,6 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 		if (execuAddLimit == null) {
 			execuAddLimit = KeywordReplyAndAddConfig.DEFAULT_EXECU_ADD_LIMIT;
 		}
-	}
-
-	/**
-	 * 获取用户分组中所有的用户ID
-	 * 
-	 * @param iter
-	 * @return
-	 */
-	private List<Long> getUidsByIterator(Iterator<Long> iter) {
-		List<Long> list = new ArrayList<Long>();
-		while (iter.hasNext()) {
-			list.add(iter.next());
-		}
-		List<Long> resutl = this.globalUserService.getAttenLimitUids(list, attentionLimit);
-		return resutl;
 	}
 
 	/**
@@ -347,12 +325,11 @@ public class AddFansAndReplyByKeyword extends UserGroupExtendedBeanImpl implemen
 	 */
 	private Map<Long, Set<Long>> getTransformData(List<Map<String, Long>> data, String groupKey,
 			String itemKey) {
-		//TODO 分层不清楚很糟糕，你所有的逻辑都在analyzer这一层来写，service就给你传dao的数据用，每次analyzer都写过几百行，你这个方法严重依赖于dao的排序
 		Map<Long, Set<Long>> readyMap = new HashMap<Long, Set<Long>>();
 		if (CollectionUtils.isEmpty(data)) {
 			return readyMap;
 		}
-		Set<Long> contentSet = new HashSet<Long>();//TODO 下面这一段写的冗余了，而且不是每次contentSet都要被put，初始化的new白new了
+		Set<Long> contentSet = new HashSet<Long>();
 		for (int i = 0; i < data.size(); i++) {
 			Map<String, Long> map = data.get(i);
 			Long groupKeyId = map.get(groupKey);

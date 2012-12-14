@@ -34,7 +34,6 @@ import com.nali.spreader.data.UserTagExample;
 import com.nali.spreader.data.WeiboAppeal;
 import com.nali.spreader.data.WeiboAppealExample;
 import com.nali.spreader.dto.FilterUserDto;
-import com.nali.spreader.dto.UserQueryParamDto;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.service.IGlobalRobotUserService;
 import com.nali.spreader.service.IGlobalUserService;
@@ -349,12 +348,18 @@ public class GlobalUserService implements IGlobalUserService {
 	}
 
 	@Override
-	public List<Long> getAttenLimitUids(List<Long> uids, Long attenLimit) {
+	public List<Long> getAttenLimitUids(Integer websiteId, List<Long> uids, Long attenLimit) {
+		Assert.notNull(websiteId, "websiteId is null");
 		List<Long> result = new ArrayList<Long>();
 		if (!CollectionUtils.isEmpty(uids)) {
-			UserQueryParamDto param = new UserQueryParamDto();
-			param.setAttentionLimit(attenLimit);
-			param.setUids(uids);
+			Map<String, Object> param = CollectionUtils.newHashMap(3);
+			// 如上限未设置，设置默认值
+			if (attenLimit == null || attenLimit <= 0) {
+				attenLimit = 500L;
+			}
+			param.put("websiteId", websiteId);
+			param.put("attentionLimit", attenLimit);
+			param.put("uids", uids);
 			result = this.userDao.queryAttenLimitUids(param);
 		}
 		return result;
@@ -366,7 +371,7 @@ public class GlobalUserService implements IGlobalUserService {
 		if (!CollectionUtils.isEmpty(data)) {
 			for (Long uid : data) {
 				User user = this.crudUserDao.selectByPrimaryKey(uid);
-				if(user!=null) {
+				if (user != null) {
 					result.add(user);
 				}
 			}
@@ -382,5 +387,64 @@ public class GlobalUserService implements IGlobalUserService {
 		UserExample example = new UserExample();
 		example.createCriteria().andIdIn(uids);
 		return this.crudUserDao.selectByExample(example);
+	}
+
+	@Override
+	public List<Long> getUidsByLastUidAndLimit(int limit) {
+		Long lastUid = userDao.getLastUid();
+		if (lastUid == null) {
+			lastUid = 0L;
+		}
+		Map<String, Object> param = CollectionUtils.newHashMap(2);
+		param.put("lastuid", lastUid);
+		param.put("limit", limit);
+		List<Long> list = userDao.getUidsByLastUidAndLimit(param);
+		if (list.size() > 0) {
+			lastUid = list.get(list.size() - 1);
+		} else {
+			lastUid = null;
+		}
+		userDao.settingLastUid(lastUid);
+		return list;
+	}
+
+	@Override
+	public List<Long> getFansLimitUids(Integer websiteId, List<Long> uids, Long fansLimit) {
+		Assert.notNull(websiteId, "websiteId is null");
+		List<Long> result = new ArrayList<Long>();
+		if (!CollectionUtils.isEmpty(uids)) {
+			Map<String, Object> param = CollectionUtils.newHashMap(3);
+			param.put("websiteId", websiteId);
+			param.put("fansLimit", fansLimit);
+			param.put("uids", uids);
+			result = this.userDao.queryFansLimitUids(param);
+		}
+		return result;
+	}
+
+	@Override
+	public void emptyLastUid() {
+		userDao.settingLastUid(null);
+	}
+
+	@Override
+	public Long saveUserAssignUid(User user) {
+		Integer websiteId = user.getWebsiteId();
+		Assert.notNull(websiteId, " websiteId is null");
+		Long websiteUid = user.getWebsiteUid();
+		Assert.notNull(websiteUid, " websiteUid is null");
+		User u = findByUniqueKey(websiteId, websiteUid);
+		if (u != null) {
+			Long uid = u.getId();
+			user.setId(uid);
+			crudUserDao.updateByPrimaryKeySelective(user);
+			return uid;
+		} else {
+			try {
+				return crudUserDao.insertSelective(user);
+			} catch (DuplicateKeyException e) {
+				return getOrAssignUid(websiteId, websiteUid);
+			}
+		}
 	}
 }

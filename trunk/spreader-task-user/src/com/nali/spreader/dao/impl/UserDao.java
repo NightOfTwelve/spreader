@@ -21,20 +21,25 @@ import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
 import com.nali.spreader.dto.FilterUserDto;
 import com.nali.spreader.dto.PostWeiboContentDto;
-import com.nali.spreader.dto.UserQueryParamDto;
 
 @Repository
 public class UserDao implements IUserDao {
 	private static final String LAST_FETCH_TIME_KEY_PREFIX = "LastFetchTime_";
+	private static final String LAST_GET_UID = "gen_ximalaya_get_last_uid";
 	@Autowired
 	private SqlMapClientTemplate sqlMap;
 	@Autowired
-	private RedisTemplate<String, Date> redisTemplate;
+	private RedisTemplate redisTemplate;
 
 	@Override
 	public Long assignUser(User user) {
 		return (Long) sqlMap.insert("spreader_user.assignUser", user);
 	}
+	
+//	@PostConstruct
+//	public void init() {
+//		
+//	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -44,7 +49,7 @@ public class UserDao implements IUserDao {
 
 	@Override
 	public Date getAndTouchLastFetchTime(Long uid) {
-		return redisTemplate.opsForValue().getAndSet(LAST_FETCH_TIME_KEY_PREFIX + uid, new Date());
+		return (Date) redisTemplate.opsForValue().getAndSet(LAST_FETCH_TIME_KEY_PREFIX + uid, new Date());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -164,7 +169,27 @@ public class UserDao implements IUserDao {
 	}
 
 	@Override
-	public List<Long> queryAttenLimitUids(UserQueryParamDto param) {
+	public List<Long> queryAttenLimitUids(Map<String,Object> param) {
 		return sqlMap.queryForList("spreader_user.queryAttenLimitUids", param);
+	}
+
+	@Override
+	public void settingLastUid(Long uid) {
+		redisTemplate.opsForValue().getAndSet(LAST_GET_UID, uid);
+	}
+
+	@Override
+	public Long getLastUid() {
+		return (Long) redisTemplate.opsForValue().get(LAST_GET_UID);
+	}
+
+	@Override
+	public List<Long> getUidsByLastUidAndLimit(Map<String, Object> param) {
+		return sqlMap.queryForList("spreader_user.getUidsByLastUidAndLimit", param);
+	}
+
+	@Override
+	public List<Long> queryFansLimitUids(Map<String, Object> param) {
+		return sqlMap.queryForList("spreader_user.queryFansLimitUids", param);
 	}
 }
