@@ -160,6 +160,21 @@ public interface IUserGroupInfoService {
 	 * @return
 	 */
 	PageResult<Long> getManualUsersPageData(Long gid, Limit limit);
-	
+
+	/**
+	 * 是否存在依赖关系
+	 * 
+	 * @param gid
+	 * @return
+	 */
 	boolean isDependency(Long gid);
+
+	/**
+	 * 按分组名称获取用户分组ID
+	 * 
+	 * @param groupName
+	 * @return
+	 */
+	List<Long> getGidsByGroupName(String... groupName);
+
 }
