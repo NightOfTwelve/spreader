@@ -10,6 +10,8 @@ public enum TaskType {//TODO @see Channel
 	appNormal(201, 1),
 	appSlow(202, 1, 3, 50, 50),
 	appReturn(203, 1, 5, 50, 50),
+	
+	ximalayaNormal(301,10),
 	;
 	private Integer id;
 	//front

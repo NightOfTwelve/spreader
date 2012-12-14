@@ -2,52 +2,34 @@ package com.nali.spreader.util.avg;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class AverageHelper {
-	public static final String KEY_USER_NUMBER = "userNumber";
-	public static final String KEY_ROBOT_USER_NUMBER = "robotUserNumber";
-	public static final String KEY_ADD_FANS_LIMIT = "addFansLimit";
-	public static final String KEY_EXECU_ADD_FANS_LIMIT = "execuAddFansLimit";
-
 	/**
 	 * 检查参数并修正后自动匹配Average模式
 	 * 
-	 * @param param
+	 * @param userNumber
+	 *            被关注的人数
+	 * @param robotUserNumber
+	 *            执行关注的机器人数
+	 * @param addFansLimit
+	 *            被关注的上限
+	 * @param execuAddFansLimit
+	 *            执行关注的上限
 	 * @param itemCounts
 	 * @return
 	 */
-	public static <T> Average<T> selectAverageByParam(Map<String, Integer> param,
-			List<ItemCount<T>> itemCounts) {
-		param = correctParams(param);
-		Integer userNumber = param.get(KEY_USER_NUMBER);
-		Integer robotUserNumber = param.get(KEY_ROBOT_USER_NUMBER);
-		Integer addLimit = param.get(KEY_ADD_FANS_LIMIT);
-		Integer execuLimit = param.get(KEY_EXECU_ADD_FANS_LIMIT);
+	public static <T> Average<T> selectAverageByParam(Integer userNumber, Integer robotUserNumber,
+			Integer addFansLimit, Integer execuAddFansLimit, List<ItemCount<T>> itemCounts) {
+		addFansLimit = Math.min(addFansLimit, robotUserNumber);
 		Average<T> avg;
 		// 保证需要关注的次数
-		if ((robotUserNumber * execuLimit - userNumber * addLimit) >= 0) {
-			avg = Average.startFromBatchSize(itemCounts, addLimit);
+		if ((robotUserNumber * execuAddFansLimit - userNumber * addFansLimit) >= 0) {
+			avg = Average.startFromBatchSize(itemCounts, addFansLimit);
 		} else {
 			// 保证每个人都关注到
 			avg = Average.startFromBatchCount(itemCounts, userNumber);
 		}
 		return avg;
-	}
-
-	/**
-	 * 修正参数
-	 * 
-	 * @param param
-	 * @return
-	 */
-	public static Map<String, Integer> correctParams(Map<String, Integer> param) {
-		Integer robotUserNumber = param.get(KEY_ROBOT_USER_NUMBER);
-		Integer addLimit = param.get(KEY_ADD_FANS_LIMIT);
-		if (addLimit > robotUserNumber) {
-			param.put(KEY_ADD_FANS_LIMIT, robotUserNumber);
-		}
-		return param;
 	}
 
 	/**
