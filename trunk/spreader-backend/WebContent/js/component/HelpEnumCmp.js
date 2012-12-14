@@ -1,8 +1,4 @@
-/**
- * 获取帮助组件
- */
-function getHelpEnumCmp() {
-	var store = new Ext.data.Store({
+var helpEnumStore = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
 							url : '../help/enumstore?_time='
 									+ new Date().getTime()
@@ -21,10 +17,10 @@ function getHelpEnumCmp() {
 								}]),
 				autoLoad : true
 			});
-	var number = 20;
-	var numtext = new Ext.form.TextField({
-				id : 'helpMaxpage',
-				name : 'helpMaxpage',
+	var helpEnumNumber = 20;
+	var helpEnumNumtext = new Ext.form.TextField({
+				id : 'helpEnumMaxpage',
+				name : 'helpEnumMaxpage',
 				width : 60,
 				emptyText : '每页条数',
 				// 激活键盘事件
@@ -32,9 +28,9 @@ function getHelpEnumCmp() {
 				listeners : {
 					specialKey : function(field, e) {
 						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							bbar.pageSize = Number(numtext.getValue());
-							number = Number(numtext.getValue());
-							store.reload({
+							bbar.pageSize = Number(helpEnumNumtext.getValue());
+							helpEnumNumber = Number(helpEnumNumtext.getValue());
+							helpEnumStore.reload({
 										params : {
 											start : 0,
 											limit : bbar.pageSize
@@ -45,24 +41,24 @@ function getHelpEnumCmp() {
 				}
 			});
 	// // 分页菜单
-	var bbar = new Ext.PagingToolbar({
-				pageSize : number,
-				store : store,
+	var helpEnumBbar = new Ext.PagingToolbar({
+				pageSize : helpEnumNumber,
+				store : helpEnumStore,
 				displayInfo : true,
 				displayMsg : '显示{0}条到{1}条,共{2}条',
 				emptyMsg : "没有符合条件的记录",
 				plugins : new Ext.ux.ProgressBarPager(),
-				items : ['-', '&nbsp;&nbsp;', numtext]
+				items : ['-', '&nbsp;&nbsp;', helpEnumNumtext]
 			});
-	var grid = new Ext.grid.GridPanel({
-				store : store,
+	var helpEnumGrid = new Ext.grid.GridPanel({
+				store : helpEnumStore,
 				margins : '0 5 5 5',
-				bbar : bbar,
+				bbar : helpEnumBbar,
 				tbar : [{
 							iconCls : 'page_refreshIcon',
 							text : '刷新',
 							handler : function() {
-								store.load();
+								helpEnumStore.load();
 							}
 						}, '-', new Ext.form.TextField({
 									id : 'helpEnumQueryName',
@@ -73,9 +69,9 @@ function getHelpEnumCmp() {
 										specialkey : function(field, e) {
 											if (e.getKey() == Ext.EventObject.ENTER) {
 												var text = field.getValue();
-												store.setBaseParam('enumName',
+												helpEnumStore.setBaseParam('enumName',
 														text);
-												store.load();
+												helpEnumStore.load();
 											}
 										}
 									},
@@ -86,8 +82,8 @@ function getHelpEnumCmp() {
 							handler : function() {
 								var text = Ext.getCmp('helpEnumQueryName')
 										.getValue();
-								store.setBaseParam('enumName', text);
-								store.load();
+								helpEnumStore.setBaseParam('enumName', text);
+								helpEnumStore.load();
 							}
 						}],
 				columns : [new Ext.grid.RowNumberer(), {
@@ -103,23 +99,21 @@ function getHelpEnumCmp() {
 						}]
 			});
 	// 弹出窗口
-	var windows = new Ext.Window({
+	var helpEnumwWndows = new Ext.Window({
 		title : '<span class="commoncss">帮助</span>', // 窗口标题
 		id : 'helpEnumCmbWindow',
 		closeAction : 'hide',
-		modal : true,
+		modal : false,
 		layout : 'fit', // 设置窗口布局模式
 		width : 350, // 窗口宽度
 		height : 250, // 窗口高度
 		closable : true, // 是否可关闭
 		collapsible : true, // 是否可收缩
-		maximizable : true, // 设置是否可以最大化
+		maximizable : false, // 设置是否可以最大化
 		border : false, // 边框线设置
-		constrain : true, // 设置窗口是否可以溢出父容器
+		constrain : false, // 设置窗口是否可以溢出父容器
 		pageY : 20, // 页面定位Y坐标
 		pageX : document.documentElement.clientWidth / 2 - 300 / 2, // 页面定位X坐标
-		items : [grid]
+		items : [helpEnumGrid]
 			// 嵌入的表单面
 		});
-	return windows;
-}

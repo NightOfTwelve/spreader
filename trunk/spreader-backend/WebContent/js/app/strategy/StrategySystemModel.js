@@ -19,7 +19,7 @@ Ext.onReady(function() {
 					tooltip : '<button type="button" value="增加">增加</button>',
 					tooltipType : 'qtip',
 					handler : function() {
-						strategySubmitTreeData(stgtree);
+						strategySubmitTreeData(stgtree, editstgWindow);
 					}
 				}],
 		root : stgroot,

@@ -18,7 +18,7 @@ import com.nali.spreader.data.Content;
 import com.nali.spreader.data.ContentExample;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("161-application-context-test.xml")
+@ContextConfiguration("220-application-context-test.xml")
 public class AddContentMongo {
 	@Autowired
 	private ICrudContentDao crudContentDao;
@@ -55,7 +55,7 @@ public class AddContentMongo {
 				this.contentMassDataDao.importContent(c);
 			}
 			rows = list.size();
-			start = start + limit + 1;
+			start = start + limit;
 			System.out.println("次数:" + i);
 			i++;
 		} while (rows > 0);
