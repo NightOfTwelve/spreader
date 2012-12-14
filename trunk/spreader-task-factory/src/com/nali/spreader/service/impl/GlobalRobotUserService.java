@@ -6,9 +6,9 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
-import com.nali.common.util.CollectionUtils;
-import com.nali.spreader.constants.Website;
+import com.nali.spreader.constants.LoginConfigMeta;
 import com.nali.spreader.dao.ICrudRobotUserDao;
 import com.nali.spreader.model.RobotUser;
 import com.nali.spreader.remote.ILoginConfigManageService;
@@ -22,17 +22,6 @@ public class GlobalRobotUserService implements IGlobalRobotUserService {
 	private ILoginConfigManageService loginConfigManageService;
 	@Autowired
 	private ICrudRobotUserDao crudRobotUserDao;
-
-	//TODO temp code
-	private Long getLoginActionId(Integer websiteId) {
-		if(Website.weibo.getId().equals(websiteId)) {
-			return 3L;
-		} else if(Website.apple.getId().equals(websiteId)) {
-			return 2003L;
-		} else {
-			throw new IllegalArgumentException();
-		}
-	}
 
 	@Override
 	public void disableAccount(Long uid) {
@@ -67,23 +56,17 @@ public class GlobalRobotUserService implements IGlobalRobotUserService {
 	
 	@Override
 	public void syncLoginConfig(RobotUser robotUser) {
-		try {//TODO delete "if else if" statement...
-			if(Website.weibo.getId().equals(robotUser.getWebsiteId())) {
-				Map<String, Object> contentObjects = CollectionUtils.newHashMap(2);
-				contentObjects.put("name", robotUser.getLoginName());
-				contentObjects.put("password", robotUser.getLoginPwd());
-				String contents = objectMapper.writeValueAsString(contentObjects);
-				loginConfigManageService.mergeLoginConfigByUid(robotUser.getUid(), getLoginActionId(robotUser.getWebsiteId()), contents);
-			} else if(Website.apple.getId().equals(robotUser.getWebsiteId())) {
-				Map<String, Object> contentObjects = CollectionUtils.newHashMap(2);
-				String[] loginNames = robotUser.getLoginName().split("\\#");
-				contentObjects.put("name", loginNames[0]);
-				contentObjects.put("udid", loginNames[1]);
-				contentObjects.put("password", robotUser.getLoginPwd());
-				String contents = objectMapper.writeValueAsString(contentObjects);
-				loginConfigManageService.mergeLoginConfigByUid(robotUser.getUid(), getLoginActionId(robotUser.getWebsiteId()), contents);
+		Integer websiteId = robotUser.getWebsiteId();
+		Assert.notNull(websiteId, " websiteId is null ");
+		try {
+			Map<Integer, LoginConfigMeta> configMap = LoginConfigMeta.getLoginConfigMap();
+			if (configMap.containsKey(websiteId)) {
+				LoginConfigMeta config = configMap.get(websiteId);
+				String contents = objectMapper.writeValueAsString(config.getLoginParams(robotUser));
+				loginConfigManageService.mergeLoginConfigByUid(robotUser.getUid(),
+						config.getActionId(), contents);
 			} else {
-				throw new IllegalArgumentException("unknown website id:"+robotUser.getWebsiteId());
+				throw new IllegalArgumentException("unknown website id:" + websiteId);
 			}
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -94,5 +77,4 @@ public class GlobalRobotUserService implements IGlobalRobotUserService {
 	public RobotUser getRobotUser(Long uid) {
 		return crudRobotUserDao.selectByPrimaryKey(uid);
 	}
-
 }
