@@ -149,4 +149,7 @@
 			<include refid="selectClientTaskStatDtlCondition" />
 		</dynamic>
 	</select>
+	<delete id="deleteTaskData" parameterClass="com.nali.spreader.dto.ClearTaskParamDto">
+		delete from spreader.$tables$ where $columns$ &lt;= date_sub(curdate(),interval #days# day)
+	</delete>
 </sqlMap>

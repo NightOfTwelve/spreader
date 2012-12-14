@@ -436,21 +436,34 @@ Ext.onReady(function() {
 	// 创建策略维护的窗口组件
 	var editstgWindow = new Ext.Window({
 		layout : 'border',
-		width : document.documentElement.clientWidth - 200,
-		height : document.documentElement.clientHeight - 200,
-		resizable : true,
-		draggable : true,
-		maximized : true,
-		closeAction : 'hide',
 		title : '<span class="commoncss">策略详细配置</span>',
-		iconCls : 'app_rightIcon',
+		// width : document.documentElement.clientWidth - 200,
+		// height : document.documentElement.clientHeight - 200,
+		// resizable : true,
+		// draggable : true,
+		// maximized : true,
+		// closeAction : 'hide',
+		// iconCls : 'app_rightIcon',
+		// modal : true,
+		// collapsible : true,
+		// maximizable : true,
+		// animCollapse : true,
+		// animateTarget : document.head,
+		// buttonAlign : 'right',
+		// constrain : true,
+		closeAction : 'hide',
 		modal : true,
-		collapsible : true,
-		maximizable : true,
-		animCollapse : true,
-		animateTarget : document.head,
-		buttonAlign : 'right',
-		constrain : true,
+		maximized : true,
+		iconCls : 'app_rightIcon',
+		width : 350, // 窗口宽度
+		height : 250, // 窗口高度
+		closable : true, // 是否可关闭
+		collapsible : true, // 是否可收缩
+		maximizable : true, // 设置是否可以最大化
+		border : false, // 边框线设置
+		constrain : false, // 设置窗口是否可以溢出父容器
+		pageY : 20, // 页面定位Y坐标
+		pageX : document.documentElement.clientWidth / 2 - 300 / 2, // 页面定位X坐标
 		items : [{
 			region : 'center',
 			layout : 'border',
@@ -470,8 +483,7 @@ Ext.onReady(function() {
 									tools : [{
 												id : "help",
 												handler : function() {
-													var win = getHelpEnumCmp();
-													win.show();
+													helpEnumwWndows.show();
 												}
 											}],
 									title : '策略属性',
@@ -671,7 +683,7 @@ Ext.onReady(function() {
 				header : '分组名称',
 				dataIndex : 'transformName',
 				// renderer : rendDispName,
-				width : 100
+				width : 200
 			}, {
 				header : '分组类型',
 				dataIndex : 'groupType',
@@ -1005,7 +1017,12 @@ Ext.onReady(function() {
 					iconCls : 'tbar_synchronizeIcon', // 按钮图标
 					handler : function() { // 按钮响应函数
 						cleanCreateTrigger();
-						strategyIdHidden.setValue(stgSelectCombo2.getValue());
+						var stgId = stgSelectCombo2.getValue();
+						if (Ext.isEmpty(stgId)) {
+							Ext.Msg.alert('提示', '必须选择一个策略');
+							return;
+						}
+						strategyIdHidden.setValue(stgId);
 						strategyNameHidden
 								.setValue(stgSelectCombo2.lastSelectionText);
 						editstgWindow.show();

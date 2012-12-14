@@ -98,7 +98,7 @@ function appendNodeAction(node) {
 /**
  * 策略提交树的数据对象
  */
-function strategySubmitTreeData(stgtree) {
+function strategySubmitTreeData(stgtree, windows) {
 	// 获取ROOT数组
 	var treearray = stgtree.root.childNodes;
 	// 循环ROOT数组
@@ -106,7 +106,7 @@ function strategySubmitTreeData(stgtree) {
 		var arrayobj = treearray[i].attributes;
 		var submitStr = treejson2str(arrayobj);
 		Ext.Ajax.request({
-					url : '../strategy/cfgsave',
+					url : '../strategy/cfgsave?_time=' + new Date().getTime(),
 					params : {
 						'name' : GOBJID,
 						'config' : submitStr
@@ -117,8 +117,10 @@ function strategySubmitTreeData(stgtree) {
 						if (result.success) {
 							stgtree.getRootNode().reload();
 							Ext.Msg.alert("提示", "保存成功");
+							windows.hide();
 						} else {
 							Ext.Msg.alert("提示", "保存失败");
+							windows.hide();
 						}
 					},
 					failure : function() {
@@ -130,7 +132,7 @@ function strategySubmitTreeData(stgtree) {
 /**
  * 用户分组提交树的数据对象
  */
-function userGroupSubmitTreeData(userGroupPropExpTree, store,gid) {
+function userGroupSubmitTreeData(userGroupPropExpTree, store, gid) {
 	// 获取ROOT数组
 	var treearray = userGroupPropExpTree.root.childNodes;
 	// 循环ROOT数组
@@ -230,7 +232,7 @@ function strategyDispatchSubmitTreeData(stgdisptree, triggerDispForm,
  */
 function strategyGroupSubmitTreeData(stgdisptree, triggerDispForm, radioForm,
 		simpleDispForm, editstgWindow, store, groupStore, fromId, toId,
-		strategyId, groupName, groupNote, groupType, objId, groupId,refid) {
+		strategyId, groupName, groupNote, groupType, objId, groupId, refid) {
 	// 获取ROOT数组
 	var treearray = stgdisptree.root.childNodes;
 	var tparam = {};

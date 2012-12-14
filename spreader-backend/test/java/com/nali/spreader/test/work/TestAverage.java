@@ -43,7 +43,7 @@ public class TestAverage {
 		Integer execuLimit = execuParams.get(KEY_EXECU_ADD_FANS_LIMIT);
 		List<Long> execuData = getData(robotUserNumber);
 		List<ItemCount<Long>> itemCounts = AverageHelper.getItemCounts(execuLimit, execuData);
-		Average<Long> avg = AverageHelper.selectAverageByParam(execuParams, itemCounts);
+		Average<Long> avg = null;
 		int ii = 1;
 		while (avg.hasNext()) {
 			System.out.println(">>>>第" + ii + "次");
@@ -78,7 +78,7 @@ public class TestAverage {
 		List<Map<String, Long>> allContent = getAllData(1);
 		List<UserContentsDto> readyData = this.getUserContentsDtoData(allContent);
 		List<ItemCount<Long>> itemCounts = AverageHelper.getItemCounts(execuLimit, execuData);
-		Average<Long> avg = AverageHelper.selectAverageByParam(execuParams, itemCounts);
+		Average<Long> avg = null;
 		Set<UserContentsDto> ucExists = new HashSet<UserContentsDto>();
 		while (avg.hasNext()) {
 			List<ItemCount<Long>> items = avg.next();

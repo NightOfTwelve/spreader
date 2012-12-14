@@ -28,7 +28,7 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
-				<value>com/nali/spreader/service/220-jdbc.properties</value>
+				<value>com/nali/spreader/service/mongo/220-jdbc.properties</value>
 				<value>classpath:urls.properties</value>
 				<value>classpath:env.properties</value>
 			</list>
@@ -37,7 +37,7 @@
 	<task:executor id="executor" pool-size="1" />    
     <task:scheduler id="scheduler" pool-size="1" />    
     <task:annotation-driven executor="executor" scheduler="scheduler" />  
-	<util:properties id="redis" location="com/nali/spreader/service/220-redis.properties" />
+	<util:properties id="redis" location="com/nali/spreader/service/mongo/220-redis.properties" />
 
 	<!-- 主库 -->
 	<bean id="dbDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"

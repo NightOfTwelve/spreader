@@ -10,7 +10,7 @@
 	var NO_SELECT = '_no_select';
 </script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/adapter/ext/ext-base.js')" ></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all.js')" ></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all-debug.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-basex.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/gridselect.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-lang-zh_CN.js')" ></script>
