@@ -23,9 +23,10 @@ public interface IExtjsComponentsUtilService {
 	 * 
 	 * @param name
 	 * @param limit
+	 * @param websiteId
 	 * @return
 	 */
-	PageResult<User> findUserByName(String name, Limit limit);
+	PageResult<User> findUserByNameAndWebsite(String name, int websiteId, Limit limit);
 
 	/**
 	 * 根据Name模糊查询用户分组基本信息

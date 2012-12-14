@@ -45,9 +45,10 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 	private ICrudHelpEnumInfoDao crudHelpEnumInfoDao;
 
 	@Override
-	public PageResult<User> findUserByName(String name, Limit limit) {
+	public PageResult<User> findUserByNameAndWebsite(String name, int websiteId, Limit limit) {
 		UserExample ue = new UserExample();
 		Criteria c = ue.createCriteria();
+		c.andWebsiteIdEqualTo(websiteId);
 		if (StringUtils.isNotEmpty(name)) {
 			c.andNickNameLike(name + "%");
 		}

@@ -2,6 +2,7 @@ package com.nali.spreader.dao;
 
 import java.util.List;
 
+import com.nali.spreader.dto.ClearTaskParamDto;
 import com.nali.spreader.dto.ClientTaskExcutionSummaryDto;
 import com.nali.spreader.dto.ClientTaskStatDtlQueryParamDto;
 import com.nali.spreader.dto.ClientTaskSumQueryParamDto;
@@ -20,7 +21,8 @@ public interface IClientTaskStatisticsDao {
 	 * @param params
 	 * @return
 	 */
-	List<ClientTaskExcutionSummaryDto> findClientTaskStatisticsInfoList(ClientTaskSumQueryParamDto param);
+	List<ClientTaskExcutionSummaryDto> findClientTaskStatisticsInfoList(
+			ClientTaskSumQueryParamDto param);
 
 	/**
 	 * 统计总数用于分页
@@ -46,4 +48,5 @@ public interface IClientTaskStatisticsDao {
 	 */
 	int countClientTaskStatDetailInfo(ClientTaskStatDtlQueryParamDto param);
 
+	void deleteTaskData(ClearTaskParamDto param);
 }

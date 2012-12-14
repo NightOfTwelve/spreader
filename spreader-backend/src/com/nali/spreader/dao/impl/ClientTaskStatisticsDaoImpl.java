@@ -7,6 +7,7 @@ import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.nali.spreader.dao.IClientTaskStatisticsDao;
+import com.nali.spreader.dto.ClearTaskParamDto;
 import com.nali.spreader.dto.ClientTaskExcutionSummaryDto;
 import com.nali.spreader.dto.ClientTaskStatDtlQueryParamDto;
 import com.nali.spreader.dto.ClientTaskSumQueryParamDto;
@@ -31,17 +32,24 @@ public class ClientTaskStatisticsDaoImpl implements IClientTaskStatisticsDao {
 
 	@Override
 	public int countClientTaskStatisticsInfo(ClientTaskSumQueryParamDto param) {
-		return (Integer) this.sqlMap.queryForObject("spreader_client_task_stat.countClientTaskStat", param);
+		return (Integer) this.sqlMap.queryForObject(
+				"spreader_client_task_stat.countClientTaskStat", param);
 	}
 
 	@Override
-	public List<ClientTaskaStatDetailDto> findClientTaskStatDetailInfo(ClientTaskStatDtlQueryParamDto param) {
+	public List<ClientTaskaStatDetailDto> findClientTaskStatDetailInfo(
+			ClientTaskStatDtlQueryParamDto param) {
 		return this.sqlMap.queryForList("spreader_client_task_stat.selectClientTaskStatDtl", param);
 	}
 
 	@Override
 	public int countClientTaskStatDetailInfo(ClientTaskStatDtlQueryParamDto param) {
-		return (Integer) this.sqlMap
-				.queryForObject("spreader_client_task_stat.countClientTaskStatDtl", param);
+		return (Integer) this.sqlMap.queryForObject(
+				"spreader_client_task_stat.countClientTaskStatDtl", param);
+	}
+
+	@Override
+	public void deleteTaskData(ClearTaskParamDto param) {
+		sqlMap.delete("spreader_client_task_stat.deleteTaskData", param);
 	}
 }
