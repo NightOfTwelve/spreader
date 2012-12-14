@@ -21,8 +21,8 @@
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>classpath:jdbc.properties</value>
-				<value>classpath:hessianUrls.properties</value>
+				<value>com/nali/spreader/front/ximalaya/220-jdbc.properties</value>
+				<value>com/nali/spreader/front/ximalaya/hessianUrlsTest.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -87,7 +87,7 @@
 			</list>
 		</property>
 	</bean>
-	<import resource="classpath:application-lwtmq-context.xml"/>
+	 <import resource="classpath:application-lwtmq-context.xml"/>
 	<import resource="classpath:application-schedule-context.xml"/>
-	<import resource="classpath:client-context.xml"/>
+	<import resource="client-context-test.xml"/>
 </beans>
