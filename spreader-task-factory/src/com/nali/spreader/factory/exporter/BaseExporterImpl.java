@@ -127,6 +127,10 @@ public abstract class BaseExporterImpl<TM extends TaskMeta> implements Exporter<
 							" make sure the producer's taskMeta have provide a contextMeta");
 				}
 				saveContext(taskId, new TaskContext(uid, context), DateUtils.addDays(expiredTime, CONTEXT_ADDITIONAL_EXPIRED_DAYS));
+			} else {
+				if(systemPropertyMap!=null) {
+					throw new IllegalArgumentException("missing system properties, need one or more of these:" + systemPropertyMap.keySet());
+				}
 			}
 			ClientTask clientTask = new ClientTask();
 			clientTask.setActionId(getActionId());
