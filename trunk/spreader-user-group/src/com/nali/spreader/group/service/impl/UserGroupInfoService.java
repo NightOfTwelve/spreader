@@ -35,6 +35,7 @@ import com.nali.spreader.group.exp.PropertyExpressionDTO;
 import com.nali.spreader.group.meta.UserGroupType;
 import com.nali.spreader.group.service.IUserGroupInfoService;
 import com.nali.spreader.model.UserGroup;
+import com.nali.spreader.model.UserGroupExample;
 import com.nali.spreader.model.UserGroupExclude;
 import com.nali.spreader.model.UserGroupExcludeExample;
 import com.nali.spreader.model.UserGroupExcludeExample.Criteria;
@@ -366,5 +367,21 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public List<Long> getGidsByGroupName(String... groupName) {
+		List<Long> gids = new ArrayList<Long>();
+		for (String name : groupName) {
+			UserGroupExample exa = new UserGroupExample();
+			UserGroupExample.Criteria c = exa.createCriteria();
+			c.andGnameEqualTo(name);
+			List<UserGroup> groups = this.crudUserGroupDao.selectByExampleWithoutBLOBs(exa);
+			if (groups.size() > 0) {
+				Long gid = groups.get(0).getGid();
+				gids.add(gid);
+			}
+		}
+		return gids;
 	}
 }
