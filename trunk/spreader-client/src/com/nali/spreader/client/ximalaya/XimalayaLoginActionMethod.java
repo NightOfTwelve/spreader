@@ -16,8 +16,7 @@ public class XimalayaLoginActionMethod implements ActionMethod {
 
 	@Override
 	public Long getActionId() {
-		// TODO Auto-generated method stub
-		return null;
+		return 3003L;
 	}
 
 }
