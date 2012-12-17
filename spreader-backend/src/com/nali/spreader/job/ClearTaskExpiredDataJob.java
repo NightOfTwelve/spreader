@@ -31,7 +31,7 @@ public class ClearTaskExpiredDataJob {
 	@Autowired
 	private IClientTaskStatService clientTaskStatService;
 
-	@Scheduled(cron = "0 45 16 ? * *")
+	@Scheduled(cron = "0 0 0 ? * SUN")
 	public void clear() {
 		Map<Integer, String[]> prop = getProperties();
 		Iterator<Entry<Integer, String[]>> iter = prop.entrySet().iterator();
@@ -40,13 +40,18 @@ public class ClearTaskExpiredDataJob {
 			int days = entry.getKey();
 			String[] tables = entry.getValue();
 			for (String tab : tables) {
+				String table = null;
+				String column = null;
 				try {
-					String table = tab.substring(0, tab.indexOf(","));
-					String column = tab.substring(tab.indexOf(",") + 1, tab.length());
+					table = tab.substring(0, tab.indexOf(","));
+					column = tab.substring(tab.indexOf(",") + 1, tab.length());
 					clientTaskStatService.clearTaskExpired(table, column, days);
-					System.out.println("table :" + table + ",column:" + column + ",days:" + days);
+					// System.out.println(" >>>>>>>>>>>>>>> table :" + table +
+					// ",column:" + column
+					// + ",days:" + days);
 				} catch (Exception e) {
-					logger.error(" clearTaskExpired fail ", e);
+					logger.error(" clearTaskExpired fail,table :" + table + ",column:" + column
+							+ ",days:" + days, e);
 				}
 			}
 		}
