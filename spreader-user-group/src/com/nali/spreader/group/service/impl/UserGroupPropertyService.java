@@ -72,6 +72,7 @@ public class UserGroupPropertyService implements IUserGroupPropertyService {
 		userGroup.setWebsiteId(webSite.getId());
 		userGroup.setDescription(description);
 		userGroup.setGname(name);
+		expressionDTO.setWebsiteId(webSite.getId());
 		try {
 			if (gtype.getTypeVal() == UserGroupType.dynamic.getTypeVal()) {
 				userGroup.setPropExp(jsonSerializer.toString(expressionDTO));
