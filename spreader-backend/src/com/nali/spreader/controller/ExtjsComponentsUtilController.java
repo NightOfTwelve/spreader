@@ -13,7 +13,7 @@ import com.nali.log.impl.LoggerFactory;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.Category;
-import com.nali.spreader.data.User;
+import com.nali.spreader.dto.UserComboxDisplayDto;
 import com.nali.spreader.model.StrategyGroup;
 import com.nali.spreader.model.UserGroup;
 import com.nali.spreader.service.IExtjsComponentsUtilService;
@@ -85,7 +85,8 @@ public class ExtjsComponentsUtilController extends BaseController {
 				name = StringUtils.trim(str[1]);
 			}
 		}
-		PageResult<User> pr = extjsService.findUserByNameAndWebsite(name, websiteId, lit);
+		PageResult<UserComboxDisplayDto> pr = extjsService.findUserByNameAndWebsite(name,
+				websiteId, lit);
 		return this.write(pr);
 	}
 

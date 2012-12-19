@@ -12,11 +12,15 @@ var addUserStore = new Ext.data.Store({
 					}, [{
 								name : 'id'
 							}, {
+								name : 'viewName'
+							}, {
 								name : 'nickName'
+							}, {
+								name : 'websiteId'
 							}])
 		});
 // 用户筛选模版
-var userResultTpl = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{id}({nickName})</span></div></tpl>');
+var userResultTpl = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{id}({viewName})</span></div></tpl>');
 // 用户筛选的Combo
 var selectUserComboUtil = new Ext.form.ComboBox({
 			hiddenName : 'id',
@@ -25,7 +29,7 @@ var selectUserComboUtil = new Ext.form.ComboBox({
 			emptyText : '请选择人员...',
 			triggerAction : 'all',
 			store : addUserStore,
-			displayField : 'nickName',
+			displayField : 'viewName',
 			valueField : 'id',
 			loadingText : '正在加载数据...',
 			mode : 'remote', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取

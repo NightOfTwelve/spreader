@@ -445,6 +445,9 @@ function renderWebsiteType(value) {
 	if (value == 2) {
 		return '苹果';
 	}
+	if (value == 3) {
+		return '喜马拉雅';
+	}
 	return '其它';
 }
 /**
