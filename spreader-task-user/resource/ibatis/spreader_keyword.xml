@@ -91,11 +91,11 @@
 		and ifnull(a.category_id,0) <> #categoryId# ]]>
 		<isNotEmpty prepend="and" property="keywordName">
 			a.name like
-			CONCAT('%',#keywordName#,'%')
+			CONCAT(#keywordName#,'%')
 		</isNotEmpty>
 		and a.executable = true
 		and a.allowtag = true
-		order by a.create_time
+		order by keyword_name,a.create_time
 		desc
 		<isNotNull property="lit">
 			limit $lit.offset$,$lit.maxRows$
@@ -114,7 +114,7 @@
 		and ifnull(a.category_id,0) <> #categoryId# ]]>
 		<isNotEmpty prepend="and" property="keywordName">
 			a.name like
-			CONCAT('%',#keywordName#,'%')
+			CONCAT(#keywordName#,'%')
 		</isNotEmpty>
 		and a.executable = true
 		and a.allowtag = true
