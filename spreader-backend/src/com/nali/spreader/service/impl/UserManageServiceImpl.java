@@ -233,7 +233,19 @@ public class UserManageServiceImpl implements IUserManageService {
 									&& StringUtils.isNotBlank(pwd)) {
 								String nickName = null;
 								if (nickNameCell != null) {
-									nickName = nickNameCell.getRichStringCellValue().getString();
+									int nickNameCellType = nickNameCell.getCellType();
+									if (nickNameCellType != XSSFCell.CELL_TYPE_STRING) {
+										if (nickNameCellType == XSSFCell.CELL_TYPE_NUMERIC) {
+											nickName = ((Long) ((Double) nickNameCell
+													.getNumericCellValue()).longValue()).toString();
+										} else {
+											throw new IllegalArgumentException(
+													"nickNameCellType is not numeric");
+										}
+									} else {
+										nickName = nickNameCell.getRichStringCellValue()
+												.getString();
+									}
 								}
 								KeyValue<RobotUser, User> kv = new KeyValue<RobotUser, User>();
 								RobotUser robotUser = new RobotUser();
@@ -269,5 +281,10 @@ public class UserManageServiceImpl implements IUserManageService {
 			LOGGER.error("file read error", e);
 			return Collections.emptyList();
 		}
+	}
+
+	public static void main(String[] args) {
+		Double x = 5809213.0d;
+		System.out.println(((Long) x.longValue()).toString());
 	}
 }
