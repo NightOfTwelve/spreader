@@ -3,6 +3,10 @@ Ext.onReady(function() {
 	var groupIdHidden = new Ext.form.Hidden({
 				name : 'groupIdHidden'
 			});
+	// 网站ID隐藏域
+	var websiteIdHidden = new Ext.form.Hidden({
+				name : 'websiteIdHidden'
+			});
 	// 用户数组
 	var userArray = [];
 	var userGroupPropExpRoot = new Ext.tree.AsyncTreeNode({
@@ -476,20 +480,23 @@ Ext.onReady(function() {
 		bbar : bbar,
 		onCellClick : function(grid, rowIndex, columnIndex, e) {
 			groupIdHidden.setValue(null);
+			websiteIdHidden.setValue(null);
 			var buttons = e.target.defaultValue;
 			var record = grid.getStore().getAt(rowIndex);
 			var data = record.data;
+			groupIdHidden.setValue(data.gid);
+			websiteIdHidden.setValue(data.websiteId);
 			// 找出表格中‘配置’按钮
 			if (buttons == '配置') {
 				var gname = data.gname;
-				groupIdHidden.setValue(data.gid);
 				editstgWindow.title = gname;
 				editstgWindow.show();
 			}
 			if (buttons == '添加') {
-				groupIdHidden.setValue(data.gid);
 				Ext.getCmp("groupinfo").setText(data.gname + ',编号:'
-						+ groupIdHidden.getValue());
+						+ groupIdHidden.getValue() + ',网站分类:'
+						+ renderWebsiteType(websiteIdHidden.getValue()));
+				// TODO
 				addGroupUserWindow.show();
 			}
 			if (buttons == '刷新') {
@@ -715,16 +722,25 @@ Ext.onReady(function() {
 	// ///////////////////添加用户部分代码//////////////////
 	// 为Combo加入选择事件
 	selectUserComboUtil.on('select', function(combo, record, index) {
-				var uid = selectUserComboUtil.getValue();
-				var uname = selectUserComboUtil.getRawValue();
+				var uid = record.data.id;
+				var uname = record.data.nickName;
+				var uWebsiteId = record.data.websiteId;
 				var tutil = Ext.getCmp('selectUserComboUtil');
 				if (!Ext.isEmpty(uid)) {
-					if (userArray.indexOf(uid) < 0) {
-						userArray.push(uid);
-						var selectstr = Ext.getCmp('selectusername');
-						selectstr.setText(uname + ";" + selectstr.text);
+					if (uWebsiteId == websiteIdHidden.getValue()) {
+						if (userArray.indexOf(uid) < 0) {
+							userArray.push(uid);
+							var selectstr = Ext.getCmp('selectusername');
+							selectstr.setText(uname + ";" + selectstr.text);
+						} else {
+							Ext.MessageBox.alert("提示:", uname + "已添加，请勿重复添加");
+						}
 					} else {
-						Ext.MessageBox.alert("提示:", uname + "已添加，请勿重复添加");
+						Ext.MessageBox.alert("提示:", '【' + uname + '】属于:'
+										+ renderWebsiteType(uWebsiteId)
+										+ '的帐号,不能添加到该分组');
+						tutil.setValue('');
+						return;
 					}
 				}
 				tutil.setValue('');
@@ -851,7 +867,7 @@ Ext.onReady(function() {
 			}, {
 				header : '网站',
 				dataIndex : 'websiteId',
-				// renderer : renderWebsiteType,
+				renderer : renderWebsiteType,
 				width : 100
 			}, {
 				header : '机器人',

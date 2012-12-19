@@ -7,7 +7,7 @@ import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.data.Category;
 import com.nali.spreader.data.HelpEnumInfo;
-import com.nali.spreader.data.User;
+import com.nali.spreader.dto.UserComboxDisplayDto;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
 import com.nali.spreader.model.UserGroup;
 
@@ -26,7 +26,8 @@ public interface IExtjsComponentsUtilService {
 	 * @param websiteId
 	 * @return
 	 */
-	PageResult<User> findUserByNameAndWebsite(String name, int websiteId, Limit limit);
+	PageResult<UserComboxDisplayDto> findUserByNameAndWebsite(String name, int websiteId,
+			Limit limit);
 
 	/**
 	 * 根据Name模糊查询用户分组基本信息

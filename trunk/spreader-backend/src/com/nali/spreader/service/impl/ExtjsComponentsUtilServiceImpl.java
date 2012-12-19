@@ -24,6 +24,7 @@ import com.nali.spreader.data.HelpEnumInfoExample;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserExample;
 import com.nali.spreader.data.UserExample.Criteria;
+import com.nali.spreader.dto.UserComboxDisplayDto;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.factory.config.IConfigService;
 import com.nali.spreader.factory.config.desc.ConfigableInfo;
@@ -45,7 +46,8 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 	private ICrudHelpEnumInfoDao crudHelpEnumInfoDao;
 
 	@Override
-	public PageResult<User> findUserByNameAndWebsite(String name, int websiteId, Limit limit) {
+	public PageResult<UserComboxDisplayDto> findUserByNameAndWebsite(String name, int websiteId,
+			Limit limit) {
 		UserExample ue = new UserExample();
 		Criteria c = ue.createCriteria();
 		c.andWebsiteIdEqualTo(websiteId);
@@ -55,7 +57,18 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 		ue.setLimit(limit);
 		List<User> list = this.crudUserDao.selectByExample(ue);
 		int cnt = this.crudUserDao.countByExample(ue);
-		return new PageResult<User>(list, limit, cnt);
+		List<UserComboxDisplayDto> viewList = new ArrayList<UserComboxDisplayDto>();
+		for (User u : list) {
+			UserComboxDisplayDto dto = new UserComboxDisplayDto();
+			dto.setId(u.getId());
+			dto.setWebsiteId(u.getWebsiteId());
+			dto.setNickName(u.getNickName());
+			String websiteDesc = Website.valueOf(u.getWebsiteId()).getDescriptions()[0];
+			dto.setViewName(u.getNickName() + "·<span style=\"color:blue;\">" + websiteDesc
+					+ "</span>");
+			viewList.add(dto);
+		}
+		return new PageResult<UserComboxDisplayDto>(viewList, limit, cnt);
 	}
 
 	@Override
