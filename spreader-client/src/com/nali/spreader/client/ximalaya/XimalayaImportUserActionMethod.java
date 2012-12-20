@@ -71,6 +71,7 @@ public class XimalayaImportUserActionMethod implements ActionMethod {
 			user.setAttentions(attentions);
 			user.setvType(vType);
 			user.setFans(fans);
+			user.setCreateTime(new Date());
 			users.add(user);
 		}
 		return users;
