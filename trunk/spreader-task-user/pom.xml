@@ -28,11 +28,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.nali</groupId>
-			<artifactId>stat-dc</artifactId>
-			<version>0.9-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>com.nali.dal</groupId>
 			<artifactId>dal-x</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
