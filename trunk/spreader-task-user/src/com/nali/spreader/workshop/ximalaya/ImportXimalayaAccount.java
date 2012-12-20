@@ -61,6 +61,7 @@ public class ImportXimalayaAccount extends SingleTaskMachineImpl implements
 	@Override
 	public void handleResult(Date updateTime, List<User> users) {
 		for (User user : users) {
+			user.setUpdateTime(updateTime);
 			globalUserService.saveUserAssignUid(user);
 		}
 	}

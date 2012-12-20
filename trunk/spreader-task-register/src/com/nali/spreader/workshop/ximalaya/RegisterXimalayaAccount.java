@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +36,7 @@ import com.nali.spreader.workshop.ximalaya.GenXimalayaUsersByWeibo.GenXimalayaPa
 public class RegisterXimalayaAccount extends SingleTaskMachineImpl implements
 		SinglePassiveTaskProducer<Long>,
 		ContextedResultProcessor<KeyValue<Long, String>, SingleTaskMeta> {
+	private static Logger logger = Logger.getLogger(RegisterXimalayaAccount.class);
 	private NamingMode[] namingModes = NamingMode.values();
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
@@ -62,16 +64,20 @@ public class RegisterXimalayaAccount extends SingleTaskMachineImpl implements
 
 	private void work(Long regId, Long weiboWebsiteUid, Long uid, SingleTaskExporter exporter) {
 		RobotRegister robot = robotRegisterService.get(regId);
-		exporter.setProperty("email", robot.getEmail());
-		exporter.setProperty("pwd", robot.getPwd());
-		exporter.setProperty("robotRegister", regId);
-		exporter.setProperty("weiboWebsiteUid", weiboWebsiteUid);
-		exporter.setProperty("uid", uid);
-		exporter.setProperty("nickNames", getModifiedNames(robot));
-		exporter.setProperty("gender", robot.getGender());
-		exporter.setProperty("province", robot.getProvince());
-		exporter.setProperty("city", robot.getCity());
-		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterNow(30));
+		if (robot != null) {
+			exporter.setProperty("email", robot.getEmail());
+			exporter.setProperty("pwd", robot.getPwd());
+			exporter.setProperty("robotRegister", regId);
+			exporter.setProperty("weiboWebsiteUid", weiboWebsiteUid);
+			exporter.setProperty("uid", uid);
+			exporter.setProperty("nickNames", getModifiedNames(robot));
+			exporter.setProperty("gender", robot.getGender());
+			exporter.setProperty("province", robot.getProvince());
+			exporter.setProperty("city", robot.getCity());
+			exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterNow(30));
+		} else {
+			logger.error("RobotRegister is null , id:" + regId);
+		}
 	}
 
 	public List<String> getModifiedNames(RobotRegister robot) {
