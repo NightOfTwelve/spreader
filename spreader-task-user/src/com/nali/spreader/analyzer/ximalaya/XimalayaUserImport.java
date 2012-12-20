@@ -66,7 +66,7 @@ public class XimalayaUserImport implements RegularAnalyzer,
 		private Date startUpateTime;
 		@PropertyDescription("小于等于的帐号更新时间")
 		private Date endUpdateTime;
-		@PropertyDescription("一共需要爬取多少条数据")
+		@PropertyDescription("一共需要爬取多少条数据*(必填)")
 		private Integer maxSize;
 		@PropertyDescription("每次爬取多少条数据")
 		private Integer limitSize;

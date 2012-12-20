@@ -3,6 +3,7 @@ package com.nali.spreader.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import com.nali.spreader.service.IRobotRegisterService;
 
 @Service
 public class RobotRegisterService implements IRobotRegisterService {
+	private static Logger logger = Logger.getLogger(RobotRegisterService.class);
 	@Autowired
 	private ICrudRobotRegisterDao crudRobotRegisterDao;
 	@Autowired
@@ -152,7 +154,11 @@ public class RobotRegisterService implements IRobotRegisterService {
 		Long realManId = reg.getRealManId();
 		if (realManId != null) {
 			RealMan rm = realManService.getRealManById(realManId);
-			return rm.getRealName();
+			if (rm != null) {
+				return rm.getRealName();
+			} else {
+				logger.error("RealMan is null ,id=" + realManId);
+			}
 		}
 		return null;
 	}
