@@ -148,6 +148,10 @@ function createPptGridStoreData(data, def) {
 				} else {
 					data[defname] = '';
 				}
+			} else {
+				if (pType == 'Date') {
+					data[defname] = new Date(data[defname]);
+				}
 			}
 		}
 		return data;
@@ -179,6 +183,10 @@ function createPptGridCustEdit(data, def) {
 			// if (!data.hasOwnProperty(defname)) {
 			if (Ext.isEmpty(data[defname])) {
 				custEdit[defname] = getTypeDefaultEdit(pType);
+			} else {
+				if (pType == 'Date') {
+					custEdit[defname] = new Ext.grid.GridEditor(new Ext.ux.form.DateTimeField());
+				}
 			}
 		}
 		return custEdit;
@@ -244,6 +252,15 @@ function createCustRenderers(data, def) {
 						return '不限';
 					}
 					return v ? '是' : '否';
+				}
+			}
+			if (pType == 'Date') {
+				customRenderers[defname] = function(v) {
+					if (Ext.isEmpty(v)) {
+						return '';
+					} else {
+						return renderDateHis(v);
+					}
 				}
 			}
 		}
