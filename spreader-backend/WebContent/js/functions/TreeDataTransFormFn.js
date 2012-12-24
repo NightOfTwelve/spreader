@@ -152,7 +152,7 @@ function isPrimitive(type) {
  */
 function treejson2str(rootobj) {
 	if (rootobj != null) {
-		var str = Ext.util.JSON.encode(createNodeData(rootobj))
+		var str = Ext.util.JSONFix.encode(createNodeData(rootobj));
 		return str;
 	} else {
 		return null;
