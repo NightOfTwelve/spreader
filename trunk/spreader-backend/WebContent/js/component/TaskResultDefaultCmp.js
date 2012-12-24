@@ -24,5 +24,10 @@ var taskDefaultWindow = new Ext.Window({
  */
 function settingTaskDefaultSource(data) {
 	taskDefaultGrid.setSource(data);
+	// TODO 这里要格式化日期
+//	for(var p in data){
+//		var x = data[p];
+//		Ext.isEmpty(x);
+//	}
 	taskDefaultWindow.show();
 }
