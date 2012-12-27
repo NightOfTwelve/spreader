@@ -3,7 +3,7 @@ package com.nali.spreader.util.collection;
 import java.util.Iterator;
 
 public abstract class WapperIterator<E> implements Iterator<E> {
-	private Iterator<E> inner;
+	protected Iterator<E> inner;
 
 	public WapperIterator(Iterator<E> inner) {
 		super();
