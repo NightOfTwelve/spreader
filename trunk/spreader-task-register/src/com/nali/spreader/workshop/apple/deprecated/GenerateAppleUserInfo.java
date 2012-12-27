@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop.apple;
+package com.nali.spreader.workshop.apple.deprecated;
 
 import java.io.IOException;
 import java.util.Random;
@@ -28,6 +28,7 @@ import com.nali.spreader.words.UsCityRandomer;
 import com.nali.spreader.words.UsState;
 
 @Component
+//注册国外apple帐号，暂时没用
 public class GenerateAppleUserInfo implements PassiveAnalyzer<Long> {
 	private static final String EN_LAST_TXT = "txt/en-last.txt";
 	private static final int USE_DR_TITLE_PERCENT = 5;

@@ -75,7 +75,13 @@ public class GenerateCnAppleUserInfo implements PassiveAnalyzer<Long> {
 	private String genUdid() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 5; i++) {
-			sb.append(Integer.toHexString(udidSeed.nextInt()));
+			String hexString = Integer.toHexString(udidSeed.nextInt());
+			if(hexString.length()<8) {
+				for (int j = 0; j < 8-hexString.length(); j++) {
+					sb.append('0');
+				}
+			}
+			sb.append(hexString);
 		}
 		return sb.toString();
 	}

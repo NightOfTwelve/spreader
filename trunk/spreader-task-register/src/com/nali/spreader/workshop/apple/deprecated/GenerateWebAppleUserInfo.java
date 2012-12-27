@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop.apple;
+package com.nali.spreader.workshop.apple.deprecated;
 
 import java.io.IOException;
 import java.util.Random;
