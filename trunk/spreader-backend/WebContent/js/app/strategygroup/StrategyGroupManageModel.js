@@ -1156,7 +1156,7 @@ Ext.onReady(function() {
 				header : '调度名称',
 				dataIndex : 'name',
 				renderer : rendDispNameFn,
-				width : 100
+				width : 200
 			}, {
 				header : '调度类型',
 				dataIndex : 'triggerType',

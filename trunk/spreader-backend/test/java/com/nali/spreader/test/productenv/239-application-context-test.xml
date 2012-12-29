@@ -159,8 +159,4 @@
 
 	<bean id="identityService" class="com.nali.spreader.test.identity.MockIdentityService"></bean>
 
-	<bean id="redisHashSimpleCountCollecter"
-		class="com.nali.stat.dc.collecter.RedisHashSimpleCountCollecter">
-		<property name="moduleName" value="spreader"></property>
-	</bean>
 </beans>
