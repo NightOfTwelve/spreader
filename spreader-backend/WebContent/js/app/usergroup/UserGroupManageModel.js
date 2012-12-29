@@ -288,7 +288,10 @@ Ext.onReady(function() {
 			}, {
 				header : '分组名称',
 				dataIndex : 'gname',
-				width : 100
+				editor : new Ext.form.TextField({
+							allowBlank : false
+						}),
+				width : 200
 			}, {
 				header : '分组类型',
 				dataIndex : 'gtype',
@@ -298,7 +301,10 @@ Ext.onReady(function() {
 				header : '分组说明',
 				dataIndex : 'description',
 				renderer : renderBrief,
-				width : 100
+				editor : new Ext.form.TextField({
+							allowBlank : true
+						}),
+				width : 220
 			}, {
 				header : '网站类型',
 				dataIndex : 'websiteId',
@@ -368,17 +374,18 @@ Ext.onReady(function() {
 			});
 
 	// 用户分组列表
-	var userGroupGrid = new Ext.grid.GridPanel({
+	var userGroupGrid = new Ext.grid.EditorGridPanel({
 		height : 500,
 		autoWidth : true,
 		autoScroll : true,
 		split : true,
 		region : 'center',
+		clicksToEdit : 2,
 		store : store,
 		loadMask : {
 			msg : '正在加载表格数据,请稍等...'
 		},
-		// stripeRows : true,
+		stripeRows : true,
 		frame : true,
 		// autoExpandColumn : 'remark',
 		sm : sm,
@@ -514,6 +521,22 @@ Ext.onReady(function() {
 	});
 	// 注册事件
 	userGroupGrid.on('cellclick', userGroupGrid.onCellClick, userGroupGrid);
+	userGroupGrid.on('afteredit', afterEdit, this);
+	function afterEdit(e) {
+		var newValue = e.value;
+		var gid = e.record.data.gid;
+		var fieldName = e.field;
+		if (checkGroupName(newValue)) {
+			Ext.Msg.alert("提示", "已存在相同组名,请重新输入");
+			e.record.reject();
+		}
+		if (modifiedGroup(gid, newValue, fieldName)) {
+			e.record.commit();
+		} else {
+			Ext.Msg.alert("提示", "更新失败");
+			e.record.reject();
+		}
+	};
 
 	// 分组类型COMB
 	var gtypeCombo = new Ext.form.ComboBox({
@@ -545,56 +568,40 @@ Ext.onReady(function() {
 			});
 	// 嵌入的FORM
 	var addGroupCmbForm = new Ext.form.FormPanel({
-		id : 'addGroupCmbForm',
-		name : 'addGroupCmbForm',
-		labelWidth : 100, // 标签宽度
-		frame : true, // 是否渲染表单面板背景色
-		defaultType : 'textfield', // 表单元素默认类型
-		labelAlign : 'left', // 标签对齐方式
-		bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
-		items : [
-				gtypeCombo,
-				webSiteComboUtil('selectWebSiteComboUtil',
-						'selectWebSiteComboUtil', null, null), {
-					xtype : "textfield",
-					fieldLabel : "分组名称",
-					name : 'gname',
-					allowBlank : false,
-					width : 100,
-					listeners : {
-						'blur' : function(foc) {
-							var tname = foc.getValue();
-							var tform = addGroupCmbForm.getForm();
-							Ext.Ajax.request({
-										url : '../usergroup/checkname',
-										params : {
-											'gname' : tname
-										},
-										scope : addGroupCmbForm,
-										success : function(response) {
-											var result = Ext
-													.decode(response.responseText);
-											if (result.success) {
-												Ext.Msg.alert("提示",
-														"已存在相同组名,请重新输入");
-												tform.findField('gname')
-														.setValue("");
-											}
-										},
-										failure : function() {
-											Ext.Msg.alert("提示", "分组名检查失败");
-											return;
-										}
-									});
-						}
-					}
-				}, {
-					xtype : "textfield",
-					fieldLabel : "分组说明",
-					name : 'description',
-					width : 100
-				}]
-	});
+				id : 'addGroupCmbForm',
+				name : 'addGroupCmbForm',
+				labelWidth : 100, // 标签宽度
+				frame : true, // 是否渲染表单面板背景色
+				defaultType : 'textfield', // 表单元素默认类型
+				labelAlign : 'left', // 标签对齐方式
+				bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
+				items : [
+						gtypeCombo,
+						webSiteComboUtil('selectWebSiteComboUtil',
+								'selectWebSiteComboUtil', null, null), {
+							xtype : "textfield",
+							fieldLabel : "分组名称",
+							name : 'gname',
+							allowBlank : false,
+							width : 100,
+							listeners : {
+								'blur' : function(foc) {
+									var tname = foc.getValue();
+									var tform = addGroupCmbForm.getForm();
+									if (checkGroupName(tname)) {
+										Ext.Msg.alert("提示", "已存在相同组名,请重新输入");
+										tform.findField('gname').setValue("");
+										return;
+									}
+								}
+							}
+						}, {
+							xtype : "textfield",
+							fieldLabel : "分组说明",
+							name : 'description',
+							width : 100
+						}]
+			});
 	// 添加用户分组弹出窗口
 	var addGroupWindow = new Ext.Window({
 				title : '<span class="commoncss">新增用户分组</span>', // 窗口标题
@@ -1151,7 +1158,7 @@ Ext.onReady(function() {
 							}
 						}]
 			});
-	// show事件，需先删除组件，再重新创建PPTGRID //TODO
+	// show事件，需先删除组件，再重新创建PPTGRID
 	addGroupUserWindow.on('show', function() {
 				cleanParams();
 				selectUserStore.removeAll();
@@ -1282,6 +1289,54 @@ Ext.onReady(function() {
 						return;
 					}
 				});
+	}
+	/**
+	 * 检查分组是否重名
+	 */
+	function checkGroupName(tname) {
+		if (Ext.isEmpty(tname)) {
+			return true;
+		}
+		var flag = true;
+		Ext.Ajax.request({
+					url : '../usergroup/checkname?_time='
+							+ new Date().getTime(),
+					async : false,
+					params : {
+						'gname' : tname
+					},
+					scope : addGroupCmbForm,
+					success : function(response) {
+						var result = Ext.decode(response.responseText);
+						flag = result.success;
+					},
+					failure : function() {
+					}
+				});
+		return flag;
+	}
+	/**
+	 * 修改分组信息
+	 */
+	function modifiedGroup(gid, modValue, fieldName) {
+		var flag = false;
+		Ext.Ajax.request({
+					url : '../usergroup/modifiedgroup?_time='
+							+ new Date().getTime(),
+					async : false,
+					params : {
+						'gid' : gid,
+						'value' : modValue,
+						'field' : fieldName
+					},
+					success : function(response) {
+						var result = Ext.decode(response.responseText);
+						flag = result.success;
+					},
+					failure : function() {
+					}
+				});
+		return flag;
 	}
 	var viewport = new Ext.Viewport({
 				layout : 'border',

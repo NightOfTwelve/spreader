@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -300,6 +302,34 @@ public class UserGroupManageController extends BaseController {
 	}
 
 	/**
+	 * 自定义导入用户
+	 * 
+	 * @param gid
+	 * @param uids
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/impusertogroup")
+	public String importGrouppedUser(Long gid, long[] uids) {
+		Map<String, Object> result = CollectionUtils.newHashMap(2);
+		result.put("success", false);
+		if (gid != null && uids.length > 0) {
+			try {
+				userGroupService.addManualUsers(gid, uids);
+				userGroupService.refreshGroupUsers(gid);
+				result.put("success", true);
+				result.put("message", "添加成功");
+			} catch (UserGroupException e) {
+				logger.debug("后台数据存储异常", e);
+				result.put("message", "后台数据存储异常,添加失败");
+			}
+		} else {
+			result.put("message", "gid为空不能添加用户,添加失败");
+		}
+		return this.write(result);
+	}
+
+	/**
 	 * 删除已经存在的用户
 	 * 
 	 * @param gid
@@ -370,6 +400,32 @@ public class UserGroupManageController extends BaseController {
 			PageResult<Long> uidPage = this.userGroupService.getManualUsersPageData(gid, lit);
 			List<User> uList = this.globalUserService.getUserMapByUids(uidPage.getList());
 			result = new PageResult<User>(uList, lit, uidPage.getTotalCount());
+		}
+		return this.write(result);
+	}
+
+	/**
+	 * 修改分组名称和备注
+	 * 
+	 * @param gid
+	 * @param value
+	 * @param field
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/modifiedgroup")
+	public String updateGroupInfo(Long gid, String value, String field) {
+		Assert.notNull(gid, " gid is null");
+		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
+		result.put("success", false);
+		if (StringUtils.isBlank(field)) {
+			throw new IllegalArgumentException(" field is blank");
+		}
+		if ("gname".equals(field)) {
+			result.put("success", userGroupService.updateGroupName(gid, value));
+		}
+		if ("description".equals(field)) {
+			result.put("success", userGroupService.updateGroupNote(gid, value));
 		}
 		return this.write(result);
 	}

@@ -1,3 +1,7 @@
+var gwebsiteHidden = new Ext.form.Hidden({
+			name : 'gwebsiteHidden'
+		});
+
 /**
  * 运行状态的COMB的数据源
  */
@@ -280,6 +284,72 @@ sinaUserStore.on('beforeload', function() {
 		});
 // 导入excel文件窗口
 var importAccWindows;
+// 导入用户分组窗口
+var importUserGroupWin;
+// 选择用户分组的组件
+var groupCombo = getUserGroupCmp('userGroupField', 'userGroupField', 'gid');
+// 为Combo加入选择事件
+groupCombo.on('select', function(combo, record, index) {
+			gwebsiteHidden.setValue(null);
+			var gWebsiteId = record.data.websiteId;
+			gwebsiteHidden.setValue(gWebsiteId);
+		});
+// 嵌入的FORM
+var userGroupForm = new Ext.form.FormPanel({
+	id : 'userGroupForm',
+	split : true,
+	autoScroll : true,
+	height : 150,
+	frame : true, // 是否渲染表单面板背景色
+	defaultType : 'textfield', // 表单元素默认类型
+	labelAlign : 'left', // 标签对齐方式
+	buttonAlign : "center",
+	bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
+	items : [groupCombo],
+	buttons : [{
+				text : '保存',
+				handler : function() {
+					var uidArr = [];
+					var alertStr = '';
+					var gWebsiteId = gwebsiteHidden.getValue();
+					var rows = sinaUserGrid.getSelectionModel().getSelections();
+					if (rows.length > 0) {
+						for (var i = 0; i < rows.length; i++) {
+							var uid = rows[i].data.id;
+							var uwebsite = rows[i].data.websiteId;
+							if (gWebsiteId == uwebsite) {
+								uidArr.push(uid);
+							} else {
+								var uname = rows[i].data.nickName;
+								alertStr = alertStr + '【' + uid + ':' + uname
+										+ '】,';
+							}
+						}
+					} else {
+						Ext.Msg.alert("提示", "请至少选择一个用户");
+						return;
+					}
+					if (!Ext.isEmpty(alertStr)) {
+						Ext.Msg.alert("提示", alertStr
+										+ '这些用户与分组的所属网站不符，不能导入，请重新选择');
+						return;
+					}
+					var groupId = groupCombo.getValue();
+					if (Ext.isEmpty(groupId)) {
+						Ext.Msg.alert("提示", '用户分组不能为空');
+						return;
+					}
+					importUserGroup(groupId, uidArr);
+					importUserGroupWin.hide();
+				}
+			}, {
+				text : '重置',
+				handler : function() {
+					userGroupForm.getForm().reset();
+				}
+			}]
+});
+
 // 导入excelForm
 var importAccForm = new Ext.form.FormPanel({
 	labelWidth : 60,
@@ -528,6 +598,26 @@ var sinaUserGrid = new Ext.grid.GridPanel({
 										});
 							}
 							importAccWindows.show(this);
+						}
+					}, '-', {
+						text : '导入到指定用户分组',
+						iconCls : 'addIcon',
+						handler : function() {
+							if (!importUserGroupWin) {
+								importUserGroupWin = new Ext.Window({
+											title : '批量导入',
+											layout : 'fit',
+											width : 400,
+											height : 140,
+											closeAction : 'hide',
+											plain : true,
+											items : [userGroupForm]
+										});
+								importUserGroupWin.on('show', function() {
+											userGroupForm.getForm().reset();
+										});
+							}
+							importUserGroupWin.show(this);
 						}
 					}],
 			onCellClick : function(grid, rowIndex, columnIndex, e) {
@@ -1051,4 +1141,39 @@ function getSelectUsers() {
 		}
 	}
 	return expArray;
+}
+/**
+ * 将用户导入用户分组
+ * 
+ * @param {}
+ *            keywordId
+ * @return {}
+ */
+function importUserGroup(gid, uids) {
+	Ext.Msg.show({
+				title : '确认信息',
+				msg : '确定导入?',
+				buttons : Ext.Msg.YESNO,
+				fn : function(ans) {
+					if (ans == 'yes') {
+						Ext.Ajax.request({
+									url : '../usergroup/impusertogroup?_time'
+											+ new Date().getTime(),
+									params : {
+										gid : gid,
+										uids : uids
+									},
+									success : function(response) {
+										var result = Ext
+												.decode(response.responseText);
+										var msg = result.message;
+										Ext.Msg.alert("提示", msg);
+									},
+									failure : function() {
+										Ext.Msg.alert("提示", "导入失败");
+									}
+								});
+					}
+				}
+			});
 }
