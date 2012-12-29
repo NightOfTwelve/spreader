@@ -23,6 +23,7 @@
 			<list>
 				<value>com/nali/spreader/front/ximalaya/220-jdbc.properties</value>
 				<value>com/nali/spreader/front/ximalaya/hessianUrlsTest.properties</value>
+				<value>com/nali/spreader/front/ximalaya/ximalayaTest.properties</value>
 			</list>
 		</property>
 	</bean>

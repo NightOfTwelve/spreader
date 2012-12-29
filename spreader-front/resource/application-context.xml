@@ -23,6 +23,7 @@
 			<list>
 				<value>classpath:jdbc.properties</value>
 				<value>classpath:hessianUrls.properties</value>
+				<value>classpath:ximalaya.properties</value>
 			</list>
 		</property>
 	</bean>
