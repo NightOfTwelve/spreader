@@ -177,4 +177,22 @@ public interface IUserGroupInfoService {
 	 */
 	List<Long> getGidsByGroupName(String... groupName);
 
+	/**
+	 * 更新分组名称
+	 * 
+	 * @param gid
+	 * @param name
+	 * @return
+	 */
+	boolean updateGroupName(Long gid, String name);
+
+	/**
+	 * 更新分组备注
+	 * 
+	 * @param gid
+	 * @param note
+	 * @return
+	 */
+	boolean updateGroupNote(Long gid, String note);
+
 }
