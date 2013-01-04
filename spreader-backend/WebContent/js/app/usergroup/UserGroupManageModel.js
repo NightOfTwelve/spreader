@@ -529,12 +529,14 @@ Ext.onReady(function() {
 		if (checkGroupName(newValue)) {
 			Ext.Msg.alert("提示", "已存在相同组名,请重新输入");
 			e.record.reject();
+			return;
 		}
 		if (modifiedGroup(gid, newValue, fieldName)) {
 			e.record.commit();
 		} else {
 			Ext.Msg.alert("提示", "更新失败");
 			e.record.reject();
+			return;
 		}
 	};
 
