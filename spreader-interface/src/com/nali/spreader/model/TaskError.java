@@ -10,7 +10,7 @@ public class TaskError implements Serializable {
 	private String taskCode;//remove code?
 	private String errorCode;
 	private String errorDesc;
-	private Object errrorData;
+	private Object errrorData;//这里有个拼写错误
 	private Date errorTime;
 	
 	private Integer websiteId;
