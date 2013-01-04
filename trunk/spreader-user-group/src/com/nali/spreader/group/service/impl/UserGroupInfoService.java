@@ -384,4 +384,36 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 		}
 		return gids;
 	}
+
+	@Override
+	public boolean updateGroupName(Long gid, String name) {
+		UserGroup g = new UserGroup();
+		g.setGid(gid);
+		g.setGname(name);
+		try {
+			int rows = crudUserGroupDao.updateByPrimaryKeySelective(g);
+			if (rows > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error(" update group name fail, gid=" + gid, e);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean updateGroupNote(Long gid, String note) {
+		UserGroup g = new UserGroup();
+		g.setGid(gid);
+		g.setDescription(note);
+		try {
+			int rows = crudUserGroupDao.updateByPrimaryKeySelective(g);
+			if (rows > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error(" update group description fail, gid=" + gid, e);
+		}
+		return false;
+	}
 }
