@@ -483,6 +483,11 @@ Ext.onReady(function() {
 					handler : function() {
 						store.load();
 					}
+				}, '-', {
+					id : 'updategroupremind',
+					name : 'updategroupremind',
+					xtype : 'tbtext',
+					text : '<font color = "red">双击表格可以修改分组信息</font>'
 				}],
 		bbar : bbar,
 		onCellClick : function(grid, rowIndex, columnIndex, e) {
