@@ -531,10 +531,12 @@ Ext.onReady(function() {
 		var newValue = e.value;
 		var gid = e.record.data.gid;
 		var fieldName = e.field;
-		if (checkGroupName(newValue)) {
-			Ext.Msg.alert("提示", "已存在相同组名,请重新输入");
-			e.record.reject();
-			return;
+		if (fieldName == 'gname') {
+			if (checkGroupName(newValue)) {
+				Ext.Msg.alert("提示", "已存在相同组名,请重新输入");
+				e.record.reject();
+				return;
+			}
 		}
 		if (modifiedGroup(gid, newValue, fieldName)) {
 			e.record.commit();
