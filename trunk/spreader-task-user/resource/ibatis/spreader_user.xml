@@ -397,7 +397,7 @@
 		resultClass="java.lang.Long">
 		select id from spreader.tb_user where is_robot = true
 		<isNotNull prepend="and" property="websiteId">
-			website_id = #websiteId# 
+			website_id = #websiteId#
 		</isNotNull>
 		<isNotEmpty prepend="and" property="uids">
 			id in
@@ -412,20 +412,22 @@
 	</select>
 	<select id="queryFansLimitUids" parameterClass="java.util.HashMap"
 		resultClass="java.lang.Long">
-		select id from spreader.tb_user where is_robot = true
-		<isNotNull prepend="and" property="websiteId">
-			website_id = #websiteId# 
-		</isNotNull>
-		<isNotEmpty prepend="and" property="uids">
-			id in
-			<iterate open="(" close=")" property="uids" conjunction=",">
-				#uids[]#
-			</iterate>
-		</isNotEmpty>
-		<isNotNull prepend="and" property="fansLimit">
-			fans &lt;=
-			#fansLimit#
-		</isNotNull>
+		select id from spreader.tb_user
+		<dynamic prepend="where">
+			<isNotNull prepend="and" property="websiteId">
+				website_id = #websiteId#
+			</isNotNull>
+			<isNotEmpty prepend="and" property="uids">
+				id in
+				<iterate open="(" close=")" property="uids" conjunction=",">
+					#uids[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotNull prepend="and" property="fansLimit">
+				fans &lt;=
+				#fansLimit#
+			</isNotNull>
+		</dynamic>
 	</select>
 	<select id="queryNickNameByWebsiteUid" parameterClass="java.util.HashMap"
 		resultClass="java.lang.String">
@@ -572,9 +574,11 @@
 	<select id="getUidsByLastUidAndLimit" parameterClass="java.util.HashMap"
 		resultClass="java.lang.Long">
 		select id from(
-		select id from tb_user where website_id = 1 and is_robot = true order by id) a
+		select id from tb_user where website_id = 1
+		and is_robot = true order by id) a
 		where a.id &gt; #lastuid#
-		limit #limit#
+		limit
+		#limit#
 	</select>
 	<select id="queryNoAvatarRobotUser" resultMap="spreader_tb_user.ibatorgenerated_BaseResultMap">
 		select * from

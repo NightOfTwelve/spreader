@@ -14,7 +14,6 @@ import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserRelation;
 import com.nali.spreader.factory.SimpleActionConfig;
-import com.nali.spreader.factory.base.ContextMeta;
 import com.nali.spreader.factory.base.SingleTaskMachineImpl;
 import com.nali.spreader.factory.base.SingleTaskMeta;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
@@ -42,10 +41,7 @@ public class AddXimalayaFans extends SingleTaskMachineImpl implements
 
 	public AddXimalayaFans() {
 		super(SimpleActionConfig.addFansXimalaya, Website.ximalaya, Channel.normal);
-		ContextMeta fromUid = new ContextMeta("fromUid");
-		ContextMeta toUid = new ContextMeta("toUid");
-		setContextMeta(fromUid);
-		setContextMeta(toUid);
+		setContextMeta("fromUid", "toUid");
 	}
 
 	@Override
@@ -84,17 +80,17 @@ public class AddXimalayaFans extends SingleTaskMachineImpl implements
 		work(fromUid, toUid, fromUser.getWebsiteUid(), toUser.getWebsiteUid(), startTime, exporter);
 	}
 
-	private void work(Long fromWebsiteUid, Long toWebsiteUid, Long fromUid, Long toUid,
+	private void work(Long fromUid, Long toUid, Long fromWebsiteUid, Long toWebsiteUid,
 			Date startTime, SingleTaskExporter exporter) {
 		if (startTime == null) {
 			startTime = new Date();
 		}
-		exporter.setProperty("fromUid", fromWebsiteUid);
-		exporter.setProperty("toUid", toWebsiteUid);
+		exporter.setProperty("fromUid", fromUid);
+		exporter.setProperty("toUid", toUid);
 		exporter.setProperty("fromWebsiteUid", fromWebsiteUid);
 		exporter.setProperty("toWebsiteUid", toWebsiteUid);
 		exporter.setTimes(startTime, SpecialDateUtil.afterToday(3));
-		exporter.send();
+		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterNow(30));
 	}
 
 	public static class AddXimalayaWorkDto implements Serializable {

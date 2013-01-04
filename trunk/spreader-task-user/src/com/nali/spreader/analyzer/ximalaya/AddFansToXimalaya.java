@@ -55,7 +55,7 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements Regu
 		Long toGid = getToUserGroup();
 		List<Long> fromUids = globalUserService.getAttenLimitUids(Website.ximalaya.getId(),
 				userGroupFacadeService.getUids(fromGid), attentionLimit);
-		List<Long> toUids = globalUserService.getAttenLimitUids(Website.ximalaya.getId(),
+		List<Long> toUids = globalUserService.getFansLimitUids(Website.ximalaya.getId(),
 				userGroupFacadeService.getUids(toGid), fansLimit);
 		Integer toAddUserCount = toUids.size();
 		List<ItemCount<Long>> execuData = AverageHelper.getItemCounts(execuAddLimit, fromUids);
