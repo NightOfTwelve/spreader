@@ -26,7 +26,7 @@ public class RecordXimalayaUsersActionMethod implements ActionMethod {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object execute(Map<String, Object> params, Map<String, Object> userContext, Long uid) {
-		List<Long> uids = (List<Long>) params.get("uids");
+		List<Number> uids = (List<Number>) params.get("uids");
 		List<String> nickNames = (List<String>) params.get("nickNames");
 		List<Map<String, Object>> users = new ArrayList<Map<String, Object>>();
 		users.addAll(getMapsByIds(uids));
@@ -34,7 +34,7 @@ public class RecordXimalayaUsersActionMethod implements ActionMethod {
 		return interfaceCheckService.getUsers(users);
 	}
 
-	private List<Map<String, Object>> getMapsByIds(List<Long> ids) {
+	private List<Map<String, Object>> getMapsByIds(List<Number> ids) {
 		List<Map<String, Object>> users = new ArrayList<Map<String, Object>>();
 		for (Number id : ids) {
 			byte[] md5;

@@ -30,8 +30,14 @@ public class XimalayaImportUserActionMethod implements ActionMethod {
 		String keyword = (String) params.get("keyword");
 		int offset = (Integer) params.get("offset");
 		int limit = (Integer) params.get("limit");
-		Long fansGte = (Long) params.get("fansGte");
-		Long fansLte = (Long) params.get("fansLte");
+		Long fansGte = null;
+		if (params.get("fansGte") != null) {
+			fansGte = ((Number) params.get("fansGte")).longValue();
+		}
+		Long fansLte = null;
+		if (params.get("fansLte") != null) {
+			fansGte = ((Number) params.get("fansLte")).longValue();
+		}
 		Integer vType = (Integer) params.get("vType");
 		Date startCreateTime = long2Date((Long) params.get("startCreateTime"));
 		Date endCreateTime = long2Date((Long) params.get("endCreateTime"));
