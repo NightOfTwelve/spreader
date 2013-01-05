@@ -420,6 +420,5 @@
 		<module>../spreader-task-dispatch</module>
 		<module>../spreader-client</module>
 
-		<module>../spreader-test</module>
 	</modules>
 </project>
