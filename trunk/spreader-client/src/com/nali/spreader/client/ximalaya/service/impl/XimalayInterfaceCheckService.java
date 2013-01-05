@@ -39,8 +39,8 @@ public class XimalayInterfaceCheckService implements IXimalayInterfaceCheckServi
 	public List<User> getUsers(List<Map<String, Object>> maps) {
 		List<User> users = new ArrayList<User>();
 		for (Map<String, Object> map : maps) {
-			if (!maps.isEmpty()) {
-				Long websiteUid = (Long) map.get("websiteUid");
+			if (map != null && !map.isEmpty()) {
+				Long websiteUid = ((Number) map.get("websiteUid")).longValue();
 				String nickName = (String) map.get("nickName");
 				Integer gender = (Integer) map.get("gender");
 				String realName = (String) map.get("realName");
@@ -50,8 +50,8 @@ public class XimalayInterfaceCheckService implements IXimalayInterfaceCheckServi
 				String city = (String) map.get("city");
 				String introduction = (String) map.get("introduction");
 				Integer vType = (Integer) map.get("vType");
-				Long attentions = (Long) map.get("attentions");
-				Long fans = (Long) map.get("fans");
+				Long attentions = ((Number) map.get("attentions")).longValue();
+				Long fans = ((Number) map.get("fans")).longValue();
 				User user = new User();
 				user.setWebsiteId(Website.ximalaya.getId());
 				user.setIsRobot(false);
