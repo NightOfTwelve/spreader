@@ -7,7 +7,7 @@ var gwebsiteHidden = new Ext.form.Hidden({
  */
 var isRobotStore = new Ext.data.ArrayStore({
 			fields : ['ID', 'NAME'],
-			data : [[true, '是'], [false, '否']]
+			data : [[null, '不限'], [true, '是'], [false, '否']]
 		});
 // 页数
 var number = 20;
