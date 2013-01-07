@@ -16,19 +16,36 @@ import com.nali.spreader.factory.regular.RegularAnalyzer;
 @ClassDescription("喜马拉雅·收录指定用户")
 public class RecordDesignationUsers implements RegularAnalyzer,
 		Configable<RecordDesignationUsers.RecordUsersConfig> {
-	private RecordUsersConfig config;
+	private List<String> nickNames;
+	private List<Long> uids;
 	@AutowireProductLine
-	private TaskProduceLine<RecordUsersConfig> recordXimalayaUsers;
+	private TaskProduceLine<String> recordXimalayaUsersByNickName;
+	@AutowireProductLine
+	private TaskProduceLine<Long> recordXimalayaUsersByUid;
 
 	@Override
 	public String work() {
-		recordXimalayaUsers.send(config);
-		return null;
+		int namesCount = 0;
+		int uidCount = 0;
+		if (nickNames != null) {
+			for (String nickName : nickNames) {
+				recordXimalayaUsersByNickName.send(nickName);
+			}
+			namesCount = nickNames.size();
+		}
+		if (uids != null) {
+			for (Long uid : uids) {
+				recordXimalayaUsersByUid.send(uid);
+			}
+			uidCount = uids.size();
+		}
+		return "通过昵称生成：" + namesCount + "条任务，通过ID生成:" + uidCount + "条记录";
 	}
 
 	@Override
 	public void init(RecordUsersConfig config) {
-		this.config = config;
+		nickNames = config.getNickNames();
+		uids = config.getUids();
 	}
 
 	public static class RecordUsersConfig implements Serializable {
