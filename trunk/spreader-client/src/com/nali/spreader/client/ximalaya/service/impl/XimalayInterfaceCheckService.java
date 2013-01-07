@@ -40,37 +40,42 @@ public class XimalayInterfaceCheckService implements IXimalayInterfaceCheckServi
 		List<User> users = new ArrayList<User>();
 		for (Map<String, Object> map : maps) {
 			if (map != null && !map.isEmpty()) {
-				Long websiteUid = ((Number) map.get("websiteUid")).longValue();
-				String nickName = (String) map.get("nickName");
-				Integer gender = (Integer) map.get("gender");
-				String realName = (String) map.get("realName");
-				String email = (String) map.get("email");
-				String nationality = (String) map.get("nationality");
-				String province = (String) map.get("province");
-				String city = (String) map.get("city");
-				String introduction = (String) map.get("introduction");
-				Integer vType = (Integer) map.get("vType");
-				Long attentions = ((Number) map.get("attentions")).longValue();
-				Long fans = ((Number) map.get("fans")).longValue();
-				User user = new User();
-				user.setWebsiteId(Website.ximalaya.getId());
-				user.setIsRobot(false);
-				user.setWebsiteUid(websiteUid);
-				user.setNickName(nickName);
-				user.setGender(gender);
-				user.setRealName(realName);
-				user.setEmail(email);
-				user.setNationality(nationality);
-				user.setProvince(province);
-				user.setCity(city);
-				user.setIntroduction(introduction);
-				user.setAttentions(attentions);
-				user.setvType(vType);
-				user.setFans(fans);
-				user.setCreateTime(new Date());
-				users.add(user);
+				users.add(getUser(map));
 			}
 		}
 		return users;
+	}
+
+	@Override
+	public User getUser(Map<String, Object> map) {
+		Long websiteUid = ((Number) map.get("websiteUid")).longValue();
+		String nickName = (String) map.get("nickName");
+		Integer gender = (Integer) map.get("gender");
+		String realName = (String) map.get("realName");
+		String email = (String) map.get("email");
+		String nationality = (String) map.get("nationality");
+		String province = (String) map.get("province");
+		String city = (String) map.get("city");
+		String introduction = (String) map.get("introduction");
+		Integer vType = (Integer) map.get("vType");
+		Long attentions = ((Number) map.get("attentions")).longValue();
+		Long fans = ((Number) map.get("fans")).longValue();
+		User user = new User();
+		user.setWebsiteId(Website.ximalaya.getId());
+		user.setIsRobot(false);
+		user.setWebsiteUid(websiteUid);
+		user.setNickName(nickName);
+		user.setGender(gender);
+		user.setRealName(realName);
+		user.setEmail(email);
+		user.setNationality(nationality);
+		user.setProvince(province);
+		user.setCity(city);
+		user.setIntroduction(introduction);
+		user.setAttentions(attentions);
+		user.setvType(vType);
+		user.setFans(fans);
+		user.setCreateTime(new Date());
+		return user;
 	}
 }

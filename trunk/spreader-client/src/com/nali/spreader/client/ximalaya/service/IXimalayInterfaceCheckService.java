@@ -19,4 +19,5 @@ public interface IXimalayInterfaceCheckService {
 
 	List<User> getUsers(List<Map<String, Object>> maps);
 
+	User getUser(Map<String, Object> map);
 }
