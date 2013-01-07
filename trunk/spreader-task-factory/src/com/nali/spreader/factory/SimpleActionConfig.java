@@ -37,7 +37,8 @@ public enum SimpleActionConfig {
 	addFansXimalaya(3002L),
 	// 3003喜马拉雅登录被占用
 	importXimalaya(3004L),
-	recordXimalaya(3005L),
+	recordXimalayaByNickName(3005L),
+	recordXimalayaByUid(3006L),
 	;
 	private Long actionId;
 	private String taskCode;
