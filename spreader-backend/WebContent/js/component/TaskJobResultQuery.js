@@ -358,24 +358,26 @@ var resultGrid = new Ext.grid.GridPanel({
 			store : resultStore,
 			cm : resultcm,
 			bbar : resultBbar,
-			onCellClick : function(grid, rowIndex, columnIndex, e) {
-				var buttons = e.target.defaultValue;
-				var record = grid.getStore().getAt(rowIndex);
-				var data = record.data;
-				var taskCode = data.taskCode;
-				var clientTaskId = data.clientTaskId;
-				var viewData = getResultData(clientTaskId);
-				if (excludeTaskCodeFn(taskCode)) {
-					if (taskCode == 'replyWeibo') {
-						settingTaskCommentWeiboForm(viewData);
+			listeners : {
+				'rowdblclick' : function(grid, rowIndex, e) {
+					var buttons = e.target.defaultValue;
+					var record = grid.getStore().getAt(rowIndex);
+					var data = record.data;
+					var taskCode = data.taskCode;
+					var clientTaskId = data.clientTaskId;
+					var viewData = getResultData(clientTaskId);
+					if (excludeTaskCodeFn(taskCode)) {
+						if (taskCode == 'replyWeibo') {
+							settingTaskCommentWeiboForm(viewData);
+						}
+					} else {
+						settingTaskDefaultSource(viewData);
 					}
-				} else {
-					settingTaskDefaultSource(viewData);
 				}
 			}
 		});
 
-resultGrid.on('cellclick', resultGrid.onCellClick, resultGrid);
+//resultGrid.on('dblclick', resultGrid.onCellClick, resultGrid);
 // task
 var taskWindow = new Ext.Window({
 	title : '<span class="commoncss">执行情况查询</span>', // 窗口标题

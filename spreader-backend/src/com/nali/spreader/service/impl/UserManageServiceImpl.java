@@ -201,7 +201,7 @@ public class UserManageServiceImpl implements IUserManageService {
 			for (int i = 0; i < sheetNumber; i++) {
 				XSSFSheet sheet = book.getSheetAt(i);
 				int sheetRows = sheet.getPhysicalNumberOfRows();
-				for (int r = 1; r < sheetRows; r++) {
+				for (int r = 1; r <= sheetRows; r++) {
 					XSSFRow row = sheet.getRow(r);
 					if (row != null) {
 						// 微博昵称
