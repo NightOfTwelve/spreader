@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -174,6 +175,19 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 	@Override
 	public void reportTask(List<TaskResult> rlts, Integer taskType, Long clientId) {
 		for (TaskResult taskResult : rlts) {
+			ClientTaskLog log = new ClientTaskLog();
+			log.setClientId(clientId);
+			//log.setErrorCode(errorCode);
+			log.setExecutedTime(taskResult.getExecutedTime());
+			log.setStatus(taskResult.getStatus());//TODO set success status
+			log.setTaskCode(taskResult.getTaskCode());
+			log.setTaskId(taskResult.getTaskId());
+			try {
+				crudClientTaskLogDao.insert(log);
+			} catch (DuplicateKeyException e) {
+				logger.error("duplicate report", e);
+				continue;
+			}
 			if(TaskResult.STATUS_SUCCESS.equals(taskResult.getStatus())) {
 				try {
 					resultSender.send(taskResult);
@@ -188,20 +202,11 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 								+ "\r\n" + taskResult.getResult()
 								);
 			}
-			ClientTaskLog log = new ClientTaskLog();
-			log.setClientId(clientId);
-			//log.setErrorCode(errorCode);
-			log.setExecutedTime(taskResult.getExecutedTime());
-			log.setStatus(taskResult.getStatus());//TODO set success status
-			log.setTaskCode(taskResult.getTaskCode());
-			log.setTaskId(taskResult.getTaskId());
-			crudClientTaskLogDao.insert(log);//TODO check why DuplicateKeyException
 		}
 	}
 
 	@Override
 	public void reportError(TaskError error) {//TODO handle give up and expire
-		errorSender.send(error);
 		ClientTaskLog log = new ClientTaskLog();
 		log.setClientId(error.getClientId());
 		log.setErrorCode(error.getErrorCode());
@@ -210,7 +215,13 @@ public class TaskService implements ITaskRepository, ITaskService {//TODO cleanE
 		log.setStatus(TaskResult.STATUS_FAILED);
 		log.setTaskCode(error.getTaskCode());
 		log.setTaskId(error.getTaskId());
-		crudClientTaskLogDao.insert(log);
+		try {
+			crudClientTaskLogDao.insert(log);
+		} catch (DuplicateKeyException e) {
+			logger.error("duplicate report", e);
+			return;
+		}
+		errorSender.send(error);
 		
 		ClientError clientError = new ClientError();
 		clientError.setClientId(error.getClientId());

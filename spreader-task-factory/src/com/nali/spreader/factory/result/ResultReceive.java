@@ -101,7 +101,7 @@ public class ResultReceive {
 			logger.info("handle result, code:" + taskCode);
 		}
 		
-		Long taskId = result.getTaskId();
+		Long taskId = result.getTaskId();//TODO add trace for passiveProduce
 		Object resultObject = result.getResult();
 		Date updateTime = result.getExecutedTime();
 		try {
@@ -143,6 +143,13 @@ public class ResultReceive {
 		public void handle(Long taskId, R resultObject, Date updateTime) {
 			TaskContext context = taskService.popContext(taskId);
 			if(context==null) {
+				Task task = taskService.getTask(taskId);
+				if(task==null) {
+					throw new IllegalArgumentException("task not exists:" + taskId);
+				}
+				if(task.getStatus()!=Task.STATUS_INIT) {
+					throw new IllegalArgumentException("task context missing, @status:" + task.getStatus() + " taskId:" + taskId);
+				}
 				throw new IllegalArgumentException("task context missing, taskId:" + taskId);
 			}
 			processor.handleResult(updateTime, resultObject, context.getContents(), context.getUid());
