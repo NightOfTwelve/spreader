@@ -30,6 +30,7 @@ import com.nali.spreader.dto.PostWeiboContentDto;
 import com.nali.spreader.util.bean.BeanProperties;
 
 @Repository
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ContentMassDataDaoImpl implements IContentMassDataDao {
 	@Autowired
 	private DalTemplate dalTemplate;
@@ -47,7 +48,6 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 
 	@Override
 	public Content selectByPrimaryKey(Long contentId) {
-		@SuppressWarnings("unchecked")
 		Map<String, Object> dataMap = dalTemplate.selectForObject("dal.selectContent",
 				new ExpressionValue<Criteria>("id", Criteria.eq, contentId));
 		return bean.convertBean(dataMap);
@@ -104,7 +104,7 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 		Map<String, Object> m = bean.convertMap(content);
 		int rows = dalTemplate.upsert("dal.upsertContent", m);
 		// 对keywords做特殊处理
-		if (m.containsKey("keywords")) {
+		if (m.containsKey("keywords")) {//TODO content.getKeywords()
 			Long[] keywords = (Long[]) m.get("keywords");
 			if (ArrayUtils.isNotEmpty(keywords)) {
 				return this.upsertContentKeyword(cid, keywords);

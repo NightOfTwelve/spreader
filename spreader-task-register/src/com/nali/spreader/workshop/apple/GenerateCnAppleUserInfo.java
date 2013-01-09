@@ -1,7 +1,6 @@
 package com.nali.spreader.workshop.apple;
 
 import java.io.IOException;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +15,7 @@ import com.nali.spreader.util.KeyValuePair;
 import com.nali.spreader.util.random.AvgRandomer;
 import com.nali.spreader.util.random.NumberRandomer;
 import com.nali.spreader.util.random.Randomer;
+import com.nali.spreader.words.AppleIds;
 import com.nali.spreader.words.CnAdress;
 import com.nali.spreader.words.EnQaRandomer;
 import com.nali.spreader.words.PwdGenerator;
@@ -26,7 +26,6 @@ public class GenerateCnAppleUserInfo implements PassiveAnalyzer<Long> {
 	private IRobotRegisterService robotRegisterService;
 	@AutowireProductLine
 	private TaskProduceLine<AppleRegisterInfo> registerCnApple;
-	private Random udidSeed = new Random();
 	private AvgRandomer<KeyValuePair<String, Randomer<String>>> qaRandomer;
 	private Randomer<Integer> zipRandomer=new NumberRandomer(100000, 800000);
 	private Randomer<Integer> phoneRandomer=new NumberRandomer(10000000, 100000000);
@@ -62,7 +61,7 @@ public class GenerateCnAppleUserInfo implements PassiveAnalyzer<Long> {
 		app.setState(info.getProvince());
 		app.setZip(zipRandomer.get()+"");//TODO
 		app.setPhone(phoneRandomer.get()+"");
-		app.setUdid(genUdid());
+		app.setUdid(AppleIds.genUdid());
 		app.setRegisterId(registerId);
 
 		KeyValuePair<String, Randomer<String>> qa1 = qaRandomer.get();//TODO
@@ -70,20 +69,6 @@ public class GenerateCnAppleUserInfo implements PassiveAnalyzer<Long> {
 		app.setA1(qa1.getValue().get());
 		
 		registerCnApple.send(app);
-	}
-
-	private String genUdid() {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < 5; i++) {
-			String hexString = Integer.toHexString(udidSeed.nextInt());
-			if(hexString.length()<8) {
-				for (int j = 0; j < 8-hexString.length(); j++) {
-					sb.append('0');
-				}
-			}
-			sb.append(hexString);
-		}
-		return sb.toString();
 	}
 
 	private Integer checkedYear(Integer birthdayYear) {

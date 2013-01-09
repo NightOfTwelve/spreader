@@ -1,7 +1,6 @@
 package com.nali.spreader.workshop.apple.deprecated;
 
 import java.io.IOException;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,6 +14,7 @@ import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.util.KeyValuePair;
 import com.nali.spreader.util.random.AvgRandomer;
 import com.nali.spreader.util.random.Randomer;
+import com.nali.spreader.words.AppleIds;
 import com.nali.spreader.words.EnQaRandomer;
 import com.nali.spreader.words.PwdGenerator;
 import com.nali.spreader.words.TxtCfgUtil;
@@ -32,7 +32,6 @@ public class GenerateWebAppleUserInfo implements PassiveAnalyzer<Long> {
 	private TaskProduceLine<AppleRegisterInfo> registerWebApple;
 	private Randomer<String> enLastNames;
 	private AvgRandomer<UsState> statesRandomer = UsCityRandomer.getStatesRandomer();
-	private Random udidSeed = new Random();
 	private AvgRandomer<KeyValuePair<String, Randomer<String>>> qaRandomer;
 	
 	public GenerateWebAppleUserInfo() throws IOException {
@@ -71,7 +70,7 @@ public class GenerateWebAppleUserInfo implements PassiveAnalyzer<Long> {
 		app.setCity(city.getName());
 		app.setState(state.getName());
 		app.setZip(zip);
-		app.setUdid(genUdid());
+		app.setUdid(AppleIds.genUdid());
 		app.setRegisterId(registerId);
 
 		KeyValuePair<String, Randomer<String>> qa1 = qaRandomer.get();
@@ -79,14 +78,6 @@ public class GenerateWebAppleUserInfo implements PassiveAnalyzer<Long> {
 		app.setA1(qa1.getValue().get());
 		
 		registerWebApple.send(app);
-	}
-
-	private String genUdid() {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < 5; i++) {
-			sb.append(Integer.toHexString(udidSeed.nextInt()));
-		}
-		return sb.toString();
 	}
 
 	private Integer checkedYear(Integer birthdayYear) {

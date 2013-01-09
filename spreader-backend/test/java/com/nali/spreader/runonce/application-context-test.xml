@@ -23,44 +23,46 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
-				<value>com/nali/spreader/test/productenv/239-jdbc.properties</value>
+				<value>/com/nali/spreader/runonce/env.properties</value>
 			</list>
 		</property>
 	</bean>
-	<util:properties id="redis" location="com/nali/spreader/test/productenv/239-redis.properties" />
+	<util:properties id="redis" location="com/nali/spreader/runonce/${env}/redis.properties" />
+	<util:properties id="jdbc" location="com/nali/spreader/runonce/${env}/jdbc.properties" />
+	<util:properties id="urls" location="com/nali/spreader/runonce/${env}/urls.properties" />
 
 	<!-- 主库 -->
 	<bean id="dbDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
 		destroy-method="close" lazy-init="false">
 		<property name="driverClass">
-			<value>${mysql.driver}</value>
+			<value>#{jdbc['mysql.driver']}</value>
 		</property>
 		<property name="jdbcUrl">
-			<value>${jdbc.url}</value>
+			<value>#{jdbc['jdbc.url']}</value>
 		</property>
 		<property name="user">
-			<value>${jdbc.username}</value>
+			<value>#{jdbc['jdbc.username']}</value>
 		</property>
 		<property name="password">
-			<value>${jdbc.password}</value>
+			<value>#{jdbc['jdbc.password']}</value>
 		</property>
 		<property name="initialPoolSize">
-			<value>${sdb.initialPoolSize}</value>
+			<value>#{jdbc['sdb.initialPoolSize']}</value>
 		</property>
 		<property name="minPoolSize">
-			<value>${sdb.minPoolSize}</value>
+			<value>#{jdbc['sdb.minPoolSize']}</value>
 		</property>
 		<property name="maxPoolSize">
-			<value>${sdb.maxPoolSize}</value>
+			<value>#{jdbc['sdb.maxPoolSize']}</value>
 		</property>
 		<property name="acquireIncrement">
-			<value>${sdb.acquireIncrement}</value>
+			<value>#{jdbc['sdb.acquireIncrement']}</value>
 		</property>
 		<property name="maxIdleTime">
-			<value>${sdb.maxIdleTime}</value>
+			<value>#{jdbc['sdb.maxIdleTime']}</value>
 		</property>
 		<property name="checkoutTimeout">
-			<value>${sdb.checkoutTimeout}</value>
+			<value>#{jdbc['sdb.checkoutTimeout']}</value>
 		</property>
 	</bean>
 
@@ -96,7 +98,7 @@
 	<bean id="loginConfigManageService"
 		class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
 		<property name="serviceUrl"
-			value="${front.hessian}/internal/hessian/loginConfigManageService" />
+			value="#{urls['front.hessian']}/internal/hessian/loginConfigManageService" /><!-- TODO -->
 		<property name="serviceInterface"
 			value="com.nali.spreader.remote.ILoginConfigManageService" />
 	</bean>
@@ -155,7 +157,7 @@
 		</property>
 	</bean>
 
-	<import resource="239-application-dal-context.xml" />
+	<import resource="application-dal-context.xml" />
 
 	<bean id="identityService" class="com.nali.spreader.test.identity.MockIdentityService"></bean>
 

@@ -17,11 +17,14 @@ public enum LoginConfigMeta {
 	},
 	apple(2, 2003L) {
 		@Override
+		@SuppressWarnings("unchecked")
 		public Map<String, Object> getLoginParams(RobotUser robotUser) {
-			Map<String, Object> contentObjects = CollectionUtils.newHashMap(2);
-			String[] loginNames = robotUser.getLoginName().split("\\#");
-			contentObjects.put("name", loginNames[0]);
-			contentObjects.put("udid", loginNames[1]);
+			Map<String, Object> extraInfo = (Map<String, Object>) robotUser.getExtraInfo();
+			Map<String, Object> contentObjects = CollectionUtils.newHashMap(5);
+			contentObjects.put("name", robotUser.getLoginName());
+			contentObjects.put("udid", extraInfo.get("udid"));
+			contentObjects.put("ipadSerial", extraInfo.get("ipadSerial"));
+			contentObjects.put("iphoneSerial", extraInfo.get("iphoneSerial"));
 			contentObjects.put("password", robotUser.getLoginPwd());
 			return contentObjects;
 		}
