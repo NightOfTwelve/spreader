@@ -116,7 +116,7 @@ public class ContentService implements IContentService {
 		if (exist != null) {
 			if (exist.getWebsiteContentId() == null) {
 				exist.setWebsiteContentId(content.getWebsiteContentId());
-				this.assignContentId(content);
+				this.assignContentId(content);//TODO 调一个奇怪的方法
 				registerRecommandContent(exist.getId(), exist.getUid());
 			}
 			return;
@@ -133,7 +133,7 @@ public class ContentService implements IContentService {
 			}
 			content.setUid(users.get(0).getId());
 		}
-		Long contentId = this.assignContentId(content);
+		Long contentId = this.assignContentId(content);//TODO 调一个奇怪的方法
 		registerRecommandContent(contentId, content.getUid());
 	}
 

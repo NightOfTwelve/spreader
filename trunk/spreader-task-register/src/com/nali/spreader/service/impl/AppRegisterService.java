@@ -74,12 +74,12 @@ public class AppRegisterService implements IAppRegisterService {
 
 	@Override
 	public void saveAppUdid(AppUdid appUdid) {
-		crudAppUdidDao.insert(appUdid);		
+		crudAppUdidDao.insertSelective(appUdid);		
 	}
 
 	@Override
 	public void saveRegAddress(RegAddress address) {
-		crudRegAddressDao.insert(address);
+		crudRegAddressDao.insertSelective(address);
 	}
 
 	@Override

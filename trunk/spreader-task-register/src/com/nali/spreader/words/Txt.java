@@ -33,7 +33,7 @@ public class Txt {
 		return resource;
 	}
 	
-	private static List<String> readList(String path) throws IOException {
+	public static List<String> readList(String path) throws IOException {
 		return new ArrayList<String>(TxtFileUtil.read(getUrl(path)));
 	}
 }

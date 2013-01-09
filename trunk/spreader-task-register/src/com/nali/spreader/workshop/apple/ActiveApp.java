@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.AppUdid;
@@ -75,9 +76,13 @@ public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassive
 		robotUser.setAccountState(RobotUser.ACCOUNT_STATE_NORMAL);
 		robotUser.setWebsiteId(websiteId);
 		robotUser.setWebsiteUid(registerId);
-		robotUser.setLoginName(email+"#"+appUdid.getUdid());//not use email
+		robotUser.setLoginName(email);//not use email
 		robotUser.setLoginPwd(appUdid.getPwd());
-		robotUser.setGender(robotRegister.getGender());
+		Map<String, Object> extraInfo = CollectionUtils.newHashMap(3);
+		extraInfo.put("udid", appUdid.getUdid());
+		extraInfo.put("ipadSerial", appUdid.getIpadSerial());
+		extraInfo.put("iphoneSerial", appUdid.getIphoneSerial());
+		robotUser.setExtraInfo(extraInfo);
 		User user = new User();
 		user.setBirthdayDay(robotRegister.getBirthdayDay());
 		user.setBirthdayMonth(robotRegister.getBirthdayMonth());

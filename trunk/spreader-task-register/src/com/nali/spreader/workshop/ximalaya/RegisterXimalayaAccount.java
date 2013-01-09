@@ -116,7 +116,6 @@ public class RegisterXimalayaAccount extends SingleTaskMachineImpl implements
 				robotUser.setLoginName(ximalayaWebsiteUid.toString());
 			}
 			robotUser.setLoginPwd(robotRegister.getPwd());
-			robotUser.setGender(robotRegister.getGender());
 			User user = new User();
 			user.setBirthdayDay(robotRegister.getBirthdayDay());
 			user.setBirthdayMonth(robotRegister.getBirthdayMonth());

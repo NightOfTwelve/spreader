@@ -1,7 +1,6 @@
 package com.nali.spreader.workshop.apple.deprecated;
 
 import java.io.IOException;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +18,7 @@ import com.nali.spreader.util.random.AvgRandomer;
 import com.nali.spreader.util.random.BooleanRandomer;
 import com.nali.spreader.util.random.NumberRandomer;
 import com.nali.spreader.util.random.Randomer;
+import com.nali.spreader.words.AppleIds;
 import com.nali.spreader.words.EnQaRandomer;
 import com.nali.spreader.words.PwdGenerator;
 import com.nali.spreader.words.TxtCfgUtil;
@@ -40,7 +40,6 @@ public class GenerateAppleUserInfo implements PassiveAnalyzer<Long> {
 	private Randomer<Integer> phoneRandomer=new NumberRandomer(1000000, 10000000);
 	private Randomer<Boolean> useDrTitle = new BooleanRandomer(USE_DR_TITLE_PERCENT);
 	private AvgRandomer<UsState> statesRandomer = UsCityRandomer.getStatesRandomer();
-	private Random udidSeed = new Random();
 	private AvgRandomer<KeyValuePair<String, Randomer<String>>> qaRandomer1;
 	private AvgRandomer<KeyValuePair<String, Randomer<String>>> qaRandomer2;
 	private AvgRandomer<KeyValuePair<String, Randomer<String>>> qaRandomer3;
@@ -99,7 +98,7 @@ public class GenerateAppleUserInfo implements PassiveAnalyzer<Long> {
 		app.setZip(zip);
 		app.setAreaCode(areaCode);
 		app.setPhone(phoneRandomer.get()+"");
-		app.setUdid(genUdid());
+		app.setUdid(AppleIds.genUdid());
 		app.setRegisterId(registerId);
 
 		KeyValuePair<String, Randomer<String>> qa1 = qaRandomer1.get();
@@ -113,20 +112,6 @@ public class GenerateAppleUserInfo implements PassiveAnalyzer<Long> {
 		app.setA3(qa3.getValue().get());
 		
 		registerApple.send(app);
-	}
-
-	private String genUdid() {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < 5; i++) {
-			String hexString = Integer.toHexString(udidSeed.nextInt());
-			if(hexString.length()<8) {
-				for (int j = 0; j < 8-hexString.length(); j++) {
-					sb.append('0');
-				}
-			}
-			sb.append(hexString);
-		}
-		return sb.toString();
 	}
 
 	private Integer checkedYear(Integer birthdayYear) {

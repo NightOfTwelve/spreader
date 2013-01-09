@@ -21,6 +21,7 @@ import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.service.IAppRegisterService;
 import com.nali.spreader.util.SpecialDateUtil;
+import com.nali.spreader.words.AppleIds;
 
 @Component
 public class RegisterCnApple extends SingleTaskMachineImpl implements ContextedPassiveWorkshop<AppleRegisterInfo, Boolean> {
@@ -79,6 +80,9 @@ public class RegisterCnApple extends SingleTaskMachineImpl implements ContextedP
 		appUdid.setUdid(udid);
 		appUdid.setPwd(pwd);
 		appUdid.setRegisterId(registerId);
+		appUdid.setIpadSerial(AppleIds.genSerialIpad2Dit12(udid));
+		appUdid.setIphoneSerial(AppleIds.genSerialIphone4Dit12(udid));
+		appUdid.setVersion(AppleIds.VERSION);
 		appRegisterService.saveAppUdid(appUdid);
 		activeApp.send(registerId);
 	}

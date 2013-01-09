@@ -1,4 +1,4 @@
-package com.nali.spreader.workshop.apple;
+package com.nali.spreader.workshop.apple.deprecated;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -21,6 +21,7 @@ import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.service.IAppRegisterService;
 import com.nali.spreader.util.SpecialDateUtil;
+import com.nali.spreader.words.AppleIds;
 
 @Component
 public class RegisterWebApple extends SingleTaskMachineImpl implements ContextedPassiveWorkshop<AppleRegisterInfo, Boolean> {
@@ -78,6 +79,8 @@ public class RegisterWebApple extends SingleTaskMachineImpl implements Contexted
 		appUdid.setUdid(udid);
 		appUdid.setPwd(pwd);
 		appUdid.setRegisterId(registerId);
+		appUdid.setIpadSerial(AppleIds.genSerialIpad2Dit12(udid));
+		appUdid.setVersion(AppleIds.VERSION);
 		appRegisterService.saveAppUdid(appUdid);
 		activeApp.send(registerId);
 	}
