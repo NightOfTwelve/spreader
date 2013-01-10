@@ -148,6 +148,9 @@ Ext.onReady(function() {
 	stgdisptree.on('contextmenu', function(node, event) {
 				// 使用preventDefault方法可防止浏览器的默认事件操作发生
 				event.preventDefault();
+				if (!node.isLeaf()) {
+					return;
+				}
 				node.select();
 				rightMenu.showAt(event.getXY());// 取得鼠标点击坐标，展示菜单
 			});
