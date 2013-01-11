@@ -11,6 +11,7 @@ import com.nali.spreader.config.RobotGroupPostWeiboDto;
 import com.nali.spreader.data.Content;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
+import com.nali.spreader.dto.PostWeiboContentDto;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
@@ -33,8 +34,8 @@ import com.nali.spreader.util.random.Randomer;
  */
 @Component
 @ClassDescription("分组·机器人发微博")
-public class RobotGroupPostWeiboByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
-		Configable<RobotGroupPostWeiboDto> {
+public class RobotGroupPostWeiboByGroup extends UserGroupExtendedBeanImpl implements
+		RegularAnalyzer, Configable<RobotGroupPostWeiboDto> {
 	@Autowired
 	private IUserGroupFacadeService userGroupFacadeService;
 	@Autowired
@@ -60,22 +61,28 @@ public class RobotGroupPostWeiboByGroup extends UserGroupExtendedBeanImpl implem
 	public String work() {
 		Long fromGid = this.getFromUserGroup();
 		Long toGid = this.getToUserGroup();
-		Iterator<User> toIterator = this.userGroupFacadeService.queryLimitedRandomGrouppedUser(toGid,
-				toRandom.get());
+		Iterator<User> toIterator = this.userGroupFacadeService.queryLimitedRandomGrouppedUser(
+				toGid, toRandom.get());
 		while (toIterator.hasNext()) {
 			User toUser = toIterator.next();
-			List<Long> toContent = groupContentService.findContentIds(config, toUser.getId(),
+			// 获取查询参数
+			PostWeiboContentDto params = groupContentService.getPostContentParams(config,
+					toUser.getId());
+			List<Long> contentIds = contentService.findContentIdByPostContentDto(params);
+			// 随机要转发的内容
+			List<Long> randomContents = groupContentService.getRandomContent(contentIds,
 					contentRandom.get());
-			if (toContent.size() > 0) {
-				for (Long contentId : toContent) {
+			if (randomContents.size() > 0) {
+				for (Long contentId : randomContents) {
 					Content c = this.contentService.getContentById(contentId);
 					String text = null;
 					if (c != null) {
 						text = c.getContent();
 					}
-					List<Long> refRobotList = robotContentService.findRelatedRobotId(contentId, null);
-					Iterator<User> fromIterator = this.userGroupFacadeService.queryLimitedRandomGrouppedUser(
-							fromGid, fromRandom.get(), refRobotList);
+					List<Long> refRobotList = robotContentService.findRelatedRobotId(contentId,
+							null);
+					Iterator<User> fromIterator = this.userGroupFacadeService
+							.queryLimitedRandomGrouppedUser(fromGid, fromRandom.get(), refRobotList);
 					while (fromIterator.hasNext()) {
 						Long refRobot = fromIterator.next().getId();
 						postWeiboContent.send(new KeyValue<Long, String>(refRobot, text));
@@ -93,8 +100,9 @@ public class RobotGroupPostWeiboByGroup extends UserGroupExtendedBeanImpl implem
 		Range<Integer> fromRange = config.getFromPostGroup();
 		Range<Integer> toRange = config.getToPostGroup();
 		Range<Integer> contentRange = config.getContentCount();
-		if (fromRange != null && toRange != null && contentRange != null && fromRange.checkNotNull()
-				&& toRange.checkNotNull() && contentRange.checkNotNull()) {
+		if (fromRange != null && toRange != null && contentRange != null
+				&& fromRange.checkNotNull() && toRange.checkNotNull()
+				&& contentRange.checkNotNull()) {
 			fromRandom = new NumberRandomer(fromRange.getGte(), fromRange.getLte() + 1);
 			toRandom = new NumberRandomer(toRange.getGte(), toRange.getLte() + 1);
 			contentRandom = new NumberRandomer(contentRange.getGte(), contentRange.getLte() + 1);

@@ -10,6 +10,7 @@ import com.nali.spreader.config.Range;
 import com.nali.spreader.config.RobotGroupForwardDto;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
+import com.nali.spreader.dto.PostWeiboContentDto;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
@@ -17,6 +18,7 @@ import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
 import com.nali.spreader.model.RobotContent;
+import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IRobotContentService;
 import com.nali.spreader.service.IRobotGroupContentService;
 import com.nali.spreader.service.IUserGroupFacadeService;
@@ -33,7 +35,8 @@ import com.nali.spreader.util.random.Randomer;
 @ClassDescription("分组·机器人转发微博")
 public class RobotGroupForwardByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
 		Configable<RobotGroupForwardDto> {
-//	private static final MessageLogger logger = LoggerFactory.getLogger(RobotGroupForwardByGroup.class);
+	// private static final MessageLogger logger =
+	// LoggerFactory.getLogger(RobotGroupForwardByGroup.class);
 	@Autowired
 	private IUserGroupFacadeService userGroupFacadeService;
 	@Autowired
@@ -42,6 +45,8 @@ public class RobotGroupForwardByGroup extends UserGroupExtendedBeanImpl implemen
 	private IRobotGroupContentService groupContentService;
 	@AutowireProductLine
 	private TaskProduceLine<KeyValue<Long, Long>> forwardWeiboContent;
+	@Autowired
+	private IContentService contentService;
 
 	private RobotGroupForwardDto config;
 
@@ -58,19 +63,24 @@ public class RobotGroupForwardByGroup extends UserGroupExtendedBeanImpl implemen
 		Long fromGid = this.getFromUserGroup();
 		Long toGid = this.getToUserGroup();
 		// 随机获取被转发用户分组的用户信息
-		Iterator<User> toIterator = this.userGroupFacadeService.queryLimitedRandomGrouppedUser(toGid,
-				toRandom.get());
+		Iterator<User> toIterator = this.userGroupFacadeService.queryLimitedRandomGrouppedUser(
+				toGid, toRandom.get());
 		while (toIterator.hasNext()) {
 			User toUser = toIterator.next();
+			// 获取查询参数
+			PostWeiboContentDto params = groupContentService.getPostContentParams(config,
+					toUser.getId());
+			List<Long> contentIds = contentService.findContentIdByPostContentDto(params);
 			// 随机要转发的内容
-			List<Long> toContent = groupContentService.findContentIds(config, toUser.getId(),
+			List<Long> randomContents = groupContentService.getRandomContent(contentIds,
 					contentRandom.get());
-			if (toContent.size() > 0) {
-				for (Long contentId : toContent) {
-					List<Long> refRobotList = robotContentService.findRelatedRobotId(contentId, null);
+			if (randomContents.size() > 0) {
+				for (Long contentId : randomContents) {
+					List<Long> refRobotList = robotContentService.findRelatedRobotId(contentId,
+							null);
 					// 随机获取转发机器人分组的用户信息
-					Iterator<User> fromIterator = this.userGroupFacadeService.queryLimitedRandomGrouppedUser(fromGid,
-							fromRandom.get(),refRobotList);
+					Iterator<User> fromIterator = this.userGroupFacadeService
+							.queryLimitedRandomGrouppedUser(fromGid, fromRandom.get(), refRobotList);
 					while (fromIterator.hasNext()) {
 						Long refRobot = fromIterator.next().getId();
 						forwardWeiboContent.send(new KeyValue<Long, Long>(refRobot, contentId));
@@ -91,8 +101,9 @@ public class RobotGroupForwardByGroup extends UserGroupExtendedBeanImpl implemen
 		Range<Integer> toRange = config.getToForwardGroup();
 		// 符合转发的微博上下限
 		Range<Integer> contentRange = config.getContentCount();
-		if (fromRange != null && toRange != null && contentRange != null && fromRange.checkNotNull()
-				&& toRange.checkNotNull() && contentRange.checkNotNull()) {
+		if (fromRange != null && toRange != null && contentRange != null
+				&& fromRange.checkNotNull() && toRange.checkNotNull()
+				&& contentRange.checkNotNull()) {
 			fromRandom = new NumberRandomer(fromRange.getGte(), fromRange.getLte() + 1);
 			toRandom = new NumberRandomer(toRange.getGte(), toRange.getLte() + 1);
 			contentRandom = new NumberRandomer(contentRange.getGte(), contentRange.getLte() + 1);

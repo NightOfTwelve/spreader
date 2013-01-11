@@ -3,7 +3,7 @@ package com.nali.spreader.service;
 import java.util.List;
 
 import com.nali.spreader.config.BaseRobotGroupContent;
-import com.nali.spreader.config.ContentDto;
+import com.nali.spreader.dto.PostWeiboContentDto;
 
 /**
  * 转发，回复相关服务
@@ -17,16 +17,16 @@ public interface IRobotGroupContentService {
 	 * 
 	 * @param config
 	 * @param uid
-	 * @param contentCount
 	 * @return
 	 */
-	List<Long> findContentIds(BaseRobotGroupContent config, Long uid, Integer contentCount);
+	PostWeiboContentDto getPostContentParams(BaseRobotGroupContent config, Long uid);
 
 	/**
-	 * 筛选符合条件内容
+	 * 随机获取内容
 	 * 
-	 * @param dto
+	 * @param contentIds
+	 * @param randomCount
 	 * @return
 	 */
-	List<Long> findContentIdByDto(ContentDto dto);
+	List<Long> getRandomContent(List<Long> contentIds, Integer randomCount);
 }

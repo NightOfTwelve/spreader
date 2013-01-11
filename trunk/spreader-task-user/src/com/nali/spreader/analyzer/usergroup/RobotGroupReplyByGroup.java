@@ -10,6 +10,7 @@ import com.nali.spreader.analyzer.other.Words;
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.RobotGroupReplyDto;
 import com.nali.spreader.data.User;
+import com.nali.spreader.dto.PostWeiboContentDto;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
@@ -18,6 +19,7 @@ import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
 import com.nali.spreader.model.ReplyDto;
 import com.nali.spreader.model.RobotContent;
+import com.nali.spreader.service.IContentService;
 import com.nali.spreader.service.IRobotContentService;
 import com.nali.spreader.service.IRobotGroupContentService;
 import com.nali.spreader.service.IUserGroupFacadeService;
@@ -42,6 +44,8 @@ public class RobotGroupReplyByGroup extends UserGroupExtendedBeanImpl implements
 	private IRobotGroupContentService groupContentService;
 	@AutowireProductLine
 	private TaskProduceLine<ReplyDto> replyWeibo;
+	@Autowired
+	private IContentService contentService;
 
 	private RobotGroupReplyDto config;
 
@@ -59,22 +63,28 @@ public class RobotGroupReplyByGroup extends UserGroupExtendedBeanImpl implements
 		Long fromGid = this.getFromUserGroup();
 		Long toGid = this.getToUserGroup();
 		// 随机获取被回复用户分组的用户信息
-		Iterator<User> toIterator = this.userGroupFacadeService.queryLimitedRandomGrouppedUser(toGid,
-				toRandom.get());
+		Iterator<User> toIterator = this.userGroupFacadeService.queryLimitedRandomGrouppedUser(
+				toGid, toRandom.get());
 		while (toIterator.hasNext()) {
 			User toUser = toIterator.next();
+			// 获取查询参数
+			PostWeiboContentDto params = groupContentService.getPostContentParams(config,
+					toUser.getId());
+			List<Long> contentIds = contentService.findContentIdByPostContentDto(params);
 			// 随机要转发的内容
-			List<Long> toContent = groupContentService.findContentIds(config, toUser.getId(),
+			List<Long> randomContents = groupContentService.getRandomContent(contentIds,
 					contentRandom.get());
-			if (toContent.size() > 0) {
-				for (Long contentId : toContent) {
-					List<Long> refRobotList = robotContentService.findRelatedRobotId(contentId, null);
+			if (randomContents.size() > 0) {
+				for (Long contentId : randomContents) {
+					List<Long> refRobotList = robotContentService.findRelatedRobotId(contentId,
+							null);
 					// 随机获取回复机器人分组的用户信息
-					Iterator<User> fromIterator = this.userGroupFacadeService.queryLimitedRandomGrouppedUser(
-							fromGid, fromRandom.get(), refRobotList);
+					Iterator<User> fromIterator = this.userGroupFacadeService
+							.queryLimitedRandomGrouppedUser(fromGid, fromRandom.get(), refRobotList);
 					while (fromIterator.hasNext()) {
 						Long refRobot = fromIterator.next().getId();
-						ReplyDto replyDto = new ReplyDto(refRobot, contentId, replyWords.get(), false);
+						ReplyDto replyDto = new ReplyDto(refRobot, contentId, replyWords.get(),
+								false);
 						replyWeibo.send(replyDto);
 						robotContentService.save(refRobot, contentId, RobotContent.TYPE_REPLY);
 					}
@@ -94,8 +104,9 @@ public class RobotGroupReplyByGroup extends UserGroupExtendedBeanImpl implements
 		// 符合回复的微博上下限
 		Range<Integer> contentRange = config.getContentCount();
 		this.replyWords = Words.defaultReplyWords;
-		if (fromRange != null && toRange != null && contentRange != null && fromRange.checkNotNull()
-				&& toRange.checkNotNull() && contentRange.checkNotNull()) {
+		if (fromRange != null && toRange != null && contentRange != null
+				&& fromRange.checkNotNull() && toRange.checkNotNull()
+				&& contentRange.checkNotNull()) {
 			fromRandom = new NumberRandomer(fromRange.getGte(), fromRange.getLte() + 1);
 			toRandom = new NumberRandomer(toRange.getGte(), toRange.getLte() + 1);
 			contentRandom = new NumberRandomer(contentRange.getGte(), contentRange.getLte() + 1);
