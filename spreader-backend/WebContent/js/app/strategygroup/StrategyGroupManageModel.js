@@ -681,7 +681,7 @@ Ext.onReady(function() {
 				header : '分组描述',
 				dataIndex : 'description',
 				renderer : renderBrief,
-				width : 100
+				width : 220
 			}, {
 				header : '分组名称',
 				dataIndex : 'transformName',
@@ -1174,7 +1174,7 @@ Ext.onReady(function() {
 				header : '描述',
 				dataIndex : 'description',
 				renderer : renderBrief,
-				width : 100
+				width : 220
 			}, {
 				header : '相关操作',
 				renderer : function showbutton() {
