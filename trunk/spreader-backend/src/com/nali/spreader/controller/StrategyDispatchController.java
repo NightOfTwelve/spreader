@@ -215,9 +215,9 @@ public class StrategyDispatchController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/dispsave")
-	public String saveStrategyConfig(String groupName, Long groupId, Integer groupType,
-			Long fromGroupId, Long toGroupId, RegularJob regularJob, TriggerDto triggerDto,
-			Long refId) {
+	public String saveStrategyConfig(String groupName, String groupNote, Long groupId,
+			Integer groupType, Long fromGroupId, Long toGroupId, RegularJob regularJob,
+			TriggerDto triggerDto, Long refId) {
 		// 检查参数
 		if (groupType == null) {
 			return returnError("分组类型为空，不能保存策略配置", null);
@@ -237,7 +237,7 @@ public class StrategyDispatchController extends BaseController {
 				}
 			} else {
 				// 否则先保存分组获取分组ID
-				groupId = getNewGroupId(groupType, groupName, regularJob.getDescription());
+				groupId = getNewGroupId(groupType, groupName, groupNote);
 			}
 		} else if (NOTICE_GROUP_TYPE.equals(groupType)) {
 			// 如果是消息子策略，需设置refid

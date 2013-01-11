@@ -191,6 +191,7 @@ var userSinaForm = new Ext.form.FormPanel({
 				text : "重置",
 				handler : function() { // 按钮响应函数
 					userSinaForm.form.reset();
+					Ext.getCmp('isRobot').setValue(null);
 				}
 			}]
 		});
