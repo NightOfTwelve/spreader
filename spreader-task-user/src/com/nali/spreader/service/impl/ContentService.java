@@ -115,8 +115,7 @@ public class ContentService implements IContentService {
 				content.getWebsiteUid(), content.getEntry());
 		if (exist != null) {
 			if (exist.getWebsiteContentId() == null) {
-				exist.setWebsiteContentId(content.getWebsiteContentId());
-				this.assignContentId(content);//TODO 调一个奇怪的方法
+				saveContent(content, exist);
 				registerRecommandContent(exist.getId(), exist.getUid());
 			}
 			return;
@@ -133,7 +132,7 @@ public class ContentService implements IContentService {
 			}
 			content.setUid(users.get(0).getId());
 		}
-		Long contentId = this.assignContentId(content);//TODO 调一个奇怪的方法
+		Long contentId = saveContent(content, null);
 		registerRecommandContent(contentId, content.getUid());
 	}
 
@@ -249,7 +248,7 @@ public class ContentService implements IContentService {
 	 * @param content
 	 * @return
 	 */
-	private Long saveOrassignContentId(Content content) {
+	private Long saveAndReturnContentId(Content content) {
 		Integer contentType = content.getType();
 		Integer websiteId = content.getWebsiteId();
 		Long websiteUid = content.getWebsiteUid();
@@ -257,35 +256,44 @@ public class ContentService implements IContentService {
 		// 唯一键必须都不为空
 		if (contentType != null && websiteId != null && websiteUid != null
 				&& StringUtils.isNotEmpty(entry)) {
-			String text = content.getContent();
-			// 设置内容长度
-			if (StringUtils.isEmpty(text)) {
-				content.setAtCount(0);
-				content.setContentLength(0);
-			} else {
-				// 设置@数
-				int atCount = this.charMatch(text, Content.AT_STR.charAt(0));
-				content.setAtCount(atCount);
-				content.setContentLength(text.length());
-			}
-			if (content.getUid() == null) {
-				Long uid = this.globalUserService.getOrAssignUid(websiteId, websiteUid);
-				content.setUid(uid);
-			}
-			Content tmp = this.findByUniqueKey(contentType, websiteId, websiteUid, entry);
-			if (tmp != null) {
-				content.setId(tmp.getId());
-				contentMassDataDao.updateContent(content);
-				return tmp.getId();
-			} else {
-				try {
-					return contentMassDataDao.insertContent(content);
-				} catch (UniqueKeyException e) {
-					return saveOrassignContentId(content);
-				}
-			}
+			Content exists = this.findByUniqueKey(contentType, websiteId, websiteUid, entry);
+			return saveContent(content, exists);
 		} else {
 			throw new IllegalArgumentException("uniqueKey contains null value");
+		}
+	}
+
+	private Long saveContent(Content content, Content exists) {
+		Integer contentType = content.getType();
+		Integer websiteId = content.getWebsiteId();
+		Long websiteUid = content.getWebsiteUid();
+		String entry = content.getEntry();
+		String text = content.getContent();
+		// 设置内容长度 内容为空抛异常
+		if (StringUtils.isEmpty(text)) {
+			throw new IllegalArgumentException("content is empty, contentType=" + contentType
+					+ ",websiteId=" + websiteId + ",entry=" + entry + ",websiteUid="
+					+ websiteUid);
+		} else {
+			// 设置@数
+			int atCount = this.charMatch(text, Content.AT_STR.charAt(0));
+			content.setAtCount(atCount);
+			content.setContentLength(text.length());
+		}
+		if (content.getUid() == null) {
+			Long uid = this.globalUserService.getOrAssignUid(websiteId, websiteUid);
+			content.setUid(uid);
+		}
+		if (exists != null) {
+			content.setId(exists.getId());
+			contentMassDataDao.updateContent(content);
+			return exists.getId();
+		} else {
+			try {
+				return contentMassDataDao.insertContent(content);
+			} catch (UniqueKeyException e) {
+				return saveAndReturnContentId(content);
+			}
 		}
 	}
 
@@ -298,7 +306,7 @@ public class ContentService implements IContentService {
 			refContentId = assignContentId(refContent);
 		}
 		content.setRefId(refContentId);
-		return saveOrassignContentId(content);
+		return saveAndReturnContentId(content);
 	}
 
 	@Override

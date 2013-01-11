@@ -20,7 +20,6 @@ import com.nali.spreader.dao.IUserDao;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
 import com.nali.spreader.dto.FilterUserDto;
-import com.nali.spreader.dto.PostWeiboContentDto;
 
 @Repository
 public class UserDao implements IUserDao {
@@ -138,11 +137,6 @@ public class UserDao implements IUserDao {
 	@Override
 	public String getUserPassword(Long uid) {
 		return (String) this.sqlMap.queryForObject("spreader_user.queryUserPassword", uid);
-	}
-
-	@Override
-	public List<Long> queryContentIdByPostContentDto(PostWeiboContentDto dto) {
-		return this.sqlMap.queryForList("spreader_content.findContentIdByPostContentDto", dto);
 	}
 
 	@Override
