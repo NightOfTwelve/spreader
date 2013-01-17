@@ -43,5 +43,5 @@
  	
 	<context:annotation-config />
 	<context:component-scan base-package="com.nali.dal.statement" />
-	<import resource="classpath:mongo/*.xml"></import>
+	<import resource="classpath*:mongo/*.xml"></import>
 </beans>
