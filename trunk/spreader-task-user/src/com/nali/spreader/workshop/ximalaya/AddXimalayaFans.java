@@ -36,28 +36,33 @@ public class AddXimalayaFans extends SingleTaskMachineImpl implements
 
 	@Autowired
 	public void initUserService(IUserServiceFactory userServiceFactory) {
-		userService = userServiceFactory.getUserService(Website.ximalaya.getId());
+		userService = userServiceFactory.getUserService(Website.ximalaya
+				.getId());
 	}
 
 	public AddXimalayaFans() {
-		super(SimpleActionConfig.addFansXimalaya, Website.ximalaya, Channel.normal);
+		super(SimpleActionConfig.addFansXimalaya, Website.ximalaya,
+				Channel.normal);
 		setContextMeta("fromUid", "toUid");
 	}
 
 	@Override
-	public void handleResult(Date updateTime, Boolean result, Map<String, Object> contextContents,
-			Long uid) {
+	public void handleResult(Date updateTime, Boolean result,
+			Map<String, Object> contextContents, Long uid) {
 		Long fromUid = (Long) contextContents.get("fromUid");
 		Long toUid = (Long) contextContents.get("toUid");
+		User toUser = globalUserService.getUserById(toUid);
 		if (result) {
 			UserRelation relation = new UserRelation();
 			relation.setUid(fromUid);
 			relation.setToUid(toUid);
-			relation.setIsRobotUser(true);
+			relation.setWebsiteId(Website.ximalaya.getId());
+			relation.setIsRobotUser(toUser.getIsRobot());
 			relation.setType(UserRelation.TYPE_ATTENTION);
 			userService.createRelation(relation);
 		} else {
-			logger.warn("user attention has already created, from " + fromUid + " to " + toUid);
+			logger.warn("user attention has already created, from " + fromUid
+					+ " to " + toUid);
 		}
 	}
 
@@ -67,7 +72,8 @@ public class AddXimalayaFans extends SingleTaskMachineImpl implements
 		Long toUid = data.getValue();
 		User fromUser = globalUserService.getUserById(fromUid);
 		User toUser = globalUserService.getUserById(toUid);
-		work(fromUid, toUid, fromUser.getWebsiteUid(), toUser.getWebsiteUid(), null, exporter);
+		work(fromUid, toUid, fromUser.getWebsiteUid(), toUser.getWebsiteUid(),
+				null, exporter);
 	}
 
 	@Input
@@ -77,11 +83,12 @@ public class AddXimalayaFans extends SingleTaskMachineImpl implements
 		Date startTime = dto.getStartTime();
 		User fromUser = globalUserService.getUserById(fromUid);
 		User toUser = globalUserService.getUserById(toUid);
-		work(fromUid, toUid, fromUser.getWebsiteUid(), toUser.getWebsiteUid(), startTime, exporter);
+		work(fromUid, toUid, fromUser.getWebsiteUid(), toUser.getWebsiteUid(),
+				startTime, exporter);
 	}
 
-	private void work(Long fromUid, Long toUid, Long fromWebsiteUid, Long toWebsiteUid,
-			Date startTime, SingleTaskExporter exporter) {
+	private void work(Long fromUid, Long toUid, Long fromWebsiteUid,
+			Long toWebsiteUid, Date startTime, SingleTaskExporter exporter) {
 		if (startTime == null) {
 			startTime = new Date();
 		}

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.User;
+import com.nali.spreader.data.UserRelation;
 import com.nali.spreader.factory.TaskProduceLine;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
@@ -31,8 +32,8 @@ import com.nali.spreader.workshop.ximalaya.AddXimalayaFans.AddXimalayaWorkDto;
 
 @Component
 @ClassDescription("喜马拉雅·关注用户(加粉)")
-public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
-		Configable<AddFansToXimalaya.AddFansToXimalayaConfig> {
+public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
+		RegularAnalyzer, Configable<AddFansToXimalaya.AddFansToXimalayaConfig> {
 	private Integer addLimit;
 	private Integer execuAddLimit;
 	private Long attentionLimit;
@@ -53,14 +54,17 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements Regu
 	public String work() {
 		Long fromGid = getFromUserGroup();
 		Long toGid = getToUserGroup();
-		List<Long> fromUids = globalUserService.getAttenLimitUids(Website.ximalaya.getId(),
+		List<Long> fromUids = globalUserService.getAttenLimitUids(
+				Website.ximalaya.getId(),
 				userGroupFacadeService.getUids(fromGid), attentionLimit);
-		List<Long> toUids = globalUserService.getFansLimitUids(Website.ximalaya.getId(),
+		List<Long> toUids = globalUserService.getFansLimitUids(
+				Website.ximalaya.getId(),
 				userGroupFacadeService.getUids(toGid), fansLimit);
 		Integer toAddUserCount = toUids.size();
-		List<ItemCount<Long>> execuData = AverageHelper.getItemCounts(execuAddLimit, fromUids);
-		Average<Long> avg = AverageHelper.selectAverageByParam(toAddUserCount, fromUids.size(),
-				addLimit, execuAddLimit, execuData);
+		List<ItemCount<Long>> execuData = AverageHelper.getItemCounts(
+				execuAddLimit, fromUids);
+		Average<Long> avg = AverageHelper.selectAverageByParam(toAddUserCount,
+				fromUids.size(), addLimit, execuAddLimit, execuData);
 		Date addTime = new Date();
 		Set<Long> addExists = new HashSet<Long>();
 		while (avg.hasNext()) {
@@ -68,6 +72,12 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements Regu
 			List<Long> workData = RandomUtil.randomItems(toUids, addExists, 1);
 			if (!CollectionUtils.isEmpty(workData)) {
 				Long toUid = workData.get(0);
+				User toUser = globalUserService.getUserById(toUid);
+				// 获取toUid所有的粉丝
+				List<Long> existsFans = globalUserService.findRelationUserId(
+						toUid, UserRelation.TYPE_ATTENTION,
+						Website.ximalaya.getId(), toUser.getIsRobot());
+				Set<Long> existsFansSet = new HashSet<Long>(existsFans);
 				User u = globalUserService.getUserById(toUid);
 				long fans = u.getFans();
 				for (ItemCount<Long> item : items) {
@@ -75,9 +85,13 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements Regu
 					int count = item.getCount();
 					if (fans <= fansLimit) {
 						if (count > 0) {
-							addFans(fromUid, toUid, addTime);
-							addTime = DateUtils.addMinutes(addTime, execuInterval);
-							fans++;
+							// 排重
+							if (!existsFansSet.contains(fromUid)) {
+								addFans(fromUid, toUid, addTime);
+								addTime = DateUtils.addMinutes(addTime,
+										execuInterval);
+								fans++;
+							}
 						}
 					} else {
 						break;

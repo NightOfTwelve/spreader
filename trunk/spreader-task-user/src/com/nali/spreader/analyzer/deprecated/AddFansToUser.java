@@ -29,7 +29,8 @@ import com.nali.spreader.util.random.RandomUtil;
 
 @Component
 @ClassDescription("关注用户")
-public class AddFansToUser implements RegularAnalyzer,Configable<CategoryUserMatchDto> {
+public class AddFansToUser implements RegularAnalyzer,
+		Configable<CategoryUserMatchDto> {
 	private Integer websiteId = Website.weibo.getId();
 	private static Logger logger = Logger.getLogger(AddFansToUser.class);
 	private IUserService userService;
@@ -38,7 +39,7 @@ public class AddFansToUser implements RegularAnalyzer,Configable<CategoryUserMat
 	private IGlobalUserService globalUserService;
 	@AutowireProductLine
 	private TaskProduceLine<KeyValue<Long, Long>> addUserFans;
-	
+
 	@Autowired
 	public void initUserService(IUserServiceFactory userServiceFactory) {
 		userService = userServiceFactory.getUserService(websiteId);
@@ -46,39 +47,47 @@ public class AddFansToUser implements RegularAnalyzer,Configable<CategoryUserMat
 
 	@Override
 	public String work() {
-		List<User> users = findUserFansInfoByDto(dto.getUser(), dto.getCategory(), dto.getWebsiteId(), false);//目前websiteId会强制为微博
-		List<User> robots = findUserFansInfoByDto(dto.getRobot(), dto.getCategory(), dto.getWebsiteId(), true);
+		List<User> users = findUserFansInfoByDto(dto.getUser(),
+				dto.getCategory(), dto.getWebsiteId(), false);// 目前websiteId会强制为微博
+		List<User> robots = findUserFansInfoByDto(dto.getRobot(),
+				dto.getCategory(), dto.getWebsiteId(), true);
 		List<Long> robotIds = ids(robots);
-		if(users.size()==0 || robots.size()==0) {
+		if (users.size() == 0 || robots.size() == 0) {
 			return "not enough users in category:" + dto.getCategory();
 		}
 		double robotRate = dto.getRobotRate();
-		//关注上限
+		// 关注上限
 		Long maxUserCount = dto.getMaxUserValue();
 		for (User user : users) {
-			long needRobotCount = (long)Math.ceil(nvl(user.getFans()).doubleValue() * robotRate) - nvl(user.getRobotFans()).longValue();
-			//如果关注上限不为null,则取needRobotCount，maxUserCount中较小的值
-			if(maxUserCount != null) {
+			long needRobotCount = (long) Math.ceil(nvl(user.getFans())
+					.doubleValue() * robotRate)
+					- nvl(user.getRobotFans()).longValue();
+			// 如果关注上限不为null,则取needRobotCount，maxUserCount中较小的值
+			if (maxUserCount != null) {
 				needRobotCount = Math.min(needRobotCount, maxUserCount);
 			}
 			Long toUid = user.getId();
-			List<Long> existsIdList = globalUserService.findRelationUserId(toUid, UserRelation.TYPE_ATTENTION, true);
+			List<Long> existsIdList = globalUserService.findRelationUserId(
+					toUid, UserRelation.TYPE_ATTENTION, Website.weibo.getId(),
+					true);
 			Set<Long> existsIds = new HashSet<Long>(existsIdList);
-			
-			List<Long> matchRobotIds = RandomUtil.randomItems(robotIds, existsIds, (int)needRobotCount);
-			
+
+			List<Long> matchRobotIds = RandomUtil.randomItems(robotIds,
+					existsIds, (int) needRobotCount);
+
 			for (Long robotId : matchRobotIds) {
 				addUserFans.send(new KeyValue<Long, Long>(robotId, toUid));
 			}
-			if(logger.isInfoEnabled()) {
-				logger.info(matchRobotIds.size() + " robots are going to follow user:" + toUid);
+			if (logger.isInfoEnabled()) {
+				logger.info(matchRobotIds.size()
+						+ " robots are going to follow user:" + toUid);
 			}
 		}
 		return null;
 	}
 
 	private Number nvl(Number n) {
-		return n==null?0:n;
+		return n == null ? 0 : n;
 	}
 
 	private List<Long> ids(List<User> robots) {
@@ -89,7 +98,8 @@ public class AddFansToUser implements RegularAnalyzer,Configable<CategoryUserMat
 		return ids;
 	}
 
-	private List<User> findUserFansInfoByDto(WebsiteUserDto dto, String category, Integer websiteId, Boolean isRobot) {
+	private List<User> findUserFansInfoByDto(WebsiteUserDto dto,
+			String category, Integer websiteId, Boolean isRobot) {
 		UserDto userDto = UserDto.genUserDtoFrom(dto);
 		userDto.setCategories(Arrays.asList(category));
 		userDto.setIsRobot(isRobot);

@@ -11,7 +11,8 @@ import com.nali.spreader.model.RobotUser;
 
 public interface IGlobalUserService {
 
-	List<Long> findRelationUserId(Long toUid, Integer attentionType, Boolean isRobot);
+	List<Long> findRelationUserId(Long toUid, Integer attentionType,
+			Integer websiteId, Boolean isRobot);
 
 	void updateUserTags(Long uid, List<UserTag> tags);
 

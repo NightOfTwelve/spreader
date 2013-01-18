@@ -272,8 +272,7 @@ public class ContentService implements IContentService {
 		// 设置内容长度 内容为空抛异常
 		if (StringUtils.isEmpty(text)) {
 			throw new IllegalArgumentException("content is empty, contentType=" + contentType
-					+ ",websiteId=" + websiteId + ",entry=" + entry + ",websiteUid="
-					+ websiteUid);
+					+ ",websiteId=" + websiteId + ",entry=" + entry + ",websiteUid=" + websiteUid);
 		} else {
 			// 设置@数
 			int atCount = this.charMatch(text, Content.AT_STR.charAt(0));
@@ -356,5 +355,17 @@ public class ContentService implements IContentService {
 	@Override
 	public List<Map<String, Long>> findContentByPostContentDto(PostWeiboContentDto dto) {
 		return this.contentMassDataDao.queryPostContents(dto);
+	}
+
+	@Override
+	public String getContentUrl(Content c) {
+		Long websiteUid = c.getWebsiteUid();
+		String entry = c.getEntry();
+		if (websiteUid != null && StringUtils.isNotBlank(entry)) {
+			StringBuffer buff = new StringBuffer("http://weibo.com/");
+			buff.append(websiteUid).append("/").append(entry);
+			return buff.toString();
+		}
+		return null;
 	}
 }
