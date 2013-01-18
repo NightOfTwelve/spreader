@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
 import com.nali.spreader.config.GroupUserAddFansDto;
+import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.data.User;
 import com.nali.spreader.data.UserRelation;
@@ -26,9 +27,10 @@ import com.nali.spreader.util.random.NumberRandomer;
 
 @Component
 @ClassDescription("分组·关注用户")
-public class AddFansToUserByGroup extends UserGroupExtendedBeanImpl implements RegularAnalyzer,
-		Configable<GroupUserAddFansDto> {
-	private static final MessageLogger logger = LoggerFactory.getLogger(AddFansToUserByGroup.class);
+public class AddFansToUserByGroup extends UserGroupExtendedBeanImpl implements
+		RegularAnalyzer, Configable<GroupUserAddFansDto> {
+	private static final MessageLogger logger = LoggerFactory
+			.getLogger(AddFansToUserByGroup.class);
 	@Autowired
 	private IUserGroupFacadeService userGroupFacadeService;
 	@Autowired
@@ -65,18 +67,21 @@ public class AddFansToUserByGroup extends UserGroupExtendedBeanImpl implements R
 		// 关注用户组ID
 		Long toGroup = this.getToUserGroup();
 		// 获取所有关注用户
-		Iterator<Long> toIterator = this.userGroupFacadeService.queryAllGrouppedUser(toGroup);
+		Iterator<Long> toIterator = this.userGroupFacadeService
+				.queryAllGrouppedUser(toGroup);
 		while (toIterator.hasNext()) {
 			Long toUid = toIterator.next();
 			int randomLimit = random.get();
 			// 获取所有的粉丝
-			List<Long> relationList = this.globalUserService.findRelationUserId(toUid,
-					UserRelation.TYPE_ATTENTION, true);
+			List<Long> relationList = this.globalUserService
+					.findRelationUserId(toUid, UserRelation.TYPE_ATTENTION,
+							Website.weibo.getId(), true);
 			// 排重
 			Set<Long> relationSet = new HashSet<Long>(relationList);
 			// 随机获取粉丝组成员
 			Iterator<User> fromIterator = this.userGroupFacadeService
-					.queryLimitedRandomGrouppedUser(fromGroup, randomLimit, relationSet);
+					.queryLimitedRandomGrouppedUser(fromGroup, randomLimit,
+							relationSet);
 			while (fromIterator.hasNext()) {
 				User fromUser = fromIterator.next();
 				Long fromUid = fromUser.getId();

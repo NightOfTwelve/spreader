@@ -103,14 +103,16 @@ public class GlobalUserService implements IGlobalUserService {
 	}
 
 	@Override
-	public List<Long> findRelationUserId(Long toUid, Integer attentionType, Boolean isRobot) {
+	public List<Long> findRelationUserId(Long toUid, Integer attentionType,
+			Integer websiteId, Boolean isRobot) {
 		UserRelationExample example = new UserRelationExample();
 		Criteria criteria = example.createCriteria().andToUidEqualTo(toUid)
-				.andTypeEqualTo(attentionType);
+				.andTypeEqualTo(attentionType).andWebsiteIdEqualTo(websiteId);
 		if (isRobot != null) {
 			criteria.andIsRobotUserEqualTo(isRobot);
 		}
-		List<UserRelation> relations = crudUserRelationDao.selectByExample(example);
+		List<UserRelation> relations = crudUserRelationDao
+				.selectByExample(example);
 		List<Long> rlt = new ArrayList<Long>(relations.size());
 		for (UserRelation relation : relations) {
 			rlt.add(relation.getUid());

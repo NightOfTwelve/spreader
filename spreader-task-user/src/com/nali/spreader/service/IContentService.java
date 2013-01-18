@@ -97,4 +97,12 @@ public interface IContentService {
 	 * @return
 	 */
 	List<ContentKeywordInfoDto> findKeywordByContentId(Long contentId);
+
+	/**
+	 * 获取微博的URL websiteUid，entry 必须不为空，否则返回null
+	 * 
+	 * @param c
+	 * @return
+	 */
+	String getContentUrl(Content c);
 }
