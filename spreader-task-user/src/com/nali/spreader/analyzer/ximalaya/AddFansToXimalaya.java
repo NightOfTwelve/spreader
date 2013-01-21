@@ -1,11 +1,15 @@
 package com.nali.spreader.analyzer.ximalaya;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +25,7 @@ import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
 import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserGroupFacadeService;
-import com.nali.spreader.util.avg.Average;
-import com.nali.spreader.util.avg.AverageHelper;
-import com.nali.spreader.util.avg.ItemCount;
+import com.nali.spreader.util.random.RandomUtil;
 import com.nali.spreader.workshop.other.AddUserFans;
 import com.nali.spreader.workshop.ximalaya.AddXimalayaFans.AddXimalayaWorkDto;
 
@@ -31,6 +33,8 @@ import com.nali.spreader.workshop.ximalaya.AddXimalayaFans.AddXimalayaWorkDto;
 @ClassDescription("喜马拉雅·关注用户(加粉)")
 public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 		RegularAnalyzer, Configable<AddFansToXimalaya.AddFansToXimalayaConfig> {
+	private static final Logger logger = Logger
+			.getLogger(AddFansToXimalaya.class);
 	private Integer addLimit;
 	private Integer execuAddLimit;
 	private Long attentionLimit;
@@ -57,42 +61,56 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 		List<Long> toUids = globalUserService.getFansLimitUids(
 				Website.ximalaya.getId(),
 				userGroupFacadeService.getUids(toGid), fansLimit);
-		Collections.shuffle(toUids);
+		List<Long> alreadyExecuUsers = Collections
+				.synchronizedList(new ArrayList<Long>());
+		Date addTime = new Date();
 		for (Long toUid : toUids) {
 			User toUser = globalUserService.getUserById(toUid);
+			long fans = toUser.getFans();
 			// 获取toUid已有的粉丝
 			List<Long> existsFans = globalUserService.findRelationUserId(toUid,
 					UserRelation.TYPE_ATTENTION, Website.ximalaya.getId(),
 					toUser.getIsRobot());
+			List<Long> exceedFansUids = getExceedFansUids(alreadyExecuUsers,
+					execuAddLimit.intValue());
+			existsFans.addAll(exceedFansUids);
 			// 粉丝要和机器人组做一次排重
 			@SuppressWarnings("unchecked")
-			List<Long> noExistsFans = (List<Long>) org.apache.commons.collections.CollectionUtils
-					.subtract(fromUids, existsFans);
-			List<ItemCount<Long>> execuData = AverageHelper.getItemCounts(
-					execuAddLimit, noExistsFans);
-			Average<Long> avg = AverageHelper.selectAverageByParam(
-					toUids.size(), noExistsFans.size(), addLimit,
-					execuAddLimit, execuData);
-			Date addTime = new Date();
-			while (avg.hasNext()) {
-				List<ItemCount<Long>> items = avg.next();
-				User u = globalUserService.getUserById(toUid);
-				long fans = u.getFans();
-				for (ItemCount<Long> item : items) {
-					Long fromUid = item.getItem();
-					int count = item.getCount();
+			List<Long> noExistsFans = (List<Long>) CollectionUtils.subtract(
+					fromUids, existsFans);
+			List<Long> execuRandom = RandomUtil.randomItems(noExistsFans,
+					addLimit);
+			for (Long fromUid : execuRandom) {
+				int execuCount = CollectionUtils.cardinality(fromUid,
+						alreadyExecuUsers);
+				if (execuCount + 1 <= execuAddLimit.intValue()) {
 					if (fansLimit > fans) {
-						if (count > 0) {
-							addFans(fromUid, toUid, addTime);
-							addTime = DateUtils.addMinutes(addTime,
-									execuInterval);
-							fans++;
-						}
+						addFans(fromUid, toUid, addTime);
+						// logger.debug("fromUid:" + fromUid + ",toUid:" +
+						// toUid);
+						addTime = DateUtils.addMinutes(addTime, execuInterval);
+						alreadyExecuUsers.add(fromUid);
+						fans++;
 					}
 				}
 			}
 		}
 		return null;
+	}
+
+	private List<Long> getExceedFansUids(List<Long> alreadyExecuUsers, int limit) {
+		@SuppressWarnings("unchecked")
+		Map<Long, Integer> map = Collections.synchronizedMap(CollectionUtils
+				.getCardinalityMap(alreadyExecuUsers));
+		List<Long> execeedList = new ArrayList<Long>();
+		for (Map.Entry<Long, Integer> entry : map.entrySet()) {
+			Long id = entry.getKey();
+			Integer count = entry.getValue();
+			if (limit > count.intValue()) {
+				execeedList.add(id);
+			}
+		}
+		return execeedList;
 	}
 
 	/**
@@ -179,5 +197,21 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 		public void setExecuAddCount(Integer execuAddCount) {
 			this.execuAddCount = execuAddCount;
 		}
+	}
+
+	public static void main(String[] args) {
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(1);
+		list.add(2);
+		list.add(2);
+		list.add(3);
+		list.add(1);
+		list.add(1);
+		list.add(5);
+
+		Map<Integer, Integer> map = Collections.synchronizedMap(CollectionUtils
+				.getCardinalityMap(list));
+		System.out.println(map);
+
 	}
 }
