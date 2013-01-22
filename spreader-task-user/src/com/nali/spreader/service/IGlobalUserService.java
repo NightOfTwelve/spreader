@@ -113,4 +113,11 @@ public interface IGlobalUserService {
 	 * @return
 	 */
 	Long saveUserAssignUid(User user);
+	
+	/**
+	 * 更新用户关注数加
+	 * 
+	 * @param uid
+	 */
+	int updateAttentions(Long uid);
 }

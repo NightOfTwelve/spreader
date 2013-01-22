@@ -186,4 +186,9 @@ public class UserDao implements IUserDao {
 	public List<Long> queryFansLimitUids(Map<String, Object> param) {
 		return sqlMap.queryForList("spreader_user.queryFansLimitUids", param);
 	}
+
+	@Override
+	public int updateAttentions(Long id) {
+		return sqlMap.update("spreader_user.updateAttentions", id);
+	}
 }
