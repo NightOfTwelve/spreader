@@ -150,4 +150,11 @@ public interface IUserDao {
 	Long getLastUid();
 	
 	List<Long> getUidsByLastUidAndLimit(Map<String,Object> param);
+
+	/**
+	 * 更新用户关注数
+	 * @param uid
+	 * @return
+	 */
+	int updateAttentions(Long id);
 }

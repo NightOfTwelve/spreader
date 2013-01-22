@@ -449,4 +449,9 @@ public class GlobalUserService implements IGlobalUserService {
 			}
 		}
 	}
+
+	@Override
+	public int updateAttentions(Long uid) {
+		return userDao.updateAttentions(uid);
+	}
 }

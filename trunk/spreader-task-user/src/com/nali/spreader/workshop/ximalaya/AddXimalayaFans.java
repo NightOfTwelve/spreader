@@ -60,6 +60,7 @@ public class AddXimalayaFans extends SingleTaskMachineImpl implements
 			relation.setIsRobotUser(toUser.getIsRobot());
 			relation.setType(UserRelation.TYPE_ATTENTION);
 			userService.createRelation(relation);
+			globalUserService.updateAttentions(fromUid);
 		} else {
 			logger.warn("user attention has already created, from " + fromUid
 					+ " to " + toUid);

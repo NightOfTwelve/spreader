@@ -612,4 +612,10 @@
 		set articles = articles+1
 		where id = #id#
 	</update>
+	<update id="updateAttentions" parameterClass="java.lang.Long">
+		update
+		spreader.tb_user
+		set attentions = attentions+1
+		where id = #id#
+	</update>
 </sqlMap>
