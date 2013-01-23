@@ -51,13 +51,12 @@ public class AddXimalayaFans extends SingleTaskMachineImpl implements
 			Map<String, Object> contextContents, Long uid) {
 		Long fromUid = (Long) contextContents.get("fromUid");
 		Long toUid = (Long) contextContents.get("toUid");
-		User toUser = globalUserService.getUserById(toUid);
 		if (result) {
 			UserRelation relation = new UserRelation();
 			relation.setUid(fromUid);
 			relation.setToUid(toUid);
 			relation.setWebsiteId(Website.ximalaya.getId());
-			relation.setIsRobotUser(toUser.getIsRobot());
+			relation.setIsRobotUser(true);
 			relation.setType(UserRelation.TYPE_ATTENTION);
 			userService.createRelation(relation);
 			globalUserService.updateAttentions(fromUid);
