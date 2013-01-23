@@ -10,6 +10,13 @@
 	<groupId>com.nali.spreader</groupId>
 	<artifactId>spreader-action-config</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<dependencies>
+		<dependency>
+			<groupId>com.nali.spreader</groupId>
+		    <artifactId>spreader-interface</artifactId>
+  			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>

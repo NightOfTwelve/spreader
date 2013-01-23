@@ -1,6 +1,5 @@
 package com.nali.spreader.workshop.system;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
@@ -59,22 +58,17 @@ public class DoWeiboAppeal extends SingleTaskMachineImpl implements SinglePassiv
 	}
 	
 	static {
-		Set<String> datas;
-		try {
-			String[] chars = PUNCTUATIONS_STRING.split("(?=.)(?<=.)");
-			punctuations = new HashSet<Character>(CollectionUtils.getMapSize(chars.length));
-			for (String charString : chars) {
-				punctuations.add(charString.charAt(0));
-			}
-			datas = TxtFileUtil.read(AutoReplyWeibo.class.getClassLoader().getResource(FILE_APPEAL_FIRST));
-			appealFirsts = new AvgRandomer<String>(datas);
-			datas = TxtFileUtil.read(AutoReplyWeibo.class.getClassLoader().getResource(FILE_APPEAL_MIDDLE));
-			appealMiddles = new AvgRandomer<String>(datas);
-			datas = TxtFileUtil.read(AutoReplyWeibo.class.getClassLoader().getResource(FILE_APPEAL_LAST));
-			appealLasts = new AvgRandomer<String>(datas);
-		} catch (IOException e) {
-			throw new Error(e);
+		String[] chars = PUNCTUATIONS_STRING.split("(?=.)(?<=.)");
+		punctuations = new HashSet<Character>(CollectionUtils.getMapSize(chars.length));
+		for (String charString : chars) {
+			punctuations.add(charString.charAt(0));
 		}
+		Set<String> datas = TxtFileUtil.read(AutoReplyWeibo.class.getClassLoader().getResource(FILE_APPEAL_FIRST));
+		appealFirsts = new AvgRandomer<String>(datas);
+		datas = TxtFileUtil.read(AutoReplyWeibo.class.getClassLoader().getResource(FILE_APPEAL_MIDDLE));
+		appealMiddles = new AvgRandomer<String>(datas);
+		datas = TxtFileUtil.read(AutoReplyWeibo.class.getClassLoader().getResource(FILE_APPEAL_LAST));
+		appealLasts = new AvgRandomer<String>(datas);
 	}
 	
 	@Override

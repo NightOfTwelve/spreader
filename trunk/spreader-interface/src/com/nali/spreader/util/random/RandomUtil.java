@@ -182,4 +182,14 @@ public class RandomUtil {
 	private static long next(Random random) {
 		return random.nextLong()>>>1;
 	}
+	
+	public static int popple(int base, int popple) {//-(popple-1) ~ (popple-1)
+		if(popple<0) {
+			throw new IllegalArgumentException("Invalid popple:" + popple);
+		}
+		if(popple<=1) {
+			return base;
+		}
+		return base + random.nextInt(popple * 2 -1) - popple + 1;
+	}
 }

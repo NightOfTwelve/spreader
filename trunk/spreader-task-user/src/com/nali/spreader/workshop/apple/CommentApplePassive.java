@@ -1,6 +1,5 @@
 package com.nali.spreader.workshop.apple;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,12 +36,7 @@ public class CommentApplePassive implements PassiveAnalyzer<KeyValue<Long, Comme
 		starRandomer = new WeightRandomer<Integer>();
 		starRandomer.add(5, 80);
 		starRandomer.add(4, 20);
-		Map<String, List<String>> keyListMap;
-		try {
-			keyListMap = TxtFileUtil.readKeyListMap(CommentApplePassive.class.getClassLoader().getResource("txt/app-comment.txt"));
-		} catch (IOException e) {
-			throw new Error(e);
-		}
+		Map<String, List<String>> keyListMap = TxtFileUtil.readKeyListMap(CommentApplePassive.class.getClassLoader().getResource("txt/app-comment.txt"));
 		wordsRandomer = new WeightRandomer<KeyValue<Integer, Randomer<String>>>();
 		for (Entry<String, List<String>> entry : keyListMap.entrySet()) {
 			Integer key = Integer.valueOf(entry.getKey());

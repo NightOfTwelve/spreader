@@ -52,4 +52,9 @@
 	    <property name="serviceInterface" value="com.nali.spreader.remote.ICaptchaResultBoard"/>
 	</bean>
 	
+	<bean name="/remoteCooldownConfigService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+	    <property name="service" ref="remoteCooldownConfigService"/>
+	    <property name="serviceInterface" value="com.nali.spreader.remote.IRemoteCooldownConfigService"/>
+	</bean>
+	
 </beans>
