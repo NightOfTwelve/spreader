@@ -70,9 +70,9 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 			User toUser = globalUserService.getUserById(toUid);
 			long fans = toUser.getFans();
 			// 获取toUid已有的粉丝
-			List<Long> existsFans = globalUserService.findRelationUserId(toUid,
-					UserRelation.TYPE_ATTENTION, Website.ximalaya.getId(),
-					toUser.getIsRobot());
+			List<Long> existsFans = globalUserService
+					.findRelationUserId(toUid, UserRelation.TYPE_ATTENTION,
+							Website.ximalaya.getId(), null);
 			List<Long> exceedFansUids = getExceedFansUids(alreadyExecuUsers,
 					execuAddLimit.intValue());
 			existsFans.addAll(exceedFansUids);
