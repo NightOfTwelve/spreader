@@ -18,14 +18,17 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.IOUtils;
+import org.springframework.dao.DataRetrievalFailureException;
 
 public class TxtFileUtil {
 	private static Pattern kvPattern=Pattern.compile("\\s*=\\s*");
 	
-	public static void distinct(URL[] srcs, File dest, String srcCode) throws IOException {
+	public static void distinct(URL[] srcs, File dest, String srcCode) {
 		final Set<String> rlt = new LinkedHashSet<String>();
 		LineHandler lineHandler = new LineHandler() {
 			@Override
@@ -38,11 +41,11 @@ public class TxtFileUtil {
 		write(rlt, dest);
 	}
 	
-	public static List<Entry<String, List<String>>> readKeyList(URL src) throws IOException {
+	public static List<Entry<String, List<String>>> readKeyList(URL src) {
 		return readKeyList(src, ",");
 	}
 
-	public static List<Entry<String, List<String>>> readKeyList(URL src, final String splitPattern) throws IOException {
+	public static List<Entry<String, List<String>>> readKeyList(URL src, final String splitPattern) {
 		final List<Entry<String, List<String>>> rlt = new ArrayList<Entry<String, List<String>>>();
 		PairHandler pairHandler = new PairHandler() {
 			@Override
@@ -53,11 +56,11 @@ public class TxtFileUtil {
 		return rlt;
 	}
 	
-	public static Map<String, List<String>> readKeyListMap(URL src) throws IOException {
+	public static Map<String, List<String>> readKeyListMap(URL src) {
 		return readKeyListMap(src, ",");
 	}
 
-	public static Map<String, List<String>> readKeyListMap(URL src, final String splitPattern) throws IOException {
+	public static Map<String, List<String>> readKeyListMap(URL src, final String splitPattern) {
 		final Map<String, List<String>> rlt = new HashMap<String, List<String>>();
 		PairHandler pairHandler = new PairHandler() {
 			@Override
@@ -68,7 +71,7 @@ public class TxtFileUtil {
 		return rlt;
 	}
 
-	public static Map<String, String> readKeyValueMap(URL src) throws IOException {
+	public static Map<String, String> readKeyValueMap(URL src) {
 		final Map<String, String> rlt = new HashMap<String, String>();
 		PairHandler pairHandler = new PairHandler() {
 			@Override
@@ -79,7 +82,7 @@ public class TxtFileUtil {
 		return rlt;
 	}
 	
-	public static List<Entry<String, String>> readKeyValue(URL src) throws IOException {
+	public static List<Entry<String, String>> readKeyValue(URL src) {
 		final List<Entry<String, String>> rlt = new ArrayList<Entry<String,String>>();
 		PairHandler pairHandler = new PairHandler() {
 			@Override
@@ -90,18 +93,28 @@ public class TxtFileUtil {
 		return rlt;
 	}
 	
-	public static Set<String> read(URL src) throws IOException {
+	public static Set<String> read(URL src) {
 		final Set<String> rlt = new LinkedHashSet<String>();
-		LineHandler lineHandler = new LineHandler() {
-			@Override
-			public void handle(String line) {
-				rlt.add(line);
-			}};
-		read(src, lineHandler);
+		readCollection(src, rlt);
 		return rlt;
 	}
 	
-	public static void writeKeyListMap(Map<String, List<String>> datas, File dest) throws IOException {
+	public static List<String> readList(URL src) {
+		final List<String> rlt = new ArrayList<String>();
+		readCollection(src, rlt);
+		return rlt;
+	}
+	
+	public static void readCollection(URL src, final Collection<String> col) {
+		LineHandler lineHandler = new LineHandler() {
+			@Override
+			public void handle(String line) {
+				col.add(line);
+			}};
+		read(src, lineHandler);
+	}
+	
+	public static void writeKeyListMap(Map<String, List<String>> datas, File dest) {
 		final Set<Entry<String, List<String>>> entrySet = datas.entrySet();
 		LineMaker<Entry<String, List<String>>> lineMaker = new LineMaker<Entry<String, List<String>>>() {
 			@Override
@@ -122,7 +135,7 @@ public class TxtFileUtil {
 		write(entrySet, lineMaker, dest);
 	}
 	
-	public static void writeKeyValueMap(Map<String, String> datas, File dest) throws IOException {
+	public static void writeKeyValueMap(Map<String, String> datas, File dest) {
 		final Set<Entry<String, String>> entrySet = datas.entrySet();
 		LineMaker<Entry<String, String>> lineMaker = new LineMaker<Entry<String,String>>() {
 			@Override
@@ -132,7 +145,7 @@ public class TxtFileUtil {
 		write(entrySet, lineMaker, dest);
 	}
 
-	public static void write(Collection<String> datas, File dest) throws IOException {
+	public static void write(Collection<String> datas, File dest) {
 		LineMaker<String> lineMaker = new LineMaker<String>() {
 			@Override
 			public String format(String t) {
@@ -141,11 +154,11 @@ public class TxtFileUtil {
 		write(datas, lineMaker, dest);
 	}
 
-	public static <T> void write(Iterable<T> datas, LineMaker<T> lineMaker, File dest) throws IOException {
-		OutputStream out = new FileOutputStream(dest);
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "utf-8"));
-
+	public static <T> void write(Iterable<T> datas, LineMaker<T> lineMaker, File dest) {
+		OutputStream out = null;
 		try {
+			out = new FileOutputStream(dest);
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "utf-8"));
 			Iterator<T> it = datas.iterator();
 			while (it.hasNext()) {
 				T data = it.next();
@@ -154,16 +167,48 @@ public class TxtFileUtil {
 					writer.newLine();
 				}
 			}
+		} catch (IOException e) {
+			throw new DataRetrievalFailureException(e.getMessage(), e);
 		} finally {
-			writer.close();
+			close(out);
 		}
 	}
 	
-	public static void read(URL src, LineHandler handler) throws IOException {
-		InputStream fi = src.openStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(fi, "utf-8"));
-		
+	private static void close(OutputStream o) {
+		if(o==null)return;
 		try {
+			o.close();
+		} catch (IOException e) {
+			throw new DataRetrievalFailureException(e.getMessage(), e);
+		}
+	}
+	
+	private static void close(InputStream i) {
+		if(i==null)return;
+		try {
+			i.close();
+		} catch (IOException e) {
+			throw new DataRetrievalFailureException(e.getMessage(), e);
+		}
+	}
+	
+	public static String readValue(URL src) {
+		InputStream fi = null;
+		try {
+			fi = src.openStream();
+			return IOUtils.toString(fi, "utf-8");
+		} catch (IOException e) {
+			throw new DataRetrievalFailureException(e.getMessage(), e);
+		} finally {
+			close(fi);
+		}
+	}
+	
+	public static void read(URL src, LineHandler handler) {
+		InputStream fi = null;
+		try {
+			fi = src.openStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fi, "utf-8"));
 			String line;
 			while ((line = reader.readLine())!=null) {
 				line=line.trim();
@@ -172,12 +217,14 @@ public class TxtFileUtil {
 				}
 				handler.handle(line);
 			}
+		} catch (IOException e) {
+			throw new DataRetrievalFailureException(e.getMessage(), e);
 		} finally {
-			reader.close();
+			close(fi);
 		}
 	}
 	
-	private static void readKeyValue(URL src, final PairHandler pairHandler) throws IOException {
+	private static void readKeyValue(URL src, final PairHandler pairHandler) {
 		LineHandler lineHandler = new LineHandler() {
 			@Override
 			public void handle(String line) {

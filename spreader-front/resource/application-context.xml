@@ -28,6 +28,7 @@
 		</property>
 	</bean>
 
+	<util:properties id="redis" location="classpath:redis.properties" />
 	<!-- 主库 -->
 	<bean id="dbDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
 		destroy-method="close" lazy-init="false">
@@ -88,6 +89,31 @@
 			</list>
 		</property>
 	</bean>
+	
+	<!-- redisTemplate -->
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory">
+			<bean class="com.nali.lwtmq.core.connection.JedisConnectionPoolFactory">
+				<property name="hostName" value="#{redis['redis.host']}"></property>
+				<property name="password" value="#{redis['redis.password']}"></property>
+				<property name="port" value="#{redis['redis.port']}"></property>
+				<property name="databaseIndex" value="#{redis['redis.database']}"></property>
+				<property name="timeout" value="#{redis['redis.timeout']}"></property>
+				<property name="poolConfig">
+					<bean class="redis.clients.jedis.JedisPoolConfig">
+						<property name="maxActive" value="#{redis['redis.connectionCount']}"></property>
+						<property name="minIdle" value="#{redis['redis.connectionCount']}"></property>
+						<property name="maxIdle" value="#{redis['redis.connectionCount']}"></property>
+					</bean>
+				</property>
+			</bean>
+		</property>
+		<property name="keySerializer">
+			<bean
+				class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+		</property>
+	</bean>
+	
 	<import resource="classpath:application-lwtmq-context.xml"/>
 	<import resource="classpath:application-schedule-context.xml"/>
 	<import resource="classpath:client-context.xml"/>

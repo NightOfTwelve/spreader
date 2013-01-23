@@ -49,7 +49,7 @@ public class SyncRobotUser {
 			Long registerId = robotUser.getRobotRegisterId();
 			AppUdid appUdid = appRegisterService.getAppUdid(registerId);
 			if(appUdid==null) {
-				logger.error("missing appUdid, register:"+robotUser.getRobotRegisterId() + ", robot:" + robotUser.getUid());
+				logger.error("missing appUdid, re:"+robotUser.getRobotRegisterId() + ", robot:" + robotUser.getUid());
 				continue;
 			}
 			appUdid.setPwd(null);

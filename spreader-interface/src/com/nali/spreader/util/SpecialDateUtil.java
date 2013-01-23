@@ -2,6 +2,7 @@ package com.nali.spreader.util;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -49,5 +50,18 @@ public class SpecialDateUtil {
 	
 	public static int getExactThisYear() {
 		return Calendar.getInstance().get(Calendar.YEAR);
+	}
+	
+	public static long getExactTodayMillis() {
+		long millis = System.currentTimeMillis();
+		return getExactDayMillis(millis);
+	}
+	
+	public static long getExactDayMillis(long millis) {
+		long dayOffset = (millis + TimeZone.getDefault().getRawOffset()) % DateUtils.MILLIS_PER_DAY;
+		if (dayOffset != 0) {
+			millis -= dayOffset;
+		}
+		return millis;
 	}
 }
