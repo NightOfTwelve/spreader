@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -64,6 +65,7 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 		List<Long> alreadyExecuUsers = Collections
 				.synchronizedList(new ArrayList<Long>());
 		Date addTime = new Date();
+		ConcurrentHashMap<Long, Long> attentMap = new ConcurrentHashMap<Long, Long>();
 		for (Long toUid : toUids) {
 			User toUser = globalUserService.getUserById(toUid);
 			long fans = toUser.getFans();
@@ -78,18 +80,29 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 			@SuppressWarnings("unchecked")
 			List<Long> noExistsFans = (List<Long>) CollectionUtils.subtract(
 					fromUids, existsFans);
-			List<Long> execuRandom = RandomUtil.randomItems(noExistsFans,
-					addLimit);
-			for (Long fromUid : execuRandom) {
+			List<Long> addFans = RandomUtil.randomItems(noExistsFans, addLimit);
+			for (Long fromUid : addFans) {
+				if (fromUid.equals(toUid)) {
+					continue;
+				}
+				User fromUser = globalUserService.getUserById(fromUid);
+				Long userAttent = fromUser.getAttentions();
+				Long attentions = attentMap.putIfAbsent(fromUid, userAttent);
+				if (attentions == null) {
+					attentions = userAttent;
+				}
 				int execuCount = CollectionUtils.cardinality(fromUid,
 						alreadyExecuUsers);
+				if (attentions >= attentionLimit) {
+					continue;
+				}
 				if (execuCount + 1 <= execuAddLimit.intValue()) {
-					if (fansLimit > fans) {
+					if (fansLimit == null ? true : fansLimit > fans) {
 						addFans(fromUid, toUid, addTime);
-						// logger.debug("fromUid:" + fromUid + ",toUid:" +
-						// toUid);
+						logger.debug("fromUid:" + fromUid + ",toUid:" + toUid);
 						addTime = DateUtils.addMinutes(addTime, execuInterval);
 						alreadyExecuUsers.add(fromUid);
+						attentMap.replace(fromUid, ++attentions);
 						fans++;
 					}
 				}
@@ -129,33 +142,36 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 
 	@Override
 	public void init(AddFansToXimalayaConfig config) {
-		execuInterval = config.getExecuInterval();
-		attentionLimit = config.getAttentionLimit();
 		fansLimit = config.getFansLimit();
+		attentionLimit = config.getAttentionLimit();
+		if (attentionLimit == null || attentionLimit <= 0) {
+			attentionLimit = 100L;
+		}
+		execuInterval = config.getExecuInterval();
 		if (execuInterval == null || execuInterval <= 0) {
 			execuInterval = AddUserFans.AddFansDto.DEFAULT_ADD_FANS_INTERVAL;
 		}
 		addLimit = config.getAddCount();
-		if (addLimit == null) {
+		if (addLimit == null || addLimit <= 0) {
 			addLimit = 1;
 		}
 		execuAddLimit = config.getExecuAddCount();
-		if (execuAddLimit == null) {
+		if (execuAddLimit == null || execuAddLimit <= 0) {
 			execuAddLimit = 1;
 		}
 	}
 
 	public static class AddFansToXimalayaConfig implements Serializable {
 		private static final long serialVersionUID = 8861711636679339664L;
-		@PropertyDescription("机器人执行关注的间隔时间(分钟)")
+		@PropertyDescription("机器人执行关注的间隔时间(分钟，默认3分钟)")
 		private Integer execuInterval;
-		@PropertyDescription("机器人已关注的次数上限(超过此上限该机器人不再分派任务)")
+		@PropertyDescription("机器人已关注的次数上限(超过此上限该机器人不再分派任务，默认100)")
 		private Long attentionLimit;
 		@PropertyDescription("被关注人的粉丝数上限(超过此上限该用户不再添加粉丝,不填则不受限)")
 		private Long fansLimit;
-		@PropertyDescription("单个账户被加粉次数上限(单次)")
+		@PropertyDescription("单个账户被加粉次数上限(单次，默认1)")
 		private Integer addCount;
-		@PropertyDescription("机器人执行关注的次数上限(单次策略)")
+		@PropertyDescription("机器人执行关注的次数上限(单次策略，默认1)")
 		private Integer execuAddCount;
 
 		public Integer getExecuInterval() {
@@ -197,21 +213,5 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 		public void setExecuAddCount(Integer execuAddCount) {
 			this.execuAddCount = execuAddCount;
 		}
-	}
-
-	public static void main(String[] args) {
-		List<Integer> list = new ArrayList<Integer>();
-		list.add(1);
-		list.add(2);
-		list.add(2);
-		list.add(3);
-		list.add(1);
-		list.add(1);
-		list.add(5);
-
-		Map<Integer, Integer> map = Collections.synchronizedMap(CollectionUtils
-				.getCardinalityMap(list));
-		System.out.println(map);
-
 	}
 }

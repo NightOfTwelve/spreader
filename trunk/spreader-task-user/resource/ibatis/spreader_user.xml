@@ -406,7 +406,7 @@
 			</iterate>
 		</isNotEmpty>
 		<isNotNull prepend="and" property="attentionLimit">
-			attentions &lt;=
+			attentions &lt;
 			#attentionLimit#
 		</isNotNull>
 	</select>
@@ -424,7 +424,7 @@
 				</iterate>
 			</isNotEmpty>
 			<isNotNull prepend="and" property="fansLimit">
-				fans &lt;=
+				fans &lt;
 				#fansLimit#
 			</isNotNull>
 		</dynamic>
