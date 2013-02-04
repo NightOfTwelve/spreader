@@ -46,7 +46,8 @@ import com.nali.spreader.service.IGlobalUserService;
 
 @Service
 public class ContentService implements IContentService {
-	private static final Pattern urlPattern = Pattern.compile("http://.*/(\\d*)/(\\w*)");
+	private static final Pattern urlPattern = Pattern
+			.compile("http://.*/(\\d*)/(\\w*)");
 	private static final Long DEFAULT_CATEGORY_ID = 0L;
 	private static Logger logger = Logger.getLogger(ContentService.class);
 	@Autowired
@@ -111,8 +112,9 @@ public class ContentService implements IContentService {
 		checkNotNull(content.getWebsiteId());
 		checkNotNull(content.getWebsiteUid());
 		checkNotNull(content.getEntry());
-		Content exist = findByUniqueKey(content.getType(), content.getWebsiteId(),
-				content.getWebsiteUid(), content.getEntry());
+		Content exist = findByUniqueKey(content.getType(),
+				content.getWebsiteId(), content.getWebsiteUid(),
+				content.getEntry());
 		if (exist != null) {
 			if (exist.getWebsiteContentId() == null) {
 				saveContent(content, exist);
@@ -122,11 +124,13 @@ public class ContentService implements IContentService {
 		}
 		if (content.getUid() == null) {
 			UserExample example = new UserExample();
-			example.createCriteria().andWebsiteIdEqualTo(content.getWebsiteId())
+			example.createCriteria()
+					.andWebsiteIdEqualTo(content.getWebsiteId())
 					.andWebsiteUidEqualTo(content.getWebsiteUid());
 			List<User> users = crudUserDao.selectByExample(example);
 			if (users.size() == 0) {
-				logger.error("user not exists websiteId,websiteUid:" + content.getWebsiteId() + ","
+				logger.error("user not exists websiteId,websiteUid:"
+						+ content.getWebsiteId() + ","
 						+ content.getWebsiteUid());
 				return;
 			}
@@ -156,12 +160,14 @@ public class ContentService implements IContentService {
 		contentCategoryMatch.registerContentId(contentId, categoryIds);
 	}
 
-	private Content findByUniqueKey(Integer type, Integer websiteId, Long websiteUid, String entry) {
+	private Content findByUniqueKey(Integer type, Integer websiteId,
+			Long websiteUid, String entry) {
 		ContentExample example = new ContentExample();
-		example.createCriteria().andTypeEqualTo(type).andWebsiteIdEqualTo(websiteId)
+		example.createCriteria().andTypeEqualTo(type)
+				.andWebsiteIdEqualTo(websiteId)
 				.andWebsiteUidEqualTo(websiteUid).andEntryEqualTo(entry);
-		Content content = contentMassDataDao.selectContentsByUniqueKey(type, websiteId, websiteUid,
-				entry);
+		Content content = contentMassDataDao.selectContentsByUniqueKey(type,
+				websiteId, websiteUid, entry);
 		return content;
 	}
 
@@ -192,8 +198,10 @@ public class ContentService implements IContentService {
 	}
 
 	@Override
-	public Content assignContent(Integer websiteId, Long websiteUid, String entry) {
-		Content exist = findByUniqueKey(Content.TYPE_WEIBO, websiteId, websiteUid, entry);
+	public Content assignContent(Integer websiteId, Long websiteUid,
+			String entry) {
+		Content exist = findByUniqueKey(Content.TYPE_WEIBO, websiteId,
+				websiteUid, entry);
 		if (exist != null) {
 			return exist;
 		}
@@ -256,7 +264,8 @@ public class ContentService implements IContentService {
 		// 唯一键必须都不为空
 		if (contentType != null && websiteId != null && websiteUid != null
 				&& StringUtils.isNotEmpty(entry)) {
-			Content exists = this.findByUniqueKey(contentType, websiteId, websiteUid, entry);
+			Content exists = this.findByUniqueKey(contentType, websiteId,
+					websiteUid, entry);
 			return saveContent(content, exists);
 		} else {
 			throw new IllegalArgumentException("uniqueKey contains null value");
@@ -271,8 +280,9 @@ public class ContentService implements IContentService {
 		String text = content.getContent();
 		// 设置内容长度 内容为空抛异常
 		if (StringUtils.isEmpty(text)) {
-			throw new IllegalArgumentException("content is empty, contentType=" + contentType
-					+ ",websiteId=" + websiteId + ",entry=" + entry + ",websiteUid=" + websiteUid);
+			throw new IllegalArgumentException("content is empty, contentType="
+					+ contentType + ",websiteId=" + websiteId + ",entry="
+					+ entry + ",websiteUid=" + websiteUid);
 		} else {
 			// 设置@数
 			int atCount = this.charMatch(text, Content.AT_STR.charAt(0));
@@ -280,7 +290,8 @@ public class ContentService implements IContentService {
 			content.setContentLength(text.length());
 		}
 		if (content.getUid() == null) {
-			Long uid = this.globalUserService.getOrAssignUid(websiteId, websiteUid);
+			Long uid = this.globalUserService.getOrAssignUid(websiteId,
+					websiteUid);
 			content.setUid(uid);
 		}
 		if (exists != null) {
@@ -331,7 +342,8 @@ public class ContentService implements IContentService {
 	public int saveContentKeyword(Long contentId, Long... keywords) {
 		Assert.notNull(contentId, "contentId is null");
 		Assert.notNull(keywords, "keywordId is null");
-		return this.contentMassDataDao.upsertContentKeyword(contentId, keywords);
+		return this.contentMassDataDao
+				.upsertContentKeyword(contentId, keywords);
 	}
 
 	@Override
@@ -345,7 +357,8 @@ public class ContentService implements IContentService {
 
 	@Override
 	public List<ContentKeywordInfoDto> findKeywordByContentId(Long contentId) {
-		List<Long> keywordList = this.contentMassDataDao.selectContentKeywords(contentId);
+		List<Long> keywordList = this.contentMassDataDao
+				.selectContentKeywords(contentId);
 		if (!CollectionUtils.isEmpty(keywordList)) {
 			return this.keywordDao.selectContentKeywordByKids(keywordList);
 		}
@@ -353,7 +366,8 @@ public class ContentService implements IContentService {
 	}
 
 	@Override
-	public List<Map<String, Long>> findContentByPostContentDto(PostWeiboContentDto dto) {
+	public List<Map<String, Long>> findContentByPostContentDto(
+			PostWeiboContentDto dto) {
 		return this.contentMassDataDao.queryPostContents(dto);
 	}
 
@@ -367,5 +381,15 @@ public class ContentService implements IContentService {
 			return buff.toString();
 		}
 		return null;
+	}
+
+	@Override
+	public Long getLastFetchContentId() {
+		return contentMassDataDao.getSpiderContentId();
+	}
+
+	@Override
+	public void recordLastFetchContentId(Long contentId) {
+		contentMassDataDao.setSpiderContentId(contentId);
 	}
 }

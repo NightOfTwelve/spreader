@@ -52,6 +52,18 @@ public class ContentQueryParamsDto implements Serializable {
 	 * 网站Uid
 	 */
 	private Long websiteUid;
+	/**
+	 * 最后一次记录的ID
+	 */
+	private Long lastId;
+
+	public Long getLastId() {
+		return lastId;
+	}
+
+	public void setLastId(Long lastId) {
+		this.lastId = lastId;
+	}
 
 	public Long getWebsiteUid() {
 		return websiteUid;
