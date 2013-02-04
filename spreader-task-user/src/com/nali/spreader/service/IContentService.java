@@ -105,4 +105,19 @@ public interface IContentService {
 	 * @return
 	 */
 	String getContentUrl(Content c);
+	
+	/**
+	 * 获取最后一次爬取的ID
+	 * 
+	 * @return
+	 */
+	Long getLastFetchContentId();
+
+	/**
+	 * 记录最后一次爬取的ID
+	 * 
+	 * @param contentId
+	 * @return
+	 */
+	void recordLastFetchContentId(Long contentId);
 }

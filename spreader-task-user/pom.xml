@@ -26,11 +26,20 @@
 			<artifactId>spreader-test</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.9</version>
+		</dependency>
 		<dependency>
 			<groupId>com.nali.dal</groupId>
 			<artifactId>dal-x</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.6.3</version>
 		</dependency>
 	</dependencies>
 </project>

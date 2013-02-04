@@ -1,8 +1,6 @@
 package com.nali.spreader.spider.service;
 
-import java.util.List;
-
-import com.nali.spreader.data.KeyValue;
+import com.nali.spreader.dto.WeiboAndComments;
 
 /**
  * 爬取微博信息服务类
@@ -18,5 +16,5 @@ public interface ICommentsService {
 	 * @param page
 	 * @return
 	 */
-	KeyValue<String, List<String>> getWeiboAndComments(String url, int page);
+	WeiboAndComments getWeiboAndComments(String url, int page);
 }
