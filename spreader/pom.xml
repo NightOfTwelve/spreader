@@ -412,6 +412,7 @@
 		<module>../spreader-task-register</module>
 		<module>../spreader-user-group</module>
 		<module>../spreader-task-user</module>
+		<module>../spreader-content-library</module>
 
 		<module>../spreader-front</module>
 		<module>../spreader-action-config</module>
@@ -419,6 +420,5 @@
 		<module>../spreader-login-config</module>
 		<module>../spreader-task-dispatch</module>
 		<module>../spreader-client</module>
-
 	</modules>
 </project>
