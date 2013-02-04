@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		"
+	default-lazy-init="true">
+
+	<bean id="dal.selectReply" class="com.nali.dal.statement.query.SelectStatement">
+		<property name="select">
+			<list>
+				<value>id</value>
+				<value>content</value>
+				<value>atCount</value>
+				<value>reReplyCount</value>
+				<value>topicCount</value>
+				<value>contentLength</value>
+			</list>
+		</property>
+		<property name="from" value="reply" />
+		<property name="orderBy" value="-id" />
+	</bean>
+	<bean id="dal.insertReply" class="com.nali.dal.statement.upsert.InserterStatement">
+		<property name="into" value="reply" />
+		<property name="values">
+			<list>
+				<value>id</value>
+				<value>content</value>
+				<value>atCount</value>
+				<value>reReplyCount</value>
+				<value>topicCount</value>
+				<value>contentLength</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="dal.upsertReply" class="com.nali.dal.statement.upsert.OperateUpsertStatement">
+		<property name="into" value="reply" />
+		<property name="modify">
+			<list>
+				<value>set(id, id)</value>
+				<value>set(content, content)</value>
+				<value>set(atCount, atCount)</value>
+				<value>set(reReplyCount, reReplyCount)</value>
+				<value>set(topicCount, topicCount)</value>
+				<value>set(contentLength, contentLength)</value>
+			</list>
+		</property>
+		<property name="match">
+			<list>
+				<value>eq(id, id)</value>
+			</list>
+		</property>
+		<property name="upsert" value="false" />
+	</bean>
+</beans>
