@@ -86,24 +86,24 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "客户端任务检索",
 									leaf : true,
 									url : '../taskstat/init'
-								},{
+								}, {
 									id : 'iprecord',
 									text : "客户端IP查询",
 									leaf : true,
 									url : '/spreader-front/iprecord/init'
-								}, 
-//									{
-//									id : 'clientTaskStatDtl',
-//									text : "客户端任务详细信息",
-//									leaf : true,
-//									url : '../taskstatdtl/init'
-//								}, 
-									{
+								},
+								// {
+								// id : 'clientTaskStatDtl',
+								// text : "客户端任务详细信息",
+								// leaf : true,
+								// url : '../taskstatdtl/init'
+								// },
+								{
 									id : 'clientTaskStatReport',
 									text : "报表查询",
 									leaf : true,
 									url : '../taskreport/init'
-								},{
+								}, {
 									id : 'helpManage',
 									text : "帮助信息维护",
 									leaf : true,
@@ -148,6 +148,11 @@ var menuTree_ContentLibQuery = new Ext.tree.TreePanel({
 									text : "图片库检索",
 									leaf : true,
 									url : '../photolib/init'
+								}, {
+									id : 'replySearch',
+									text : "微博回复搜索",
+									leaf : true,
+									url : '../reply/init'
 								}]
 					}),
 			// 添加监听事件
