@@ -55,7 +55,8 @@ public interface IContentMassDataDao {
 	 * @param entry
 	 * @return
 	 */
-	Content selectContentsByUniqueKey(Integer type, Integer websiteId, Long websiteUid, String entry);
+	Content selectContentsByUniqueKey(Integer type, Integer websiteId,
+			Long websiteUid, String entry);
 
 	/**
 	 * 更新Content，必须分配contentId
@@ -112,4 +113,18 @@ public interface IContentMassDataDao {
 	 * @return
 	 */
 	List<Long> selectContentKeywords(Long contentId);
+
+	/**
+	 * 获得最后一次爬取的内容ID
+	 * 
+	 * @return
+	 */
+	Long getSpiderContentId();
+
+	/**
+	 * 设置最后一次爬取的内容ID
+	 * 
+	 * @param id
+	 */
+	void setSpiderContentId(Long id);
 }

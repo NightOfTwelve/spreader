@@ -11,6 +11,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
@@ -41,15 +42,21 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 	@Autowired
 	private IIdentityService identityService;
 	private static final String APP_NAME = "spreader.content";
+	private static final String SPIDER_LAST_CONTENT_ID = "spreader_user_spider_last_content_id";
 	private static Map<String, Long[]> CONDITIONS = new ConcurrentHashMap<String, Long[]>();
-	private BeanProperties bean = new BeanProperties(null, Content.class, "nickName",
-			"webSiteName", "typeName", "tags", "url", "refContent", "shard", "limit");
-	private static final Logger LOGGER = Logger.getLogger(ContentMassDataDaoImpl.class);
+	private BeanProperties bean = new BeanProperties(null, Content.class,
+			"nickName", "webSiteName", "typeName", "tags", "url", "refContent",
+			"shard", "limit");
+	private static final Logger LOGGER = Logger
+			.getLogger(ContentMassDataDaoImpl.class);
+	@Autowired
+	private RedisTemplate redisTemplate;
 
 	@Override
 	public Content selectByPrimaryKey(Long contentId) {
-		Map<String, Object> dataMap = dalTemplate.selectForObject("dal.selectContent",
-				new ExpressionValue<Criteria>("id", Criteria.eq, contentId));
+		Map<String, Object> dataMap = dalTemplate.selectForObject(
+				"dal.selectContent", new ExpressionValue<Criteria>("id",
+						Criteria.eq, contentId));
 		return bean.convertBean(dataMap);
 	}
 
@@ -82,17 +89,19 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 	}
 
 	@Override
-	public Content selectContentsByUniqueKey(Integer type, Integer websiteId, Long websiteUid,
-			String entry) {
+	public Content selectContentsByUniqueKey(Integer type, Integer websiteId,
+			Long websiteUid, String entry) {
 		Assert.notNull(type, "type is null");
 		Assert.notNull(websiteId, "websiteId is null");
 		Assert.notNull(websiteUid, "websiteUid is null");
 		Assert.notNull(entry, "entry is null");
-		Map<String, Object> dataMap = dalTemplate.selectForObject("dal.selectContent",
-				new ExpressionValue<Criteria>("type", Criteria.eq, type),
-				new ExpressionValue<Criteria>("websiteId", Criteria.eq, websiteId),
-				new ExpressionValue<Criteria>("websiteUid", Criteria.eq, websiteUid),
-				new ExpressionValue<Criteria>("entry", Criteria.eq, entry));
+		Map<String, Object> dataMap = dalTemplate.selectForObject(
+				"dal.selectContent", new ExpressionValue<Criteria>("type",
+						Criteria.eq, type), new ExpressionValue<Criteria>(
+						"websiteId", Criteria.eq, websiteId),
+				new ExpressionValue<Criteria>("websiteUid", Criteria.eq,
+						websiteUid), new ExpressionValue<Criteria>("entry",
+						Criteria.eq, entry));
 		return bean.convertBean(dataMap);
 	}
 
@@ -119,7 +128,8 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 		Limit limit = param.getLit();
 		List<Content> result = new ArrayList<Content>();
 		List<ExpressionValue<Criteria>> criteriaList = contentLibCondition(param);
-		ExpressionValue<Criteria>[] cTmp = new ExpressionValue[criteriaList.size()];
+		ExpressionValue<Criteria>[] cTmp = new ExpressionValue[criteriaList
+				.size()];
 		List<Map<String, Object>> tmp = dalTemplate.select("dal.selectContent",
 				criteriaList.toArray(cTmp), limit.offset, limit.maxRows);
 		if (!CollectionUtils.isEmpty(tmp)) {
@@ -137,7 +147,8 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 	 * @param param
 	 * @return
 	 */
-	private List<ExpressionValue<Criteria>> contentLibCondition(ContentQueryParamsDto param) {
+	private List<ExpressionValue<Criteria>> contentLibCondition(
+			ContentQueryParamsDto param) {
 		List<ExpressionValue<Criteria>> criteriaList = new ArrayList<ExpressionValue<Criteria>>();
 		String categoryName = param.getCategoryName();
 		String keywordName = param.getKeyword();
@@ -148,27 +159,39 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 		String userName = param.getUserName();
 		Long[] keywords = getKeywordIdArrays(categoryName, keywordName);
 		Long websiteUid = param.getWebsiteUid();
+		Long lastContentId = param.getLastId();
+		if (lastContentId != null) {
+			criteriaList.add(new ExpressionValue<Criteria>("id", Criteria.gt,
+					lastContentId));
+		}
 		if (keywords != null) {
-			criteriaList.add(new ExpressionValue<Criteria>("keywords", Criteria.in, keywords));
+			criteriaList.add(new ExpressionValue<Criteria>("keywords",
+					Criteria.in, keywords));
 		}
 		if (sPubDate != null) {
-			criteriaList.add(new ExpressionValue<Criteria>("pubDate", Criteria.gte, sPubDate));
+			criteriaList.add(new ExpressionValue<Criteria>("pubDate",
+					Criteria.gte, sPubDate));
 		}
 		if (ePubDate != null) {
-			criteriaList.add(new ExpressionValue<Criteria>("pubDate", Criteria.lte, ePubDate));
+			criteriaList.add(new ExpressionValue<Criteria>("pubDate",
+					Criteria.lte, ePubDate));
 		}
 		if (sSyncDate != null) {
-			criteriaList.add(new ExpressionValue<Criteria>("syncDate", Criteria.gte, sSyncDate));
+			criteriaList.add(new ExpressionValue<Criteria>("syncDate",
+					Criteria.gte, sSyncDate));
 		}
 		if (eSyncDate != null) {
-			criteriaList.add(new ExpressionValue<Criteria>("syncDate", Criteria.lte, eSyncDate));
+			criteriaList.add(new ExpressionValue<Criteria>("syncDate",
+					Criteria.lte, eSyncDate));
 		}
 		if (StringUtils.isNotEmpty(userName)) {
 			Long[] users = this.getUidArrays(userName);
-			criteriaList.add(new ExpressionValue<Criteria>("uid", Criteria.in, users));
+			criteriaList.add(new ExpressionValue<Criteria>("uid", Criteria.in,
+					users));
 		}
 		if (websiteUid != null) {
-			criteriaList.add(new ExpressionValue<Criteria>("websiteUid", Criteria.eq, websiteUid));
+			criteriaList.add(new ExpressionValue<Criteria>("websiteUid",
+					Criteria.eq, websiteUid));
 		}
 		return criteriaList;
 	}
@@ -244,69 +267,74 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 		Range<Integer> refCount = param.getRefCount();
 		Range<Integer> replyCount = param.getReplyCount();
 		if (ArrayUtils.isNotEmpty(keywords)) {
-			criteriaList.add(new ExpressionValue<Criteria>("keywords", Criteria.in, keywords));
+			criteriaList.add(new ExpressionValue<Criteria>("keywords",
+					Criteria.in, keywords));
 		}
 		if (uids != null) {
-			criteriaList.add(new ExpressionValue<Criteria>("uid", Criteria.in, uids));
+			criteriaList.add(new ExpressionValue<Criteria>("uid", Criteria.in,
+					uids));
 		}
 		if (Boolean.TRUE.equals(isPic)) {
-			criteriaList.add(new ExpressionValue<Criteria>("picUrl", Criteria.ne, null));
+			criteriaList.add(new ExpressionValue<Criteria>("picUrl",
+					Criteria.ne, null));
 		}
 		if (Boolean.TRUE.equals(isAudio)) {
-			criteriaList.add(new ExpressionValue<Criteria>("audioUrl", Criteria.ne, null));
+			criteriaList.add(new ExpressionValue<Criteria>("audioUrl",
+					Criteria.ne, null));
 		}
 		if (Boolean.TRUE.equals(isVideo)) {
-			criteriaList.add(new ExpressionValue<Criteria>("videoUrl", Criteria.ne, null));
+			criteriaList.add(new ExpressionValue<Criteria>("videoUrl",
+					Criteria.ne, null));
 		}
 		if (atCount != null) {
 			if (atCount.getGte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("atCount", Criteria.gte, atCount
-						.getGte()));
+				criteriaList.add(new ExpressionValue<Criteria>("atCount",
+						Criteria.gte, atCount.getGte()));
 			}
 			if (atCount.getLte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("atCount", Criteria.lte, atCount
-						.getLte()));
+				criteriaList.add(new ExpressionValue<Criteria>("atCount",
+						Criteria.lte, atCount.getLte()));
 			}
 		}
 		if (contentLength != null) {
 			if (contentLength.getGte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("contentLength", Criteria.gte,
-						contentLength.getGte()));
+				criteriaList.add(new ExpressionValue<Criteria>("contentLength",
+						Criteria.gte, contentLength.getGte()));
 			}
 			if (contentLength.getLte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("contentLength", Criteria.lte,
-						contentLength.getLte()));
+				criteriaList.add(new ExpressionValue<Criteria>("contentLength",
+						Criteria.lte, contentLength.getLte()));
 			}
 		}
 		if (pubDate != null) {
 			if (pubDate.getGte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("pubDate", Criteria.gte, pubDate
-						.getGte()));
+				criteriaList.add(new ExpressionValue<Criteria>("pubDate",
+						Criteria.gte, pubDate.getGte()));
 			}
 		}
 		if (refCount != null) {
 			if (refCount.getGte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("refCount", Criteria.gte, refCount
-						.getGte()));
+				criteriaList.add(new ExpressionValue<Criteria>("refCount",
+						Criteria.gte, refCount.getGte()));
 			}
 			if (refCount.getLte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("refCount", Criteria.lte, refCount
-						.getLte()));
+				criteriaList.add(new ExpressionValue<Criteria>("refCount",
+						Criteria.lte, refCount.getLte()));
 			}
 		}
 		if (replyCount != null) {
 			if (replyCount.getGte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("replyCount", Criteria.gte,
-						replyCount.getGte()));
+				criteriaList.add(new ExpressionValue<Criteria>("replyCount",
+						Criteria.gte, replyCount.getGte()));
 			}
 			if (replyCount.getLte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("replyCount", Criteria.lte,
-						replyCount.getLte()));
+				criteriaList.add(new ExpressionValue<Criteria>("replyCount",
+						Criteria.lte, replyCount.getLte()));
 			}
 		}
 		ExpressionValue[] tmp = new ExpressionValue[criteriaList.size()];
-		List<Map<String, Object>> tmpList = this.dalTemplate.select("dal.selectContentId",
-				criteriaList.toArray(tmp));
+		List<Map<String, Object>> tmpList = this.dalTemplate.select(
+				"dal.selectContentId", criteriaList.toArray(tmp));
 		List<Long> result = new ArrayList<Long>();
 		if (!CollectionUtils.isEmpty(tmpList)) {
 			for (Map<String, Object> m : tmpList) {
@@ -321,8 +349,10 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 	public int countContentLibraryRows(ContentQueryParamsDto param) {
 		Assert.notNull(param, "param is null");
 		List<ExpressionValue<Criteria>> criteriaList = contentLibCondition(param);
-		ExpressionValue<Criteria>[] cTmp = new ExpressionValue[criteriaList.size()];
-		Long tmp = dalTemplate.count("dal.selectContent", criteriaList.toArray(cTmp));
+		ExpressionValue<Criteria>[] cTmp = new ExpressionValue[criteriaList
+				.size()];
+		Long tmp = dalTemplate.count("dal.selectContent",
+				criteriaList.toArray(cTmp));
 		return tmp.intValue();
 	}
 
@@ -349,8 +379,9 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 	@Override
 	public List<Long> selectContentKeywords(Long contentId) {
 		Assert.notNull(contentId, "contentId is null");
-		Map<String, Object> dataMap = dalTemplate.selectForObject("dal.selectContentKeywords",
-				new ExpressionValue<Criteria>("id", Criteria.eq, contentId));
+		Map<String, Object> dataMap = dalTemplate.selectForObject(
+				"dal.selectContentKeywords", new ExpressionValue<Criteria>(
+						"id", Criteria.eq, contentId));
 		if (dataMap != null) {
 			if (dataMap.containsKey("keywords")) {
 				List<Long> keywords = (List<Long>) dataMap.get("keywords");
@@ -375,64 +406,69 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 		Range<Integer> refCount = param.getRefCount();
 		Range<Integer> replyCount = param.getReplyCount();
 		if (ArrayUtils.isNotEmpty(keywords)) {
-			criteriaList.add(new ExpressionValue<Criteria>("keywords", Criteria.in, keywords));
+			criteriaList.add(new ExpressionValue<Criteria>("keywords",
+					Criteria.in, keywords));
 		}
 		if (uids != null) {
-			criteriaList.add(new ExpressionValue<Criteria>("uid", Criteria.in, uids));
+			criteriaList.add(new ExpressionValue<Criteria>("uid", Criteria.in,
+					uids));
 		}
 		if (Boolean.TRUE.equals(isPic)) {
-			criteriaList.add(new ExpressionValue<Criteria>("picUrl", Criteria.ne, null));
+			criteriaList.add(new ExpressionValue<Criteria>("picUrl",
+					Criteria.ne, null));
 		}
 		if (Boolean.TRUE.equals(isAudio)) {
-			criteriaList.add(new ExpressionValue<Criteria>("audioUrl", Criteria.ne, null));
+			criteriaList.add(new ExpressionValue<Criteria>("audioUrl",
+					Criteria.ne, null));
 		}
 		if (Boolean.TRUE.equals(isVideo)) {
-			criteriaList.add(new ExpressionValue<Criteria>("videoUrl", Criteria.ne, null));
+			criteriaList.add(new ExpressionValue<Criteria>("videoUrl",
+					Criteria.ne, null));
 		}
 		if (atCount != null) {
 			if (atCount.getGte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("atCount", Criteria.gte, atCount
-						.getGte()));
+				criteriaList.add(new ExpressionValue<Criteria>("atCount",
+						Criteria.gte, atCount.getGte()));
 			}
 			if (atCount.getLte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("atCount", Criteria.lte, atCount
-						.getLte()));
+				criteriaList.add(new ExpressionValue<Criteria>("atCount",
+						Criteria.lte, atCount.getLte()));
 			}
 		}
 		if (contentLength != null) {
 			if (contentLength.getGte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("contentLength", Criteria.gte,
-						contentLength.getGte()));
+				criteriaList.add(new ExpressionValue<Criteria>("contentLength",
+						Criteria.gte, contentLength.getGte()));
 			}
 			if (contentLength.getLte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("contentLength", Criteria.lte,
-						contentLength.getLte()));
+				criteriaList.add(new ExpressionValue<Criteria>("contentLength",
+						Criteria.lte, contentLength.getLte()));
 			}
 		}
 		if (pubDate != null) {
 			if (pubDate.getGte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("pubDate", Criteria.gte, pubDate
-						.getGte()));
+				criteriaList.add(new ExpressionValue<Criteria>("pubDate",
+						Criteria.gte, pubDate.getGte()));
 			}
 		}
 		if (refCount != null) {
 			if (refCount.getGte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("refCount", Criteria.gte, refCount
-						.getGte()));
+				criteriaList.add(new ExpressionValue<Criteria>("refCount",
+						Criteria.gte, refCount.getGte()));
 			}
 			if (refCount.getLte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("refCount", Criteria.lte, refCount
-						.getLte()));
+				criteriaList.add(new ExpressionValue<Criteria>("refCount",
+						Criteria.lte, refCount.getLte()));
 			}
 		}
 		if (replyCount != null) {
 			if (replyCount.getGte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("replyCount", Criteria.gte,
-						replyCount.getGte()));
+				criteriaList.add(new ExpressionValue<Criteria>("replyCount",
+						Criteria.gte, replyCount.getGte()));
 			}
 			if (replyCount.getLte() != null) {
-				criteriaList.add(new ExpressionValue<Criteria>("replyCount", Criteria.lte,
-						replyCount.getLte()));
+				criteriaList.add(new ExpressionValue<Criteria>("replyCount",
+						Criteria.lte, replyCount.getLte()));
 			}
 		}
 		ExpressionValue[] tmp = new ExpressionValue[criteriaList.size()];
@@ -448,5 +484,17 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public Long getSpiderContentId() {
+		return (Long) redisTemplate.opsForValue().get(SPIDER_LAST_CONTENT_ID);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setSpiderContentId(Long id) {
+		Assert.notNull(id, " contentId is null");
+		redisTemplate.opsForValue().getAndSet(SPIDER_LAST_CONTENT_ID, id);
 	}
 }
