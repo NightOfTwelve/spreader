@@ -22,6 +22,7 @@ public enum SimpleActionConfig {
 	fetchKeyword(24L),
 	fetchKeywordContent(25L),
 	fetchNotice(26L),
+	fetchWeiboDetail(27L),
 	
 	//apple
 	registerApple(2001L),
