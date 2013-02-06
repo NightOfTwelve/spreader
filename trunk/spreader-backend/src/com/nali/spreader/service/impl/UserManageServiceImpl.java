@@ -43,7 +43,8 @@ import com.nali.spreader.utils.PhotoHelper;
 
 @Service
 public class UserManageServiceImpl implements IUserManageService {
-	private static final Logger LOGGER = Logger.getLogger(UserManageServiceImpl.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(UserManageServiceImpl.class);
 	@Autowired
 	private IUserDao userDao;
 	@Autowired
@@ -70,8 +71,6 @@ public class UserManageServiceImpl implements IUserManageService {
 				if (p != null) {
 					String pUri = p.getPicUrl();
 					u.setAvatarUrl(PhotoHelper.formatPhotoUrl(pUri));
-				} else {
-					LOGGER.info("未找到对应头像信息");
 				}
 			}
 			if (utList.size() > 0) {
@@ -118,8 +117,8 @@ public class UserManageServiceImpl implements IUserManageService {
 	}
 
 	@Override
-	public PageResult<RobotRegister> findRobotRegisterInfo(String nickName, String province,
-			Limit lit) {
+	public PageResult<RobotRegister> findRobotRegisterInfo(String nickName,
+			String province, Limit lit) {
 		RobotRegisterExample exp = new RobotRegisterExample();
 		Criteria cr = exp.createCriteria();
 		if (StringUtils.isNotEmpty(nickName)) {
@@ -157,7 +156,8 @@ public class UserManageServiceImpl implements IUserManageService {
 		if (range.checkNotNull()) {
 			randomer = new NumberRandomer(range.getGte(), range.getLte() + 1);
 		} else {
-			randomer = new NumberRandomer(ContentKeywordsConfig.DEFAULT_RANDOM_GTE,
+			randomer = new NumberRandomer(
+					ContentKeywordsConfig.DEFAULT_RANDOM_GTE,
 					ContentKeywordsConfig.DEFAULT_RANDOM_LTE + 1);
 		}
 		List<T> result;
@@ -189,7 +189,8 @@ public class UserManageServiceImpl implements IUserManageService {
 	 * springframework.web.multipart.commons.CommonsMultipartFile)
 	 */
 	@Override
-	public List<KeyValue<RobotUser, User>> importWeiboAccount(CommonsMultipartFile file) {
+	public List<KeyValue<RobotUser, User>> importWeiboAccount(
+			CommonsMultipartFile file) {
 		if (file.isEmpty()) {
 			throw new IllegalArgumentException("import file is empty");
 		}
@@ -212,52 +213,61 @@ public class UserManageServiceImpl implements IUserManageService {
 						XSSFCell emailCell = row.getCell(2);
 						// password
 						XSSFCell pwdCell = row.getCell(3);
-						if (websiteUidCell != null && websiteUidCell != null && emailCell != null
-								&& pwdCell != null) {
+						if (websiteUidCell != null && websiteUidCell != null
+								&& emailCell != null && pwdCell != null) {
 							Long websiteUid = null;
 							// 该单元格如果为数字型直接转为Long
 							if (websiteUidCell.getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
-								websiteUid = ((Double) websiteUidCell.getNumericCellValue())
-										.longValue();
+								websiteUid = ((Double) websiteUidCell
+										.getNumericCellValue()).longValue();
 							} else {
-								String websiteUidStr = websiteUidCell.getRichStringCellValue()
-										.getString();
+								String websiteUidStr = websiteUidCell
+										.getRichStringCellValue().getString();
 								if (StringUtils.isNotBlank(websiteUidStr)) {
 									websiteUid = Long.parseLong(websiteUidStr);
 								}
 							}
-							String emailAccount = emailCell.getRichStringCellValue().getString();
-							String pwd = pwdCell.getRichStringCellValue().getString();
+							String emailAccount = emailCell
+									.getRichStringCellValue().getString();
+							String pwd = pwdCell.getRichStringCellValue()
+									.getString();
 							// 有些空行也会读出来，这里做过滤
-							if (websiteUid != null && StringUtils.isNotBlank(emailAccount)
+							if (websiteUid != null
+									&& StringUtils.isNotBlank(emailAccount)
 									&& StringUtils.isNotBlank(pwd)) {
 								String nickName = null;
 								if (nickNameCell != null) {
-									int nickNameCellType = nickNameCell.getCellType();
+									int nickNameCellType = nickNameCell
+											.getCellType();
 									if (nickNameCellType != XSSFCell.CELL_TYPE_STRING) {
 										if (nickNameCellType == XSSFCell.CELL_TYPE_NUMERIC) {
 											nickName = ((Long) ((Double) nickNameCell
-													.getNumericCellValue()).longValue()).toString();
+													.getNumericCellValue())
+													.longValue()).toString();
 										} else {
 											throw new IllegalArgumentException(
 													"nickNameCellType is not numeric");
 										}
 									} else {
-										nickName = nickNameCell.getRichStringCellValue()
+										nickName = nickNameCell
+												.getRichStringCellValue()
 												.getString();
 									}
 								}
 								KeyValue<RobotUser, User> kv = new KeyValue<RobotUser, User>();
 								RobotUser robotUser = new RobotUser();
-								robotUser.setRobotRegisterId(IMPORT_ROBOT_REGISTER_ID);
-								robotUser.setAccountState(RobotUser.ACCOUNT_STATE_NORMAL);
+								robotUser
+										.setRobotRegisterId(IMPORT_ROBOT_REGISTER_ID);
+								robotUser
+										.setAccountState(RobotUser.ACCOUNT_STATE_NORMAL);
 								robotUser.setWebsiteId(Website.weibo.getId());
 								robotUser.setWebsiteUid(websiteUid);
 								robotUser.setLoginName(emailAccount);
 								robotUser.setLoginPwd(pwd);
 								kv.setKey(robotUser);
-								User existsUser = globaUserService.findByUniqueKey(
-										Website.weibo.getId(), websiteUid);
+								User existsUser = globaUserService
+										.findByUniqueKey(Website.weibo.getId(),
+												websiteUid);
 								// 已存在，设置isrobot true
 								if (existsUser != null) {
 									existsUser.setEmail(emailAccount);

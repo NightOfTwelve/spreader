@@ -7,6 +7,7 @@
 #parse("/show/comm/WebsiteSelectCmpInclude.vm")
 #parse("/show/comm/FileUpoadFieldCmpInclude.vm")
 #parse("/show/comm/UserGroupCmpInclude.vm")
+#parse("/show/comm/My97DateInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/user/UserFansInfoDtlGrid.js'))"></script>
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/user/UserRobotFansInfoDtlGrid.js'))"></script>
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/user/UserInfoSinaGrid.js'))"></script>

@@ -1,6 +1,7 @@
 package com.nali.spreader.config;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.nali.common.model.Limit;
 
@@ -35,6 +36,24 @@ public class UserTagParamsDto implements Serializable {
 	private Integer limit;
 	private Long websiteUid;
 	private Limit lit;
+	private Date startCreateTime;
+	private Date endCreateTime;
+
+	public Date getStartCreateTime() {
+		return startCreateTime;
+	}
+
+	public void setStartCreateTime(Date startCreateTime) {
+		this.startCreateTime = startCreateTime;
+	}
+
+	public Date getEndCreateTime() {
+		return endCreateTime;
+	}
+
+	public void setEndCreateTime(Date endCreateTime) {
+		this.endCreateTime = endCreateTime;
+	}
 
 	public Long getWebsiteUid() {
 		return websiteUid;
