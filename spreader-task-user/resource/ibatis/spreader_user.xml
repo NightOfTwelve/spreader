@@ -183,6 +183,12 @@
 				u.website_id =
 				#websiteId#
 			</isNotNull>
+			<isNotNull prepend="and" property="startCreateTime">
+				u.create_time &gt;=#startCreateTime#
+			</isNotNull>
+			<isNotNull prepend="and" property="endCreateTime">
+				u.create_time &lt;=#endCreateTime#
+			</isNotNull>
 			<isNotNull prepend="and" property="websiteUid">
 				u.website_uid =
 				#websiteUid#
@@ -241,6 +247,12 @@
 			<isNotNull prepend="and" property="websiteId">
 				u.website_id =
 				#websiteId#
+			</isNotNull>
+			<isNotNull prepend="and" property="startCreateTime">
+				u.create_time &gt;=#startCreateTime#
+			</isNotNull>
+			<isNotNull prepend="and" property="endCreateTime">
+				u.create_time &lt;=#endCreateTime#
 			</isNotNull>
 		</dynamic>
 	</select>

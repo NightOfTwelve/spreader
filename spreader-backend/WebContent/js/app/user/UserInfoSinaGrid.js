@@ -148,6 +148,16 @@ var userSinaForm = new Ext.form.FormPanel({
 												fieldLabel : "Uid",
 												name : 'id'
 											}]
+								}, {
+									columnWidth : .33,
+									layout : "form",
+									items : [calendarCmp('startCreateTime',
+											'startCreateTime', '起始时间')]
+								}, {
+									columnWidth : .33,
+									layout : "form",
+									items : [calendarCmp('endCreateTime',
+											'endCreateTime', '结束时间')]
 								}]
 					}],
 			buttonAlign : "center",
@@ -252,6 +262,8 @@ var sinaUserStore = new Ext.data.Store({
 								name : 'province'
 							}, {
 								name : 'city'
+							}, {
+								name : 'createTime'
 							}]),
 			autoLoad : true
 		});
@@ -269,6 +281,14 @@ sinaUserStore.on('beforeload', function() {
 			var isRobot = pfrom.findField("isRobot").getValue();
 			var websiteId = Ext.getCmp('selectWebSiteComboUtil').getValue();
 			var limit = numtext.getValue();
+			var startStr = pfrom.findField("startCreateTime").getValue();
+			var endStr = pfrom.findField("endCreateTime").getValue();
+			var startCreateTime = Ext.isEmpty(startStr)
+					? null
+					: string2Date(startStr);
+			var endCreateTime = Ext.isEmpty(endStr)
+					? null
+					: string2Date(endStr);
 			this.baseParams = {
 				nickName : Ext.isEmpty(pnickName) ? null : pnickName,
 				minFans : pminFans,
@@ -280,7 +300,9 @@ sinaUserStore.on('beforeload', function() {
 				isRobot : isRobot,
 				websiteId : websiteId,
 				id : uid,
-				websiteUid : websiteUid
+				websiteUid : websiteUid,
+				startCreateTime : startCreateTime,
+				endCreateTime : endCreateTime
 			};
 		});
 // 导入excel文件窗口
@@ -448,6 +470,12 @@ var cm = new Ext.grid.ColumnModel([rownums, sm, {
 			dataIndex : 'nickName',
 			// locked : true,
 			width : 100
+		}, {
+			header : '创建时间',
+			dataIndex : 'createTime',
+			// locked : true,
+			width : 150,
+			renderer : renderDateHis
 		}
 		// , {
 		// header : '头像',
