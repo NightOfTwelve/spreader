@@ -20,6 +20,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -35,8 +37,11 @@ public class CommentsService implements ICommentsService {
 	private static final String COMMENT_PAGE_URL = "http://weibo.com/aj/comment/big?";
 	private static final String WEIBO_TEXT_TAG = "div.WB_text>p>em";
 	private static final String WEIBO_MAX_PAGE_TAG = "div.W_pages_minibtn>a";
+	private static final String COOKIES_KEY = "spreader_spider_weibo_cookies";
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
 	/**
-	 * 登录网站的cookies，通过配置文件读取
+	 * 登录网站的cookies
 	 */
 	public static String cookies;
 
@@ -46,6 +51,23 @@ public class CommentsService implements ICommentsService {
 
 	@PostConstruct
 	public void init() {
+		readCookieByRedis();
+		if (cookies == null) {
+			readCookieByProperties();
+		}
+	}
+
+	/**
+	 * 通过redis读取cookies
+	 */
+	private void readCookieByRedis() {
+		cookies = (String) redisTemplate.opsForValue().get(COOKIES_KEY);
+	}
+
+	/**
+	 * 配置文件方式读取cookies
+	 */
+	private void readCookieByProperties() {
 		try {
 			AbstractConfiguration.setDefaultListDelimiter('~');
 			URL url = CommentsService.class
@@ -332,6 +354,12 @@ public class CommentsService implements ICommentsService {
 
 	private String getString(String buff) {
 		return buff.substring(buff.indexOf("：") + 1).trim();
+	}
+
+	@Override
+	public void settingCookies(String cookies) {
+		redisTemplate.opsForValue().set(COOKIES_KEY, cookies);
+		readCookieByRedis();
 	}
 
 	// public static void main(String[] args) {
