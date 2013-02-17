@@ -17,4 +17,11 @@ public interface ICommentsService {
 	 * @return
 	 */
 	WeiboAndComments getWeiboAndComments(String url, int page);
+
+	/**
+	 * 设置cookies
+	 * 
+	 * @param cookies
+	 */
+	void settingCookies(String cookies);
 }
