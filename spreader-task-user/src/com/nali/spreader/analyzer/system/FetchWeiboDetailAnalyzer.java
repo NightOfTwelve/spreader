@@ -33,7 +33,7 @@ public class FetchWeiboDetailAnalyzer implements RegularAnalyzer, SystemObject {
 		Long lastContentId = contentService.getLastFetchContentId();
 		ContentQueryParamsDto dto = new ContentQueryParamsDto();
 		dto.setLastId(lastContentId);
-		Limit lit = Limit.newInstanceForLimit(0, 5);
+		Limit lit = Limit.newInstanceForLimit(0, 10);
 		dto.setLit(lit);
 		List<Content> list = contentService.findContentPageResult(dto)
 				.getList();

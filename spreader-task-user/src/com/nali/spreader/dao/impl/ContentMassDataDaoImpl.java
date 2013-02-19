@@ -161,7 +161,7 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 		Long websiteUid = param.getWebsiteUid();
 		Long lastContentId = param.getLastId();
 		if (lastContentId != null) {
-			criteriaList.add(new ExpressionValue<Criteria>("id", Criteria.gt,
+			criteriaList.add(new ExpressionValue<Criteria>("id", Criteria.lt,
 					lastContentId));
 		}
 		if (keywords != null) {
@@ -494,7 +494,6 @@ public class ContentMassDataDaoImpl implements IContentMassDataDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setSpiderContentId(Long id) {
-		Assert.notNull(id, " contentId is null");
 		redisTemplate.opsForValue().getAndSet(SPIDER_LAST_CONTENT_ID, id);
 	}
 }
