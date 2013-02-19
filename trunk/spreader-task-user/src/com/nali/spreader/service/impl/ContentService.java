@@ -392,4 +392,9 @@ public class ContentService implements IContentService {
 	public void recordLastFetchContentId(Long contentId) {
 		contentMassDataDao.setSpiderContentId(contentId);
 	}
+
+	@Override
+	public void clearLastFetchContentId() {
+		contentMassDataDao.setSpiderContentId(0L);
+	}
 }

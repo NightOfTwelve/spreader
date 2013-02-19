@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.nali.spreader.dto.WeiboAndComments;
+import com.nali.spreader.spider.exceptions.WeiboRevisionException;
 import com.nali.spreader.spider.service.ICommentsService;
 import com.nali.spreader.spider.utils.WeiboMsg;
 
@@ -104,7 +105,7 @@ public class CommentsService implements ICommentsService {
 	 */
 	private Response getResponse(String url) {
 		if (StringUtils.isBlank(url)) {
-			throw new IllegalArgumentException(" url is blank");
+			throw new IllegalArgumentException(" getResponse error,weibo url is blank");
 		}
 		Response resp;
 		try {
@@ -124,10 +125,14 @@ public class CommentsService implements ICommentsService {
 	 * @return
 	 */
 	private String getWeibo(Elements els) {
-		if (els != null && els.size() > 0) {
-			return els.get(0).childNode(0).toString();
+		if (els == null) {
+			throw new IllegalArgumentException("get weibo Elements error");
 		}
-		return null;
+		if (els.size() > 0) {
+			return els.get(0).childNode(0).toString();
+		} else {
+			throw new IllegalArgumentException("get weibo Elements size = 0");
+		}
 	}
 
 	/**
@@ -147,20 +152,25 @@ public class CommentsService implements ICommentsService {
 			return data;
 		}
 		Document doc = response.parse();
-		Elements scriptEls = getElementsByScriptTag(doc);
-		Elements weiboEls = getWeiboElements(scriptEls, WEIBO_TEXT_TAG);
-		Elements pageEls = getWeiboElements(scriptEls, WEIBO_MAX_PAGE_TAG);
-		String weibo = getWeibo(weiboEls);
-		int maxPage = getMaxPage(pageEls);
-		if (page > maxPage) {
-			page = maxPage;
+		try {
+			Elements scriptEls = getElementsByScriptTag(doc);
+			Elements weiboEls = getWeiboElements(scriptEls, WEIBO_TEXT_TAG);
+			Elements pageEls = getWeiboElements(scriptEls, WEIBO_MAX_PAGE_TAG);
+			String weibo = getWeibo(weiboEls);
+			int maxPage = getMaxPage(pageEls);
+			if (page > maxPage) {
+				page = maxPage;
+			}
+			String mid = getIdAndMid(pageEls);
+			List<String> comments = getComments(mid, page);
+			data.setComments(comments);
+			data.setWeibo(weibo);
+			data.setPage(page);
+			return data;
+		} catch (Exception e) {
+			logger.error("get weibo and comment error,weibo url:" + weiboUrl);
 		}
-		String mid = getIdAndMid(pageEls);
-		List<String> comments = getComments(mid, page);
-		data.setComments(comments);
-		data.setWeibo(weibo);
-		data.setPage(page);
-		return data;
+		return null;
 	}
 
 	/**
@@ -209,6 +219,10 @@ public class CommentsService implements ICommentsService {
 	 * @return
 	 */
 	private int getMaxPage(Elements els) {
+		if (els == null) {
+			throw new IllegalArgumentException(
+					" get max page error,els is null");
+		}
 		if (!els.isEmpty() && els.size() > 0) {
 			Element el = els.get(els.size() - 2);
 			if (el != null) {
@@ -226,6 +240,9 @@ public class CommentsService implements ICommentsService {
 	 * @return
 	 */
 	private Elements getElementsByScriptTag(Document doc) {
+		if (doc == null) {
+			throw new IllegalArgumentException("Document is null");
+		}
 		Elements els = doc.getElementsByTag("script");
 		return els;
 	}
@@ -243,9 +260,9 @@ public class CommentsService implements ICommentsService {
 			Document weiboDoc = Jsoup.parse(weiboHtml);
 			return weiboDoc.select(tag);
 		} else {
-			// 跳转 TODO
+			throw new WeiboRevisionException("get weibo Elements error,tag:"
+					+ tag);
 		}
-		return null;
 	}
 
 	private String getContentWeiboDetailHtml(String jsonHtml) {

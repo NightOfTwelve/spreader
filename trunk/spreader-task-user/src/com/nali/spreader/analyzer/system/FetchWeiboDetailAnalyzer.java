@@ -51,8 +51,10 @@ public class FetchWeiboDetailAnalyzer implements RegularAnalyzer, SystemObject {
 				logger.error(e);
 			}
 		}
-		contentService.recordLastFetchContentId(list.get(list.size() - 1)
-				.getId());
+		if (list.size() > 0) {
+			contentService.recordLastFetchContentId(list.get(list.size() - 1)
+					.getId());
+		}
 		// List<String> weibo = new ArrayList<String>();
 		// weibo.add("http://weibo.com/1193491727/zfPQIpe1z");
 		// weibo.add("http://weibo.com/1193491727/zf9VMeWC9");
