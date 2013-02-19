@@ -17,6 +17,7 @@ import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.ReplySearch;
 import com.nali.spreader.lucene.service.ISearchService;
 import com.nali.spreader.remote.ISegmenAnalyzerService;
+import com.nali.spreader.service.IContentService;
 import com.nali.spreader.spider.service.ICommentsService;
 
 @Controller
@@ -30,6 +31,8 @@ public class ReplySearchController extends BaseController {
 	private ISearchService searchService;
 	@Autowired
 	private ICommentsService commentsService;
+	@Autowired
+	private IContentService contentService;
 
 	@Override
 	public String init() {
@@ -72,5 +75,12 @@ public class ReplySearchController extends BaseController {
 			logger.error("settingCookies error", e);
 		}
 		return write(map);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/clearrecord")
+	public String clearSpiderRecord() {
+		contentService.clearLastFetchContentId();
+		return null;
 	}
 }
