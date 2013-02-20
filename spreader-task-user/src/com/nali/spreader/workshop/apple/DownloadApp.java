@@ -175,18 +175,19 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 				return;
 			}
 		}
-
-		Long appId = (Long) contextContents.get("appId");
-		appDownlodService.finishDownload(appSource, appId, uid);
-		CommentDto commentDto = new CommentDto();
-		commentDto.setAppId(appId);
-		commentDto.setAppSource(appSource);
-		commentDto.setUrl(url);
-		commentDto.setStars(stars);
-		commentDto.setTitle(title);
-		commentDto.setContent(comment);
-		KeyValue<Long, CommentDto> data = new KeyValue<Long, CommentDto>(uid,
-				commentDto);
-		commentApple.send(data);
+		if (stars != null) {
+			Long appId = (Long) contextContents.get("appId");
+			appDownlodService.finishDownload(appSource, appId, uid);
+			CommentDto commentDto = new CommentDto();
+			commentDto.setAppId(appId);
+			commentDto.setAppSource(appSource);
+			commentDto.setUrl(url);
+			commentDto.setStars(stars);
+			commentDto.setTitle(title);
+			commentDto.setContent(comment);
+			KeyValue<Long, CommentDto> data = new KeyValue<Long, CommentDto>(
+					uid, commentDto);
+			commentApple.send(data);
+		}
 	}
 }
