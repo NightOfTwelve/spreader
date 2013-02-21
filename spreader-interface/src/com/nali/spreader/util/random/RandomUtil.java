@@ -1,5 +1,6 @@
 package com.nali.spreader.util.random;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,6 +58,25 @@ public class RandomUtil {
 	public static<T> T randomItem(List<T> datas, Random random) {
 		int idx = random.nextInt(datas.size());
 		return datas.get(idx);
+	}
+
+	public static<T> T randomItem(T[] datas) {
+		return randomItem(datas, random);
+	}
+	
+	public static<T> T randomItem(T[] datas, Random random) {
+		int idx = random.nextInt(datas.length);
+		return datas[idx];
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static<T> T randomArrayItem(Object dataArray, Random random) {
+		int idx = random.nextInt(Array.getLength(dataArray));
+		return (T) Array.get(dataArray, idx);
+	}
+
+	public static<T> T randomArrayItem(Object dataArray) {
+		return randomArrayItem(dataArray, random);
 	}
 	
 	/**

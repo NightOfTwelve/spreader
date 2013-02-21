@@ -61,6 +61,19 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Conf
 			registerWeiboAccount.send(robotEmail.getKey());
 		}
 	}
+	
+	private boolean registerEmail(String email, String domain, String pwd) {
+		boolean rlt = robotRegisterService.addUsingEmail(email);
+		if(rlt==true) {
+			try {
+				rlt = emailRegister.register(email, domain, pwd);
+			} catch (IOException e) {
+				logger.error(e, e);
+				rlt = false;
+			}
+		}
+		return rlt;
+	}
 
 	@Override
 	public void work(KeyValue<RobotRegister, String> robotAndEmail, MultiTaskExporter exporter) {
@@ -72,18 +85,19 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Conf
 			String domain = emailCode;
 			for (int i = 0; i < emails.size(); i++) {
 				email = emails.get(i);
-				try {
-					boolean rlt = robotRegisterService.addUsingEmail(email);
-					if(rlt==true) {
-						rlt = emailRegister.register(email, domain, robot.getPwd());
-					}
-					if(rlt==true) {
-						break;
-					}
-				} catch (IOException e) {
-					logger.error(e, e);
+				if(registerEmail(email, domain, robot.getPwd())==true) {
+					break;
 				}
 				email = null;
+			}
+			if(email==null) {
+				for (int i = 0; i < 5; i++) {
+					email = RobotUserInfoGenerator.randomEmail();
+					if(registerEmail(email, domain, robot.getPwd())==true) {
+						break;
+					}
+					email = null;
+				}
 			}
 			if(email!=null) {
 				robotRegisterService.updateEmail(robot.getId(), email + "@" + domain);
