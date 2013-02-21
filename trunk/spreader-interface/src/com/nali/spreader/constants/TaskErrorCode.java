@@ -42,6 +42,7 @@ public enum TaskErrorCode {
 	postLimit(20304, "发帖太多了"),
 	adError(20305, "被识别成广告了"),
 	//3开头的苹果异常
+	notAPurchasedApp(30101, "未购买应用"),
 	;
 	private final String code;
 	private final String msg;

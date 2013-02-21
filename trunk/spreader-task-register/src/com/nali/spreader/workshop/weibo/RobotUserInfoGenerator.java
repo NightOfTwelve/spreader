@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.nali.spreader.constants.Words;
 import com.nali.spreader.data.Constellation;
 import com.nali.spreader.data.RealMan;
 import com.nali.spreader.data.RobotRegister;
@@ -21,6 +22,7 @@ import com.nali.spreader.util.KeyValuePair;
 import com.nali.spreader.util.RangeChoice;
 import com.nali.spreader.util.TxtFileUtil;
 import com.nali.spreader.util.random.AvgRandomer;
+import com.nali.spreader.util.random.NumberRandomer;
 import com.nali.spreader.util.random.RandomUtil;
 import com.nali.spreader.util.random.Randomer;
 import com.nali.spreader.util.random.WeightRandomer;
@@ -43,6 +45,8 @@ public class RobotUserInfoGenerator {
 	private Randomer<Randomer<Integer>> yearRandomer;
 	private Randomer<Integer> monthRandomer;
 	private Randomer<Integer> dayRandomer;
+	private static Randomer<Integer> wordLengthRandomer = new NumberRandomer(4, 9);
+	private static Randomer<Integer> numberLengthRandomer = new NumberRandomer(3, 7);
 	
 	private RangeChoice<Integer, Constellation> constellations;
 	private Randomer<Area> directAreas = new AvgRandomer<Area>(CnCities.getDirectAreas());
@@ -80,6 +84,19 @@ public class RobotUserInfoGenerator {
 		yearRandomer = tmpRandomer;
 	}
 	
+	public static String randomEmail() {
+		int wordLength = wordLengthRandomer.get();
+		int numberLength = numberLengthRandomer.get();
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < wordLength; i++) {
+			sb.append(RandomUtil.randomArrayItem(Words.LOW_CASE));
+		}
+		for (int i = 0; i < numberLength; i++) {
+			sb.append(RandomUtil.randomArrayItem(Words.NUMBER));
+		}
+		return sb.toString();
+	}
+	
 	public static List<String> makeEmailAccounts(RobotRegister robot) {
 		List<String> rlt = new LinkedList<String>();
 		add(rlt, robot.getFirstNamePinyinLower()+"_"+robot.getBirthdayYear());
@@ -96,7 +113,7 @@ public class RobotUserInfoGenerator {
 		Collections.shuffle(rlt);
 		return rlt;
 	}
-
+	
 	private static void add(List<String> names, String roughName) {
 		if(roughName.length()>18) {
 			roughName = roughName.substring(0, 18);
