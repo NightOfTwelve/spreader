@@ -75,8 +75,9 @@ public class RandomUtil {
 		return (T) Array.get(dataArray, idx);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static<T> T randomArrayItem(Object dataArray) {
-		return randomArrayItem(dataArray, random);
+		return (T) randomArrayItem(dataArray, random);
 	}
 	
 	/**
