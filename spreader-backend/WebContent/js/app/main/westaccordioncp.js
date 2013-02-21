@@ -91,6 +91,11 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "客户端IP查询",
 									leaf : true,
 									url : '/spreader-front/iprecord/init'
+								},{
+									id : 'cooldownsetting',
+									text : "下载曲线设置",
+									leaf : true,
+									url : '/spreader-front/cooldown/init'
 								},
 								// {
 								// id : 'clientTaskStatDtl',
