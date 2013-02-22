@@ -1,5 +1,6 @@
 package com.nali.spreader.controller;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,10 +12,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nali.common.model.Limit;
+import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
 import com.nali.spreader.controller.basectrl.BaseController;
+import com.nali.spreader.data.AccountLog;
 import com.nali.spreader.service.IAccountManageService;
 
 /**
@@ -37,14 +41,16 @@ public class SystemAccountManageController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "/logon")
-	public String logon(HttpServletRequest request, HttpServletResponse response, String accountId,
-			String password) {
+	public String logon(HttpServletRequest request,
+			HttpServletResponse response, String accountId, String password) {
 		Map<String, Boolean> map = CollectionUtils.newHashMap(1);
 		map.put("success", false);
-		if (StringUtils.isNotEmpty(accountId) && StringUtils.isNotEmpty(password)) {
-			boolean tag = this.accountService.checkEffectiveAccount(accountId, password);
+		if (StringUtils.isNotEmpty(accountId)
+				&& StringUtils.isNotEmpty(password)) {
+			boolean tag = this.accountService.checkEffectiveAccount(accountId,
+					password);
 			if (tag) {
-				request.getSession().setAttribute("accountId", "success");
+				request.getSession().setAttribute("accountId", accountId);
 			}
 			map.put("success", tag);
 		} else {
@@ -52,5 +58,15 @@ public class SystemAccountManageController extends BaseController {
 			throw new IllegalArgumentException();
 		}
 		return this.write(map);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/log")
+	public String log(String accountId, Date startCreateTime,
+			Date endCreateTime, Integer start, Integer limit) {
+		Limit lit = initLimit(start, limit);
+		PageResult<AccountLog> pg = accountService.logData(accountId,
+				startCreateTime, endCreateTime, lit);
+		return write(pg);
 	}
 }

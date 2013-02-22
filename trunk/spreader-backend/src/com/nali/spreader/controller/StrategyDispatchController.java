@@ -17,6 +17,7 @@ import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
 import com.nali.lang.StringUtils;
 import com.nali.lts.exceptions.SchedulerException;
+import com.nali.spreader.aop.annotation.AuthAnnotation;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.factory.config.IConfigService;
@@ -32,7 +33,8 @@ import com.nali.spreader.service.IStrategyGroupService;
 @Controller
 @RequestMapping(value = "/strategydisp")
 public class StrategyDispatchController extends BaseController {
-	private static final Logger LOGGER = Logger.getLogger(StrategyDispatchController.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(StrategyDispatchController.class);
 	@Autowired
 	private RegularScheduler cfgService;
 	@Autowired
@@ -69,15 +71,16 @@ public class StrategyDispatchController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/stgdispgridstore")
-	public String stgGridStore(String dispname, Integer triggerType, Long groupId, Integer start,
-			Integer limit, String jobType) {
+	public String stgGridStore(String dispname, Integer triggerType,
+			Long groupId, Integer start, Integer limit, String jobType) {
 		Assert.notNull(jobType, "jobType is null");
 		Limit lit = this.initLimit(start, limit);
-		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname, triggerType, groupId,
-				this.getConfigableTypeByJobType(jobType), lit, null);
+		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname,
+				triggerType, groupId, this.getConfigableTypeByJobType(jobType),
+				lit, null);
 		List<RegularJob> list = pr.getList();
-		List<ConfigableInfo> dispnamelist = regularConfigService.listConfigableInfo(this
-				.getConfigableTypeByJobType(jobType));
+		List<ConfigableInfo> dispnamelist = regularConfigService
+				.listConfigableInfo(this.getConfigableTypeByJobType(jobType));
 		int rowcount = pr.getTotalCount();
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("cnt", rowcount);
@@ -102,7 +105,8 @@ public class StrategyDispatchController extends BaseController {
 		if (StrategyDispatchController.NORMAL_JOBTYPE.equalsIgnoreCase(jobType)) {
 			return ConfigableType.normal;
 		} else {
-			throw new IllegalArgumentException("not find this jobType:" + jobType);
+			throw new IllegalArgumentException("not find this jobType:"
+					+ jobType);
 		}
 	}
 
@@ -118,7 +122,8 @@ public class StrategyDispatchController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/createdisptree")
-	public String createStgTreeData(String name, Long id, Boolean isGroup, String defaultData) {
+	public String createStgTreeData(String name, Long id, Boolean isGroup,
+			String defaultData) {
 		if (Boolean.TRUE.equals(isGroup)) {
 			id = getRegularIdByGid(id);
 		}
@@ -134,10 +139,12 @@ public class StrategyDispatchController extends BaseController {
 		if (id != null) {
 			data = cfgService.getRegularJobObject(id).getConfigObject();
 		} else {
-			Class<?> dataClass = regularConfigService.getConfigableInfo(name).getDataClass();
+			Class<?> dataClass = regularConfigService.getConfigableInfo(name)
+					.getDataClass();
 			if (!StringUtils.isEmpty(defaultData)) {
 				try {
-					data = this.getObjectMapper().readValue(defaultData, dataClass);
+					data = this.getObjectMapper().readValue(defaultData,
+							dataClass);
 				} catch (Exception e) {
 					return returnError("获取configObj异常" + name, e);
 				}
@@ -151,8 +158,8 @@ public class StrategyDispatchController extends BaseController {
 			sug = cfgService.getExtendConfig(name, id);
 		}
 		TriggerDto trigger = this.getTrigger(id);
-		DispatchData dispatch = new DispatchData(null, dispname, extendType, meta, def, data, sug,
-				trigger);
+		DispatchData dispatch = new DispatchData(null, dispname, extendType,
+				meta, def, data, sug, trigger);
 		return this.write(dispatch);
 	}
 
@@ -164,7 +171,8 @@ public class StrategyDispatchController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/settgrparam")
-	public String settingTriggerParam(Long id, Boolean isGroup) throws SchedulerException {
+	public String settingTriggerParam(Long id, Boolean isGroup)
+			throws SchedulerException {
 		if (isGroup != null && isGroup) {
 			id = getRegularIdByGid(id);
 		}
@@ -213,11 +221,12 @@ public class StrategyDispatchController extends BaseController {
 	 * @param config
 	 * @return
 	 */
+	@AuthAnnotation(opName = "策略分组>保存策略调度")
 	@ResponseBody
 	@RequestMapping(value = "/dispsave")
-	public String saveStrategyConfig(String groupName, String groupNote, Long groupId,
-			Integer groupType, Long fromGroupId, Long toGroupId, RegularJob regularJob,
-			TriggerDto triggerDto, Long refId) {
+	public String saveStrategyConfig(String groupName, String groupNote,
+			Long groupId, Integer groupType, Long fromGroupId, Long toGroupId,
+			RegularJob regularJob, TriggerDto triggerDto, Long refId) {
 		// 检查参数
 		if (groupType == null) {
 			return returnError("分组类型为空，不能保存策略配置", null);
@@ -233,7 +242,8 @@ public class StrategyDispatchController extends BaseController {
 					// 如果分组ID不为null,首先检查并同步策略表
 					groupService.syncRegularJob(groupId, groupName, id);
 				} else {
-					return returnError("通过组ID:" + groupId + ",获取regularJob失败", null);
+					return returnError("通过组ID:" + groupId + ",获取regularJob失败",
+							null);
 				}
 			} else {
 				// 否则先保存分组获取分组ID
@@ -251,13 +261,14 @@ public class StrategyDispatchController extends BaseController {
 		regularJob.setGid(groupId);
 		regularJob.setGname(groupName);
 
-		ConfigableInfo cfgInfo = regularConfigService.getConfigableInfo(regularJob.getName());
+		ConfigableInfo cfgInfo = regularConfigService
+				.getConfigableInfo(regularJob.getName());
 		// check config
 		Class<?> dataClass = cfgInfo.getDataClass();
 		if (regularJob.getConfig() != null) {
 			try {
-				Object configObj = this.getObjectMapper().readValue(regularJob.getConfig(),
-						dataClass);
+				Object configObj = this.getObjectMapper().readValue(
+						regularJob.getConfig(), dataClass);
 				regularJob.setConfigObject(configObj);
 			} catch (Exception e) {
 				return returnError("获取configObj异常" + groupId, e);
@@ -306,6 +317,7 @@ public class StrategyDispatchController extends BaseController {
 	 * @param idstr
 	 * @return
 	 */
+	@AuthAnnotation(opName = "策略分组>批量删除调度信息")
 	@ResponseBody
 	@RequestMapping(value = "/deletetrg")
 	public String deleteTrigger(String idstr) {
@@ -340,7 +352,8 @@ public class StrategyDispatchController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/combstore")
 	public String createStgCombStore() {
-		List<ConfigableInfo> list = regularConfigService.listConfigableInfo(ConfigableType.normal);
+		List<ConfigableInfo> list = regularConfigService
+				.listConfigableInfo(ConfigableType.normal);
 		return this.write(list);
 	}
 
@@ -352,9 +365,11 @@ public class StrategyDispatchController extends BaseController {
 	 * @param groupNote
 	 * @return
 	 */
+	@AuthAnnotation(opName = "策略分组>创建一个新分组并获取ID")
 	@ResponseBody
 	@RequestMapping(value = "/newgroupid")
-	public String createNewGroupId(Integer groupType, String groupName, String groupNote) {
+	public String createNewGroupId(Integer groupType, String groupName,
+			String groupNote) {
 		Long gid = this.getNewGroupId(groupType, groupName, groupNote);
 		Map<String, Long> m = CollectionUtils.newHashMap(1);
 		m.put("groupId", gid);
@@ -369,11 +384,12 @@ public class StrategyDispatchController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/noticestrategy")
-	public String queryNoticeStrategy(Long noticeId, Integer start, Integer limit) {
+	public String queryNoticeStrategy(Long noticeId, Integer start,
+			Integer limit) {
 		Assert.notNull(noticeId, "noticeId is null");
 		Limit lit = this.initLimit(start, limit);
-		PageResult<RegularJob> data = this.cfgService.findRegularJob(null, null, null,
-				ConfigableType.noticeRelated, lit, noticeId);
+		PageResult<RegularJob> data = this.cfgService.findRegularJob(null,
+				null, null, ConfigableType.noticeRelated, lit, noticeId);
 		return this.write(data);
 	}
 
@@ -395,7 +411,8 @@ public class StrategyDispatchController extends BaseController {
 	 * @param note
 	 * @return
 	 */
-	private Long getNewGroupId(Integer groupType, String groupName, String groupNote) {
+	private Long getNewGroupId(Integer groupType, String groupName,
+			String groupNote) {
 		// 否则先保存分组获取分组ID
 		StrategyGroup sg = new StrategyGroup();
 		sg.setGroupType(groupType);
@@ -424,8 +441,9 @@ public class StrategyDispatchController extends BaseController {
 		private Object sug;
 		private TriggerDto trigger;
 
-		public DispatchData(String treeid, String treename, String extendType, Object extendMeta,
-				ConfigDefinition def, Object data, Object sug, TriggerDto trigger) {
+		public DispatchData(String treeid, String treename, String extendType,
+				Object extendMeta, ConfigDefinition def, Object data,
+				Object sug, TriggerDto trigger) {
 			this.treeid = treeid;
 			this.treename = treename;
 			this.def = def;

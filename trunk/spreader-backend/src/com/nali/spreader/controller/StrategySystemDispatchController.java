@@ -17,6 +17,7 @@ import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.lang.StringUtils;
 import com.nali.lts.exceptions.SchedulerException;
+import com.nali.spreader.aop.annotation.AuthAnnotation;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.factory.config.IConfigService;
@@ -29,7 +30,8 @@ import com.nali.spreader.model.RegularJob.TriggerDto;
 @Controller
 @RequestMapping(value = "/dispsys")
 public class StrategySystemDispatchController extends BaseController {
-	private static final Logger LOGGER = Logger.getLogger(StrategySystemDispatchController.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(StrategySystemDispatchController.class);
 	@Autowired
 	private RegularScheduler cfgService;
 	@Autowired
@@ -51,10 +53,11 @@ public class StrategySystemDispatchController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/stgdispgridstore")
-	public String stgGridStore(String dispname, Integer triggerType, int start, int limit) {
+	public String stgGridStore(String dispname, Integer triggerType, int start,
+			int limit) {
 		Limit lit = this.initLimit(start, limit);
-		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname, triggerType, null,
-				ConfigableType.system, lit, null);
+		PageResult<RegularJob> pr = cfgService.findRegularJob(dispname,
+				triggerType, null, ConfigableType.system, lit, null);
 		List<RegularJob> list = pr.getList();
 		List<ConfigableInfo> dispnamelist = regularConfigService
 				.listConfigableInfo(ConfigableType.system);
@@ -77,9 +80,10 @@ public class StrategySystemDispatchController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/createdisptree")
 	public String createStgTreeData(String name, Long id) {
-		return this.write(new DispatchData(null, regularConfigService.getConfigableInfo(name)
-				.getDisplayName(), regularConfigService.getConfigDefinition(name), id != null
-				&& id > 0 ? cfgService.getRegularJobObject(id).getConfigObject() : null));
+		return this.write(new DispatchData(null, regularConfigService
+				.getConfigableInfo(name).getDisplayName(), regularConfigService
+				.getConfigDefinition(name), id != null && id > 0 ? cfgService
+				.getRegularJobObject(id).getConfigObject() : null));
 	}
 
 	/**
@@ -109,16 +113,19 @@ public class StrategySystemDispatchController extends BaseController {
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
 	 */
+	@AuthAnnotation(opName = "系统调度管理>创建一个系统调度")
 	@ResponseBody
 	@RequestMapping(value = "/dispsave")
-	public String saveStrategyConfig(RegularJob regularJob, TriggerDto triggerDto)
-			throws JsonParseException, JsonMappingException, IOException {
+	public String saveStrategyConfig(RegularJob regularJob,
+			TriggerDto triggerDto) throws JsonParseException,
+			JsonMappingException, IOException {
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
 		message.put("success", false);
-		Class<?> dataClass = regularConfigService.getConfigableInfo(regularJob.getName())
-				.getDataClass();
+		Class<?> dataClass = regularConfigService.getConfigableInfo(
+				regularJob.getName()).getDataClass();
 		if (regularJob.getConfig() != null) {
-			Object configObj = this.getObjectMapper().readValue(regularJob.getConfig(), dataClass);
+			Object configObj = this.getObjectMapper().readValue(
+					regularJob.getConfig(), dataClass);
 			regularJob.setConfigObject(configObj);
 		}
 		regularJob.setTriggerObject(triggerDto);
@@ -138,6 +145,7 @@ public class StrategySystemDispatchController extends BaseController {
 	 * @param idstr
 	 * @return
 	 */
+	@AuthAnnotation(opName = "系统调度管理>删除调度信息")
 	@ResponseBody
 	@RequestMapping(value = "/deletetrg")
 	public String deleteTrigger(String idstr) {
@@ -172,7 +180,8 @@ public class StrategySystemDispatchController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/combstore")
 	public String createStgCombStore() {
-		List<ConfigableInfo> list = regularConfigService.listConfigableInfo(ConfigableType.system);
+		List<ConfigableInfo> list = regularConfigService
+				.listConfigableInfo(ConfigableType.system);
 		return this.write(list);
 	}
 
@@ -191,7 +200,8 @@ public class StrategySystemDispatchController extends BaseController {
 		// 节点数据
 		private Object data;
 
-		public DispatchData(String treeid, String treename, ConfigDefinition def, Object data) {
+		public DispatchData(String treeid, String treename,
+				ConfigDefinition def, Object data) {
 			this.treeid = treeid;
 			this.treename = treename;
 			this.def = def;

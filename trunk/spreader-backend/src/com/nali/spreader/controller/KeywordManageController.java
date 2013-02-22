@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
+import com.nali.spreader.aop.annotation.AuthAnnotation;
 import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
 import com.nali.spreader.controller.basectrl.BaseController;
@@ -66,6 +67,7 @@ public class KeywordManageController extends BaseController {
 	 * @param categoryId
 	 * @return
 	 */
+	@AuthAnnotation(opName = "关键字管理>创建关键字")
 	@ResponseBody
 	@RequestMapping(value = "/create")
 	public String create(Keyword kw) {
@@ -104,6 +106,7 @@ public class KeywordManageController extends BaseController {
 	 * @param oldCategoryId
 	 * @return
 	 */
+	@AuthAnnotation(opName = "关键字管理>解除与分类的绑定关系")
 	@ResponseBody
 	@RequestMapping(value = "/unbind")
 	public String unBinding(Long keywordId, Long oldCategoryId) {
@@ -152,6 +155,7 @@ public class KeywordManageController extends BaseController {
 	 * @param keywordId
 	 * @return
 	 */
+	@AuthAnnotation(opName = "关键字管理>解除无需分类的状态")
 	@ResponseBody
 	@RequestMapping(value = "/cancelcategory")
 	public String cancelNoCategory(Long keywordId) {

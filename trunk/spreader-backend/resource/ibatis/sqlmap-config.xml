@@ -36,6 +36,7 @@
   <sqlMap resource="ibatis/spreader_tb_help_enum_info_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_robot_weibo_ximalaya_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_content_segmen_SqlMap.xml" /> 
+  <sqlMap resource="ibatis/spreader_tb_account_log_SqlMap.xml" /> 
   
   <!-- ×Ô¶¨Òå -->
   <sqlMap resource="ibatis/spreader_tb_photo.xml" />
