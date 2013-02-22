@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
+import com.nali.spreader.aop.annotation.AuthAnnotation;
 import com.nali.spreader.config.KeywordInfoQueryDto;
 import com.nali.spreader.config.KeywordQueryParamsDto;
 import com.nali.spreader.controller.basectrl.BaseController;
@@ -36,7 +37,8 @@ import com.nali.spreader.service.ICategoryKeyWordService;
 @Controller
 @RequestMapping(value = "/category")
 public class CategoryManageController extends BaseController {
-	private static Logger logger = Logger.getLogger(CategoryManageController.class);
+	private static Logger logger = Logger
+			.getLogger(CategoryManageController.class);
 	@Autowired
 	private ICategoryKeyWordService ckService;
 	@Autowired
@@ -87,7 +89,8 @@ public class CategoryManageController extends BaseController {
 		Integer limit = param.getLimit();
 		Limit lit = this.initLimit(start, limit);
 		param.setLit(lit);
-		PageResult<KeywordInfoQueryDto> data = this.ckService.findKeywordByParams(param);
+		PageResult<KeywordInfoQueryDto> data = this.ckService
+				.findKeywordByParams(param);
 		return this.write(data);
 	}
 
@@ -110,7 +113,8 @@ public class CategoryManageController extends BaseController {
 		Integer limit = param.getLimit();
 		Limit lit = this.initLimit(start, limit);
 		param.setLit(lit);
-		PageResult<KeywordInfoQueryDto> data = this.ckService.findKeywordByNotEqualParams(param);
+		PageResult<KeywordInfoQueryDto> data = this.ckService
+				.findKeywordByNotEqualParams(param);
 		return this.write(data);
 	}
 
@@ -124,13 +128,16 @@ public class CategoryManageController extends BaseController {
 	 * @throws JsonMappingException
 	 * @throws JsonGenerationException
 	 */
+	@AuthAnnotation(opName = "分类管理>批量更新绑定关系")
 	@ResponseBody
 	@RequestMapping(value = "/updaterela")
-	public String updateCategoryTagRelation(String param) throws JsonParseException,
-			JsonMappingException, IOException {
+	public String updateCategoryTagRelation(String param)
+			throws JsonParseException, JsonMappingException, IOException {
 		@SuppressWarnings("deprecation")
-		List<UpdateUserTagParam> list = this.getObjectMapper().readValue(param,
-				TypeFactory.collectionType(ArrayList.class, UpdateUserTagParam.class));
+		List<UpdateUserTagParam> list = this.getObjectMapper().readValue(
+				param,
+				TypeFactory.collectionType(ArrayList.class,
+						UpdateUserTagParam.class));
 		Map<String, Boolean> m = CollectionUtils.newHashMap(1);
 		m.put("success", false);
 		for (UpdateUserTagParam utp : list) {
@@ -139,12 +146,13 @@ public class CategoryManageController extends BaseController {
 			try {
 				if (keywordId != null) {
 					this.ckService.updateKeywordExecutable(keywordId, false);
-					SyncUpdateUserTagThread t = new SyncUpdateUserTagThread(utp, ckService);
+					SyncUpdateUserTagThread t = new SyncUpdateUserTagThread(
+							utp, ckService);
 					pool.getExecutor().execute(t);
 				}
 			} catch (Exception e) {
-				String log = this.ckService
-						.keywordAndCategoryRollBackInfo(keywordId, oldCategoryId);
+				String log = this.ckService.keywordAndCategoryRollBackInfo(
+						keywordId, oldCategoryId);
 				logger.error(log, e);
 			} finally {
 				this.ckService.updateKeywordExecutableByRollback(keywordId);
@@ -163,6 +171,7 @@ public class CategoryManageController extends BaseController {
 	 * @throws JsonMappingException
 	 * @throws JsonGenerationException
 	 */
+	@AuthAnnotation(opName = "分类管理>新增分类")
 	@ResponseBody
 	@RequestMapping(value = "/addcategory")
 	public String addCategory(Category category) {
@@ -200,6 +209,7 @@ public class CategoryManageController extends BaseController {
 	 * @param category
 	 * @return
 	 */
+	@AuthAnnotation(opName = "分类管理>更新分类属性")
 	@ResponseBody
 	@RequestMapping(value = "/updatecategory")
 	public String updateCategory(Category category) {
@@ -213,6 +223,7 @@ public class CategoryManageController extends BaseController {
 	 * @param ids
 	 * @return
 	 */
+	@AuthAnnotation(opName = "分类管理>删除分类")
 	@ResponseBody
 	@RequestMapping(value = "/deletecategory")
 	public String deleteCategory(Long... ids) {

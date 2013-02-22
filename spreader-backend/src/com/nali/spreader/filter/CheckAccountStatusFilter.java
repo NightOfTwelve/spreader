@@ -31,8 +31,8 @@ public class CheckAccountStatusFilter implements Filter, InitializingBean {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
-			throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response,
+			FilterChain filterChain) throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
 		HttpSession session = req.getSession();
@@ -49,8 +49,9 @@ public class CheckAccountStatusFilter implements Filter, InitializingBean {
 					return;
 				}
 				if (StringUtils.isNotEmpty(url)) {
-					resp.getWriter().write(
-							"<script type=\"text/javascript\">parent.location.href='" + url
+					resp.getWriter()
+							.write("<script type=\"text/javascript\">parent.location.href='"
+									+ url
 									+ "/spreader-backend/account/init'</script>");
 					resp.getWriter().flush();
 					resp.getWriter().close();
@@ -60,7 +61,15 @@ public class CheckAccountStatusFilter implements Filter, InitializingBean {
 				}
 			}
 		}
-		filterChain.doFilter(request, response);
+		AccountContext ctx = new AccountContext();
+		ctx.setUserName(accountId);
+		ctx.setRequest(req);
+		AccountContext.setAccountContext(ctx);
+		try {
+			filterChain.doFilter(request, response);
+		} finally {
+			AccountContext.removeAccountContext();
+		}
 	}
 
 	@Override
@@ -102,7 +111,8 @@ public class CheckAccountStatusFilter implements Filter, InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		compilePachPattern = getCompilePachPattern();
 		for (String freePattern : getNoCheckPach()) {
-			compilePachPattern.add(Pattern.compile(freePattern, Pattern.CASE_INSENSITIVE));
+			compilePachPattern.add(Pattern.compile(freePattern,
+					Pattern.CASE_INSENSITIVE));
 		}
 	}
 

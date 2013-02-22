@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nali.spreader.aop.annotation.AuthAnnotation;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.factory.config.IConfigService;
@@ -23,7 +24,8 @@ import com.nali.spreader.factory.config.desc.ConfigableInfo;
 @Controller
 @RequestMapping(value = "/strategy")
 public class StrategyManageController extends BaseController {
-	private static final Logger LOGGER = Logger.getLogger(StrategyManageController.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(StrategyManageController.class);
 	@Autowired
 	private IConfigService<String> passiveConfigService;
 
@@ -44,7 +46,8 @@ public class StrategyManageController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/stggridstore")
 	public String stgGridStore() {
-		List<ConfigableInfo> list = passiveConfigService.listConfigableInfo(ConfigableType.normal);
+		List<ConfigableInfo> list = passiveConfigService
+				.listConfigableInfo(ConfigableType.normal);
 		Map<String, List<ConfigableInfo>> jsonMap = new HashMap<String, List<ConfigableInfo>>();
 		jsonMap.put("data", list);
 		return this.write(jsonMap);
@@ -61,9 +64,10 @@ public class StrategyManageController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/createtree")
 	public String createStgTreeData(String name) {
-		return this.write(new DefAndData(passiveConfigService.getConfigableInfo(name),
-				passiveConfigService.getConfigDefinition(name), passiveConfigService
-						.getConfigData(name)));
+		return this.write(new DefAndData(passiveConfigService
+				.getConfigableInfo(name), passiveConfigService
+				.getConfigDefinition(name), passiveConfigService
+				.getConfigData(name)));
 	}
 
 	/**
@@ -76,15 +80,18 @@ public class StrategyManageController extends BaseController {
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
 	 */
+	@AuthAnnotation(opName = "策略管理>创建一个策略")
 	@ResponseBody
 	@RequestMapping(value = "/cfgsave")
-	public String saveStrategyConfig(String name, String config) throws JsonParseException,
-			JsonMappingException, IOException {
+	public String saveStrategyConfig(String name, String config)
+			throws JsonParseException, JsonMappingException, IOException {
 		Map<String, Boolean> message = new HashMap<String, Boolean>();
 		message.put("success", false);
 		if (!StringUtils.isEmpty(name) && config != null) {
-			Class<?> configClass = passiveConfigService.getConfigableInfo(name).getDataClass();
-			Object configObject = this.getObjectMapper().readValue(config, configClass);
+			Class<?> configClass = passiveConfigService.getConfigableInfo(name)
+					.getDataClass();
+			Object configObject = this.getObjectMapper().readValue(config,
+					configClass);
 			try {
 				passiveConfigService.saveConfigData(name, configObject);
 				message.put("success", true);
@@ -103,11 +110,14 @@ public class StrategyManageController extends BaseController {
 		private ConfigDefinition def;
 		private Object data;
 
-		public DefAndData(ConfigableInfo configableInfo, ConfigDefinition def, Object data) {
-			this(configableInfo.getName(), configableInfo.getDisplayName(), def, data);
+		public DefAndData(ConfigableInfo configableInfo, ConfigDefinition def,
+				Object data) {
+			this(configableInfo.getName(), configableInfo.getDisplayName(),
+					def, data);
 		}
 
-		public DefAndData(String id, String name, ConfigDefinition def, Object data) {
+		public DefAndData(String id, String name, ConfigDefinition def,
+				Object data) {
 			this.id = id;
 			this.name = name;
 			this.def = def;

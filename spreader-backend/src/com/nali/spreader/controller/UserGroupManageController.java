@@ -21,6 +21,7 @@ import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
+import com.nali.spreader.aop.annotation.AuthAnnotation;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.data.User;
@@ -69,6 +70,7 @@ public class UserGroupManageController extends BaseController {
 	 * @param gid
 	 * @return
 	 */
+	@AuthAnnotation(opName = "用户分组管理>刷新指定分组的用户")
 	@ResponseBody
 	@RequestMapping(value = "/refreshuser")
 	public String refreshUser(Long gid) {
@@ -85,7 +87,7 @@ public class UserGroupManageController extends BaseController {
 	 * @param gids
 	 * @return
 	 */
-
+	@AuthAnnotation(opName = "用户分组管理>刷新多个分组的用户")
 	@ResponseBody
 	@RequestMapping(value = "/refreshselectusers")
 	public String refreshSelectUser(Long... gids) {
@@ -109,8 +111,9 @@ public class UserGroupManageController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/grouplist")
-	public String queryAllUserGroup(Integer websiteid, String gname, Integer gtype,
-			Date fromModifiedTime, Date toModifiedTime, Integer start, Integer limit) {
+	public String queryAllUserGroup(Integer websiteid, String gname,
+			Integer gtype, Date fromModifiedTime, Date toModifiedTime,
+			Integer start, Integer limit) {
 		Website website = null;
 		if (websiteid != null) {
 			website = Website.valueOf(websiteid);
@@ -120,8 +123,9 @@ public class UserGroupManageController extends BaseController {
 			userGroupType = UserGroupType.valueOf(gtype);
 		}
 		Limit lit = this.initLimit(start, limit);
-		PageResult<UserGroup> result = userGroupService.queryUserGroups(website, gname,
-				userGroupType, fromModifiedTime, toModifiedTime, lit);
+		PageResult<UserGroup> result = userGroupService.queryUserGroups(
+				website, gname, userGroupType, fromModifiedTime,
+				toModifiedTime, lit);
 		return this.write(result);
 	}
 
@@ -135,18 +139,19 @@ public class UserGroupManageController extends BaseController {
 	 * @return
 	 * @throws AssembleException
 	 */
+	@AuthAnnotation(opName = "用户分组管理>创建一个用户分组")
 	@ResponseBody
 	@RequestMapping(value = "/createusergroup")
-	public String addNewUserGroup(String gname, Integer gtype, Integer websiteid, String description)
-			throws AssembleException {
+	public String addNewUserGroup(String gname, Integer gtype,
+			Integer websiteid, String description) throws AssembleException {
 		Map<String, Object> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
 		result.put("gid", null);
 		if (gtype != null && websiteid != null) {
 			PropertyExpressionDTO dto = new PropertyExpressionDTO();
 			UserGroup group = userGroupPropertyService.assembleUserGroup(
-					Website.valueOf(websiteid), gname, description, UserGroupType.valueOf(gtype),
-					dto);
+					Website.valueOf(websiteid), gname, description,
+					UserGroupType.valueOf(gtype), dto);
 			group.setPropVal(null);
 			try {
 				long gid = this.userGroupPropertyService.createGroup(group);
@@ -174,7 +179,8 @@ public class UserGroupManageController extends BaseController {
 	@RequestMapping(value = "/checkname")
 	public String checkGroupName(String gname) {
 		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
-		Boolean flg = userGroupPropertyService.checkUserGroupUniqueByName(gname);
+		Boolean flg = userGroupPropertyService
+				.checkUserGroupUniqueByName(gname);
 		result.put("success", flg);
 		return this.write(result);
 	}
@@ -200,7 +206,9 @@ public class UserGroupManageController extends BaseController {
 					try {
 						data = userGroupPropertyService.toExpression(propexp);
 					} catch (AssembleException e) {
-						logger.error("Can't parse string to PropertyExpressionDTO , gid=" + gid, e);
+						logger.error(
+								"Can't parse string to PropertyExpressionDTO , gid="
+										+ gid, e);
 					}
 					def = DescriptionResolve.get(PropertyExpressionDTO.class);
 					configableInfo = DescriptionResolve.getConfigableInfo(
@@ -224,16 +232,18 @@ public class UserGroupManageController extends BaseController {
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
 	 */
+	@AuthAnnotation(opName = "用户分组管理>更新用户分组内容")
 	@ResponseBody
 	@RequestMapping(value = "/updategroup")
-	public String updateGroupData(Long gid, String propexp) throws AssembleException,
-			JsonParseException, JsonMappingException, IOException {
+	public String updateGroupData(Long gid, String propexp)
+			throws AssembleException, JsonParseException, JsonMappingException,
+			IOException {
 		Map<String, Object> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
 		if (gid != null && gid > 0) {
 			UserGroup group = userGroupService.queryUserGroup(gid);
-			PropertyExpressionDTO dto = this.getObjectMapper().readValue(propexp,
-					PropertyExpressionDTO.class);
+			PropertyExpressionDTO dto = this.getObjectMapper().readValue(
+					propexp, PropertyExpressionDTO.class);
 			List<Long> excludeGids = dto.getExcludeGids();
 			if (!CollectionUtils.isEmpty(excludeGids)) {
 				Map<Long, List<Long>> excMap = new HashMap<Long, List<Long>>();
@@ -267,8 +277,10 @@ public class UserGroupManageController extends BaseController {
 		PageResult<User> result = null;
 		if (gid != null) {
 			Limit lit = this.initLimit(start, limit);
-			PageResult<Long> uidPage = this.userGroupService.queryGrouppedUsers(gid, lit);
-			List<User> uList = this.globalUserService.getUserMapByUids(uidPage.getList());
+			PageResult<Long> uidPage = this.userGroupService
+					.queryGrouppedUsers(gid, lit);
+			List<User> uList = this.globalUserService.getUserMapByUids(uidPage
+					.getList());
 			result = new PageResult<User>(uList, lit, uidPage.getTotalCount());
 		}
 		return this.write(result);
@@ -281,6 +293,7 @@ public class UserGroupManageController extends BaseController {
 	 * @param uids
 	 * @return
 	 */
+	@AuthAnnotation(opName = "用户分组管理>为一个用户分组手工添加用户")
 	@ResponseBody
 	@RequestMapping(value = "/adduser")
 	public String addGrouppedUser(Long gid, long[] uids) {
@@ -308,6 +321,7 @@ public class UserGroupManageController extends BaseController {
 	 * @param uids
 	 * @return
 	 */
+	@AuthAnnotation(opName = "用户分组管理>导入指定的用户到用户分组")
 	@ResponseBody
 	@RequestMapping(value = "/impusertogroup")
 	public String importGrouppedUser(Long gid, long[] uids) {
@@ -336,6 +350,7 @@ public class UserGroupManageController extends BaseController {
 	 * @param uids
 	 * @return
 	 */
+	@AuthAnnotation(opName = "用户分组管理>删除用户分组里的用户")
 	@ResponseBody
 	@RequestMapping(value = "/deleteuser")
 	public String deleteGrouppedUser(Long gid, Long[] uids) {
@@ -362,6 +377,7 @@ public class UserGroupManageController extends BaseController {
 	 * @param gids
 	 * @return
 	 */
+	@AuthAnnotation(opName = "用户分组管理>批量删除用户分组")
 	@ResponseBody
 	@RequestMapping(value = "/removegroup")
 	public String deleteUserGroup(long[] gids) {
@@ -378,7 +394,8 @@ public class UserGroupManageController extends BaseController {
 				}
 			}
 			if (dependGroup.size() > 0) {
-				result.put("message", "分组编号:" + dependGroup.toString() + " 因在其它分组中有排除关系，不能删除");
+				result.put("message", "分组编号:" + dependGroup.toString()
+						+ " 因在其它分组中有排除关系，不能删除");
 			}
 			result.put("success", true);
 		}
@@ -397,8 +414,10 @@ public class UserGroupManageController extends BaseController {
 		PageResult<User> result = null;
 		if (gid != null && gid > 0) {
 			Limit lit = this.initLimit(start, limit);
-			PageResult<Long> uidPage = this.userGroupService.getManualUsersPageData(gid, lit);
-			List<User> uList = this.globalUserService.getUserMapByUids(uidPage.getList());
+			PageResult<Long> uidPage = this.userGroupService
+					.getManualUsersPageData(gid, lit);
+			List<User> uList = this.globalUserService.getUserMapByUids(uidPage
+					.getList());
 			result = new PageResult<User>(uList, lit, uidPage.getTotalCount());
 		}
 		return this.write(result);
@@ -412,6 +431,7 @@ public class UserGroupManageController extends BaseController {
 	 * @param field
 	 * @return
 	 */
+	@AuthAnnotation(opName = "用户分组管理>修改分组名称和备注")
 	@ResponseBody
 	@RequestMapping(value = "/modifiedgroup")
 	public String updateGroupInfo(Long gid, String value, String field) {
@@ -442,11 +462,14 @@ public class UserGroupManageController extends BaseController {
 		private ConfigDefinition def;
 		private Object data;
 
-		public UserGroupExpTreeDto(ConfigableInfo configableInfo, ConfigDefinition def, Object data) {
-			this(configableInfo.getName(), configableInfo.getDisplayName(), def, data);
+		public UserGroupExpTreeDto(ConfigableInfo configableInfo,
+				ConfigDefinition def, Object data) {
+			this(configableInfo.getName(), configableInfo.getDisplayName(),
+					def, data);
 		}
 
-		public UserGroupExpTreeDto(String id, String name, ConfigDefinition def, Object data) {
+		public UserGroupExpTreeDto(String id, String name,
+				ConfigDefinition def, Object data) {
 			this.id = id;
 			this.name = name;
 			this.def = def;

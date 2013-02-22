@@ -2,10 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
 		http://www.springframework.org/schema/context
 		http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd 
 		http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd 
 		http://www.springframework.org/schema/util
@@ -14,7 +17,7 @@
 	<context:annotation-config />
 	<context:component-scan base-package="com.nali.spreader.controller" />
 	<context:component-scan base-package="com.nali.spreader.filter" />
-
+	<aop:aspectj-autoproxy proxy-target-class="true" />
 	<mvc:resources mapping="/css/**" location="/css/"></mvc:resources>
 	<mvc:resources mapping="/images/**" location="/images/"></mvc:resources>
 	<mvc:resources mapping="/js/**" location="/js/"></mvc:resources>
@@ -50,10 +53,12 @@
 				<ref bean="strHttpMessageConverter" />
 			</util:list>
 		</property>
-        <property name="webBindingInitializer">
-        	<bean class="com.nali.spreader.util.web.WebBinder" />
-        </property>
+		<property name="webBindingInitializer">
+			<bean class="com.nali.spreader.util.web.WebBinder" />
+		</property>
 	</bean>
-	<bean id="strHttpMessageConverter" class="com.nali.common.springplus.XmlStringHttpMessageConverter" />
-	<bean id="controllerExceptionHandler" class="com.nali.common.exception.i18n.ControllerExceptionHandler" />
+	<bean id="strHttpMessageConverter"
+		class="com.nali.common.springplus.XmlStringHttpMessageConverter" />
+	<bean id="controllerExceptionHandler"
+		class="com.nali.common.exception.i18n.ControllerExceptionHandler" />
 </beans>

@@ -13,6 +13,7 @@ import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
+import com.nali.spreader.aop.annotation.AuthAnnotation;
 import com.nali.spreader.controller.basectrl.BaseController;
 import com.nali.spreader.factory.config.ConfigableType;
 import com.nali.spreader.factory.config.IConfigService;
@@ -58,16 +59,18 @@ public class StrategyGroupManageController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/groupgrid")
-	public String groupGridStore(String groupName, Integer groupType, Integer start, Integer limit) {
+	public String groupGridStore(String groupName, Integer groupType,
+			Integer start, Integer limit) {
 		StrategyGroup sg = new StrategyGroup();
 		sg.setGroupName(groupName);
 		sg.setGroupType(groupType);
-		PageResult<StrategyGroup> pr = groupService.findStrategyGroupPageResult(sg,
-				this.initLimit(start, limit));
+		PageResult<StrategyGroup> pr = groupService
+				.findStrategyGroupPageResult(sg, this.initLimit(start, limit));
 		int totalCount = pr.getTotalCount();
 		List<ConfigableInfo> dispnamelist = regularConfigService
 				.listConfigableInfo(ConfigableType.normal);
-		List<StrategyGroup> sgList = transformGroupStore(pr.getList(), dispnamelist);
+		List<StrategyGroup> sgList = transformGroupStore(pr.getList(),
+				dispnamelist);
 		Map<String, Object> dataMap = CollectionUtils.newHashMap(3);
 		dataMap.put("totalCount", totalCount);
 		dataMap.put("list", sgList);
@@ -82,8 +85,8 @@ public class StrategyGroupManageController extends BaseController {
 	 * @param dispnamelist
 	 * @return
 	 */
-	private List<StrategyGroup> transformGroupStore(List<StrategyGroup> groupList,
-			List<ConfigableInfo> dispnamelist) {
+	private List<StrategyGroup> transformGroupStore(
+			List<StrategyGroup> groupList, List<ConfigableInfo> dispnamelist) {
 		if (groupList.size() > 0 && dispnamelist.size() > 0) {
 			for (StrategyGroup sg : groupList) {
 				Integer gType = sg.getGroupType();
@@ -113,6 +116,7 @@ public class StrategyGroupManageController extends BaseController {
 	 * @param gids
 	 * @return
 	 */
+	@AuthAnnotation(opName = "策略分组>删除策略分组")
 	@ResponseBody
 	@RequestMapping(value = "/deletegroup")
 	public String deleteStrategyGroup(Long[] gids) {
@@ -136,6 +140,7 @@ public class StrategyGroupManageController extends BaseController {
 	 * @param text
 	 * @return
 	 */
+	@AuthAnnotation(opName = "策略分组>更新分组说明")
 	@ResponseBody
 	@RequestMapping(value = "/updatedesc")
 	public String updateGroupNote(Long gid, String text) {

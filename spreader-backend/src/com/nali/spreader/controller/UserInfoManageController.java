@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
+import com.nali.spreader.aop.annotation.AuthAnnotation;
 import com.nali.spreader.config.Range;
 import com.nali.spreader.config.UserTagParamsDto;
 import com.nali.spreader.controller.basectrl.BaseController;
@@ -33,7 +34,8 @@ import com.nali.spreader.service.IUserManageService;
 @Controller
 @RequestMapping(value = "/userinfo")
 public class UserInfoManageController extends BaseController {
-	private static final Logger LOGGER = Logger.getLogger(UserInfoManageController.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(UserInfoManageController.class);
 	@Autowired
 	private IUserManageService userService;
 	@Autowired
@@ -56,8 +58,8 @@ public class UserInfoManageController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/userlist")
-	public String userInfoDtl(UserTagParamsDto utp) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public String userInfoDtl(UserTagParamsDto utp)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		Limit lit = this.initLimit(utp.getStart(), utp.getLimit());
 		PageResult<User> result = userService.findUserInfo(utp, lit);
 		return this.write(result);
@@ -117,6 +119,7 @@ public class UserInfoManageController extends BaseController {
 	 * @param user
 	 * @return
 	 */
+	@AuthAnnotation(opName = "用户管理>更新用户信息")
 	@ResponseBody
 	@RequestMapping(value = "/updateuser")
 	public String updateUserData(User user) {
@@ -158,6 +161,7 @@ public class UserInfoManageController extends BaseController {
 	 * @param uids
 	 * @return
 	 */
+	@AuthAnnotation(opName = "用户管理>导出用户信息")
 	@ResponseBody
 	@RequestMapping(value = "/expuser")
 	public String expUserInfo(Long... uids) {
@@ -183,10 +187,11 @@ public class UserInfoManageController extends BaseController {
 	 * @param randomkeyword
 	 * @return
 	 */
+	@AuthAnnotation(opName = "用户管理>批量修改用户标签")
 	@ResponseBody
 	@RequestMapping(value = "/updatetag")
-	public String updateUserTags(Long[] uids, Integer rangegte, Integer rangelte,
-			String corekeyword, String randomkeyword) {
+	public String updateUserTags(Long[] uids, Integer rangegte,
+			Integer rangelte, String corekeyword, String randomkeyword) {
 		if (uids == null || uids.length == 0) {
 			throw new IllegalArgumentException("uid is null");
 		}
@@ -201,8 +206,8 @@ public class UserInfoManageController extends BaseController {
 			Range<Integer> range = new Range<Integer>();
 			range.setGte(rangegte);
 			range.setLte(rangelte);
-			List<String> randomList = this.userService.getRandomList(Arrays.asList(randomArray),
-					range);
+			List<String> randomList = this.userService.getRandomList(
+					Arrays.asList(randomArray), range);
 			coreList.addAll(randomList);
 		}
 		List<UserTag> tagList = this.userService.createUserTags(coreList);
@@ -226,6 +231,7 @@ public class UserInfoManageController extends BaseController {
 	 * @param form
 	 * @return
 	 */
+	@AuthAnnotation(opName = "用户管理>导入指定的帐号")
 	@ResponseBody
 	@RequestMapping(value = "/uploadacc")
 	public String uploadAccount(UploadBeanDto form) {
@@ -233,13 +239,14 @@ public class UserInfoManageController extends BaseController {
 		result.put("success", false);
 		int count = 0;
 		try {
-			List<KeyValue<RobotUser, User>> list = this.userService.importWeiboAccount(form
-					.getFile());
+			List<KeyValue<RobotUser, User>> list = this.userService
+					.importWeiboAccount(form.getFile());
 			if (!CollectionUtils.isEmpty(list)) {
 				for (KeyValue<RobotUser, User> kv : list) {
 					RobotUser robotUser = kv.getKey();
 					User user = kv.getValue();
-					Long uid = this.globaUserService.registerRobotUser(robotUser, user);
+					Long uid = this.globaUserService.registerRobotUser(
+							robotUser, user);
 					robotUser.setUid(uid);
 					this.globalRobotUserService.syncLoginConfig(robotUser);
 					count++;
