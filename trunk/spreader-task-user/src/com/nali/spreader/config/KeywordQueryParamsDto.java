@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 import com.nali.common.model.Limit;
 
 /**
@@ -30,6 +33,11 @@ public class KeywordQueryParamsDto implements Serializable {
 	private List<Long> categories;
 	// 关键字ID
 	private List<Long> keywordIds;
+
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this,
+				ToStringStyle.SHORT_PREFIX_STYLE);
+	}
 
 	public List<Long> getKeywordIds() {
 		return keywordIds;

@@ -3,6 +3,8 @@ package com.nali.spreader.config;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.nali.common.model.Limit;
 
 /**
@@ -38,6 +40,10 @@ public class UserTagParamsDto implements Serializable {
 	private Limit lit;
 	private Date startCreateTime;
 	private Date endCreateTime;
+
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 
 	public Date getStartCreateTime() {
 		return startCreateTime;
