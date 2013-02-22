@@ -109,6 +109,26 @@ public class RandomUtil {
 		}
 		return list.set(first, list.set(second, list.get(first)));
 	}
+	
+	/**
+	 * @see RandomUtil#fakeRandomItems(List, int, Random)
+	 */
+	public static<E> List<E> fakeRandomItems(List<E> allList, int count) {
+		return fakeRandomItems(allList, count, random);
+	}
+	
+	/**
+	 * 伪随机，多用于count>allList.size()的情况
+	 */
+	public static<E> List<E> fakeRandomItems(List<E> allList, int count, Random rand) {
+		List<E> rlt = new ArrayList<E>(count);
+		for (int i = 0; i < count/allList.size(); i++) {
+			rlt.addAll(allList);
+		}
+		rlt.addAll(randomItems(allList, count%allList.size(), rand));
+		Collections.shuffle(rlt);
+		return rlt;
+	}
 
 	/**
 	 * 随机取n个不重复元素
@@ -204,6 +224,9 @@ public class RandomUtil {
 		return random.nextLong()>>>1;
 	}
 	
+	/**
+	 * 波动基本值
+	 */
 	public static int popple(int base, int popple) {//-(popple-1) ~ (popple-1)
 		if(popple<0) {
 			throw new IllegalArgumentException("Invalid popple:" + popple);
