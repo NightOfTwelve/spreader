@@ -3,6 +3,9 @@ package com.nali.spreader.data;
 import com.nali.common.model.BaseModel;
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 public class Category extends BaseModel implements Serializable {
     private static final long serialVersionUID = -3847741939837558834L;
 
@@ -101,4 +104,9 @@ public class Category extends BaseModel implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+    
+    public String toString() {
+		return ToStringBuilder.reflectionToString(this,
+				ToStringStyle.SHORT_PREFIX_STYLE);
+	}
 }

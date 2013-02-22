@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 import com.nali.common.model.BaseModel;
 
 public class User extends BaseModel implements Serializable {
@@ -1117,4 +1120,9 @@ public class User extends BaseModel implements Serializable {
     public void setCtrlGid(Long ctrlGid) {
         this.ctrlGid = ctrlGid;
     }
+
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this,
+				ToStringStyle.SHORT_PREFIX_STYLE);
+	}
 }
