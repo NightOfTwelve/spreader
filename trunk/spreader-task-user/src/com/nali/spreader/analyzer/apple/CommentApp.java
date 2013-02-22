@@ -1,5 +1,6 @@
 package com.nali.spreader.analyzer.apple;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,34 +30,39 @@ public class CommentApp implements RegularAnalyzer,
 	@AutowireProductLine
 	private TaskProduceLine<DownloadApp.AppCommentDto> downloadApp;
 	private static WeightRandomer<Integer> starRandomer;
-	private static WeightRandomer<Integer> starOnlyRandomer;
-	private static final int START_ONLY = 1;
 	private List<String> titles;
 	private List<String> comments;
 	private AppInfo appInfo;
 	private int count;
+	private Integer starOnlyRate;
 
 	@Override
 	public String work() {
 		List<Long> assignUids = appDownlodService.assignUids(
 				Website.apple.getId(), appInfo.getAppSource(),
 				appInfo.getAppId(), count);
-		for (Long uid : assignUids) {
+		int startOnlyCount = starOnlyRate * assignUids.size() / 100;
+		int normalCount = assignUids.size() - startOnlyCount;
+		List<String> titles = RandomUtil.fakeRandomItems(this.titles, normalCount);
+		List<String> comments = RandomUtil.fakeRandomItems(this.comments, normalCount);
+		Collections.shuffle(assignUids);
+		for (int i = 0; i < assignUids.size(); i++) {
+			Long uid = assignUids.get(i);
+			
 			DownloadApp.AppCommentDto dto = new AppCommentDto();
-			Integer startOnly = starOnlyRandomer.get();
 			dto.setUid(uid);
 			dto.setAppId(appInfo.getAppId());
 			dto.setAppSource(appInfo.getAppSource());
 			dto.setMillionBite(appInfo.getMillionBite());
 			dto.setUrl(appInfo.getUrl());
-			if (START_ONLY == startOnly.intValue()) {
+			dto.setStars(starRandomer.get());
+			if (i < startOnlyCount) {
 				dto.setTitle(StringUtils.EMPTY);
 				dto.setComment(StringUtils.EMPTY);
 			} else {
-				dto.setTitle(getRandomContent(titles));
-				dto.setComment(getRandomContent(comments));
+				dto.setTitle(titles.get(i - startOnlyCount));
+				dto.setComment(comments.get(i - startOnlyCount));
 			}
-			dto.setStars(starRandomer.get());
 			downloadApp.send(dto);
 		}
 		return "预计下载：" + count + ", 实际下载：" + assignUids.size();
@@ -75,27 +81,18 @@ public class CommentApp implements RegularAnalyzer,
 		appInfo.setMillionBite(dto.getMillionBite());
 		count = dto.getCount();
 		Integer fourStar = dto.getFourStar();
-		Integer starOnly = dto.getStarOnly();
+		starOnlyRate = dto.getStarOnly();
 		if (fourStar == null) {
 			fourStar = 20;
 		}
-		if (starOnly == null) {
-			starOnly = 20;
+		if (starOnlyRate == null) {
+			starOnlyRate = 0;
 		}
 		starRandomer = new WeightRandomer<Integer>();
-		starOnlyRandomer = new WeightRandomer<Integer>();
 		starRandomer.add(4, fourStar);
 		starRandomer.add(5, 100 - fourStar);
-		starOnlyRandomer.add(START_ONLY, starOnly);
-		starOnlyRandomer.add(2, 100 - starOnly);
 		titles = dto.getTitle();
 		comments = dto.getComments();
 	}
 
-	private String getRandomContent(List<String> list) {
-		if (list == null) {
-			return StringUtils.EMPTY;
-		}
-		return RandomUtil.randomItem(list);
-	}
 }
