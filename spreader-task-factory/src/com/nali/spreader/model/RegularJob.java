@@ -2,6 +2,10 @@ package com.nali.spreader.model;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 import com.nali.common.model.BaseModel;
 
 public class RegularJob extends BaseModel implements Serializable {
@@ -82,6 +86,11 @@ public class RegularJob extends BaseModel implements Serializable {
 
 		public void setRemind(String remind) {
 			this.remind = remind;
+		}
+		
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this,
+					ToStringStyle.SHORT_PREFIX_STYLE);
 		}
 	}
 
@@ -509,5 +518,10 @@ public class RegularJob extends BaseModel implements Serializable {
 	 */
 	public void setConfig(String config) {
 		this.config = config;
+	}
+	
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this,
+				ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 }
