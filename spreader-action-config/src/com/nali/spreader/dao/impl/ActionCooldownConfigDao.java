@@ -16,6 +16,7 @@ import com.nali.spreader.util.data.impl.TxtToRedisRead;
 public class ActionCooldownConfigDao implements IActionCooldownConfigDao {
 	private static final String DEFAULT = "default";
 	private Read<String, List<Double>> rateRead;
+	private Write<String, List<Double>> rateWrite;
 	private Read<String, Integer> maxRead;
 	private Write<String, Integer> maxWrite;
 
@@ -24,11 +25,11 @@ public class ActionCooldownConfigDao implements IActionCooldownConfigDao {
 		TxtToRedisRead<Double> rateReads = new TxtToRedisRead<Double>(
 				"front#clientconfig#cooldown#rate#", "txt/cooldown_rate",
 				redisTemplate, BaseConverters.stringDouble);
-		rateRead = rateReads.reads.readList();
 		TxtToRedisRead<Integer> maxReads = new TxtToRedisRead<Integer>(
 				"front#clientconfig#cooldown#max#", "txt/cooldown_max",
 				redisTemplate, BaseConverters.stringInteger);
 		rateRead = rateReads.reads.readList();
+		rateWrite = rateReads.rawRedisWrites.writeList();
 		maxRead = maxReads.reads.readValue();
 		maxWrite = maxReads.rawRedisWrites.writeValue();
 	}
@@ -36,6 +37,11 @@ public class ActionCooldownConfigDao implements IActionCooldownConfigDao {
 	@Override
 	public List<Double> getDownloadRate(int id) {
 		return rateRead.read(DEFAULT);
+	}
+	
+	@Override
+	public void saveDownloadRate(int id, List<Double> rates) {
+		rateWrite.write(DEFAULT, rates);
 	}
 
 	@Override
