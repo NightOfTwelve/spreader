@@ -188,6 +188,14 @@ function createPptGridCustEdit(data, def) {
 					custEdit[defname] = new Ext.grid.GridEditor(new Ext.ux.form.DateTimeField());
 				}
 			}
+			if (pType == 'String') {
+				custEdit[defname] = new Ext.grid.GridEditor(new Ext.form.TextArea(
+						{
+							allowBlank : false,
+							maxLength : 2000,
+							autoHeight : true
+						}));
+			}
 		}
 		return custEdit;
 	} else {
