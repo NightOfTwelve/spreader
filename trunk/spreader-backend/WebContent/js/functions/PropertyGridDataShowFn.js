@@ -192,9 +192,13 @@ function createPptGridCustEdit(data, def) {
 				custEdit[defname] = new Ext.grid.GridEditor(new Ext.form.TextArea(
 						{
 							allowBlank : false,
-							maxLength : 2000,
-							height : 400
-							// autoHeight : true
+							width : 200,
+							enableKeyEvents : true,
+							height : 200,
+							cls : 'white-space:nowrap;overflow:scroll;',
+							ctCls : 'white-space:nowrap;overflow:scroll;',
+							bodyStyle : 'white-space:nowrap;overflow:scroll;',
+							focusClass : 'xxx'
 						}));
 			}
 		}
