@@ -1,9 +1,7 @@
-package com.nali.spreader.workshop.apple;
+package com.nali.spreader.workshop.deprecated;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
-import org.springframework.stereotype.Component;
 
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
@@ -14,9 +12,9 @@ import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.desc.ClassDescription;
 import com.nali.spreader.factory.exporter.SingleTaskExporter;
 import com.nali.spreader.util.random.LongRandomer;
-import com.nali.spreader.workshop.apple.ReturnVisitApplePassive.ReturnVisitDto;
+import com.nali.spreader.workshop.deprecated.ReturnVisitApplePassive.ReturnVisitDto;
 
-@Component
+//@Component
 @ClassDescription("apple回访时间（天）")
 public class ReturnVisitApplePassive extends SingleTaskMachineImpl implements PassiveWorkshop<ReturnVisitDto, Boolean>, Configable<Integer> {
 	private LongRandomer millisRandomer;

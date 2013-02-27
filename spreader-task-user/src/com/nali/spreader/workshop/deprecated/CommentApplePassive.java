@@ -1,10 +1,8 @@
-package com.nali.spreader.workshop.apple;
+package com.nali.spreader.workshop.deprecated;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.springframework.stereotype.Component;
 
 import com.nali.spreader.data.KeyValue;
 import com.nali.spreader.factory.TaskProduceLine;
@@ -18,7 +16,7 @@ import com.nali.spreader.util.random.Randomer;
 import com.nali.spreader.util.random.WeightRandomer;
 import com.nali.spreader.workshop.apple.CommentApple.CommentDto;
 
-@Component
+//@Component
 @ClassDescription("app下载完评论几率")
 public class CommentApplePassive implements PassiveAnalyzer<KeyValue<Long, CommentDto>>, Configable<Integer> {
 	private static WeightRandomer<Integer> starRandomer;

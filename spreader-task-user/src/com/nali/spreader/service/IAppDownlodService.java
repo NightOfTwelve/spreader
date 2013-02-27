@@ -9,6 +9,8 @@ public interface IAppDownlodService {
 	Integer STATUS_DOWNLOADED=1;
 	
 	List<Long> assignUids(Integer websiteId, String appSource, Long appId, int count);
+	
+	List<Long> assignUids(Integer websiteId, String appSource, Long appId, int count, int offset);
 
 	void finishDownload(String appSource, Long appId, Long uid);
 

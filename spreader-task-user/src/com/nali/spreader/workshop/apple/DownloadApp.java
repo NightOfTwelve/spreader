@@ -3,7 +3,6 @@ package com.nali.spreader.workshop.apple;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,26 +21,21 @@ import com.nali.spreader.model.ClientTask;
 import com.nali.spreader.service.IAppDownlodService;
 import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.workshop.apple.CommentApple.CommentDto;
-import com.nali.spreader.workshop.apple.ReturnVisitApplePassive.ReturnVisitDto;
 
 @Component
 public class DownloadApp extends SingleTaskMachineImpl implements
 		ContextedPassiveWorkshop<KeyValue<Long, AppInfo>, Object> {
 	private static final int BASE_PRIORITY = ClientTask.BASE_PRIORITY_MAX / 10;
-	private static Logger logger = Logger.getLogger(DownloadApp.class);
 	@Autowired
 	private IAppDownlodService appDownlodService;
 
 	@AutowireProductLine
 	private TaskProduceLine<KeyValue<Long, CommentDto>> commentApple;
-	@AutowireProductLine
-	private TaskProduceLine<ReturnVisitDto> returnVisitApplePassive;
 
 	public DownloadApp() {
 		super(SimpleActionConfig.downloadApp, Website.apple,
 				Channel.intervention);
-		setContextMeta(new String[] { "appSource", "appId" }, "url",
-				"millionBite", "stars", "title", "comment");
+		setContextMeta(new String[] { "appSource", "appId", "stars", "title", "comment"}, "url");
 	}
 
 	@Override
@@ -64,14 +58,14 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 		String appSource = dto.getAppSource();
 		Long appId = dto.getAppId();
 		String url = dto.getUrl();
-		Double millionBite = dto.getMillionBite();
+//		Double millionBite = dto.getMillionBite();
 		String comment = dto.getComment();
 		Integer stars = dto.getStars();
 		String title = dto.getTitle();
 		exporter.setProperty("appSource", appSource);
 		exporter.setProperty("appId", appId);
 		exporter.setProperty("url", url);
-		exporter.setProperty("millionBite", millionBite);
+//		exporter.setProperty("millionBite", millionBite);
 		exporter.setProperty("comment", comment);
 		exporter.setProperty("stars", stars);
 		exporter.setProperty("title", title);
@@ -159,22 +153,9 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 			Map<String, Object> contextContents, Long uid) {
 		String appSource = (String) contextContents.get("appSource");
 		String url = (String) contextContents.get("url");
-		Double millionBite = (Double) contextContents.get("millionBite");
 		String comment = (String) contextContents.get("comment");
 		String title = (String) contextContents.get("title");
 		Integer stars = (Integer) contextContents.get("stars");
-		Long signTime;
-		if (rlt != null) {
-			if (rlt instanceof Long) {
-				signTime = (Long) rlt;
-				ReturnVisitDto returnVisitDto = new ReturnVisitDto(url,
-						millionBite, signTime, uid);
-				returnVisitApplePassive.send(returnVisitDto);
-			} else {
-				logger.error("receive not Long type:" + rlt);
-				return;
-			}
-		}
 		if (stars != null) {
 			Long appId = (Long) contextContents.get("appId");
 			appDownlodService.finishDownload(appSource, appId, uid);
