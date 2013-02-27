@@ -193,7 +193,8 @@ function createPptGridCustEdit(data, def) {
 						{
 							allowBlank : false,
 							maxLength : 2000,
-							autoHeight : true
+							height : 400
+							// autoHeight : true
 						}));
 			}
 		}
