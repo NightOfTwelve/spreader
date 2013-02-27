@@ -74,11 +74,7 @@ public class CommentApp implements RegularAnalyzer,
 			throw new IllegalArgumentException(
 					"url and count must not be empty");
 		}
-		if (dto.getMillionBite() == null) {
-			throw new IllegalArgumentException("millionBite must not be empty");
-		}
 		appInfo = appDownlodService.parseUrl(dto.getUrl());
-		appInfo.setMillionBite(dto.getMillionBite());
 		count = dto.getCount();
 		Integer fourStar = dto.getFourStar();
 		starOnlyRate = dto.getStarOnly();

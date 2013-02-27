@@ -10,6 +10,8 @@ public class UrlDownloadCount implements Serializable {
 	private String url;
 	@PropertyDescription("下载次数")
 	private Integer count;
+	@PropertyDescription("跳过多少个帐号")
+	private Integer offset;
 	@PropertyDescription("app大小（MB）")
 	private Double millionBite;
 	@PropertyDescription("是否等待下载结束")
@@ -45,5 +47,11 @@ public class UrlDownloadCount implements Serializable {
 	}
 	public void setRunApp(boolean runApp) {
 		this.runApp = runApp;
+	}
+	public Integer getOffset() {
+		return offset;
+	}
+	public void setOffset(Integer offset) {
+		this.offset = offset;
 	}
 }

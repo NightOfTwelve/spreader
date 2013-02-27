@@ -34,6 +34,11 @@ public class AppDownlodService implements IAppDownlodService {
 	
 	@Override
 	public List<Long> assignUids(Integer websiteId, String appSource, Long appId, int count) {
+		return assignUids(websiteId, appSource, appId, count, 0);
+	}
+	
+	@Override
+	public List<Long> assignUids(Integer websiteId, String appSource, Long appId, int count, int offset) {
 		List<RobotUser> robots;
 		endPointOperateLock.lock();
 		try {
@@ -41,7 +46,7 @@ public class AppDownlodService implements IAppDownlodService {
 			
 			RobotUserExample example = new RobotUserExample();
 			example.setOrderByClause("uid");
-			example.setLimit(Limit.newInstanceForLimit(0, count));
+			example.setLimit(Limit.newInstanceForLimit(offset, count));
 			if(lastUid!=null) {
 				example.createCriteria()
 					.andAccountStateEqualTo(RobotUser.ACCOUNT_STATE_NORMAL)

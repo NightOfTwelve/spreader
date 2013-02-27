@@ -25,10 +25,11 @@ public class DownloadAppFromUrl implements RegularAnalyzer,Configable<UrlDownloa
 	private TaskProduceLine<KeyValue<Long, AppInfo>> downloadApp;
 	private AppInfo appInfo;
 	private int count;
+	private Integer offset;
 
 	@Override
 	public String work() {
-		List<Long> assignUids = appDownlodService.assignUids(Website.apple.getId(), appInfo.getAppSource(), appInfo.getAppId(), count);
+		List<Long> assignUids = appDownlodService.assignUids(Website.apple.getId(), appInfo.getAppSource(), appInfo.getAppId(), count, offset);
 		for (Long uid : assignUids) {
 			downloadApp.send(new KeyValue<Long, AppInfo>(uid, appInfo));
 		}
@@ -48,6 +49,10 @@ public class DownloadAppFromUrl implements RegularAnalyzer,Configable<UrlDownloa
 		appInfo.setRunApp(dto.isRunApp());
 		appInfo.setWaitToEnd(dto.isWaitToEnd());
 		count = dto.getCount();
+		offset = dto.getOffset();
+		if(offset==null) {
+			offset=0;
+		}
 	}
 
 }
