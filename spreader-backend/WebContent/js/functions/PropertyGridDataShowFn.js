@@ -195,10 +195,7 @@ function createPptGridCustEdit(data, def) {
 							width : 200,
 							enableKeyEvents : true,
 							height : 200,
-							cls : 'white-space:nowrap;overflow:scroll;',
-							ctCls : 'white-space:nowrap;overflow:scroll;',
-							bodyStyle : 'white-space:nowrap;overflow:scroll;',
-							focusClass : 'xxx'
+							autoScroll : true
 						}));
 			}
 		}
