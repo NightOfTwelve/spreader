@@ -1,6 +1,9 @@
 package com.nali.spreader.front.controller;
 
+import java.util.Enumeration;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +26,20 @@ public class TestDispatchController {
 	private UidPoolRepository uidPoolRepository;
 	@Autowired
 	private UidPoolRefresh uidPoolRefresh;
+	
+	@SuppressWarnings("rawtypes")
+	@ResponseBody
+	@RequestMapping("/header")
+	public String testHeader(HttpServletRequest req) {
+		StringBuilder sb = new StringBuilder("<pre>\r\n");
+		Enumeration names = req.getHeaderNames();
+		while (names.hasMoreElements()) {
+			String name = (String) names.nextElement();
+			sb.append(name).append('=').append(req.getHeader(name)).append("\r\n");
+		}
+		sb.append(req.getRemoteAddr()).append("\r\n</pre>");
+		return sb.toString();
+	}
 	
 	@ResponseBody
 	@RequestMapping("/pool/{taskType}")
