@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -46,7 +47,15 @@ public class CommentApple extends SingleTaskMachineImpl implements ContextedPass
 		exporter.setProperty("stars", commentDto.getStars());
 		exporter.setProperty("nickname", user.getNickName());
 		exporter.setBasePriority(BASE_PRIORITY);
-		exporter.send(uid, SpecialDateUtil.afterNow(10));//TODO add start time
+		
+		Date startTime = commentDto.getStartTime();
+		if(startTime!=null) {
+			exporter.setTimes(startTime, DateUtils.addDays(startTime, 3));
+			exporter.setUid(uid);
+			exporter.send();
+		} else {
+			exporter.send(uid, SpecialDateUtil.afterNow(10));
+		}
 	}
 	
 	@Override
@@ -64,6 +73,7 @@ public class CommentApple extends SingleTaskMachineImpl implements ContextedPass
 		private String title;
 		private String content;
 		private Integer stars;
+		private Date startTime;
 		public String getUrl() {
 			return url;
 		}
@@ -99,6 +109,12 @@ public class CommentApple extends SingleTaskMachineImpl implements ContextedPass
 		}
 		public void setStars(Integer stars) {
 			this.stars = stars;
+		}
+		public Date getStartTime() {
+			return startTime;
+		}
+		public void setStartTime(Date startTime) {
+			this.startTime = startTime;
 		}
 	}
 }

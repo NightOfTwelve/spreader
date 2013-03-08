@@ -4,10 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +39,7 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 	private AppInfo appInfo;
 	private Integer starOnlyCount;
 	private Integer offset;
+	private Integer secondsDelay;
 
 	@Override
 	public String work() {
@@ -48,6 +51,10 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 		List<String[]> comments = new ArrayList<String[]>(this.comments);
 		Collections.shuffle(comments);
 		int errorCount=0;
+		Date startTime = null;
+		if(secondsDelay!=null) {
+			startTime = DateUtils.addMinutes(new Date(), 10);//first delay
+		}
 		for (int i = 0; i < assignUids.size(); i++) {
 			Long uid = assignUids.get(i);
 
@@ -70,6 +77,10 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 			} else {
 				dto.setTitle(StringUtils.EMPTY);
 				dto.setComment(StringUtils.EMPTY);
+			}
+			if(startTime!=null) {
+				startTime = DateUtils.addSeconds(startTime, secondsDelay);
+				dto.setCommentStartTime(startTime);
 			}
 			downloadApp.send(dto);
 		}
@@ -104,6 +115,7 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 		if (offset == null) {
 			offset = 0;
 		}
+		secondsDelay=dto.secondsDelay;
 	}
 
 	private static Pattern lineSpliter = Pattern.compile("[\r\n]+");
@@ -130,6 +142,8 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 		private Integer fourStar;
 		@PropertyDescription("跳过多少个帐号")
 		private Integer offset;
+		@PropertyDescription("每次回复间隔（秒）")
+		private Integer secondsDelay;
 
 		public String getUrl() {
 			return url;
@@ -169,6 +183,14 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 
 		public void setOffset(Integer offset) {
 			this.offset = offset;
+		}
+
+		public Integer getSecondsDelay() {
+			return secondsDelay;
+		}
+
+		public void setSecondsDelay(Integer secondsDelay) {
+			this.secondsDelay = secondsDelay;
 		}
 	}
 }
