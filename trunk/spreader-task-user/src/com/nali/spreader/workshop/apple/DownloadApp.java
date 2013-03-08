@@ -35,7 +35,7 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 	public DownloadApp() {
 		super(SimpleActionConfig.downloadApp, Website.apple,
 				Channel.intervention);
-		setContextMeta(new String[] { "appSource", "appId", "stars", "title", "comment"}, "url");
+		setContextMeta(new String[] { "appSource", "appId", "stars", "title", "comment", "commentStartTime"}, "url");
 	}
 
 	@Override
@@ -69,6 +69,7 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 		exporter.setProperty("comment", comment);
 		exporter.setProperty("stars", stars);
 		exporter.setProperty("title", title);
+		exporter.setProperty("commentStartTime", dto.getCommentStartTime());
 		exporter.setBasePriority(BASE_PRIORITY);
 		exporter.send(uid, SpecialDateUtil.afterNow(10));
 	}
@@ -82,6 +83,7 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 		private String comment;
 		private Integer stars;
 		private String title;
+		private Date commentStartTime;
 
 		public String getTitle() {
 			return title;
@@ -146,6 +148,14 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 		public void setComment(String comment) {
 			this.comment = comment;
 		}
+
+		public void setCommentStartTime(Date commentStartTime) {
+			this.commentStartTime = commentStartTime;
+		}
+
+		public Date getCommentStartTime() {
+			return commentStartTime;
+		}
 	}
 
 	@Override
@@ -156,6 +166,7 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 		String comment = (String) contextContents.get("comment");
 		String title = (String) contextContents.get("title");
 		Integer stars = (Integer) contextContents.get("stars");
+		Date commentStartTime = (Date) contextContents.get("commentStartTime");
 		if (stars != null) {
 			Long appId = (Long) contextContents.get("appId");
 			appDownlodService.finishDownload(appSource, appId, uid);
@@ -166,6 +177,7 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 			commentDto.setStars(stars);
 			commentDto.setTitle(title);
 			commentDto.setContent(comment);
+			commentDto.setStartTime(commentStartTime);
 			KeyValue<Long, CommentDto> data = new KeyValue<Long, CommentDto>(
 					uid, commentDto);
 			commentApple.send(data);

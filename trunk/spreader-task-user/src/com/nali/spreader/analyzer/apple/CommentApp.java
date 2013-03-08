@@ -1,9 +1,11 @@
 package com.nali.spreader.analyzer.apple;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +37,8 @@ public class CommentApp implements RegularAnalyzer,
 	private AppInfo appInfo;
 	private int count;
 	private Integer starOnlyRate;
-
+	private Integer secondsDelay;
+	
 	@Override
 	public String work() {
 		List<Long> assignUids = appDownlodService.assignUids(
@@ -46,6 +49,10 @@ public class CommentApp implements RegularAnalyzer,
 		List<String> titles = RandomUtil.fakeRandomItems(this.titles, normalCount);
 		List<String> comments = RandomUtil.fakeRandomItems(this.comments, normalCount);
 		Collections.shuffle(assignUids);
+		Date startTime = null;
+		if(secondsDelay!=null) {
+			startTime = DateUtils.addMinutes(new Date(), 10);
+		}
 		for (int i = 0; i < assignUids.size(); i++) {
 			Long uid = assignUids.get(i);
 			
@@ -62,6 +69,10 @@ public class CommentApp implements RegularAnalyzer,
 			} else {
 				dto.setTitle(titles.get(i - startOnlyCount));
 				dto.setComment(comments.get(i - startOnlyCount));
+			}
+			if(startTime!=null) {
+				startTime = DateUtils.addSeconds(startTime, secondsDelay);
+				dto.setCommentStartTime(startTime);
 			}
 			downloadApp.send(dto);
 		}
@@ -89,6 +100,7 @@ public class CommentApp implements RegularAnalyzer,
 		starRandomer.add(5, 100 - fourStar);
 		titles = dto.getTitle();
 		comments = dto.getComments();
+		secondsDelay=dto.getSecondsDelay();
 	}
 
 }

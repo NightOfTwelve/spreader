@@ -21,6 +21,8 @@ public class CommentAppConfig implements Serializable {
 	private Integer starOnly;
 	@PropertyDescription("四星的比例")
 	private Integer fourStar;
+	@PropertyDescription("每次回复间隔（秒）")
+	private Integer secondsDelay;
 
 	public String getUrl() {
 		return url;
@@ -76,5 +78,13 @@ public class CommentAppConfig implements Serializable {
 
 	public void setFourStar(Integer fourStar) {
 		this.fourStar = fourStar;
+	}
+
+	public Integer getSecondsDelay() {
+		return secondsDelay;
+	}
+
+	public void setSecondsDelay(Integer secondsDelay) {
+		this.secondsDelay = secondsDelay;
 	}
 }
