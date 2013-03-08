@@ -302,11 +302,7 @@ Ext.onReady(function() {
 					if (butname == '编辑') {
 						// TODO
 						if (configType == 1) {
-							cardPanelCmp.removeAll();
-							textForm.form.reset();
-							var tform = textForm.getForm();
-							tform.findField("textcfg").setValue(cfg);
-							cardPanelCmp.add(textForm);
+							createTextModel(cardPanelCmp, cfg);
 						}
 						// TODO
 						if (configType == 2) {
@@ -439,11 +435,6 @@ Ext.onReady(function() {
 			// editorWin.destroy();
 			// var cardPanelCmp = Ext.getCmp('cardPanel').layout;
 			// cardPanelCmp.setActiveItem(configType - 1);
-			var tform = infoForm.getForm();
-			tform.findField("id").setValue(configId);
-			tform.findField("clientId").setValue(clientId);
-			tform.findField("configName").setValue(configName);
-			tform.findField("selectConfigType").setValue(configType);
 			editorWin = new Ext.Window({
 						title : '客户端配置编辑器',
 						layout : 'border',
@@ -453,7 +444,15 @@ Ext.onReady(function() {
 						plain : true,
 						items : [infoForm, cardPanel]
 					});
+
 		}
+		editorWin.on('show', function() {
+					var tform = infoForm.getForm();
+					tform.findField("id").setValue(configId);
+					tform.findField("clientId").setValue(clientId);
+					tform.findField("configName").setValue(configName);
+					tform.findField("selectConfigType").setValue(configType);
+				});
 		editorWin.show(this);
 	}
 
@@ -552,6 +551,8 @@ Ext.onReady(function() {
 												editor : new Ext.form.TextField(),
 												width : 100
 											});
+									cols.push(text)
+									colsHidden.setValue(cols);
 									columns = new Ext.grid.ColumnModel(colcfg);
 									grid.reconfigure(multiGridStore, columns);
 								}
@@ -594,6 +595,7 @@ Ext.onReady(function() {
 							var tt = new Array();
 							for (var i = 0; i < modsize; i++) {
 								var cmCfgData = cmcfg[i];
+								// TODO BUG
 								if (!Ext.isEmpty(cmCfgData)) {
 									var hide = cmCfgData.hidden;
 									// 如果列隐藏了就当作是删除了该列
@@ -601,6 +603,9 @@ Ext.onReady(function() {
 										var tData = mod[i].data;
 										tt[i] = tData;
 									}
+								}
+								if (Ext.isEmpty(cmCfgData) && i > 0) {
+									tt[i] = tData;
 								}
 							}
 							var configs = Ext.util.JSON.encode(tt);
@@ -649,7 +654,9 @@ Ext.onReady(function() {
 		multiGridStore.clearData();
 		multiGridStore.load();
 	}
-
+	/**
+	 * 普通文本编辑方式
+	 */
 	function createTextModel(cardPanelCmp, cfg) {
 		cardPanelCmp.removeAll();
 		var txtForm = new Ext.FormPanel({
@@ -704,6 +711,8 @@ Ext.onReady(function() {
 				}
 			}]
 		});
+		var tf = txtForm.getForm();
+		tf.findField("textcfg").setValue(cfg);
 		cardPanelCmp.add(txtForm);
 	}
 	/**
@@ -799,6 +808,8 @@ Ext.onReady(function() {
 			Ext.Msg.alert("提示", "请编辑好表格列再进行操作");
 			return;
 		}
+		var reader = createMultiGridReader(cols);
+		multiGridStore.reader = reader;
 		var d = new Array();
 		var r = text.split(/\r?\n/);
 		for (var i = 0, size = r.length; i < size; i++) {
