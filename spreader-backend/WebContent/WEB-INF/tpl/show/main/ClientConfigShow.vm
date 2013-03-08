@@ -1,0 +1,10 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>客户端配置信息管理</title>
+#parse("/show/comm/PublicInclude.vm")
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/clientcfg/ClientConfigModel.js'))"></script>
+</head>
+<body>
+</body>
+</html>

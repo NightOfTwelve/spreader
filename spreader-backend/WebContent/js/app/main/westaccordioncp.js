@@ -96,6 +96,11 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "下载曲线设置",
 									leaf : true,
 									url : '/spreader-front/cooldown/init'
+								},{
+									id : 'clientCfgsetting',
+									text : "客户端配置",
+									leaf : true,
+									url : '../clientcfg/init'
 								},
 								// {
 								// id : 'clientTaskStatDtl',
