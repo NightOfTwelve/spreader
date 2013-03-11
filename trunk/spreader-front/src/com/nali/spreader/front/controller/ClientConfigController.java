@@ -3,7 +3,6 @@ package com.nali.spreader.front.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -123,27 +122,13 @@ public class ClientConfigController extends BaseController {
 		return write(keys);
 	}
 
-	private List<Map<String, Object>> getMaps(List<ClientConfig> list) {
-		List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-		Set<String> colSet = new HashSet<String>();
-		for (ClientConfig cc : list) {
-			Long id = cc.getId();
-			String cfg = cc.getClientConfig();
-			Map<String, Object> m = string2Map(cfg);
-			m.put("id", id);
-			data.add(m);
-			if (colSet.size() < m.size()) {
-				colSet = m.keySet();
-			}
-		}
-		return data;
-	}
-
 	private Map<String, Object>[] string2Array(String json) {
 		TypeReference<Map<String, Object>[]> ref = new TypeReference<Map<String, Object>[]>() {
 		};
 		try {
-			return getObjectMapper().readValue(json, ref);
+			if (json != null) {
+				return getObjectMapper().readValue(json, ref);
+			}
 		} catch (JsonParseException e) {
 			logger.error(e);
 		} catch (JsonMappingException e) {
@@ -152,30 +137,6 @@ public class ClientConfigController extends BaseController {
 			logger.error(e);
 		}
 		return null;
-	}
-
-	private Map<String, Object> string2Map(String json) {
-		TypeReference<Map<String, Object>> ref = new TypeReference<Map<String, Object>>() {
-		};
-		Map<String, Object> m = new HashMap<String, Object>();
-		try {
-			m = getObjectMapper().readValue(json, ref);
-		} catch (JsonParseException e) {
-			logger.error(e);
-		} catch (JsonMappingException e) {
-			logger.error(e);
-		} catch (IOException e) {
-			logger.error(e);
-		}
-		return m;
-	}
-
-	public static void main(String[] args) throws JsonParseException,
-			JsonMappingException, IOException {
-		String json = "[{\"a\":\"sd\",\"b\":\"rr\",\"v\":\"hk\"},{\"a\":\"h\",\"b\":\"h\",\"v\":\"hg\"}]";
-		ClientConfigController cr = new ClientConfigController();
-		// Map<String, Object>[] ms = cr.string2Array(json);
-		// System.out.println(ms[0]);
 	}
 
 	@Override
