@@ -114,7 +114,6 @@ Ext.onReady(function() {
 						}, recordType // 记录的类型
 				)
 			});
-	// TODO
 	var textForm = new Ext.FormPanel();
 	var copyWin;
 	var copyTextForm = new Ext.FormPanel({
@@ -300,11 +299,9 @@ Ext.onReady(function() {
 					var configType = selesm[0].data.configType;
 					var cardPanelCmp = Ext.getCmp('cardPanel');
 					if (butname == '编辑') {
-						// TODO
 						if (configType == 1) {
 							createTextModel(cardPanelCmp, cfg);
 						}
-						// TODO
 						if (configType == 2) {
 							createPropertyModel(cardPanelCmp, cfg, configId,
 									clientId);
@@ -397,7 +394,6 @@ Ext.onReady(function() {
 									emptyText : '...',// 默认值
 									triggerAction : 'all',
 									listeners : {
-										// TODO
 										select : function(combo, record, index) {
 											var configType = combo.getValue();
 											var cardPanelCmp = Ext
@@ -500,7 +496,7 @@ Ext.onReady(function() {
 		for (var i = 0; i < idxArray.length; i++) {
 			columnArray[i] = {
 				header : idxArray[i],
-				width : 100,
+				width : 180,
 				dataIndex : idxArray[i],
 				editor : new Ext.form.TextField()
 			}
@@ -509,9 +505,10 @@ Ext.onReady(function() {
 		return column;
 	}
 
-	// TODO
+	/**
+	 * 创建多行多列表格编辑模式
+	 */
 	function createMultiGridModel(cardPanelCmp, configId) {
-		// TODO
 		cardPanelCmp.removeAll();
 		colsHidden.setValue(null);
 		var cols = getMultiGridColumns(configId);
@@ -549,7 +546,7 @@ Ext.onReady(function() {
 												header : text,
 												dataIndex : text,
 												editor : new Ext.form.TextField(),
-												width : 100
+												width : 180
 											});
 									cols.push(text)
 									colsHidden.setValue(cols);
@@ -595,12 +592,11 @@ Ext.onReady(function() {
 							var tt = new Array();
 							for (var i = 0; i < modsize; i++) {
 								var cmCfgData = cmcfg[i];
-								// TODO BUG
+								var tData = mod[i].data;
 								if (!Ext.isEmpty(cmCfgData)) {
 									var hide = cmCfgData.hidden;
 									// 如果列隐藏了就当作是删除了该列
 									if (Ext.isEmpty(hide) || !hide) {
-										var tData = mod[i].data;
 										tt[i] = tData;
 									}
 								}
@@ -720,7 +716,6 @@ Ext.onReady(function() {
 	 */
 	function createPropertyModel(cardPanelCmp, cfg, cfgId, clientId) {
 		cardPanelCmp.removeAll();
-		// TODO
 		var propSrc = Ext.decode(cfg);
 		var propGrid = new Ext.grid.PropertyGrid({
 			width : 300,
