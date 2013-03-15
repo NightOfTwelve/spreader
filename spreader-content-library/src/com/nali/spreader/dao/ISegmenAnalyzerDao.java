@@ -20,6 +20,16 @@ public interface ISegmenAnalyzerDao {
 	double saveSegmenScore(Long contentSegId, Long replySegId, double score);
 
 	/**
+	 * 保存热门微博标签下的相关分词列表与分数的sorted set
+	 * 
+	 * @param titleId
+	 * @param contentSegId
+	 * @param score
+	 * @return
+	 */
+	double saveHotWeiboSegmenScore(Long titleId, Long contentSegId, double score);
+
+	/**
 	 * 获取某个内容分词下分数排名前rank的分词
 	 * 
 	 * @param contentSegId
