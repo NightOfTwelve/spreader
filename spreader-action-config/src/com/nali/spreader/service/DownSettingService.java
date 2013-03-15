@@ -1,5 +1,7 @@
 package com.nali.spreader.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,5 +20,10 @@ public class DownSettingService implements IDownSettingService {
 	@Override
 	public void setMaxDownloadPerHour(int id, int count) {
 		actionCooldownConfigDao.saveMaxDownloadPerHour(id, count);
+	}
+
+	@Override
+	public void setDownloadRate(int id, List<Double> rates) {
+		actionCooldownConfigDao.saveDownloadRate(id, rates);
 	}
 }
