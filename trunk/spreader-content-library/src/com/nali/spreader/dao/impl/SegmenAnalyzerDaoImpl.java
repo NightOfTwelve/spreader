@@ -29,6 +29,7 @@ public class SegmenAnalyzerDaoImpl implements ISegmenAnalyzerDao {
 	private static Logger logger = Logger
 			.getLogger(SegmenAnalyzerDaoImpl.class);
 	private static final String CONTENT_SEG_KEY = "spreader_content_segmen_";
+	private static final String CONTENT_SEG_HOTWEIBO_KEY = "spreader_content_segmen_hotweibo";
 	private static final String LAST_REPLY_INDEX_ID = "last_reply_index_id";
 	@Autowired
 	private DalTemplate dalTemplate;
@@ -48,6 +49,18 @@ public class SegmenAnalyzerDaoImpl implements ISegmenAnalyzerDao {
 
 	private String getSegmenSetKey(Long contentSegId) {
 		return CONTENT_SEG_KEY + contentSegId;
+	}
+
+	private String getHotWeiboSegmenKey(Long titleId) {
+		return CONTENT_SEG_HOTWEIBO_KEY + titleId;
+	}
+
+	@Override
+	public double saveHotWeiboSegmenScore(Long titleId, Long contentSegId,
+			double score) {
+		String key = getHotWeiboSegmenKey(titleId);
+		return redisTemplate.opsForZSet().incrementScore(key, contentSegId,
+				score);
 	}
 
 	@SuppressWarnings("unchecked")
