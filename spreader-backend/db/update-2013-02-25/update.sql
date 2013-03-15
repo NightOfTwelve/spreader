@@ -19,3 +19,5 @@ CREATE TABLE `tb_account_log` (
   PRIMARY KEY  (`id`),
   KEY `IDX_LOG_OP_NAME_USER` (`op_name`,`url`,`create_time`,`account_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+alter table spreader.tb_account_logon modify column password varchar(150)  comment '密码';

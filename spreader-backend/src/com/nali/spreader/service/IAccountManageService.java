@@ -41,4 +41,15 @@ public interface IAccountManageService {
 	 */
 	PageResult<AccountLog> logData(String accountId, Date startCreateTime,
 			Date endCreateTime, Limit limit);
+
+	/**
+	 * 修改密码
+	 * 
+	 * @param accountId
+	 * @param oldPassword
+	 * @param newPassword
+	 * @return
+	 */
+	boolean updatePassWord(String accountId, String oldPassword,
+			String newPassword);
 }
