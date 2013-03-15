@@ -397,4 +397,17 @@ public class ContentService implements IContentService {
 	public void clearLastFetchContentId() {
 		contentMassDataDao.setSpiderContentId(null);
 	}
+
+	@Override
+	public Long assignContentId(String weiboUrl, String content) {
+		if (StringUtils.isBlank(weiboUrl)) {
+			throw new IllegalArgumentException(" weiboUrl must no null");
+		}
+		Content c = parseUrl(weiboUrl);
+		if (c != null) {
+			c.setContent(content);
+			return assignContentId(c);
+		}
+		return null;
+	}
 }

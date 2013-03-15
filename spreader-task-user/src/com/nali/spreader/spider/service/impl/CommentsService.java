@@ -19,13 +19,18 @@ import org.jsoup.helper.HttpConnection.Response;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.nali.spreader.data.Content;
+import com.nali.spreader.data.KeyValue;
+import com.nali.spreader.dto.HotWeiboDto;
 import com.nali.spreader.dto.WeiboAndComments;
+import com.nali.spreader.service.impl.ContentService;
 import com.nali.spreader.spider.exceptions.WeiboRevisionException;
 import com.nali.spreader.spider.service.ICommentsService;
 import com.nali.spreader.spider.utils.WeiboMsg;
@@ -39,6 +44,7 @@ public class CommentsService implements ICommentsService {
 	private static final String WEIBO_TEXT_TAG = "div.WB_text>p>em";
 	private static final String WEIBO_MAX_PAGE_TAG = "div.W_pages_minibtn>a";
 	private static final String COOKIES_KEY = "spreader_spider_weibo_cookies";
+	private static final String HOT_WEIBO_URL = "http://hot.weibo.com/";
 	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
 	/**
@@ -103,9 +109,12 @@ public class CommentsService implements ICommentsService {
 	 * @param url
 	 * @return
 	 */
-	private Response getResponse(String url) {
+	// TODO
+	public Response getResponse(String url) {
+		readCookieByProperties();// 用完去掉这行
 		if (StringUtils.isBlank(url)) {
-			throw new IllegalArgumentException(" getResponse error,weibo url is blank");
+			throw new IllegalArgumentException(
+					" getResponse error,weibo url is blank");
 		}
 		Response resp;
 		try {
@@ -298,6 +307,44 @@ public class CommentsService implements ICommentsService {
 		return list;
 	}
 
+	private List<KeyValue<String, String>> getHotWeiboEntrance() {
+		List<KeyValue<String, String>> entrance = new ArrayList<KeyValue<String, String>>();
+		Response response = getResponse(HOT_WEIBO_URL);
+		if (response != null) {
+			Document doc;
+			try {
+				doc = response.parse();
+				Elements hotLeft = doc.select("div.hot_leftnavbox>ul");
+				for (Element li : hotLeft) {
+					Elements hrefEls = li.select("a[href]");
+					for (Element entrHref : hrefEls) {
+						String href = entrHref.attr("href");
+						List<Node> nodes = entrHref.childNodes();
+						KeyValue<String, String> kv = new KeyValue<String, String>();
+						if (nodes.size() > 0) {
+							TextNode entrNode = (TextNode) nodes.get(1);
+							if (entrNode != null) {
+								String entrText = entrNode.text();
+								kv.setKey(entrText);
+								kv.setValue(href);
+								entrance.add(kv);
+							}
+						}
+					}
+				}
+			} catch (IOException e) {
+				if (logger.isDebugEnabled()) {
+					logger.debug(HOT_WEIBO_URL + ",parse error", e);
+				}
+			}
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug(HOT_WEIBO_URL + ",response is null");
+			}
+		}
+		return entrance;
+	}
+
 	private List<String> read(String html) {
 		Document doc = Jsoup.parse(html);
 		Elements els = doc.select("dl.comment_list>dd");
@@ -379,18 +426,68 @@ public class CommentsService implements ICommentsService {
 		readCookieByRedis();
 	}
 
-	// public static void main(String[] args) {
-	// CommentsService cs = new CommentsService();
-	// WeiboAndComments data;
-	// try {
-	// data = cs.analysisWeiboAndComments(
-	// "http://weibo.com/1642512402/zg64ZDDmG", 3);
-	// String weibo = data.getWeibo();
-	// List<String> comments = data.getComments();
-	// System.out.println("weibo:" + weibo);
-	// System.out.println("comments:" + comments);
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
+	private List<HotWeiboDto> getHotWeiboByTitle(String titleUrl, String title,
+			int page) {
+		if (page <= 0) {
+			page = 1;
+		}
+		if (page > 10) {
+			page = 10;
+		}
+		List<HotWeiboDto> list = new ArrayList<HotWeiboDto>();
+		for (int i = 1; i <= page; i++) {
+			StringBuffer buff = new StringBuffer(titleUrl).append("&page=");
+			buff.append(i);
+			Response response = getResponse(buff.toString());
+			Document doc;
+			try {
+				doc = response.parse();
+				Elements eles = doc.select("div.WB_feed_type");
+				for (Element el : eles) {
+					HotWeiboDto dto = new HotWeiboDto();
+					Elements infoEls = el.select("div.WB_text");
+					if (infoEls != null) {
+						String content = infoEls.text();
+						Elements urlEls = el.select("a.WB_time");
+						if (urlEls != null) {
+							String url = urlEls.attr("href");
+							dto.setTitle(title);
+							dto.setContent(content);
+							dto.setUrl(url);
+							list.add(dto);
+						} else {
+							logger.error("a.WB_time not found,url:"
+									+ buff.toString());
+						}
+					} else {
+						logger.error("div.WB_text not found,url:"
+								+ buff.toString());
+					}
+				}
+			} catch (IOException e) {
+				logger.error("url:" + buff.toString() + ",parse error", e);
+			}
+		}
+		return list;
+	}
+
+	public static void main(String[] args) throws IOException {
+		// 分页 /?v=1299&page=2
+		// CommentsService cs = new CommentsService();
+		// Response response = cs.getResponse("http://hot.weibo.com/?v=1299");
+		// Document doc = response.parse();
+		// Elements eles = doc.select("div.WB_feed_type");
+		// for (Element el : eles) {
+		// Elements infoels = el.select("div.WB_text");
+		// String content = infoels.text();
+		// Elements urlels = el.select("a.WB_time");
+		// String url = urlels.attr("href");
+		// System.out.println(content);
+		// System.out.println(url);
+		// }
+		ContentService cs = new ContentService();
+		Content c = cs.parseUrl("http://weibo.com/1494759712/znmdSA4WM");
+		System.out.println(c.toString());
+		
+	}
 }
