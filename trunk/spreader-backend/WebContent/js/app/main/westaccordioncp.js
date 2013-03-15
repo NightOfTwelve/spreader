@@ -91,12 +91,12 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "客户端IP查询",
 									leaf : true,
 									url : '/spreader-front/iprecord/init'
-								},{
+								}, {
 									id : 'cooldownsetting',
 									text : "下载曲线设置",
 									leaf : true,
 									url : '/spreader-front/cooldown/init'
-								},{
+								}, {
 									id : 'clientCfgsetting',
 									text : "客户端配置",
 									leaf : true,
@@ -118,6 +118,11 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "帮助信息维护",
 									leaf : true,
 									url : '../help/init'
+								}, {
+									id : 'passwordUpdate',
+									text : "密码修改",
+									leaf : true,
+									url : '../psw/init'
 								}]
 					}),
 			// 添加监听事件
