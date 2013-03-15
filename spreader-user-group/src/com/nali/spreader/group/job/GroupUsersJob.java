@@ -21,7 +21,9 @@ public class GroupUsersJob {
 
 	@PostConstruct
 	public void init() {
+		PerformanceLogger.infoStart();
 		refreshAllGroupUsers();
+		PerformanceLogger.info("用户分组初始化加载完毕");
 	}
 
 	@SuppressWarnings("unused")
@@ -34,7 +36,8 @@ public class GroupUsersJob {
 
 	private void refreshAllGroupUsers() {
 		List<Long> queryGroups = this.userGroupInfoService.queryAllUserGroup();
-		List<Long> dependGroups = this.userGroupInfoService.getAllGroupDependData(null);
+		List<Long> dependGroups = this.userGroupInfoService
+				.getAllGroupDependData(null);
 		refreshDependGroupUsers(dependGroups);
 		refreshQueryGroupUsers(queryGroups, dependGroups);
 	}
