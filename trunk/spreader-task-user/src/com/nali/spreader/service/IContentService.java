@@ -30,6 +30,15 @@ public interface IContentService {
 	Content assignContent(Integer websiteId, Long websiteUid, String entry);
 
 	Content parseUrl(String url);
+	
+	/**
+	 * 根据微博地址和内容保存一条记录并返回ID
+	 * 
+	 * @param weiboUrl
+	 * @param content
+	 * @return
+	 */
+	Long assignContentId(String weiboUrl, String content);
 
 	/**
 	 * 分配一个contentID content == null return null
