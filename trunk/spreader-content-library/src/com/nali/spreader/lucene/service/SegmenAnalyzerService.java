@@ -26,6 +26,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.NumericField;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,8 @@ import com.nali.spreader.remote.ISegmenAnalyzerService;
 import com.nali.spreader.util.PerformanceLogger;
 
 @Service
-public class SegmenAnalyzerService implements ISegmenAnalyzerService {
+public class SegmenAnalyzerService implements ISegmenAnalyzerService,
+		ApplicationListener {
 	private static Logger logger = Logger
 			.getLogger(SegmenAnalyzerService.class);
 	// private ContentAnalyzer contentAnalyzer = new ContentAnalyzer();
@@ -70,12 +73,6 @@ public class SegmenAnalyzerService implements ISegmenAnalyzerService {
 
 	@PostConstruct
 	public void init() {
-		PerformanceLogger.infoStart();
-		loadSegment();
-		PerformanceLogger.info("分词加载完毕");
-		PerformanceLogger.infoStart();
-		createReplyIndex();
-		PerformanceLogger.info("回复库索引建立完毕");
 		scale = 0.1f; // TODO
 		segRank = 5;
 		try {
@@ -413,5 +410,22 @@ public class SegmenAnalyzerService implements ISegmenAnalyzerService {
 		public void setMaxScore(double maxScore) {
 			this.maxScore = maxScore;
 		}
+	}
+
+	@Override
+	public void onApplicationEvent(ApplicationEvent event) {
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				PerformanceLogger.infoStart();
+				loadSegment();
+				PerformanceLogger.info("分词加载完毕");
+				PerformanceLogger.infoStart();
+				createReplyIndex();
+				PerformanceLogger.info("回复库索引建立完毕");
+			}
+		});
+		t.setName("CreateReplyIndexThread");
+		t.start();
 	}
 }
