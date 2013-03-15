@@ -3,13 +3,13 @@ Ext.onReady(function() {
 						id : 'settingForm',
 						name : 'settingForm',
 						labelWidth : 100, // 标签宽度
-						// frame : true, // 是否渲染表单面板背景色
+						frame : true, // 是否渲染表单面板背景色
 						defaultType : 'textfield', // 表单元素默认类型
 						labelAlign : 'right', // 标签对齐方式
 						bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
 						items : [{
 									fieldLabel : '已设置的值', // 标签
-									id:'perHour',
+									id : 'perHour',
 									name : 'perHour', // name:后台根据此name属性取值
 									readOnly : true,
 									anchor : '95%' // 宽度百分比
@@ -19,13 +19,23 @@ Ext.onReady(function() {
 									allowBlank : false,
 									name : 'MaxDownloadPerHour', // name:后台根据此name属性取值
 									anchor : '95%' // 宽度百分比
+								}, {
+									// TODO
+									fieldLabel : 'Rates', // 标签
+									xtype : 'textarea',
+									autoScroll : true,
+									height : 350,
+									id : 'maxDownloadRates',
+									allowBlank : false,
+									name : 'maxDownloadRates', // name:后台根据此name属性取值
+									anchor : '95%' // 宽度百分比
 								}]
 					});
 			var win = new Ext.Window({
 						title : '设置曲线',
 						layout : 'fit',
 						width : 400, // 窗口宽度
-						height : 200, // 窗口高度
+						height : 500, // 窗口高度
 						closable : false, // 是否可关闭
 						collapsible : true, // 是否可收缩
 						maximizable : true, // 设置是否可以最大化
@@ -54,6 +64,15 @@ Ext.onReady(function() {
 			function submitTheForm() {
 				var tform = form.getForm();
 				var hour = tform.findField("maxDownloadPerHour").getValue();
+				var rates = tform.findField("maxDownloadRates").getValue();
+				var ratesArr = new Array();
+				if (!Ext.isEmpty(rates)) {
+					ratesArr = text2Array(rates);
+				}
+				if (!checkRates(ratesArr)) {
+					Ext.Msg.alert('提示', 'coolDown_rate数据不正确');
+					return;
+				}
 				if (Ext.isEmpty(hour)) {
 					Ext.Msg.alert('提示', '请填写值');
 					return;
@@ -69,11 +88,24 @@ Ext.onReady(function() {
 								Ext.MessageBox.alert('提示', '数据保存失败');
 							},
 							params : {
-								hour : hour
+								hour : hour,
+								rates : ratesArr
 							}
 						});
 			}
-
+			function checkRates(rates) {
+				for (var i = 0; i < rates.length; i++) {
+					var rate = rates[i];
+					if (rate > 1 || rate < 0) {
+						return false;
+					}
+				}
+				return true;
+			}
+			function text2Array(text) {
+				var r = text.split(/\r?\n/);
+				return r;
+			}
 			function getHour() {
 				Ext.Ajax.request({
 							url : '/spreader-front/cooldown/get?_time='

@@ -1,6 +1,7 @@
 package com.nali.spreader.front.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -26,12 +27,13 @@ public class ActionCooldownController {
 
 	@ResponseBody
 	@RequestMapping(value = "/setting")
-	public String settingHour(Integer hour) {
+	public String settingHour(Integer hour, Double[] rates) {
 		int hours = 0;
 		if (hour != null) {
 			hours = hour.intValue();
 		}
 		downSettingService.setMaxDownloadPerHour(0, hours);
+		downSettingService.setDownloadRate(0, Arrays.asList(rates));
 		return null;
 	}
 
