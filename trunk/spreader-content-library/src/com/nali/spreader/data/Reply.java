@@ -19,6 +19,16 @@ public class Reply implements Serializable {
 
 	private Integer useCount;
 
+	private Boolean isIndex;
+
+	public Boolean getIsIndex() {
+		return isIndex;
+	}
+
+	public void setIsIndex(Boolean isIndex) {
+		this.isIndex = isIndex;
+	}
+
 	public Integer getUseCount() {
 		return useCount;
 	}

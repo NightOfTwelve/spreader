@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,8 +27,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.NumericField;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ import com.nali.spreader.util.PerformanceLogger;
 
 @Service
 public class SegmenAnalyzerService implements ISegmenAnalyzerService,
-		ApplicationListener {
+		ApplicationListener<ContextRefreshedEvent> {
 	private static Logger logger = Logger
 			.getLogger(SegmenAnalyzerService.class);
 	// private ContentAnalyzer contentAnalyzer = new ContentAnalyzer();
@@ -70,6 +71,8 @@ public class SegmenAnalyzerService implements ISegmenAnalyzerService,
 	private float scale;
 	// 分词得分排名
 	private int segRank;
+	// 建立索引的锁
+	private final ReentrantLock lock = new ReentrantLock();
 
 	@PostConstruct
 	public void init() {
@@ -113,6 +116,16 @@ public class SegmenAnalyzerService implements ISegmenAnalyzerService,
 					segmenAnalyzerDao.saveSegmenScore(csegId, rsegId, 1);
 				}
 			}
+		}
+	}
+
+	// TODO hotweibo
+	private void analysisHotWeiboSegmen(String content, String title) {
+		Set<String> contentSegs = getContentSegmen(content, ikAnalyzer);
+		Long titleId = assignContentSegmenId(title);
+		for (String contentSeg : contentSegs) {
+			Long csegId = assignContentSegmenId(contentSeg);
+			segmenAnalyzerDao.saveHotWeiboSegmenScore(titleId, csegId, 1);
 		}
 	}
 
@@ -198,50 +211,43 @@ public class SegmenAnalyzerService implements ISegmenAnalyzerService,
 
 	@Override
 	public void createReplyIndex() {
-		int start = 0;
-		int limit = 5000;
-		List<Reply> list = null;
-		int rows = 0;
-		do {
-			list = segmenAnalyzerDao.query(start, limit);
-			List<Document> docs = getDocument(list);
-			searchService.indexDocs(docs);
-			rows = list.size();
-			start = start + limit;
-		} while (rows > 0);
-	}
-
-	/**
-	 * 增量的方式 TODO
-	 */
-	private void createReplyIndex2() {
-		int start = 0;
-		int limit = 5000;
-		List<Reply> list = null;
-		int rows = 0;
-		Long lastId = segmenAnalyzerDao.getLastReplyId();
-		Long setLastId = null;
-		do {
-			list = segmenAnalyzerDao.query(lastId, start, limit);
-			List<Document> docs = getDocument(list);
-			searchService.indexDocs(docs);
-			rows = list.size();
-			if (rows > 0) {
-				if (start == 0) {
-					setLastId = list.get(0).getId();
-				}
+		if (isLock()) {
+			try {
+				int start = 0;
+				int limit = 5000;
+				List<Reply> list = null;
+				int rows = 0;
+				do {
+					list = segmenAnalyzerDao.query(start, limit);
+					List<DocumentReply> data = getDocument(list);
+					for (DocumentReply dr : data) {
+						Document doc = dr.getDoc();
+						Long replyId = dr.getReplyId();
+						boolean success = searchService.indexDoc(doc);
+						// 建完索引把reply索引标识改为true
+						if (success) {
+							segmenAnalyzerDao.updateReplyIsIndex(replyId, true);
+						}
+					}
+					rows = list.size();
+					start = start + limit;
+				} while (rows > 0);
+			} catch (Exception e) {
+				logger.error(" index error ", e);
+			} finally {
+				unLock();
 			}
-			start = start + limit;
-		} while (rows > 0);
-		segmenAnalyzerDao.setLastReplyId(setLastId);
+		}
 	}
 
-	private List<Document> getDocument(List<Reply> list) {
-		List<Document> docs = new ArrayList<Document>();
+	private List<DocumentReply> getDocument(List<Reply> list) {
+		List<DocumentReply> data = new ArrayList<DocumentReply>();
 		for (Reply r : list) {
+			DocumentReply dr = new DocumentReply();
+			Long replyId = r.getId();
 			Document doc = new Document();
 			doc.add(new NumericField("id", Field.Store.YES, false)
-					.setLongValue(r.getId()));
+					.setLongValue(replyId));
 			doc.add(new Field("content", r.getContent(), Field.Store.YES,
 					Field.Index.ANALYZED));
 			doc.add(new NumericField("atCount", Field.Store.NO, false)
@@ -252,9 +258,11 @@ public class SegmenAnalyzerService implements ISegmenAnalyzerService,
 					.setLongValue(getInteger(r.getTopicCount())));
 			doc.add(new NumericField("useCount", Field.Store.NO, false)
 					.setLongValue(getInteger(r.getUseCount())));
-			docs.add(doc);
+			dr.setReplyId(replyId);
+			dr.setDoc(doc);
+			data.add(dr);
 		}
-		return docs;
+		return data;
 	}
 
 	private Integer getInteger(Integer i) {
@@ -391,6 +399,27 @@ public class SegmenAnalyzerService implements ISegmenAnalyzerService,
 		return buff.toString();
 	}
 
+	private class DocumentReply {
+		private Document doc;
+		private Long replyId;
+
+		public Document getDoc() {
+			return doc;
+		}
+
+		public void setDoc(Document doc) {
+			this.doc = doc;
+		}
+
+		public Long getReplyId() {
+			return replyId;
+		}
+
+		public void setReplyId(Long replyId) {
+			this.replyId = replyId;
+		}
+	}
+
 	private class SegmenScore {
 		private Map<String, Double> scores;
 		private double maxScore;
@@ -413,13 +442,15 @@ public class SegmenAnalyzerService implements ISegmenAnalyzerService,
 	}
 
 	@Override
-	public void onApplicationEvent(ApplicationEvent event) {
+	public void onApplicationEvent(ContextRefreshedEvent event) {
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
+				PerformanceLogger.info("开始加载分词");
 				PerformanceLogger.infoStart();
 				loadSegment();
 				PerformanceLogger.info("分词加载完毕");
+				PerformanceLogger.info("开始建立回复库索引");
 				PerformanceLogger.infoStart();
 				createReplyIndex();
 				PerformanceLogger.info("回复库索引建立完毕");
@@ -427,5 +458,15 @@ public class SegmenAnalyzerService implements ISegmenAnalyzerService,
 		});
 		t.setName("CreateReplyIndexThread");
 		t.start();
+	}
+
+	@Override
+	public boolean isLock() {
+		return lock.tryLock();
+	}
+
+	@Override
+	public void unLock() {
+		lock.unlock();
 	}
 }

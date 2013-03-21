@@ -97,7 +97,6 @@ public class SearchService implements ISearchService, DisposableBean {
 			try {
 				for (Document doc : docs) {
 					String content = doc.get("content");
-					System.out.println("doc:" + content);
 					indexWriter.deleteDocuments(new Term("content", content));
 					indexWriter.forceMergeDeletes();
 					indexWriter.addDocument(doc);
@@ -108,6 +107,23 @@ public class SearchService implements ISearchService, DisposableBean {
 				logger.error(e);
 			}
 		}
+	}
+
+	@Override
+	public boolean indexDoc(Document doc) {
+		if (doc == null) {
+			return false;
+		}
+		try {
+			indexWriter.addDocument(doc);
+			indexWriter.commit();
+			return true;
+		} catch (CorruptIndexException e) {
+			logger.error(e);
+		} catch (IOException e) {
+			logger.error(e);
+		}
+		return false;
 	}
 
 	@Override

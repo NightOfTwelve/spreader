@@ -69,6 +69,15 @@ public interface ISegmenAnalyzerDao {
 	 */
 	int updateReply(Reply reply);
 
+	/**
+	 * 更新是否已经索引标识
+	 * 
+	 * @param id
+	 * @param isIndex
+	 * @return
+	 */
+	int updateReplyIsIndex(Long id, boolean isIndex);
+
 	List<Reply> query(String content, int atCountGte, int atCountLte,
 			int reReplyCountGte, int reReplyCountLte, int topicCountGte,
 			int topicCountLte, int contentLengthGte, int contentLengthLte,

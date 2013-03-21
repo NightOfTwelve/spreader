@@ -99,12 +99,23 @@ public class SegmenAnalyzerDaoImpl implements ISegmenAnalyzerDao {
 		return null;
 	}
 
+	@Override
 	public int updateReply(Reply reply) {
 		Assert.notNull(reply, "reply is null");
 		Long id = reply.getId();
 		Assert.notNull(id, "replyId is null");
 		Map<String, Object> m = bean.convertMap(reply);
 		int rows = dalTemplate.upsert("dal.upsertReply", m);
+		return rows;
+	}
+
+	@Override
+	public int updateReplyIsIndex(Long id, boolean isIndex) {
+		Assert.notNull(id, " reply id is null");
+		Map<String, Object> m = CollectionUtils.newHashMap(2);
+		m.put("id", id);
+		m.put("isIndex", isIndex);
+		int rows = dalTemplate.upsert("dal.upsertReplyIsIndex", m);
 		return rows;
 	}
 
@@ -221,6 +232,7 @@ public class SegmenAnalyzerDaoImpl implements ISegmenAnalyzerDao {
 	@Override
 	public List<Reply> query(int offset, int limit) {
 		SelectBuilder builder = dalTemplate.startFor("dal.selectReply");
+		builder.cond("isIndex", Criteria.eq, false);
 		List<Map<String, Object>> tmpList = builder.select(offset, limit);
 		return getReplyList(tmpList);
 	}
