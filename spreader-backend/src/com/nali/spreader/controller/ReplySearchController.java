@@ -19,6 +19,7 @@ import com.nali.spreader.lucene.service.ISearchService;
 import com.nali.spreader.remote.ISegmenAnalyzerService;
 import com.nali.spreader.service.IContentService;
 import com.nali.spreader.spider.service.ICommentsService;
+import com.nali.spreader.util.PerformanceLogger;
 
 @Controller
 @RequestMapping(value = "/reply")
@@ -82,5 +83,28 @@ public class ReplySearchController extends BaseController {
 	public String clearSpiderRecord() {
 		contentService.clearLastFetchContentId();
 		return null;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/index")
+	public String index() {
+		Map<String, Boolean> m = CollectionUtils.newHashMap(1);
+		m.put("lock", false);
+		boolean lock = segmenAnalyzerService.isLock();
+		if (!lock) {
+			m.put("lock", true);
+		} else {
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					PerformanceLogger.infoStart();
+					segmenAnalyzerService.createReplyIndex();
+					PerformanceLogger.info("建立索引完毕");
+				}
+			});
+			t.setName("manualIndexThread");
+			t.start();
+		}
+		return write(m);
 	}
 }
