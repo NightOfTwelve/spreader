@@ -123,6 +123,11 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "密码修改",
 									leaf : true,
 									url : '../psw/init'
+								}, {
+									id : 'logView',
+									text : "日志查询",
+									leaf : true,
+									url : '../log/init'
 								}]
 					}),
 			// 添加监听事件
