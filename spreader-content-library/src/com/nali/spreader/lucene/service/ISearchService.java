@@ -22,7 +22,7 @@ public interface ISearchService {
 	 * @param fields
 	 * @return
 	 */
-	public long index(List<Field> fields);
+	long index(List<Field> fields);
 
 	/**
 	 * 根据文档建立索引
@@ -30,7 +30,15 @@ public interface ISearchService {
 	 * @param docs
 	 * @return
 	 */
-	public void indexDocs(List<Document> docs);
+	void indexDocs(List<Document> docs);
+
+	/**
+	 * 建立文档的索引
+	 * 
+	 * @param doc
+	 * @return
+	 */
+	boolean indexDoc(Document doc);
 
 	/**
 	 * 按Query删除索引
@@ -38,7 +46,7 @@ public interface ISearchService {
 	 * @param queries
 	 * @return
 	 */
-	public long delete(Query... queries);
+	long delete(Query... queries);
 
 	/**
 	 * 按Term删除索引
@@ -46,14 +54,14 @@ public interface ISearchService {
 	 * @param terms
 	 * @return
 	 */
-	public long delete(Term... terms);
+	long delete(Term... terms);
 
 	/**
 	 * 删除全部索引
 	 * 
 	 * @return
 	 */
-	public long deleteAll();
+	long deleteAll();
 
 	/**
 	 * 更新索引
@@ -62,7 +70,7 @@ public interface ISearchService {
 	 * @param doc
 	 * @return
 	 */
-	public long update(Term t, Document doc);
+	long update(Term t, Document doc);
 
 	/**
 	 * 根据关键字查询回复内容
@@ -72,6 +80,5 @@ public interface ISearchService {
 	 * @param rows
 	 * @return
 	 */
-	public List<ReplySearch> searchReply(String keyword, String[] fieldName,
-			int rows);
+	List<ReplySearch> searchReply(String keyword, String[] fieldName, int rows);
 }

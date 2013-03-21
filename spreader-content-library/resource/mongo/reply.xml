@@ -62,4 +62,18 @@
 		</property>
 		<property name="upsert" value="false" />
 	</bean>
+	<bean id="dal.upsertReplyIsIndex" class="com.nali.dal.statement.upsert.OperateUpsertStatement">
+		<property name="into" value="reply" />
+		<property name="modify">
+			<list>
+				<value>set(isIndex, isIndex)</value>
+			</list>
+		</property>
+		<property name="match">
+			<list>
+				<value>eq(id, id)</value>
+			</list>
+		</property>
+		<property name="upsert" value="false" />
+	</bean>
 </beans>
