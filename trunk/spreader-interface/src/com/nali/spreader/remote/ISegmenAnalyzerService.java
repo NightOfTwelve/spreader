@@ -27,6 +27,10 @@ public interface ISegmenAnalyzerService {
 	 */
 	void createReplyIndex();
 
+	boolean isLock();
+
+	void unLock();
+
 	/**
 	 * 保存一条回复记录并返回ID
 	 * 
