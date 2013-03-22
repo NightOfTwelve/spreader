@@ -9,13 +9,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LimitedEmailRegister {
 	private static final Object token = new Object();
 	private static Logger logger = Logger.getLogger(LimitedEmailRegister.class);
-	private EmailRegister emailRegister = new EmailRegister();
+	@Autowired
+	private EmailRegister emailRegister;
 	private BlockingQueue<Object> tokenHolder = new LinkedBlockingQueue<Object>(1);
 	private Timer timer = new Timer();
 	

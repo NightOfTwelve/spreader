@@ -37,7 +37,8 @@ public class RegisterRobotUserEmail extends MultiTaskMachineImpl implements Conf
 	private static Logger logger = Logger.getLogger(RegisterRobotUserEmail.class);
 	@Autowired
 	private IRobotRegisterService robotRegisterService;
-	private LimitedEmailRegister emailRegister = new LimitedEmailRegister();
+	@Autowired
+	private LimitedEmailRegister emailRegister;
 	
 	@AutowireProductLine
 	private TaskProduceLine<Long> registerWeiboAccount;
