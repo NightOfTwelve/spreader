@@ -9,7 +9,9 @@ import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
+import org.springframework.stereotype.Component;
 
+@Component
 public class EmailRegister {
 	private static Logger logger = Logger.getLogger(EmailRegister.class);
 	private static final int RETRY_TIME = 5;

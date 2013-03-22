@@ -40,7 +40,8 @@ public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassive
 	private IAppRegisterService appRegisterService;
 	@AutowireProductLine
 	private TaskProduceLine<KeyValue<RobotUser, User>> generateAppAccount;
-	private LimitedEmailRegister emailRegister = new LimitedEmailRegister();
+	@Autowired
+	private LimitedEmailRegister emailRegister;
 
 	public ActiveApp() {
 		super(SimpleActionConfig.activeApp, Website.apple, Channel.normal);
