@@ -7,20 +7,22 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.params.ClientPNames;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.HttpParams;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +42,7 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	@Value("${spreader.email.mdaemon.mailDeleteUrl}")
 	private String mailDeleteUrl;
 	private static final String LOGIN_LOCATION = "login.wdm?expired=1";
-	private String firstAccessHeader;
+	private String firstAccessCookies;
 	private static final DefaultHttpClient httpClient = new DefaultHttpClient();
 
 	/**
@@ -80,7 +82,7 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	 */
 	private String getRegisterPostXML(String userName, String domain,
 			String password) {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		buff.append("<root> ");
 		buff.append("<Form Name=\"waForm\" Document=\"useredit_account.wdm\" UrlVars=\"\">");
 		buff.append("<SmartPassword Type=\"password\"><![CDATA[]]></SmartPassword> ");
@@ -118,7 +120,7 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	 */
 	private String getDelPostXML(String userName, String domain) {
 		String delete = getCDATA(userName + "@" + domain);
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		buff.append("<root><Form Name=\"waForm\" Document=\"userlist.wdm\" UrlVars=\"\"> ");
 		buff.append("<FilterCol Type=\"hidden\"><![CDATA[]]></FilterCol> ");
 		buff.append("<FilterMatch Type=\"hidden\"><![CDATA[]]></FilterMatch> ");
@@ -131,46 +133,47 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	}
 
 	private boolean execute(String postXML, String postUrl) {
-		if (isNeedLogin(postUrl)) {
+		if (isNeedLogin()) {
 			login();
 		}
 		HttpPost post = new HttpPost(postUrl);
 		try {
 			StringEntity myEntity = new StringEntity(postXML, DEFAULT_CHARSET);
 			post.addHeader("Content-Type", "text/xml");
-			post.setHeader("Cookie", firstAccessHeader);
 			post.setEntity(myEntity);
 			HttpResponse response = httpClient.execute(post);
-			int statusCode = response.getStatusLine().getStatusCode();
-			if (statusCode == HttpURLConnection.HTTP_OK) {
-				return true;
-			} else {
-				HttpEntity resEntity = response.getEntity();
-				InputStreamReader reader = new InputStreamReader(
-						resEntity.getContent(), DEFAULT_CHARSET);
-				char[] buff = new char[1024];
-				int length = 0;
-				while ((length = reader.read(buff)) != -1) {
-					logger.error(new String(buff, 0, length));
+			if (response != null) {
+				int statusCode = response.getStatusLine().getStatusCode();
+				if (statusCode == HttpURLConnection.HTTP_OK) {
+					HttpEntity ht = response.getEntity();
+					String html = EntityUtils.toString(ht);
+					if (isLoginPage(html) || isLocationLogin(response)) {
+						firstAccessCookies = null;
+						execute(postXML, postUrl);
+					} else {
+						return true;
+					}
+				} else {
+					HttpEntity resEntity = response.getEntity();
+					InputStreamReader reader = new InputStreamReader(
+							resEntity.getContent(), DEFAULT_CHARSET);
+					logger.error(IOUtils.toString(reader));
 				}
 			}
-			post.abort();
 		} catch (UnsupportedEncodingException e) {
 			logger.error(e);
 		} catch (IOException e) {
 			logger.error(e);
 		} finally {
-			httpClient.getConnectionManager().shutdown();
+			post.abort();
 		}
 		return false;
 	}
 
 	private void login() {
 		HttpPost post = new HttpPost(mailLoginUrl);
-		if (firstAccessHeader == null) {
-			getFirstLoginCookies();
-		}
-		post.setHeader("Cookie", firstAccessHeader);
+		getFirstLoginCookies();
+		post.setHeader("Cookie", firstAccessCookies);
 		List<NameValuePair> nvs = new ArrayList<NameValuePair>();
 		nvs.add(new BasicNameValuePair("CheckForCookie", "1"));
 		nvs.add(new BasicNameValuePair("RequestedPage", "login"));
@@ -181,10 +184,6 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 		try {
 			post.setEntity(new UrlEncodedFormEntity(nvs, DEFAULT_CHARSET));
 			httpClient.execute(post);
-		} catch (UnsupportedEncodingException e) {
-			logger.error(e);
-		} catch (ClientProtocolException e) {
-			logger.error(e);
 		} catch (IOException e) {
 			logger.error(e);
 		} finally {
@@ -192,31 +191,46 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 		}
 	}
 
-	private boolean isNeedLogin(String url) {
-		if (firstAccessHeader == null) {
+	/**
+	 * 分析是否是登录页面
+	 * 
+	 * @param htmlText
+	 * @return
+	 */
+	private boolean isLoginPage(String htmlText) {
+		Document doc = Jsoup.parse(htmlText);
+		Elements els = doc.select(".loginButton");
+		if (els.size() > 0) {
 			return true;
 		}
-		HttpGet get = new HttpGet(url);
-		get.addHeader("Content-Type", "text/xml");
-		HttpParams hp = httpClient.getParams();
-		hp.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
-		HttpResponse response;
-		try {
-			response = httpClient.execute(get);
-			Header hs = response.getFirstHeader("Location");
-			if (hs == null) {
-				return false;
-			} else {
-				return LOGIN_LOCATION.equals(hs.getValue());
-			}
-		} catch (ClientProtocolException e) {
-			logger.error(e);
-		} catch (IOException e) {
-			logger.error(e);
-		} finally {
-			get.abort();
+		return false;
+	}
+
+	/**
+	 * 是否需要登录
+	 * 
+	 * @return
+	 */
+	private boolean isNeedLogin() {
+		if (firstAccessCookies == null) {
+			return true;
 		}
-		return true;
+		return false;
+	}
+
+	/**
+	 * 是否跳转到登录页面
+	 * 
+	 * @param response
+	 * @return
+	 */
+	private boolean isLocationLogin(HttpResponse response) {
+		Header hs = response.getFirstHeader("Location");
+		if (hs == null) {
+			return false;
+		} else {
+			return LOGIN_LOCATION.equals(hs.getValue());
+		}
 	}
 
 	/**
@@ -230,10 +244,8 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 			HttpResponse response = httpClient.execute(get);
 			Header setCookie = response.getFirstHeader("Set-Cookie");
 			if (setCookie != null) {
-				firstAccessHeader = setCookie.getValue();
+				firstAccessCookies = setCookie.getValue();
 			}
-		} catch (ClientProtocolException e) {
-			logger.error(e);
 		} catch (IOException e) {
 			logger.error(e);
 		} finally {
@@ -242,15 +254,22 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	}
 
 	private String getCDATA(String value) {
-		StringBuffer buff = new StringBuffer("<![CDATA[");
+		StringBuilder buff = new StringBuilder("<![CDATA[");
 		buff.append(value);
 		buff.append("]]>");
 		return buff.toString();
 	}
 
-	public static void main(String[] args) {
-		MDaemonEmailRegister m = new MDaemonEmailRegister();
-		m.register("testCookies4", "abc.com", "123");
-		m.del("testCookies1", "abc.com");
-	}
+	// public static void main(String[] args) {
+	// MDaemonEmailRegister m = new MDaemonEmailRegister();
+	// // m.register("testnew1", "abc.com", "123");
+	// String aa[] = { "abc2", "sam12321", "at212", "zou_1981",
+	// "yinbangpai1985", "enterprise19821125", "brian_luo",
+	// "qin19790628", "arnold19891112", "yan_xinglan", "wang19911206",
+	// "wujiaxi1996", "zhang_hongmao", "frances_zhu", "yan_xiangdi",
+	// "test3KJJ", "test3KJ3J", "testnew1" };
+	// for (String x : aa) {
+	// m.del(x, "abc2.com");
+	// }
+	// }
 }
