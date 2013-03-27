@@ -48,6 +48,14 @@ public interface ISegmenAnalyzerService {
 	void execuAnalysisSegmen(String weibo, List<String> comments);
 
 	/**
+	 * 分析微博
+	 * 
+	 * @param content
+	 * @param title
+	 */
+	void analysisHotWeiboSegmen(String content, String title);
+
+	/**
 	 * 根据微博匹配最相似的回复内容
 	 * 
 	 * @param weibo

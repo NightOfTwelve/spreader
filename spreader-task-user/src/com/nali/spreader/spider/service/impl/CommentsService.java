@@ -307,7 +307,7 @@ public class CommentsService implements ICommentsService {
 		return list;
 	}
 
-	private List<KeyValue<String, String>> getHotWeiboEntrance() {
+	public List<KeyValue<String, String>> getHotWeiboEntrance() {
 		List<KeyValue<String, String>> entrance = new ArrayList<KeyValue<String, String>>();
 		Response response = getResponse(HOT_WEIBO_URL);
 		if (response != null) {
@@ -426,7 +426,8 @@ public class CommentsService implements ICommentsService {
 		readCookieByRedis();
 	}
 
-	private List<HotWeiboDto> getHotWeiboByTitle(String titleUrl, String title,
+	@Override
+	public List<HotWeiboDto> getHotWeiboByTitle(String titleUrl, String title,
 			int page) {
 		if (page <= 0) {
 			page = 1;
@@ -488,6 +489,6 @@ public class CommentsService implements ICommentsService {
 		ContentService cs = new ContentService();
 		Content c = cs.parseUrl("http://weibo.com/1494759712/znmdSA4WM");
 		System.out.println(c.toString());
-		
+
 	}
 }

@@ -182,6 +182,40 @@ Ext.onReady(function() {
 							}
 						});
 					}
+				}, '-', {
+					text : '爬取热门微博',
+					iconCls : 'page_findIcon',
+					handler : function() {
+						Ext.Msg.show({
+							title : '警告',
+							msg : '该操作执行需要较长时间，是否继续?',
+							buttons : Ext.Msg.YESNO,
+							fn : function(ans) {
+								if (ans == 'yes') {
+									Ext.Ajax.request({
+										url : '../reply/hotweibo?_time'
+												+ new Date().getTime(),
+										success : function(response) {
+											var result = Ext
+													.decode(response.responseText);
+											var lock = result.lock;
+											if (lock) {
+												Ext.Msg.alert("提示",
+														"该操作被锁定请稍后再试");
+												return;
+											} else {
+												Ext.Msg.alert("提示", "已提交到后台执行");
+												return;
+											}
+										},
+										failure : function() {
+											Ext.Msg.alert("提示", "清除失败");
+										}
+									});
+								}
+							}
+						});
+					}
 				}]
 	});
 
