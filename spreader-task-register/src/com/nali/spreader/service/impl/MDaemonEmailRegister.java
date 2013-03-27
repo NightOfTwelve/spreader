@@ -22,10 +22,12 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpParams;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-public class MDaemonEmailRegister {
+import com.nali.spreader.service.IEmailRegisterService;
+
+@Service
+public class MDaemonEmailRegister implements IEmailRegisterService {
 	private static final Logger logger = Logger
 			.getLogger(MDaemonEmailRegister.class);
 	private static final String DEFAULT_CHARSET = "UTF-8";
@@ -49,6 +51,7 @@ public class MDaemonEmailRegister {
 	 * @param password
 	 * @return
 	 */
+	@Override
 	public boolean register(String userName, String domain, String password) {
 		String xml = getRegisterPostXML(userName, domain, password);
 		return execute(xml, mailRegisterUrl);
@@ -61,6 +64,7 @@ public class MDaemonEmailRegister {
 	 * @param domain
 	 * @return
 	 */
+	@Override
 	public boolean del(String userName, String domain) {
 		String xml = getDelPostXML(userName, domain);
 		return execute(xml, mailDeleteUrl);
@@ -162,10 +166,7 @@ public class MDaemonEmailRegister {
 		return false;
 	}
 
-	/**
-	 * 登录
-	 */
-	public void login() {
+	private void login() {
 		HttpPost post = new HttpPost(mailLoginUrl);
 		if (firstAccessHeader == null) {
 			getFirstLoginCookies();
