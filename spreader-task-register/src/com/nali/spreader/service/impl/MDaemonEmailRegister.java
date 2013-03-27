@@ -2,18 +2,15 @@ package com.nali.spreader.service.impl;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -36,13 +33,11 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	private static final String MAIL_USER_ADMIN = "admin@abc.com";
 	private static final String MAIL_USER_ADMIN_PSW = "admin";
 	@Value("${spreader.email.mdaemon.mailLoginUrl}")
-	private String mailLoginUrl;
+	private String mailLoginUrl = "http://192.168.3.133:1000/login.wdm";
 	@Value("${spreader.email.mdaemon.mailRegisterUrl}")
-	private String mailRegisterUrl;
+	private String mailRegisterUrl = "http://192.168.3.133:1000/useredit_account.wdm?postXML=1";
 	@Value("${spreader.email.mdaemon.mailDeleteUrl}")
-	private String mailDeleteUrl;
-	private static final String LOGIN_LOCATION = "login.wdm?expired=1";
-	private String firstAccessCookies;
+	private String mailDeleteUrl = "http://192.168.3.133:1000/userlist.wdm?postXML=1";
 	private static final DefaultHttpClient httpClient = new DefaultHttpClient();
 
 	/**
@@ -133,9 +128,6 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	}
 
 	private boolean execute(String postXML, String postUrl) {
-		if (isNeedLogin()) {
-			login();
-		}
 		HttpPost post = new HttpPost(postUrl);
 		try {
 			StringEntity myEntity = new StringEntity(postXML, DEFAULT_CHARSET);
@@ -147,8 +139,8 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 				if (statusCode == HttpURLConnection.HTTP_OK) {
 					HttpEntity ht = response.getEntity();
 					String html = EntityUtils.toString(ht);
-					if (isLoginPage(html) || isLocationLogin(response)) {
-						firstAccessCookies = null;
+					if (isLoginPage(html)) {
+						login();
 						execute(postXML, postUrl);
 					} else {
 						return true;
@@ -160,8 +152,6 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 					logger.error(IOUtils.toString(reader));
 				}
 			}
-		} catch (UnsupportedEncodingException e) {
-			logger.error(e);
 		} catch (IOException e) {
 			logger.error(e);
 		} finally {
@@ -172,8 +162,6 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 
 	private void login() {
 		HttpPost post = new HttpPost(mailLoginUrl);
-		getFirstLoginCookies();
-		post.setHeader("Cookie", firstAccessCookies);
 		List<NameValuePair> nvs = new ArrayList<NameValuePair>();
 		nvs.add(new BasicNameValuePair("CheckForCookie", "1"));
 		nvs.add(new BasicNameValuePair("RequestedPage", "login"));
@@ -206,53 +194,6 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 		return false;
 	}
 
-	/**
-	 * 是否需要登录
-	 * 
-	 * @return
-	 */
-	private boolean isNeedLogin() {
-		if (firstAccessCookies == null) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * 是否跳转到登录页面
-	 * 
-	 * @param response
-	 * @return
-	 */
-	private boolean isLocationLogin(HttpResponse response) {
-		Header hs = response.getFirstHeader("Location");
-		if (hs == null) {
-			return false;
-		} else {
-			return LOGIN_LOCATION.equals(hs.getValue());
-		}
-	}
-
-	/**
-	 * 获取首次访问页面得到的cookies
-	 * 
-	 * @return
-	 */
-	private void getFirstLoginCookies() {
-		HttpGet get = new HttpGet(mailLoginUrl);
-		try {
-			HttpResponse response = httpClient.execute(get);
-			Header setCookie = response.getFirstHeader("Set-Cookie");
-			if (setCookie != null) {
-				firstAccessCookies = setCookie.getValue();
-			}
-		} catch (IOException e) {
-			logger.error(e);
-		} finally {
-			get.abort();
-		}
-	}
-
 	private String getCDATA(String value) {
 		StringBuilder buff = new StringBuilder("<![CDATA[");
 		buff.append(value);
@@ -262,7 +203,12 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 
 	// public static void main(String[] args) {
 	// MDaemonEmailRegister m = new MDaemonEmailRegister();
-	// // m.register("testnew1", "abc.com", "123");
+	// m.register("testnew1", "abc.com", "123");
+	// private String mailLoginUrl = "http://192.168.3.133:1000/login.wdm";
+	// private String mailRegisterUrl =
+	// "http://192.168.3.133:1000/useredit_account.wdm?postXML=1";
+	// private String mailDeleteUrl =
+	// "http://192.168.3.133:1000/userlist.wdm?postXML=1";
 	// String aa[] = { "abc2", "sam12321", "at212", "zou_1981",
 	// "yinbangpai1985", "enterprise19821125", "brian_luo",
 	// "qin19790628", "arnold19891112", "yan_xinglan", "wang19911206",
