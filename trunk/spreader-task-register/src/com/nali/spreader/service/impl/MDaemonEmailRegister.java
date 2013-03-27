@@ -135,7 +135,6 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 			login();
 		}
 		HttpPost post = new HttpPost(postUrl);
-		DefaultHttpClient httpClient = new DefaultHttpClient();
 		try {
 			StringEntity myEntity = new StringEntity(postXML, DEFAULT_CHARSET);
 			post.addHeader("Content-Type", "text/xml");

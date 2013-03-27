@@ -119,8 +119,8 @@ public class SegmenAnalyzerService implements ISegmenAnalyzerService,
 		}
 	}
 
-	// TODO hotweibo
-	private void analysisHotWeiboSegmen(String content, String title) {
+	@Override
+	public void analysisHotWeiboSegmen(String content, String title) {
 		Set<String> contentSegs = getContentSegmen(content, ikAnalyzer);
 		Long titleId = assignContentSegmenId(title);
 		for (String contentSeg : contentSegs) {
