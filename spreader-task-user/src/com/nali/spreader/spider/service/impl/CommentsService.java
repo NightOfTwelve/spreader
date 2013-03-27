@@ -109,9 +109,7 @@ public class CommentsService implements ICommentsService {
 	 * @param url
 	 * @return
 	 */
-	// TODO
 	public Response getResponse(String url) {
-		readCookieByProperties();// 用完去掉这行
 		if (StringUtils.isBlank(url)) {
 			throw new IllegalArgumentException(
 					" getResponse error,weibo url is blank");
