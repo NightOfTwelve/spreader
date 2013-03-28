@@ -32,6 +32,12 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	private static final String DEFAULT_CHARSET = "UTF-8";
 	private static final String MAIL_USER_ADMIN = "admin@abc.com";
 	private static final String MAIL_USER_ADMIN_PSW = "admin";
+	// TOOD DELETE
+	// private String mailLoginUrl = "http://192.168.3.133:1000/login.wdm";
+	// private String mailRegisterUrl =
+	// "http://192.168.3.133:1000/useredit_account.wdm?postXML=1";
+	// private String mailDeleteUrl =
+	// "http://192.168.3.133:1000/userlist.wdm?postXML=1";
 	@Value("${spreader.email.mdaemon.mailLoginUrl}")
 	private String mailLoginUrl = "http://192.168.3.133:1000/login.wdm";
 	@Value("${spreader.email.mdaemon.mailRegisterUrl}")
@@ -51,7 +57,7 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	@Override
 	public boolean register(String userName, String domain, String password) {
 		String xml = getRegisterPostXML(userName, domain, password);
-		return execute(xml, mailRegisterUrl);
+		return execute(xml, mailRegisterUrl, 5);
 	}
 
 	/**
@@ -64,7 +70,7 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	@Override
 	public boolean del(String userName, String domain) {
 		String xml = getDelPostXML(userName, domain);
-		return execute(xml, mailDeleteUrl);
+		return execute(xml, mailDeleteUrl, 5);
 	}
 
 	/**
@@ -127,8 +133,11 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 		return buff.toString();
 	}
 
-	private boolean execute(String postXML, String postUrl) {
+	private boolean execute(String postXML, String postUrl, int tryTimes) {
 		HttpPost post = new HttpPost(postUrl);
+		// if (tryTimes <= 1) {
+		// return false;
+		// }
 		try {
 			StringEntity myEntity = new StringEntity(postXML, DEFAULT_CHARSET);
 			post.addHeader("Content-Type", "text/xml");
@@ -141,15 +150,22 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 					String html = EntityUtils.toString(ht);
 					if (isLoginPage(html)) {
 						login();
-						execute(postXML, postUrl);
+						tryTimes--;
+						System.out.println(html);
+						return execute(postXML, postUrl, tryTimes);
 					} else {
+						System.out.println(html);
 						return true;
 					}
 				} else {
 					HttpEntity resEntity = response.getEntity();
 					InputStreamReader reader = new InputStreamReader(
 							resEntity.getContent(), DEFAULT_CHARSET);
-					logger.error(IOUtils.toString(reader));
+					logger.error("execute :" + postUrl + ",error,"
+							+ IOUtils.toString(reader));
+					login();
+					tryTimes--;
+					return execute(postXML, postUrl, tryTimes);
 				}
 			}
 		} catch (IOException e) {
@@ -160,7 +176,7 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 		return false;
 	}
 
-	private void login() {
+	private synchronized void login() {
 		HttpPost post = new HttpPost(mailLoginUrl);
 		List<NameValuePair> nvs = new ArrayList<NameValuePair>();
 		nvs.add(new BasicNameValuePair("CheckForCookie", "1"));
@@ -191,6 +207,9 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 		if (els.size() > 0) {
 			return true;
 		}
+		if(htmlText.indexOf("Your session has expired")>0) {
+			return true;
+		}
 		return false;
 	}
 
@@ -201,21 +220,20 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 		return buff.toString();
 	}
 
-	// public static void main(String[] args) {
-	// MDaemonEmailRegister m = new MDaemonEmailRegister();
-	// m.register("testnew1", "abc.com", "123");
-	// private String mailLoginUrl = "http://192.168.3.133:1000/login.wdm";
-	// private String mailRegisterUrl =
-	// "http://192.168.3.133:1000/useredit_account.wdm?postXML=1";
-	// private String mailDeleteUrl =
-	// "http://192.168.3.133:1000/userlist.wdm?postXML=1";
-	// String aa[] = { "abc2", "sam12321", "at212", "zou_1981",
-	// "yinbangpai1985", "enterprise19821125", "brian_luo",
-	// "qin19790628", "arnold19891112", "yan_xinglan", "wang19911206",
-	// "wujiaxi1996", "zhang_hongmao", "frances_zhu", "yan_xiangdi",
-	// "test3KJJ", "test3KJ3J", "testnew1" };
-	// for (String x : aa) {
-	// m.del(x, "abc2.com");
-	// }
-	// }
+	public static void main(String[] args) {
+		MDaemonEmailRegister m = new MDaemonEmailRegister();
+		String names[] = { "t1", "t2", "t3", "t4", "t5" };
+		for (String x : names) {
+			boolean t = m.register(x, "360ke.net", "123");
+			// boolean t = m.del(x, "360ke.net");
+			System.out.println(t);
+		}
+
+		// m.del("", "abc2.com");
+		// private String mailLoginUrl = "http://192.168.3.133:1000/login.wdm";
+		// private String mailRegisterUrl =
+		// "http://192.168.3.133:1000/useredit_account.wdm?postXML=1";
+		// private String mailDeleteUrl =
+		// "http://192.168.3.133:1000/userlist.wdm?postXML=1";
+	}
 }
