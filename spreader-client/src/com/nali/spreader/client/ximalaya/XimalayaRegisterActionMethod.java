@@ -47,9 +47,9 @@ public class XimalayaRegisterActionMethod implements ActionMethod {
 				md5 = interfaceCheckService.getParamsMD5(new Object[] { nickName, email, pwd,
 						gender, province, city });
 			} catch (NoSuchAlgorithmException e) {
-				logger.error(e);
+				logger.error(e, e);
 			} catch (IOException e) {
-				logger.error(e);
+				logger.error(e, e);
 			}
 			Map<String, Object> result;
 			try {
@@ -68,7 +68,7 @@ public class XimalayaRegisterActionMethod implements ActionMethod {
 							+ ",nickName :" + nickName + ", email:" + email + ", password :" + pwd);
 				}
 			} catch (AuthenticationException e) {
-				logger.error(e);
+				logger.error(e, e);
 			}
 		}
 		return new KeyValue<Long, String>(null, null);

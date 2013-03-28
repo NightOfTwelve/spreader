@@ -49,9 +49,9 @@ public class XimalayaImportUserActionMethod implements ActionMethod {
 					fansGte, fansLte, vType, startCreateTime, endCreateTime, startUpdateTime,
 					endUpdateTime });
 		} catch (NoSuchAlgorithmException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 		List<Map<String, Object>> maps;
 		try {
@@ -59,7 +59,7 @@ public class XimalayaImportUserActionMethod implements ActionMethod {
 					startCreateTime, endCreateTime, startUpdateTime, endUpdateTime, md5);
 		} catch (AuthenticationException e) {
 			maps = new ArrayList<Map<String, Object>>();
-			logger.error(e);
+			logger.error(e, e);
 		}
 		return interfaceCheckService.getUsers(maps);
 	}
