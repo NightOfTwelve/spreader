@@ -18,13 +18,15 @@ import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.User;
 
 @Service
-public class XimalayInterfaceCheckService implements IXimalayInterfaceCheckService {
+public class XimalayInterfaceCheckService implements
+		IXimalayInterfaceCheckService {
 
 	@Value("${ximalaya.md5Key}")
 	private String md5Key;
 
 	@Override
-	public byte[] getParamsMD5(Object[] params) throws IOException, NoSuchAlgorithmException {
+	public byte[] getParamsMD5(Object[] params) throws IOException,
+			NoSuchAlgorithmException {
 		ByteArrayOutputStream bao = new ByteArrayOutputStream();
 		ObjectOutputStream oo = new ObjectOutputStream(bao);
 		oo.writeObject(params);
@@ -60,6 +62,7 @@ public class XimalayInterfaceCheckService implements IXimalayInterfaceCheckServi
 		Integer vType = (Integer) map.get("vType");
 		Long attentions = ((Number) map.get("attentions")).longValue();
 		Long fans = ((Number) map.get("fans")).longValue();
+		Date createdTime = (Date) map.get("createdTime");
 		User user = new User();
 		user.setWebsiteId(Website.ximalaya.getId());
 		user.setIsRobot(false);
@@ -75,7 +78,7 @@ public class XimalayInterfaceCheckService implements IXimalayInterfaceCheckServi
 		user.setAttentions(attentions);
 		user.setvType(vType);
 		user.setFans(fans);
-		user.setCreateTime(new Date());
+		user.setCreateTime(createdTime == null ? new Date() : createdTime);
 		return user;
 	}
 }
