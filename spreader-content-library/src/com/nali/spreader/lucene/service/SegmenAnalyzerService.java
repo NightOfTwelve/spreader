@@ -175,14 +175,14 @@ public class SegmenAnalyzerService implements ISegmenAnalyzerService,
 				}
 			}
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} finally {
 			try {
 				if (reader != null) {
 					reader.close();
 				}
 			} catch (IOException e) {
-				logger.error(e);
+				logger.error(e, e);
 			}
 		}
 		return tokens;

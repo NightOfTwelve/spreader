@@ -91,7 +91,7 @@ public class ContentLibManageController extends BaseController {
 				nickName = "--";
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 		return this.write(nickName);
 	}

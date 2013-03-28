@@ -54,7 +54,7 @@ public class MockIdentityService implements IIdentityService {
 			file.createNewFile();
 			FileUtils.writeStringToFile(file, "10000");
 		} catch (IOException e) {
-			log.error(e);
+			log.error(e, e);
 		}
 	}
 

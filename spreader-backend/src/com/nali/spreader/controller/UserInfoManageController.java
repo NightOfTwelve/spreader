@@ -254,7 +254,7 @@ public class UserInfoManageController extends BaseController {
 			}
 			result.put("success", true);
 		} catch (Exception e) {
-			LOGGER.error(e);
+			LOGGER.error(e, e);
 		}
 		result.put("count", count);
 		return this.write(result);

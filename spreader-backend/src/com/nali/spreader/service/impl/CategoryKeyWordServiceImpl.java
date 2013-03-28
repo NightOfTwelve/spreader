@@ -235,7 +235,7 @@ public class CategoryKeyWordServiceImpl implements ICategoryKeyWordService {
 				this.keywordDao.cleanKeywordCategory(id);
 				rows++;
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error(e, e);
 			}
 		}
 		return rows;

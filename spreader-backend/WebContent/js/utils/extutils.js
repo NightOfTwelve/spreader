@@ -181,7 +181,9 @@ function renderDateNYRHis(value) {
 }
 
 function string2Date(str) {
-	var d = new Date(Date.parse(str.replace(/-/g, "/")));
+	var tstr = str.replace(/-/g, "/");
+	var tp = Date.parse(tstr);
+	var d = new Date(tp);
 	return d;
 }
 /**

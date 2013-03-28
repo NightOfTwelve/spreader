@@ -33,7 +33,7 @@ public class StopwordsFilter extends FilteringTokenFilter {
 			String[] words = cfg.getStringArray(DEFAULT_STOPWORD_FILE_KEY);
 			return new HashSet<String>(Arrays.asList(words));
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 		return new HashSet<String>();
 	}
@@ -100,7 +100,7 @@ public class StopwordsFilter extends FilteringTokenFilter {
 				String[] words = cfg.getStringArray(keyName);
 				stopwords = new HashSet<String>(Arrays.asList(words));
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error(e, e);
 			}
 		}
 	}

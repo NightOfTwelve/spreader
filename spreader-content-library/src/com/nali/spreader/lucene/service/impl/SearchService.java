@@ -104,7 +104,7 @@ public class SearchService implements ISearchService, DisposableBean {
 				// tiw.addDocuments(docs);
 				indexWriter.commit();
 			} catch (IOException e) {
-				logger.error(e);
+				logger.error(e, e);
 			}
 		}
 	}
@@ -119,9 +119,9 @@ public class SearchService implements ISearchService, DisposableBean {
 			indexWriter.commit();
 			return true;
 		} catch (CorruptIndexException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 		return false;
 	}
@@ -131,7 +131,7 @@ public class SearchService implements ISearchService, DisposableBean {
 		try {
 			return tiw.deleteDocuments(queries);
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 		return 0;
 	}
@@ -141,7 +141,7 @@ public class SearchService implements ISearchService, DisposableBean {
 		try {
 			return tiw.deleteDocuments(terms);
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 		return 0;
 	}
@@ -151,7 +151,7 @@ public class SearchService implements ISearchService, DisposableBean {
 		try {
 			return tiw.deleteAll();
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 		return 0;
 	}
@@ -161,7 +161,7 @@ public class SearchService implements ISearchService, DisposableBean {
 		try {
 			return tiw.updateDocument(t, doc);
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 		return 0;
 	}
@@ -195,16 +195,16 @@ public class SearchService implements ISearchService, DisposableBean {
 				list.add(ds);
 			}
 		} catch (CorruptIndexException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} catch (ParseException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} finally {
 			try {
 				nrtMgr.release(searcher);
 			} catch (IOException e) {
-				logger.error(e);
+				logger.error(e, e);
 			}
 		}
 		return list;

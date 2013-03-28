@@ -1,5 +1,7 @@
 package com.nali.spreader.service;
 
+import java.io.IOException;
+
 /**
  * 邮箱注册
  * 
@@ -15,7 +17,7 @@ public interface IEmailRegisterService {
 	 * @param password
 	 * @return
 	 */
-	boolean register(String userName, String domain, String password);
+	boolean register(String userName, String domain, String password) throws IOException;
 
 	/**
 	 * 删除邮箱
@@ -24,5 +26,5 @@ public interface IEmailRegisterService {
 	 * @param domain
 	 * @return
 	 */
-	boolean del(String userName, String domain);
+	void del(String userName, String domain) throws IOException;
 }
