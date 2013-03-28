@@ -48,7 +48,7 @@ public class FetchWeiboDetailAnalyzer implements RegularAnalyzer, SystemObject {
 					fetchWeiboDetail.send(kv);
 				}
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error(e, e);
 			}
 		}
 		if (list.size() > 0) {
@@ -69,7 +69,7 @@ public class FetchWeiboDetailAnalyzer implements RegularAnalyzer, SystemObject {
 		// fetchWeiboDetail.send(kv);
 		// }
 		// } catch (Exception e) {
-		// logger.error(e);
+		// logger.error(e, e);
 		// }
 		// }
 		return null;

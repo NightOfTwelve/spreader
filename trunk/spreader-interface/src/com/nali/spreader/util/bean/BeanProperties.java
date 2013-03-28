@@ -215,9 +215,9 @@ public class BeanProperties {
 		try {
 			obj = (E) clazz.newInstance();
 		} catch (InstantiationException e) {
-			LOGGER.error(e);
+			LOGGER.error(e, e);
 		} catch (IllegalAccessException e) {
-			LOGGER.error(e);
+			LOGGER.error(e, e);
 		}
 		for (Map.Entry<String, Method> entry : setMethodMap.entrySet()) {
 			String propName = entry.getKey();
@@ -261,11 +261,11 @@ public class BeanProperties {
 					map.put(propName, value);
 				}
 			} catch (IllegalArgumentException e) {
-				LOGGER.error(e);
+				LOGGER.error(e, e);
 			} catch (IllegalAccessException e) {
-				LOGGER.error(e);
+				LOGGER.error(e, e);
 			} catch (InvocationTargetException e) {
-				LOGGER.error(e);
+				LOGGER.error(e, e);
 			}
 		}
 		return map;

@@ -73,11 +73,11 @@ public abstract class BaseController {
 		try {
 			return this.getObjectMapper().writeValueAsString(o);
 		} catch (JsonGenerationException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} catch (JsonMappingException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 		return null;
 	}

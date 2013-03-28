@@ -5,6 +5,7 @@
 #parse("/show/comm/PublicInclude.vm")
 #parse("/show/comm/RowEditorCmpInclude.vm")
 <script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/help/HelpEnumManageModel.js'))"></script>
+<script type="text/javascript" src="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/js/app/taskreport/logger.js'))"></script>
 </head>
 <body>
 </body>

@@ -18,7 +18,8 @@ public class HelpManageController extends BaseController {
 	private IExtjsComponentsUtilService extjsComponentsUtilService;
 
 	public String init() {
-		return "/show/main/HelpEnumManageShow";
+//		return "/show/main/HelpEnumManageShow";
+		return "/show/main/LoggerShow";
 	}
 
 	@ResponseBody

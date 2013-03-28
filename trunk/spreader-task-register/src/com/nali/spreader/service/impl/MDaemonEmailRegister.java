@@ -1,12 +1,12 @@
 package com.nali.spreader.service.impl;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -21,29 +21,22 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import com.nali.spreader.service.IEmailRegisterService;
 
-@Service
+
 public class MDaemonEmailRegister implements IEmailRegisterService {
 	private static final Logger logger = Logger
 			.getLogger(MDaemonEmailRegister.class);
 	private static final String DEFAULT_CHARSET = "UTF-8";
 	private static final String MAIL_USER_ADMIN = "admin@abc.com";
 	private static final String MAIL_USER_ADMIN_PSW = "admin";
-	// TOOD DELETE
-	// private String mailLoginUrl = "http://192.168.3.133:1000/login.wdm";
-	// private String mailRegisterUrl =
-	// "http://192.168.3.133:1000/useredit_account.wdm?postXML=1";
-	// private String mailDeleteUrl =
-	// "http://192.168.3.133:1000/userlist.wdm?postXML=1";
 	@Value("${spreader.email.mdaemon.mailLoginUrl}")
-	private String mailLoginUrl = "http://192.168.3.133:1000/login.wdm";
+	private String mailLoginUrl;
 	@Value("${spreader.email.mdaemon.mailRegisterUrl}")
-	private String mailRegisterUrl = "http://192.168.3.133:1000/useredit_account.wdm?postXML=1";
+	private String mailRegisterUrl;
 	@Value("${spreader.email.mdaemon.mailDeleteUrl}")
-	private String mailDeleteUrl = "http://192.168.3.133:1000/userlist.wdm?postXML=1";
+	private String mailDeleteUrl;
 	private static final DefaultHttpClient httpClient = new DefaultHttpClient();
 
 	/**
@@ -55,9 +48,11 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	 * @return
 	 */
 	@Override
-	public boolean register(String userName, String domain, String password) {
+	public boolean register(String userName, String domain, String password)
+			throws IOException {
 		String xml = getRegisterPostXML(userName, domain, password);
-		return execute(xml, mailRegisterUrl, 5);
+		String rlt = execute(xml, mailRegisterUrl, 5);
+		return rlt.indexOf("already in use") == -1;
 	}
 
 	/**
@@ -68,9 +63,9 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	 * @return
 	 */
 	@Override
-	public boolean del(String userName, String domain) {
+	public void del(String userName, String domain) throws IOException {
 		String xml = getDelPostXML(userName, domain);
-		return execute(xml, mailDeleteUrl, 5);
+		execute(xml, mailDeleteUrl, 5);
 	}
 
 	/**
@@ -105,7 +100,7 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 		buff.append(getCDATA(userName));
 		buff.append("</MailBox> ");
 		buff.append("<FullName Type=\"text\">");
-		buff.append(getCDATA(userName + domain));
+		buff.append(getCDATA(userName + "@" + domain));
 		buff.append("</FullName> ");
 		buff.append("</Form> ");
 		buff.append("</root>");
@@ -133,47 +128,37 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 		return buff.toString();
 	}
 
-	private boolean execute(String postXML, String postUrl, int tryTimes) {
+	private String execute(String postXML, String postUrl, int tryTimes)
+			throws IOException {
 		HttpPost post = new HttpPost(postUrl);
-		// if (tryTimes <= 1) {
-		// return false;
-		// }
+		if (tryTimes <= 1) {
+			throw new IOException("retry too much");
+		}
 		try {
 			StringEntity myEntity = new StringEntity(postXML, DEFAULT_CHARSET);
 			post.addHeader("Content-Type", "text/xml");
 			post.setEntity(myEntity);
 			HttpResponse response = httpClient.execute(post);
-			if (response != null) {
-				int statusCode = response.getStatusLine().getStatusCode();
-				if (statusCode == HttpURLConnection.HTTP_OK) {
-					HttpEntity ht = response.getEntity();
-					String html = EntityUtils.toString(ht);
-					if (isLoginPage(html)) {
-						login();
-						tryTimes--;
-						System.out.println(html);
-						return execute(postXML, postUrl, tryTimes);
-					} else {
-						System.out.println(html);
-						return true;
-					}
-				} else {
-					HttpEntity resEntity = response.getEntity();
-					InputStreamReader reader = new InputStreamReader(
-							resEntity.getContent(), DEFAULT_CHARSET);
-					logger.error("execute :" + postUrl + ",error,"
-							+ IOUtils.toString(reader));
-					login();
-					tryTimes--;
-					return execute(postXML, postUrl, tryTimes);
+			int statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode == HttpURLConnection.HTTP_OK) {
+				HttpEntity ht = response.getEntity();
+				String html = EntityUtils.toString(ht);
+				if (!isLoginPage(html)) {
+					return html;
 				}
+			} else {
+				Header[] hs = response.getAllHeaders();
+				logger.error("statusCode:" + statusCode + ",postUrl:" + postUrl
+						+ ",headers:" + Arrays.asList(hs).toString());
 			}
+			login();
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} finally {
 			post.abort();
 		}
-		return false;
+		tryTimes--;
+		return execute(postXML, postUrl, tryTimes);
 	}
 
 	private synchronized void login() {
@@ -189,7 +174,7 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 			post.setEntity(new UrlEncodedFormEntity(nvs, DEFAULT_CHARSET));
 			httpClient.execute(post);
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} finally {
 			post.abort();
 		}
@@ -207,7 +192,7 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 		if (els.size() > 0) {
 			return true;
 		}
-		if(htmlText.indexOf("Your session has expired")>0) {
+		if (htmlText.indexOf("Your session has expired") > 0) {
 			return true;
 		}
 		return false;
@@ -220,20 +205,21 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 		return buff.toString();
 	}
 
-	public static void main(String[] args) {
-		MDaemonEmailRegister m = new MDaemonEmailRegister();
-		String names[] = { "t1", "t2", "t3", "t4", "t5" };
-		for (String x : names) {
-			boolean t = m.register(x, "360ke.net", "123");
-			// boolean t = m.del(x, "360ke.net");
-			System.out.println(t);
-		}
-
-		// m.del("", "abc2.com");
-		// private String mailLoginUrl = "http://192.168.3.133:1000/login.wdm";
-		// private String mailRegisterUrl =
-		// "http://192.168.3.133:1000/useredit_account.wdm?postXML=1";
-		// private String mailDeleteUrl =
-		// "http://192.168.3.133:1000/userlist.wdm?postXML=1";
-	}
+	// public static void main(String[] args) throws IOException {
+	// MDaemonEmailRegister m = new MDaemonEmailRegister();
+	// String names[] = { "t1", "t2", "t3", "t4", "t5" };
+	// for (String x : names) {
+	// // m.del(x, "360ke.net");
+	// boolean r = m.register(x, "360ke.net", "123");
+	// System.out.println(r);
+	// }
+	//
+	// // m.del("", "abc2.com");
+	// // private String mailLoginUrl =
+	// "http://192.168.3.133:1000/login.wdm";
+	// // private String mailRegisterUrl =
+	// // "http://192.168.3.133:1000/useredit_account.wdm?postXML=1";
+	// // private String mailDeleteUrl =
+	// // "http://192.168.3.133:1000/userlist.wdm?postXML=1";
+	// }
 }
