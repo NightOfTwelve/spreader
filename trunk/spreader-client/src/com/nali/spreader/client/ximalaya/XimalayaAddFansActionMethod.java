@@ -30,9 +30,9 @@ public class XimalayaAddFansActionMethod implements ActionMethod {
 		try {
 			md5 = interfaceCheckService.getParamsMD5(new Object[] { fromWebsiteUid, toWebsiteUid });
 		} catch (NoSuchAlgorithmException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 		try {
 			return robotRemoteService.follow(fromWebsiteUid, toWebsiteUid, md5);

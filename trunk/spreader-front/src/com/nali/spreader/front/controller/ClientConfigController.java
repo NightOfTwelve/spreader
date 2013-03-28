@@ -77,7 +77,7 @@ public class ClientConfigController extends BaseController {
 					configType, cfg, configMD5);
 			result.put("success", true);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 		return write(result);
 	}
@@ -130,11 +130,11 @@ public class ClientConfigController extends BaseController {
 				return getObjectMapper().readValue(json, ref);
 			}
 		} catch (JsonParseException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} catch (JsonMappingException e) {
-			logger.error(e);
+			logger.error(e, e);
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 		return null;
 	}
