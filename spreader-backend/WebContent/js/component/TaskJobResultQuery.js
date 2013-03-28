@@ -324,13 +324,12 @@ var resultcm = new Ext.grid.ColumnModel([{
 		}, {
 			header : '客户端',
 			dataIndex : 'clientId',
-			renderer : renderTaskStatus,
 			width : 80
 		}, {
 			header : '执行时间',
 			dataIndex : 'executedTime',
 			renderer : renderDateHis,
-			width : 100
+			width : 180
 		}, {
 			header : '返回状态',
 			dataIndex : 'executeStatus',
@@ -377,7 +376,7 @@ var resultGrid = new Ext.grid.GridPanel({
 			}
 		});
 
-//resultGrid.on('dblclick', resultGrid.onCellClick, resultGrid);
+// resultGrid.on('dblclick', resultGrid.onCellClick, resultGrid);
 // task
 var taskWindow = new Ext.Window({
 	title : '<span class="commoncss">执行情况查询</span>', // 窗口标题
@@ -441,7 +440,8 @@ function rendDispNameWorkShopFn(value) {
 		'downloadApp' : '下载应用',
 		'registerWebApple' : '网页注册苹果',
 		'registerCnApple' : '苹果中国区注册',
-		'commentApple' : '评论-苹果'
+		'commentApple' : '评论-苹果',
+		'importXimalaya' : '导入喜马拉雅帐号'
 	};
 	for (var idx in list) {
 		var tmp = list[idx];
