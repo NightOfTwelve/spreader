@@ -75,6 +75,7 @@ public class AccountManageServiceImpl implements IAccountManageService {
 			c.andCreateTimeLessThanOrEqualTo(endCreateTime);
 		}
 		int count = accountLogDao.countByExample(exa);
+		exa.setOrderByClause(" id desc ");
 		exa.setLimit(limit);
 		List<AccountLog> list = accountLogDao.selectByExample(exa);
 		return new PageResult<AccountLog>(list, limit, count);
