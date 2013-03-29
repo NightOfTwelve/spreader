@@ -92,6 +92,7 @@
 		left join tb_task_batch b on b.id=ct.batch_id 
 		left join tb_client_task_log l on t.id=l.task_id
 		where t.result_id=#resultId# and t.status=#taskStatus#
+		 order by clientTaskId desc
 		<isNotNull property="limit">
 			limit $limit.offset$,$limit.maxRows$ 
 		</isNotNull>
