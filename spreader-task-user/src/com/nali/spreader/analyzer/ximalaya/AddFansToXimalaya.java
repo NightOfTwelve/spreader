@@ -62,11 +62,11 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 		List<Long> toUids = globalUserService.getFansLimitUids(
 				Website.ximalaya.getId(),
 				userGroupFacadeService.getUids(toGid), fansLimit);
-		List<Long> alreadyExecuUsers = Collections
-				.synchronizedList(new ArrayList<Long>());
 		Date addTime = new Date();
 		ConcurrentHashMap<Long, Long> attentMap = new ConcurrentHashMap<Long, Long>();
 		for (Long toUid : toUids) {
+			List<Long> alreadyExecuUsers = Collections
+					.synchronizedList(new ArrayList<Long>());
 			User toUser = globalUserService.getUserById(toUid);
 			long fans = toUser.getFans();
 			// 获取toUid已有的粉丝
