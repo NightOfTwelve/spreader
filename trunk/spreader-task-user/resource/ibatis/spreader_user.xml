@@ -473,7 +473,12 @@
 			<isNotNull prepend="and" property="articles.lte">
 	  			<![CDATA[ u.articles<= #articles.lte#]]>
 			</isNotNull>
-
+			<isNotNull prepend="and" property="startCreateTime">
+	  			<![CDATA[ u.create_time>= #startCreateTime#]]>
+			</isNotNull>
+			<isNotNull prepend="and" property="endCreateTime">
+	  			<![CDATA[ u.create_time<= #endCreateTime#]]>
+			</isNotNull>
 			<!-- 关注数 -->
 			<isNotNull prepend="and" property="attentions.gte">
 	  			<![CDATA[ u.attentions>= #attentions.gte#]]>

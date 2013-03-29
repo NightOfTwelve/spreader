@@ -1,6 +1,7 @@
 package com.nali.spreader.group.exp;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -48,9 +49,33 @@ public class PropertyExpressionDTO implements Serializable {
 
 	@PropertyDescription("网站ID")
 	private Integer websiteId;
+
 	@PropertyDescription("需要排除的用户分组")
 	private List<Long> excludeGids;
+	
+	@PropertyDescription("用户创时间(开始)")
+	private Date startCreateTime;
+	
+	@PropertyDescription("用户创时间(结束)")
+	private Date endCreateTime;
+	
 	private Integer propVal;
+
+	public Date getStartCreateTime() {
+		return startCreateTime;
+	}
+
+	public void setStartCreateTime(Date startCreateTime) {
+		this.startCreateTime = startCreateTime;
+	}
+
+	public Date getEndCreateTime() {
+		return endCreateTime;
+	}
+
+	public void setEndCreateTime(Date endCreateTime) {
+		this.endCreateTime = endCreateTime;
+	}
 
 	public List<Long> getExcludeGids() {
 		return excludeGids;
