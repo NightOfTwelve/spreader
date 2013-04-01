@@ -149,12 +149,12 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 			attentionLimit = 100L;
 		}
 		execuInterval = config.getExecuInterval();
-		if (!(execuInterval instanceof Integer)) {
-			throw new IllegalArgumentException(" execuInterval must be Integer");
-		}
 		if (execuInterval == null || execuInterval <= 0) {
 			// 默认20秒
 			execuInterval = 20;
+		}
+		if (!(execuInterval instanceof Integer)) {
+			throw new IllegalArgumentException(" execuInterval must be Integer");
 		}
 		addLimit = config.getAddCount();
 		if (addLimit == null || addLimit <= 0) {
