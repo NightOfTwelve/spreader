@@ -27,7 +27,6 @@ import com.nali.spreader.group.config.UserGroupExtendedBeanImpl;
 import com.nali.spreader.service.IGlobalUserService;
 import com.nali.spreader.service.IUserGroupFacadeService;
 import com.nali.spreader.util.random.RandomUtil;
-import com.nali.spreader.workshop.other.AddUserFans;
 import com.nali.spreader.workshop.ximalaya.AddXimalayaFans.AddXimalayaWorkDto;
 
 @Component
@@ -100,7 +99,9 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 					if (fansLimit == null ? true : fansLimit > fans) {
 						addFans(fromUid, toUid, addTime);
 						logger.debug("fromUid:" + fromUid + ",toUid:" + toUid);
-						addTime = DateUtils.addMinutes(addTime, execuInterval);
+						// addTime = DateUtils.addMinutes(addTime,
+						// execuInterval);
+						addTime = DateUtils.addSeconds(addTime, execuInterval);
 						alreadyExecuUsers.add(fromUid);
 						attentMap.replace(fromUid, ++attentions);
 						fans++;
@@ -148,8 +149,12 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 			attentionLimit = 100L;
 		}
 		execuInterval = config.getExecuInterval();
+		if (!(execuInterval instanceof Integer)) {
+			throw new IllegalArgumentException(" execuInterval must be Integer");
+		}
 		if (execuInterval == null || execuInterval <= 0) {
-			execuInterval = AddUserFans.AddFansDto.DEFAULT_ADD_FANS_INTERVAL;
+			// 默认20秒
+			execuInterval = 20;
 		}
 		addLimit = config.getAddCount();
 		if (addLimit == null || addLimit <= 0) {
@@ -163,7 +168,7 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 
 	public static class AddFansToXimalayaConfig implements Serializable {
 		private static final long serialVersionUID = 8861711636679339664L;
-		@PropertyDescription("机器人执行关注的间隔时间(分钟，默认3分钟)")
+		@PropertyDescription("机器人执行关注的间隔时间(秒，默认20秒)")
 		private Integer execuInterval;
 		@PropertyDescription("机器人已关注的次数上限(超过此上限该机器人不再分派任务，默认100)")
 		private Long attentionLimit;
