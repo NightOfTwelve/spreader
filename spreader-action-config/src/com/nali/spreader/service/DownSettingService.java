@@ -26,4 +26,9 @@ public class DownSettingService implements IDownSettingService {
 	public void setDownloadRate(int id, List<Double> rates) {
 		actionCooldownConfigDao.saveDownloadRate(id, rates);
 	}
+
+	@Override
+	public List<Double> getDownloadRate(int id) {
+		return actionCooldownConfigDao.getDownloadRate(id);
+	}
 }
