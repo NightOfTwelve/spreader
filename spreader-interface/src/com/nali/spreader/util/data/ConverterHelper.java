@@ -9,7 +9,21 @@ import java.util.Map.Entry;
 import com.nali.common.util.CollectionUtils;
 
 public class ConverterHelper {
-
+	private final static Converter<Object, Object> emptyConverter = new Converter<Object, Object>() {
+		@Override
+		public Object tran(Object from) {
+			return from;
+		}
+	};
+	
+	@SuppressWarnings("unchecked")
+	public static <V1, V2> Converter<V1, V2> notNull(Converter<V1, V2> c) {
+		if(c==null) {
+			return (Converter<V1, V2>) emptyConverter;
+		}
+		return c;
+	}
+	
 	public static <V1, V2> Set<V2> convert(Set<V1> ori, Converter<V1, V2> c) {
 		Set<V2> rlt = CollectionUtils.newHashSet(ori.size());
 		for (V1 v : ori) {

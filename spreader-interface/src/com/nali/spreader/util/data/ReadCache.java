@@ -3,7 +3,6 @@ package com.nali.spreader.util.data;
 import org.springframework.dao.DataAccessException;
 
 //P==Parameter, OP=OriginalParameter, CP=CacheParameter
-@SuppressWarnings("unchecked")
 public class ReadCache<P, V, OP, OV, CP, CV> implements Read<P, V> {
 	private Read<OP, OV> oRead;
 	private Write<CP, CV> cache;
@@ -19,47 +18,23 @@ public class ReadCache<P, V, OP, OV, CP, CV> implements Read<P, V> {
 		super();
 		this.oRead = oRead;
 		this.cache = cache;
-		this.ovToCv = ovToCv;
-		this.cvToV = cvToV;
-		this.pToOp = pToOp;
-		this.pToCp = pToCp;
-	}
-	OP toOp(P p) {
-		if(pToOp==null) {
-			return (OP) p;
-		}
-		return pToOp.tran(p);
-	}
-	CP toCp(P p) {
-		if(pToCp==null) {
-			return (CP) p;
-		}
-		return pToCp.tran(p);
-	}
-	CV toCv(OV ov) {
-		if(ovToCv==null) {
-			return (CV) ov;
-		}
-		return ovToCv.tran(ov);
-	}
-	V toV(CV cv) {
-		if(cvToV==null) {
-			return (V) cv;
-		}
-		return cvToV.tran(cv);
+		this.ovToCv = ConverterHelper.notNull(ovToCv);
+		this.cvToV = ConverterHelper.notNull(cvToV);
+		this.pToOp = ConverterHelper.notNull(pToOp);
+		this.pToCp = ConverterHelper.notNull(pToCp);
 	}
 	
 	@Override
 	public V read(P p) throws DataAccessException {
-		CP cp = toCp(p);
+		CP cp = pToCp.tran(p);
 		CV cv = cache.read(cp);
 		if(cv==null) {
-			OP op = toOp(p);
+			OP op = pToOp.tran(p);
 			OV ov = oRead.read(op);
-			cv = toCv(ov);
+			cv = ovToCv.tran(ov);
 			cache.write(cp, cv);//TODO handle null cv
 		}
-		return toV(cv);
+		return cvToV.tran(cv);
 	}
 
 }

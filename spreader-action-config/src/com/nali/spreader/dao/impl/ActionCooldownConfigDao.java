@@ -29,9 +29,9 @@ public class ActionCooldownConfigDao implements IActionCooldownConfigDao {
 				"front#clientconfig#cooldown#max#", "txt/cooldown_max",
 				redisTemplate, BaseConverters.stringInteger);
 		rateRead = rateReads.reads.readList();
-		rateWrite = rateReads.rawRedisWrites.writeList();
+		rateWrite = rateReads.writes.writeList();
 		maxRead = maxReads.reads.readValue();
-		maxWrite = maxReads.rawRedisWrites.writeValue();
+		maxWrite = maxReads.writes.writeValue();
 	}
 
 	@Override
