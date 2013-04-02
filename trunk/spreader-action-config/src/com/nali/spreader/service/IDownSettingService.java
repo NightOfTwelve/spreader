@@ -9,4 +9,6 @@ public interface IDownSettingService {
 	void setMaxDownloadPerHour(int id, int count);
 
 	void setDownloadRate(int id, List<Double> rates);
+	
+	List<Double> getDownloadRate(int id);
 }
