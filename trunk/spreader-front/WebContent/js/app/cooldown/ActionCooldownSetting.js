@@ -65,6 +65,32 @@ Ext.onReady(function() {
 							}
 						}]
 			});
+	var form3 = new Ext.form.FormPanel({
+				region : 'south',
+				id : 'form3',
+				name : 'form3',
+				labelWidth : 100, // 标签宽度
+				frame : true, // 是否渲染表单面板背景色
+				defaultType : 'textfield', // 表单元素默认类型
+				labelAlign : 'right', // 标签对齐方式
+				bodyStyle : 'padding:5 5 5 5', // 表单元素和表单面板的边距
+				buttonAlign : "center",
+				buttons : [{
+					text : "应用",
+					handler : function() { // 按钮响应函数
+						Ext.Ajax.request({
+									url : '/spreader-front/cooldown/reset?_time='
+											+ new Date().getTime(),
+									success : function(response, opts) {
+										Ext.Msg.alert('提示', '操作成功');
+									},
+									failure : function(response, opts) {
+										Ext.MessageBox.alert('提示', '操作失败');
+									}
+								});
+					}
+				}]
+			});
 	var win = new Ext.Window({
 		title : '设置曲线',
 		layout : 'border',
@@ -77,7 +103,7 @@ Ext.onReady(function() {
 		constrain : true, // 设置窗口是否可以溢出父容器
 		pageY : 20, // 页面定位X坐标
 		pageX : document.body.clientWidth / 2 - 400 / 2, // 页面定位Y坐标
-		items : [form, form2]
+		items : [form, form2, form3]
 			// 嵌入的表单面板
 		});
 	win.on('show', function() {
