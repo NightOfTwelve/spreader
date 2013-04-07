@@ -6,4 +6,6 @@ public interface IActionCooldownConfigService {
 
 	int[] getHourCooldowns(Date date, int id);
 
+	void reset();
+
 }

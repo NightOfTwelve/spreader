@@ -31,11 +31,17 @@ public class ActionCooldownConfigService implements IActionCooldownConfigService
 	
 	@PostConstruct
 	public void postConstruct() {
-		defaultCooldowns = new ThreeDayHourCooldowns();
+		reset();
+	}
+
+	@Override
+	public void reset() {
+		ThreeDayHourCooldowns defaultCooldowns = new ThreeDayHourCooldowns();
 		defaultCooldowns.today = genCooldown(DEFAULT_ID);
 		defaultCooldowns.tomorrow = genCooldown(DEFAULT_ID);
 		defaultCooldowns.yesterday = genCooldown(DEFAULT_ID);
 		defaultCooldowns.todayMillis = SpecialDateUtil.getExactTodayMillis();
+		this.defaultCooldowns = defaultCooldowns;
 		expiredTime = defaultCooldowns.todayMillis + DAY_MILLIS;
 	}
 
