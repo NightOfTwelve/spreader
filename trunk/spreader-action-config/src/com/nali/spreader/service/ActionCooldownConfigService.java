@@ -3,7 +3,8 @@ package com.nali.spreader.service;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
 
@@ -27,7 +28,7 @@ public class ActionCooldownConfigService implements IActionCooldownConfigService
 	@Autowired
 	private IActionCooldownConfigDao actionCooldownConfigDao;
 	private volatile long expiredTime;
-	private AtomicBoolean refreshFlag = new AtomicBoolean(false);
+	private Lock lock = new ReentrantLock();
 	
 	@PostConstruct
 	public void postConstruct() {
@@ -36,13 +37,18 @@ public class ActionCooldownConfigService implements IActionCooldownConfigService
 
 	@Override
 	public void reset() {
-		ThreeDayHourCooldowns defaultCooldowns = new ThreeDayHourCooldowns();
-		defaultCooldowns.today = genCooldown(DEFAULT_ID);
-		defaultCooldowns.tomorrow = genCooldown(DEFAULT_ID);
-		defaultCooldowns.yesterday = genCooldown(DEFAULT_ID);
-		defaultCooldowns.todayMillis = SpecialDateUtil.getExactTodayMillis();
-		this.defaultCooldowns = defaultCooldowns;
-		expiredTime = defaultCooldowns.todayMillis + DAY_MILLIS;
+		lock.lock();
+		try {
+			ThreeDayHourCooldowns defaultCooldowns = new ThreeDayHourCooldowns();
+			defaultCooldowns.today = genCooldown(DEFAULT_ID);
+			defaultCooldowns.tomorrow = genCooldown(DEFAULT_ID);
+			defaultCooldowns.yesterday = genCooldown(DEFAULT_ID);
+			defaultCooldowns.todayMillis = SpecialDateUtil.getExactTodayMillis();
+			this.defaultCooldowns = defaultCooldowns;
+			expiredTime = defaultCooldowns.todayMillis + DAY_MILLIS;
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	@Override
@@ -54,7 +60,7 @@ public class ActionCooldownConfigService implements IActionCooldownConfigService
 	private void checkExpired() {
 		long current = System.currentTimeMillis();
 		if(current>expiredTime) {
-			if(refreshFlag.compareAndSet(false, true)) {
+			if(lock.tryLock()) {
 				if (current > expiredTime) {
 					new Thread(new Runnable() {
 						@Override
@@ -62,10 +68,12 @@ public class ActionCooldownConfigService implements IActionCooldownConfigService
 							try {
 								refresh();
 							} finally {
-								refreshFlag.set(false);
+								lock.unlock();
 							}
 						}
 					}).start();
+				} else {
+					lock.unlock();
 				}
 			}
 		}
@@ -73,6 +81,7 @@ public class ActionCooldownConfigService implements IActionCooldownConfigService
 
 	protected void refresh() {
 		defaultCooldowns = next(defaultCooldowns, DEFAULT_ID);
+		expiredTime = defaultCooldowns.todayMillis + DAY_MILLIS;
 	}
 
 	protected int[] genCooldown(int id) {
