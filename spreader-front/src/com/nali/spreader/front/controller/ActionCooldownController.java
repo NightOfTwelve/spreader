@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nali.spreader.service.IActionCooldownConfigService;
 import com.nali.spreader.service.IDownSettingService;
 
 @Controller
@@ -19,6 +20,8 @@ import com.nali.spreader.service.IDownSettingService;
 public class ActionCooldownController {
 	@Autowired
 	private IDownSettingService downSettingService;
+	@Autowired
+	private IActionCooldownConfigService actionCooldownConfigService;
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@RequestMapping(value = "/init")
@@ -58,5 +61,12 @@ public class ActionCooldownController {
 			JsonMappingException, IOException {
 		List<Double> list = downSettingService.getDownloadRate(0);
 		return objectMapper.writeValueAsString(list);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/reset")
+	public String reset() {
+		actionCooldownConfigService.reset();
+		return null;
 	}
 }
