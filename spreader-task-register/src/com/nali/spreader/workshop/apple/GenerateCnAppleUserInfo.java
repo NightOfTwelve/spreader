@@ -1,7 +1,5 @@
 package com.nali.spreader.workshop.apple;
 
-import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +15,7 @@ import com.nali.spreader.util.random.NumberRandomer;
 import com.nali.spreader.util.random.Randomer;
 import com.nali.spreader.words.AppleIds;
 import com.nali.spreader.words.CnAdress;
-import com.nali.spreader.words.EnQaRandomer;
+import com.nali.spreader.words.CnQaRandomer;
 import com.nali.spreader.words.PwdGenerator;
 
 @Component
@@ -26,17 +24,34 @@ public class GenerateCnAppleUserInfo implements PassiveAnalyzer<Long> {
 	private IRobotRegisterService robotRegisterService;
 	@AutowireProductLine
 	private TaskProduceLine<AppleRegisterInfo> registerCnApple;
-	private AvgRandomer<KeyValuePair<String, Randomer<String>>> qaRandomer;
+	private AvgRandomer<KeyValuePair<String, Randomer<String>>> qaRandomer1;
+	private AvgRandomer<KeyValuePair<String, Randomer<String>>> qaRandomer2;
+	private AvgRandomer<KeyValuePair<String, Randomer<String>>> qaRandomer3;
 	private Randomer<Integer> zipRandomer=new NumberRandomer(100000, 800000);
 	private Randomer<Integer> phoneRandomer=new NumberRandomer(10000000, 100000000);
 	
-	public GenerateCnAppleUserInfo() throws IOException {
+	public GenerateCnAppleUserInfo() {
 		initQa();
 	}
 
-	private void initQa() throws IOException {
-		qaRandomer=EnQaRandomer.getQa("s");
+	private void initQa() {
+		qaRandomer1=CnQaRandomer.getQa("1");
+		qaRandomer2=CnQaRandomer.getQa("2");
+		qaRandomer3=CnQaRandomer.getQa("3");
 	}
+	
+//	public static void main(String[] args) throws IOException {
+//		GenerateCnAppleUserInfo o = new GenerateCnAppleUserInfo();
+//		KeyValuePair<String, Randomer<String>> qa1 = o.qaRandomer1.get();
+//		System.out.println(qa1.getKey());
+//		System.out.println(qa1.getValue().get());
+//		KeyValuePair<String, Randomer<String>> qa2 = o.qaRandomer2.get();
+//		System.out.println(qa2.getKey());
+//		System.out.println(qa2.getValue().get());
+//		KeyValuePair<String, Randomer<String>> qa3 = o.qaRandomer3.get();
+//		System.out.println(qa3.getKey());
+//		System.out.println(qa3.getValue().get());
+//	}
 
 	@Override
 	public void work(Long registerId) {
@@ -64,9 +79,15 @@ public class GenerateCnAppleUserInfo implements PassiveAnalyzer<Long> {
 		app.setUdid(AppleIds.genUdid());
 		app.setRegisterId(registerId);
 
-		KeyValuePair<String, Randomer<String>> qa1 = qaRandomer.get();//TODO
+		KeyValuePair<String, Randomer<String>> qa1 = qaRandomer1.get();
 		app.setQ1(qa1.getKey());
 		app.setA1(qa1.getValue().get());
+		KeyValuePair<String, Randomer<String>> qa2 = qaRandomer2.get();
+		app.setQ2(qa2.getKey());
+		app.setA2(qa2.getValue().get());
+		KeyValuePair<String, Randomer<String>> qa3 = qaRandomer3.get();
+		app.setQ3(qa3.getKey());
+		app.setA3(qa3.getValue().get());
 		
 		registerCnApple.send(app);
 	}

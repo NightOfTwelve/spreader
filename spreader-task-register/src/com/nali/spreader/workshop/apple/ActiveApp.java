@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Channel;
 import com.nali.spreader.constants.Website;
 import com.nali.spreader.data.AppUdid;
@@ -28,6 +27,7 @@ import com.nali.spreader.service.IAppRegisterService;
 import com.nali.spreader.service.IRobotRegisterService;
 import com.nali.spreader.service.impl.LimitedEmailRegister;
 import com.nali.spreader.util.SpecialDateUtil;
+import com.nali.spreader.util.collection.CollectionUtils;
 import com.nali.spreader.words.AppleNickname;
 
 @Component
@@ -79,10 +79,17 @@ public class ActiveApp extends SingleTaskMachineImpl implements ContextedPassive
 		robotUser.setWebsiteUid(registerId);
 		robotUser.setLoginName(email);//not use email
 		robotUser.setLoginPwd(appUdid.getPwd());
-		Map<String, Object> extraInfo = CollectionUtils.newHashMap(3);
-		extraInfo.put("udid", appUdid.getUdid());
-		extraInfo.put("ipadSerial", appUdid.getIpadSerial());
-		extraInfo.put("iphoneSerial", appUdid.getIphoneSerial());
+		Map<String, Object> extraInfo = CollectionUtils.newHashMap(
+			"udid", appUdid.getUdid(),
+			"ipadSerial", appUdid.getIpadSerial(),
+			"iphoneSerial", appUdid.getIphoneSerial(),
+			"q1", appUdid.getQ1(),
+			"q2", appUdid.getQ2(),
+			"q3", appUdid.getQ3(),
+			"a1", appUdid.getA1(),
+			"a2", appUdid.getA2(),
+			"a3", appUdid.getA3()
+		);
 		robotUser.setExtraInfo(extraInfo);
 		User user = new User();
 		user.setBirthdayDay(robotRegister.getBirthdayDay());

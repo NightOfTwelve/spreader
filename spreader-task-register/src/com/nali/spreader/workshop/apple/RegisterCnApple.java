@@ -32,15 +32,19 @@ public class RegisterCnApple extends SingleTaskMachineImpl implements ContextedP
 	
 	public RegisterCnApple() {
 		super(SimpleActionConfig.registerCnApple, Website.apple, Channel.normal);
-		setContextMeta(Arrays.asList("registerId", "udid"), "pwd");
+		setContextMeta(Arrays.asList("registerId", "udid"), "pwd", "q1", "q2", "q3", "a1", "a2", "a3");
 	}
 	
 	@Override
 	public void work(AppleRegisterInfo data, SingleTaskExporter exporter) {
 		exporter.setProperty("email", data.getEmail());
 		exporter.setProperty("pwd", data.getPwd());
-		exporter.setProperty("question", data.getQ1());
-		exporter.setProperty("answer", data.getA1());
+		exporter.setProperty("q1", data.getQ1());
+		exporter.setProperty("q2", data.getQ2());
+		exporter.setProperty("q3", data.getQ3());
+		exporter.setProperty("a1", data.getA1());
+		exporter.setProperty("a2", data.getA2());
+		exporter.setProperty("a3", data.getA3());
 		exporter.setProperty("year", data.getYear());
 		exporter.setProperty("month", data.getMonth());
 		exporter.setProperty("date", data.getDate());
@@ -83,6 +87,12 @@ public class RegisterCnApple extends SingleTaskMachineImpl implements ContextedP
 		appUdid.setIpadSerial(AppleIds.genSerialIpad2Dit12(udid));
 		appUdid.setIphoneSerial(AppleIds.genSerialIphone4Dit12(udid));
 		appUdid.setVersion(AppleIds.VERSION);
+		appUdid.setQ1((String) contextContents.get("q1"));
+		appUdid.setQ2((String) contextContents.get("q2"));
+		appUdid.setQ3((String) contextContents.get("q3"));
+		appUdid.setA1((String) contextContents.get("a1"));
+		appUdid.setA2((String) contextContents.get("a2"));
+		appUdid.setA3((String) contextContents.get("a3"));
 		appRegisterService.saveAppUdid(appUdid);
 		activeApp.send(registerId);
 	}
