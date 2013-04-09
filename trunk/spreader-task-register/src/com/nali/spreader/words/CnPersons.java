@@ -20,7 +20,7 @@ public class CnPersons {
 	private static final String FILE_PINYIN = "txt/py-all.txt";
 	private static final String FILE_LAST_NAME_PINYIN = "txt/py-last.txt";
 	// Randomers
-	private static Randomer<String> lastNameRandomer;
+	static Randomer<String> lastNameRandomer;
 	private static Randomer<String> maleFirstNameRandomer;
 	private static Randomer<String> maleEnNameRandomer;
 	private static Randomer<String> femaleFirstNameRandomer;

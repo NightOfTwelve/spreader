@@ -2,8 +2,8 @@ package com.nali.spreader.constants;
 
 import java.util.Map;
 
-import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.model.RobotUser;
+import com.nali.spreader.util.collection.CollectionUtils;
 
 public enum LoginConfigMeta {
 	weibo(1, 3L) {
@@ -20,12 +20,19 @@ public enum LoginConfigMeta {
 		@SuppressWarnings("unchecked")
 		public Map<String, Object> getLoginParams(RobotUser robotUser) {
 			Map<String, Object> extraInfo = (Map<String, Object>) robotUser.getExtraInfo();
-			Map<String, Object> contentObjects = CollectionUtils.newHashMap(5);
-			contentObjects.put("name", robotUser.getLoginName());
-			contentObjects.put("udid", extraInfo.get("udid"));
-			contentObjects.put("ipadSerial", extraInfo.get("ipadSerial"));
-			contentObjects.put("iphoneSerial", extraInfo.get("iphoneSerial"));
-			contentObjects.put("password", robotUser.getLoginPwd());
+			Map<String, Object> contentObjects = CollectionUtils.newHashMap(
+						"name", robotUser.getLoginName(),
+						"udid", extraInfo.get("udid"),
+						"ipadSerial", extraInfo.get("ipadSerial"),
+						"iphoneSerial", extraInfo.get("iphoneSerial"),
+						"q1", extraInfo.get("q1"),
+						"a1", extraInfo.get("a1"),
+						"q2", extraInfo.get("q2"),
+						"a2", extraInfo.get("a2"),
+						"q3", extraInfo.get("q3"),
+						"a3", extraInfo.get("a3"),
+						"password", robotUser.getLoginPwd()
+					);
 			return contentObjects;
 		}
 	},

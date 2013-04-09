@@ -20,6 +20,11 @@ import com.nali.spreader.words.naming.word.Word;
 public class CnAdress {
 	private static Snippet streets;
 	private static Snippet suites;
+	private static Snippet streetNames;
+	
+	public static String streetName() {
+		return streetNames.name();
+	}
 
 	public static String street() {
 		return streets.name();
@@ -47,7 +52,7 @@ public class CnAdress {
 				.a(new Word("街"), 1)
 				.a(new Word("路"), 2));
 		
-		Snippet streetNames = new RandomSnippet(new WeightRandomer<Snippet>()
+		streetNames = new RandomSnippet(new WeightRandomer<Snippet>()
 				.a(topStreets, 50)
 				.a(new Phrase("", normalStreetPrefixs, streetSuffix), 30)
 				.a(new Phrase("", cityStreetStreetPrefixs, streetSuffix), 20)

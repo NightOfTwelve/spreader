@@ -43,6 +43,7 @@ public enum TaskErrorCode {
 	adError(20305, "被识别成广告了"),
 	//3开头的苹果异常
 	notAPurchasedApp(30101, "未购买应用"),
+	unknownQuetion(30102, "未找到安全问题"),
 	;
 	private final String code;
 	private final String msg;
