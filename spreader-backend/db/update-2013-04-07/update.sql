@@ -43,3 +43,6 @@ create table tb_app_purchase
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;
+
+
+alter table tb_client_config modify column client_config text;
