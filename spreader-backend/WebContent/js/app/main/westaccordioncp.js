@@ -128,6 +128,11 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "日志查询",
 									leaf : true,
 									url : '../log/init'
+								}, {
+									id : 'appTopView',
+									text : "App排行查询",
+									leaf : true,
+									url : '../appletop/init'
 								}]
 					}),
 			// 添加监听事件

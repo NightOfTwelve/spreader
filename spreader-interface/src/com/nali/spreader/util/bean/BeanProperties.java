@@ -34,16 +34,20 @@ public class BeanProperties {
 	private Set<String> blackSet;
 	private IConvertMethodParamType convert;
 
-	public BeanProperties(IConvertMethodParamType convert, Class<?> clazz, String... strs) {
-		this(convert, clazz, ArrayUtils.isEmpty(strs) ? null : new HashSet<String>(
-				Arrays.asList(strs)));
+	public BeanProperties(IConvertMethodParamType convert, Class<?> clazz,
+			String... strs) {
+		this(convert, clazz, ArrayUtils.isEmpty(strs) ? null
+				: new HashSet<String>(Arrays.asList(strs)));
 	}
 
-	public BeanProperties(IConvertMethodParamType convert, Class<?> clazz, List<String> list) {
-		this(convert, clazz, CollectionUtils.isEmpty(list) ? null : new HashSet<String>(list));
+	public BeanProperties(IConvertMethodParamType convert, Class<?> clazz,
+			List<String> list) {
+		this(convert, clazz, CollectionUtils.isEmpty(list) ? null
+				: new HashSet<String>(list));
 	}
 
-	public BeanProperties(IConvertMethodParamType convert, Class<?> clazz, Set<String> blackSet) {
+	public BeanProperties(IConvertMethodParamType convert, Class<?> clazz,
+			Set<String> blackSet) {
 		this.clazz = clazz;
 		this.blackSet = blackSet;
 		if (convert == null) {
@@ -135,8 +139,10 @@ public class BeanProperties {
 	 * @param paramsLen
 	 * @return
 	 */
-	private boolean checkSetMethod(String methodName, Class<?> methodReturnType, int paramsLen) {
-		if (StringUtils.isNotEmpty(methodName) && methodReturnType != null && paramsLen == 1) {
+	private boolean checkSetMethod(String methodName,
+			Class<?> methodReturnType, int paramsLen) {
+		if (StringUtils.isNotEmpty(methodName) && methodReturnType != null
+				&& paramsLen == 1) {
 			if (StringUtils.startsWith(methodName, METHOD_START_WITH_SET)
 					&& methodReturnType.equals(void.class)) {
 				return true;
@@ -156,8 +162,10 @@ public class BeanProperties {
 	 * @param paramsLen
 	 * @return
 	 */
-	private boolean checkGetMethod(String methodName, Class<?> methodReturnType, int paramsLen) {
-		if (StringUtils.isNotEmpty(methodName) && methodReturnType != null && paramsLen == 0) {
+	private boolean checkGetMethod(String methodName,
+			Class<?> methodReturnType, int paramsLen) {
+		if (StringUtils.isNotEmpty(methodName) && methodReturnType != null
+				&& paramsLen == 0) {
 			if ((StringUtils.startsWith(methodName, METHOD_START_WITH_GET) || StringUtils
 					.startsWith(methodName, METHOD_START_WITH_GET_BOOLEAN))
 					&& !methodReturnType.equals(void.class)) {
@@ -226,7 +234,10 @@ public class BeanProperties {
 			if (data != null) {
 				Class<?> setParam = method.getParameterTypes()[0];
 				if (!setParam.isInstance(data)) {
-					data = this.convert.convert(setParam, data);
+					if (!setParam.isPrimitive()) {
+						// TODO
+						data = this.convert.convert(setParam, data);
+					}
 				}
 			}
 			try {
@@ -251,21 +262,23 @@ public class BeanProperties {
 	public Map<String, Object> convertMap(Object bean) {
 		Assert.notNull(bean, "convertMap,bean is null");
 		Assert.notNull(getMethodMap, "getMethodMap is null");
-		Map<String, Object> map = CollectionUtils.newHashMap(getMethodMap.entrySet().size());
+		Map<String, Object> map = CollectionUtils.newHashMap(getMethodMap
+				.entrySet().size());
 		for (Map.Entry<String, Method> entry : getMethodMap.entrySet()) {
 			String propName = entry.getKey();
 			Method method = entry.getValue();
 			try {
-				Object value = method.invoke(bean, ArrayUtils.EMPTY_OBJECT_ARRAY);
+				Object value = method.invoke(bean,
+						ArrayUtils.EMPTY_OBJECT_ARRAY);
 				if (value != null) {
 					map.put(propName, value);
 				}
 			} catch (IllegalArgumentException e) {
-				LOGGER.error(e, e);
+				LOGGER.error("propName :" + propName + ",method:" + method, e);
 			} catch (IllegalAccessException e) {
-				LOGGER.error(e, e);
+				LOGGER.error("propName :" + propName + ",method:" + method, e);
 			} catch (InvocationTargetException e) {
-				LOGGER.error(e, e);
+				LOGGER.error("propName :" + propName + ",method:" + method, e);
 			}
 		}
 		return map;
