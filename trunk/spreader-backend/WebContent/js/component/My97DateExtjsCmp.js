@@ -34,7 +34,7 @@ function calendarCmp(fieldId, fieldName, text, dateTimeParams,emptyText) {
 	var triggerField = new Ext.form.TriggerField({
 				fieldLabel : Ext.isEmpty(text) ? '查询时间' : text,
 				emptyText : Ext.isEmpty(emptyText) ? '请输入时间' : emptyText,
-				labelWidth : 100,
+				labelWidth : 150,
 				id : Ext.isEmpty(fieldId) ? 'startDate' : fieldId,
 				name : Ext.isEmpty(fieldName) ? 'startDate' : fieldName,
 				// 使用TextField用到的样式
@@ -43,8 +43,8 @@ function calendarCmp(fieldId, fieldName, text, dateTimeParams,emptyText) {
 				// cls : 'Wdate',
 				// 指定按钮的样式
 				triggerClass : 'x-form-date-trigger',
-				anchor : '90%',
-				labelStyle : 'text-align:right;width:90;',
+				anchor : '100%',
+				labelStyle : 'text-align:right;width:100;',
 				// TriggerField点击按钮函数
 				onTriggerClick : function(field) {
 					WdatePicker(params);
