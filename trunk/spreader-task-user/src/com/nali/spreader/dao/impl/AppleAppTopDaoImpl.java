@@ -14,6 +14,7 @@ import com.nali.common.util.CollectionUtils;
 import com.nali.dal.expression.ExpressionValue;
 import com.nali.dal.expression.query.Criteria;
 import com.nali.dal.statement.DalTemplate;
+import com.nali.dal.statement.SelectBuilder;
 import com.nali.spreader.dao.IAppleAppTopDao;
 import com.nali.spreader.data.AppleAppCurrentTop;
 import com.nali.spreader.data.AppleAppHistoryTop;
@@ -105,6 +106,7 @@ public class AppleAppTopDaoImpl implements IAppleAppTopDao {
 		map.put("ranking", ranking);
 		map.put("genre", genre);
 		map.put("genreId", genreId);
+		map.put("popId", popId);
 		return dalTemplate.upsert("dal.appleAppCurrentTop.upsert", map);
 	}
 
@@ -133,5 +135,38 @@ public class AppleAppTopDaoImpl implements IAppleAppTopDao {
 			list.add(top);
 		}
 		return list;
+	}
+
+	@Override
+	public List<AppleAppCurrentTop> getCurrentTop(Long appId, Integer genreId,
+			Integer popId, int start, int limit) {
+		List<AppleAppCurrentTop> list = new ArrayList<AppleAppCurrentTop>();
+		SelectBuilder builder = dalTemplate
+				.startFor("dal.appleAppCurrentTop.select");
+		if (appId != null) {
+			builder.cond("appId", Criteria.eq, appId);
+		}
+		if (genreId != null) {
+			builder.cond("genreId", Criteria.eq, genreId);
+		}
+		if (popId != null) {
+			builder.cond("popId", Criteria.eq, popId);
+		}
+		List<Map<String, Object>> data = builder.select(start, limit);
+		for (Map<String, Object> m : data) {
+			AppleAppCurrentTop top = currTopBean.convertBean(m);
+			list.add(top);
+		}
+		return list;
+	}
+
+	@Override
+	public int countCurrentTop(Long appId, Integer genreId, Integer popId) {
+		SelectBuilder builder = dalTemplate
+				.startFor("dal.appleAppCurrentTop.select");
+		builder.cond("appId", Criteria.eq, appId);
+		builder.cond("genreId", Criteria.eq, genreId);
+		builder.cond("popId", Criteria.eq, popId);
+		return (int) builder.count();
 	}
 }

@@ -25,10 +25,14 @@ import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nali.common.model.Limit;
+import com.nali.common.pagination.PageResult;
 import com.nali.spreader.dao.IAppleAppTopDao;
+import com.nali.spreader.data.AppleAppCurrentTop;
 import com.nali.spreader.data.AppleAppHistoryTop;
 import com.nali.spreader.data.AppleAppInfo;
 import com.nali.spreader.data.KeyValue;
+import com.nali.spreader.dto.AppleAppCurrentTopDto;
 import com.nali.spreader.dto.AppleAppHistoryDto;
 import com.nali.spreader.spider.service.IAppleAppsTopService;
 
@@ -266,6 +270,44 @@ public class AppleAppsTopService implements IAppleAppsTopService {
 			dto.setAppName(appName);
 			dto.setRankTime(date);
 			dto.setRanking(rank);
+			data.add(dto);
+		}
+		return data;
+	}
+
+	@Override
+	public PageResult<AppleAppCurrentTop> getCurrentTop(Long appId,
+			Integer genreId, Integer popId, Limit limit) {
+		List<AppleAppCurrentTop> tops = appleAppTopDao.getCurrentTop(appId,
+				genreId, popId, limit.offset, limit.maxRows);
+		int count = appleAppTopDao.countCurrentTop(appId, genreId, popId);
+		return new PageResult<AppleAppCurrentTop>(tops, limit, count);
+	}
+
+	@Override
+	public PageResult<AppleAppCurrentTopDto> getCurrentTopDto(Long appId,
+			Integer genreId, Integer popId, Limit limit) {
+		PageResult<AppleAppCurrentTop> tops = getCurrentTop(appId, genreId,
+				popId, limit);
+		List<AppleAppCurrentTopDto> list = getAppleAppCurrentTopDto(tops
+				.getList());
+		return new PageResult<AppleAppCurrentTopDto>(list, limit,
+				tops.getTotalCount());
+	}
+
+	private List<AppleAppCurrentTopDto> getAppleAppCurrentTopDto(
+			List<AppleAppCurrentTop> tops) {
+		List<AppleAppCurrentTopDto> data = new ArrayList<AppleAppCurrentTopDto>();
+		for (AppleAppCurrentTop top : tops) {
+			Long appId = top.getAppId();
+			AppleAppInfo info = appleAppTopDao.getAppInfoByAppId(appId);
+			AppleAppCurrentTopDto dto = new AppleAppCurrentTopDto();
+			dto.setAppId(appId);
+			dto.setAppName(info.getAppName());
+			dto.setGenre(top.getGenre());
+			dto.setGenreId(top.getGenreId());
+			dto.setPopId(top.getPopId());
+			dto.setRanking(top.getRanking());
 			data.add(dto);
 		}
 		return data;

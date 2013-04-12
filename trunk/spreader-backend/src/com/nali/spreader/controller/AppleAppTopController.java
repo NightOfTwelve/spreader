@@ -12,8 +12,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nali.common.model.Limit;
+import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.controller.basectrl.BaseController;
+import com.nali.spreader.dto.AppleAppCurrentTopDto;
 import com.nali.spreader.dto.AppleAppHistoryDto;
 import com.nali.spreader.spider.service.IAppleAppsTopService;
 
@@ -34,9 +37,19 @@ public class AppleAppTopController extends BaseController {
 		return "/show/main/AppleAppTopShow";
 	}
 
+	/**
+	 * 查询历史排行曲线
+	 * 
+	 * @param appId
+	 * @param genreId
+	 * @param popId
+	 * @param startCreateDate
+	 * @param endCreateDate
+	 * @return
+	 */
 	@ResponseBody
-	@RequestMapping(value = "/currtop")
-	public String currTopData(Long appId, Integer genreId, Integer popId,
+	@RequestMapping(value = "/histop")
+	public String hisTopData(Long appId, Integer genreId, Integer popId,
 			Date startCreateDate, Date endCreateDate) {
 		String startDate = null;
 		String endDate = null;
@@ -62,6 +75,26 @@ public class AppleAppTopController extends BaseController {
 			m.put("list", list);
 			return write(list);
 		}
+	}
+
+	/**
+	 * 当前排行信息
+	 * 
+	 * @param appId
+	 * @param genreId
+	 * @param popId
+	 * @param start
+	 * @param limit
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/currtop")
+	public String currTopData(Long appId, Integer genreId, Integer popId,
+			Integer start, Integer limit) {
+		Limit lit = initLimit(start, limit);
+		PageResult<AppleAppCurrentTopDto> data = appleAppsTopService
+				.getCurrentTopDto(appId, genreId, popId, lit);
+		return write(data);
 	}
 
 	private String formatDate(Date date) {

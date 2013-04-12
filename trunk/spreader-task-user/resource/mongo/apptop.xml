@@ -30,7 +30,7 @@
 			</list>
 		</property>
 		<property name="from" value="appleAppInfo" />
-		<property name="orderBy" value="-id" />
+		<property name="orderBy" value="appId" />
 	</bean>
 	<bean id="dal.appleAppInfo.upsert" class="com.nali.dal.statement.upsert.OperateUpsertStatement">
 		<property name="into" value="appleAppInfo" />
@@ -64,7 +64,7 @@
 			</list>
 		</property>
 		<property name="from" value="appleAppCurrentTop" />
-		<property name="orderBy" value="-id" />
+		<property name="orderBy" value="ranking" />
 	</bean>
 	<bean id="dal.appleAppCurrentTop.upsert" class="com.nali.dal.statement.upsert.OperateUpsertStatement">
 		<property name="into" value="appleAppCurrentTop" />
@@ -100,7 +100,7 @@
 			</list>
 		</property>
 		<property name="from" value="appleAppHistoryTop" />
-		<property name="orderBy" value="-id" />
+		<property name="orderBy" value="appId" />
 	</bean>
 	<bean id="dal.appleAppHistoryTop.upsert" class="com.nali.dal.statement.upsert.OperateUpsertStatement">
 		<property name="into" value="appleAppHistoryTop" />
