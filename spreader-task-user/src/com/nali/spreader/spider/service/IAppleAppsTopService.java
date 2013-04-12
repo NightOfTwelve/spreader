@@ -2,6 +2,10 @@ package com.nali.spreader.spider.service;
 
 import java.util.List;
 
+import com.nali.common.model.Limit;
+import com.nali.common.pagination.PageResult;
+import com.nali.spreader.data.AppleAppCurrentTop;
+import com.nali.spreader.dto.AppleAppCurrentTopDto;
 import com.nali.spreader.dto.AppleAppHistoryDto;
 
 /**
@@ -45,4 +49,18 @@ public interface IAppleAppsTopService {
 	 */
 	List<AppleAppHistoryDto> getAppDayTop(int genreId, Long appId, int popId,
 			String startCreateDate, String endCreateDate);
+
+	/**
+	 * 查询实时排行榜信息
+	 * 
+	 * @param appId
+	 * @param genreId
+	 * @param popId
+	 * @return
+	 */
+	PageResult<AppleAppCurrentTop> getCurrentTop(Long appId, Integer genreId,
+			Integer popId, Limit limit);
+
+	PageResult<AppleAppCurrentTopDto> getCurrentTopDto(Long appId,
+			Integer genreId, Integer popId, Limit limit);
 }

@@ -84,4 +84,26 @@ public interface IAppleAppTopDao {
 	int upsertCurrentTop(Long appId, String genre, int genreId, int ranking,
 			int popId);
 
+	/**
+	 * 分页显示实时排行
+	 * 
+	 * @param appId
+	 * @param genreId
+	 * @param popId
+	 * @param start
+	 * @param limit
+	 * @return
+	 */
+	List<AppleAppCurrentTop> getCurrentTop(Long appId, Integer genreId,
+			Integer popId, int start, int limit);
+
+	/**
+	 * 统计总数
+	 * 
+	 * @param appId
+	 * @param genreId
+	 * @param popId
+	 * @return
+	 */
+	int countCurrentTop(Long appId, Integer genreId, Integer popId);
 }
