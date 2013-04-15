@@ -50,6 +50,80 @@ Ext.onReady(function() {
 	popCombo.on('load', function() {
 				popCombo.setValue(27);
 			});
+	var appInfoStore = new Ext.data.Store({
+				proxy : new Ext.data.HttpProxy({
+							url : '../extutil/appscombo?_time='
+									+ new Date().getTime()
+						}),
+				reader : new Ext.data.JsonReader({
+							totalProperty : 'totalCount',
+							root : 'list'
+						}, [{
+									name : 'appId'
+								}, {
+									name : 'appName'
+								}])
+			});
+	var appResultTpl = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{appId}({appName})</span></div></tpl>');
+	var appInfoComboUtil = new Ext.form.ComboBox({
+				hiddenName : 'appId',
+				id : 'appInfoComboUtil',
+				fieldLabel : '选择app',
+				emptyText : '请选择app...',
+				triggerAction : 'all',
+				store : appInfoStore,
+				displayField : 'appName',
+				valueField : 'appId',
+				loadingText : '正在加载数据...',
+				mode : 'remote', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取
+				forceSelection : true,
+				typeAhead : false,// 自动补齐
+				resizable : true,
+				minChars : 1,
+				pageSize : 10,
+				itemSelector : 'div.x-combo-list-item',
+				tpl : appResultTpl,
+				editable : true,
+				// enableKeyEvents:true,
+				anchor : '100%'
+			});
+	var appInfoStore2 = new Ext.data.Store({
+				proxy : new Ext.data.HttpProxy({
+							url : '../extutil/appscombo?_time='
+									+ new Date().getTime()
+						}),
+				reader : new Ext.data.JsonReader({
+							totalProperty : 'totalCount',
+							root : 'list'
+						}, [{
+									name : 'appId'
+								}, {
+									name : 'appName'
+								}])
+			});
+	var appResultTpl2 = new Ext.XTemplate('<tpl for="."><div class="x-combo-list-item"><span>{appId}({appName})</span></div></tpl>');
+	var appInfoComboUtil2 = new Ext.form.ComboBox({
+				hiddenName : 'appId',
+				id : 'appInfoComboUtil2',
+				fieldLabel : '选择app',
+				emptyText : '请选择app...',
+				triggerAction : 'all',
+				store : appInfoStore2,
+				displayField : 'appName',
+				valueField : 'appId',
+				loadingText : '正在加载数据...',
+				mode : 'remote', // 数据会自动读取,如果设置为local又调用了store.load()则会读取2次；也可以将其设置为local，然后通过store.load()方法来读取
+				forceSelection : true,
+				typeAhead : false,// 自动补齐
+				resizable : true,
+				minChars : 1,
+				pageSize : 10,
+				itemSelector : 'div.x-combo-list-item',
+				tpl : appResultTpl,
+				editable : true,
+				// enableKeyEvents:true,
+				anchor : '100%'
+			});
 	var genreStore2 = new Ext.data.ArrayStore({
 				fields : ['ID', 'NAME'],
 				data : [['0', '0.全部'], ['6021', '6021.报刊杂志'],
@@ -161,10 +235,10 @@ Ext.onReady(function() {
 			});
 	// 分页带上查询条件
 	curTopStore.on('beforeload', function() {
-				var appIdForm = Ext.getCmp('appId2');
+				var appCombo = Ext.getCmp('appInfoComboUtil2');
 				var genreCombo = Ext.getCmp('genreCombo2');
 				var popCombo = Ext.getCmp('popCombo2');
-				var appId = appIdForm.getValue();
+				var appId = appCombo.getValue();
 				var popId = popCombo.getValue();
 				var genreId = genreCombo.getValue();
 				this.baseParams = {
@@ -235,12 +309,7 @@ Ext.onReady(function() {
 		bbar : bbar,
 		sm : sm,
 		cm : cm,
-		tbar : [new Ext.form.NumberField({
-							id : 'appId2',
-							name : 'appId2',
-							fieldLabel : 'appId',
-							emptyText : '请输入AppId'
-						}), '-', new Ext.form.ComboBox({
+		tbar : [appInfoComboUtil2, '-', new Ext.form.ComboBox({
 							id : 'genreCombo2',
 							name : 'genreCombo2',
 							fieldLabel : '分类',
@@ -262,10 +331,11 @@ Ext.onReady(function() {
 					text : '查询',
 					iconCls : 'arrow_refreshIcon',
 					handler : function() {
-						var appIdForm = Ext.getCmp('appId2');
+						// var appIdForm = Ext.getCmp('appId2');
+						var appCombo = Ext.getCmp('appInfoComboUtil2');
 						var genreCombo = Ext.getCmp('genreCombo2');
 						var popCombo = Ext.getCmp('popCombo2');
-						var appId = appIdForm.getValue();
+						var appId = appCombo.getValue();
 						var popId = popCombo.getValue();
 						var genreId = genreCombo.getValue();
 						curTopStore.setBaseParam('appId', appId);
@@ -307,12 +377,14 @@ Ext.onReady(function() {
 		frame : true,
 		split : true,
 		layout : 'fit',
-		tbar : [new Ext.form.NumberField({
-							id : 'appId',
-							name : 'appId',
-							fieldLabel : 'appId',
-							emptyText : '请输入AppId'
-						}), '-', new Ext.form.ComboBox({
+		tbar : [
+				// new Ext.form.NumberField({
+				// id : 'appId',
+				// name : 'appId',
+				// fieldLabel : 'appId',
+				// emptyText : '请输入AppId'
+				// })
+				appInfoComboUtil, '-', new Ext.form.ComboBox({
 							id : 'genreCombo',
 							fieldLabel : '分类',
 							emptyText : '请选择App分类',
@@ -343,10 +415,12 @@ Ext.onReady(function() {
 					text : '查询',
 					iconCls : 'arrow_refreshIcon',
 					handler : function() {
-						var appIdForm = Ext.getCmp('appId');
+						// var appIdForm = Ext.getCmp('appId');
+						var appIdCombo = Ext.getCmp('appInfoComboUtil');
 						var genreCombo = Ext.getCmp('genreCombo');
 						var popCombo = Ext.getCmp('popCombo');
-						var appId = appIdForm.getValue();
+						// var appId = appIdForm.getValue();
+						var appId = appIdCombo.getValue();
 						if (Ext.isEmpty(appId)) {
 							Ext.MessageBox.alert('提示', 'App代码不能为空');
 							return;
@@ -394,7 +468,8 @@ Ext.onReady(function() {
 			tipRenderer : function(chart, record) {
 				var appName = record.get('appName');
 				var ranking = record.get('ranking');
-				return '【' + appName + '】   排名:' + ranking;
+				var text = String.format('App:{0}\n排名:{1}\n', appName, ranking);
+				return text;
 			},
 			chartStyle : {
 				padding : 10,

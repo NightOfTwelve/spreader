@@ -14,6 +14,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 public class AppleAppInfo implements Serializable {
 	private static final long serialVersionUID = 2055460264454154919L;
 	public static final int NO_GENRE = 0;
+	public static final String NO_GENRE_NAME = "总榜";
 	// app编号
 	private Long appId;
 	// app名称
