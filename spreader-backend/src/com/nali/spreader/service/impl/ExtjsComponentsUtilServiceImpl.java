@@ -13,6 +13,7 @@ import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.common.util.CollectionUtils;
 import com.nali.spreader.constants.Website;
+import com.nali.spreader.dao.IAppleAppTopDao;
 import com.nali.spreader.dao.ICrudCategoryDao;
 import com.nali.spreader.dao.ICrudHelpEnumInfoDao;
 import com.nali.spreader.dao.ICrudUserDao;
@@ -33,7 +34,8 @@ import com.nali.spreader.model.UserGroupExample;
 import com.nali.spreader.service.IExtjsComponentsUtilService;
 
 @Service
-public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilService {
+public class ExtjsComponentsUtilServiceImpl implements
+		IExtjsComponentsUtilService {
 	@Autowired
 	private ICrudUserDao crudUserDao;
 	@Autowired
@@ -44,10 +46,12 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 	private IConfigService<Long> regularConfigService;
 	@Autowired
 	private ICrudHelpEnumInfoDao crudHelpEnumInfoDao;
+	@Autowired
+	private IAppleAppTopDao appleAppTopDao;
 
 	@Override
-	public PageResult<UserComboxDisplayDto> findUserByNameAndWebsite(String name, int websiteId,
-			Limit limit) {
+	public PageResult<UserComboxDisplayDto> findUserByNameAndWebsite(
+			String name, int websiteId, Limit limit) {
 		UserExample ue = new UserExample();
 		Criteria c = ue.createCriteria();
 		c.andWebsiteIdEqualTo(websiteId);
@@ -63,9 +67,10 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 			dto.setId(u.getId());
 			dto.setWebsiteId(u.getWebsiteId());
 			dto.setNickName(u.getNickName());
-			String websiteDesc = Website.valueOf(u.getWebsiteId()).getDescriptions()[0];
-			dto.setViewName(u.getNickName() + "·<span style=\"color:blue;\">" + websiteDesc
-					+ "</span>");
+			String websiteDesc = Website.valueOf(u.getWebsiteId())
+					.getDescriptions()[0];
+			dto.setViewName(u.getNickName() + "·<span style=\"color:blue;\">"
+					+ websiteDesc + "</span>");
 			viewList.add(dto);
 		}
 		return new PageResult<UserComboxDisplayDto>(viewList, limit, cnt);
@@ -74,12 +79,14 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 	@Override
 	public PageResult<UserGroup> findUserGroupByName(String name, Limit limit) {
 		UserGroupExample exp = new UserGroupExample();
-		com.nali.spreader.model.UserGroupExample.Criteria c = exp.createCriteria();
+		com.nali.spreader.model.UserGroupExample.Criteria c = exp
+				.createCriteria();
 		if (StringUtils.isNotEmpty(name)) {
 			c.andGnameLike("%" + name + "%");
 		}
 		exp.setLimit(limit);
-		List<UserGroup> list = this.crudUserGroupDao.selectByExampleWithoutBLOBs(exp);
+		List<UserGroup> list = this.crudUserGroupDao
+				.selectByExampleWithoutBLOBs(exp);
 		int cnt = this.crudUserGroupDao.countByExample(exp);
 		return new PageResult<UserGroup>(list, limit, cnt);
 	}
@@ -87,7 +94,8 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 	@Override
 	public PageResult<Category> findCategoryByName(String name, Limit limit) {
 		CategoryExample exp = new CategoryExample();
-		com.nali.spreader.data.CategoryExample.Criteria c = exp.createCriteria();
+		com.nali.spreader.data.CategoryExample.Criteria c = exp
+				.createCriteria();
 		if (StringUtils.isNotEmpty(name)) {
 			c.andNameLike("%" + name + "%");
 		}
@@ -125,9 +133,11 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 	}
 
 	@Override
-	public PageResult<HelpEnumInfo> findHelpEnumInfoByName(String enumName, Limit limit) {
+	public PageResult<HelpEnumInfo> findHelpEnumInfoByName(String enumName,
+			Limit limit) {
 		HelpEnumInfoExample exp = new HelpEnumInfoExample();
-		com.nali.spreader.data.HelpEnumInfoExample.Criteria c = exp.createCriteria();
+		com.nali.spreader.data.HelpEnumInfoExample.Criteria c = exp
+				.createCriteria();
 		if (StringUtils.isNotBlank(enumName)) {
 			c.andEnumNameLike("%" + enumName + "%");
 		}
@@ -161,5 +171,23 @@ public class ExtjsComponentsUtilServiceImpl implements IExtjsComponentsUtilServi
 	public void deleteEnum(Long id) {
 		Assert.notNull(id, " id is null");
 		crudHelpEnumInfoDao.deleteByPrimaryKey(id);
+	}
+
+	@Override
+	public PageResult<Map<String, Object>> findAppInfoLikeName(String appName,
+			Limit limit) {
+		List<Map<String, Object>> list = appleAppTopDao.getAppInfoLikeName(
+				appName, limit.offset, limit.maxRows);
+		int count = appleAppTopDao.countAppInfoLikeName(appName);
+		return new PageResult<Map<String, Object>>(list, limit, count);
+	}
+
+	@Override
+	public PageResult<Map<String, Object>> findAppInfoById(Long appId,
+			Limit limit) {
+		List<Map<String, Object>> list = appleAppTopDao.getAppInfoById(appId,
+				limit.offset, limit.maxRows);
+		int count = appleAppTopDao.countAppInfoById(appId);
+		return new PageResult<Map<String, Object>>(list, limit, count);
 	}
 }

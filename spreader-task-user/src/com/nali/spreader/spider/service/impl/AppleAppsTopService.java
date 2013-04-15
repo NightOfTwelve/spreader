@@ -83,9 +83,12 @@ public class AppleAppsTopService implements IAppleAppsTopService {
 			KeyValue<Integer, String> kv = getAppNameAndRanking(name);
 			int ranking = kv.getKey();
 			String appName = kv.getValue();
-			if (genreId > 0) {
+			if (genreId > AppleAppInfo.NO_GENRE) {
 				appleAppTopDao.upsertAppInfo(appId, appName, url, artworkUrl,
 						genre, genreId, popId);
+			}
+			if (genreId == AppleAppInfo.NO_GENRE) {
+				genre = AppleAppInfo.NO_GENRE_NAME;
 			}
 			Date rankTime = new Date();
 			String createDate = DateFormatUtils.format(rankTime, "yyyyMMdd");
@@ -222,11 +225,11 @@ public class AppleAppsTopService implements IAppleAppsTopService {
 		if (top != null) {
 			ranks = top.getRanking();
 		}
-		return formatDayRanking(ranks, genreId, appId);
+		return formatDayRanking(ranks, appId);
 	}
 
 	private List<AppleAppHistoryDto> formatDayRanking(
-			List<Map<String, Object>> ranks, int genreId, Long appId) {
+			List<Map<String, Object>> ranks, Long appId) {
 		List<AppleAppHistoryDto> list = new ArrayList<AppleAppHistoryDto>();
 		if (ranks != null) {
 			AppleAppInfo app = appleAppTopDao.getAppInfoByAppId(appId);

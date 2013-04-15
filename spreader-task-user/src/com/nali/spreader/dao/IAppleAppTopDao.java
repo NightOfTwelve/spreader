@@ -2,6 +2,7 @@ package com.nali.spreader.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.nali.spreader.data.AppleAppCurrentTop;
 import com.nali.spreader.data.AppleAppHistoryTop;
@@ -32,6 +33,16 @@ public interface IAppleAppTopDao {
 	AppleAppHistoryTop getHistoryTopByGenreAndId(int genreId, Long appId,
 			String createDate, int popId);
 
+	/**
+	 * 查询时间段内的App排行
+	 * 
+	 * @param genreId
+	 * @param appId
+	 * @param startCreateDate
+	 * @param endCreateDate
+	 * @param popId
+	 * @return
+	 */
 	List<AppleAppHistoryTop> getHistoryTopByGenreAndId(int genreId, Long appId,
 			String startCreateDate, String endCreateDate, int popId);
 
@@ -106,4 +117,21 @@ public interface IAppleAppTopDao {
 	 * @return
 	 */
 	int countCurrentTop(Long appId, Integer genreId, Integer popId);
+
+	/**
+	 * 模糊查询APP信息
+	 * 
+	 * @param appName
+	 * @param start
+	 * @param limit
+	 * @return
+	 */
+	List<Map<String, Object>> getAppInfoLikeName(String appName, int start,
+			int limit);
+
+	int countAppInfoLikeName(String appName);
+
+	List<Map<String, Object>> getAppInfoById(Long appId, int start, int limit);
+
+	int countAppInfoById(Long appId);
 }

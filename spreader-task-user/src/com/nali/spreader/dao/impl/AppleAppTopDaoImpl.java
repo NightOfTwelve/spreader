@@ -169,4 +169,46 @@ public class AppleAppTopDaoImpl implements IAppleAppTopDao {
 		builder.cond("popId", Criteria.eq, popId);
 		return (int) builder.count();
 	}
+
+	@Override
+	public List<Map<String, Object>> getAppInfoLikeName(String appName,
+			int start, int limit) {
+		SelectBuilder select = dalTemplate
+				.startFor("dal.appleAppInfo.select.like.appName");
+		if (StringUtils.isNotBlank(appName)) {
+			select.cond("appName", Criteria.like, appName);
+		}
+		return select.select(start, limit);
+	}
+
+	@Override
+	public int countAppInfoLikeName(String appName) {
+		SelectBuilder select = dalTemplate
+				.startFor("dal.appleAppInfo.select.like.appName");
+		if (StringUtils.isNotBlank(appName)) {
+			select.cond("appName", Criteria.like, appName);
+		}
+		return (int) select.count();
+	}
+
+	@Override
+	public List<Map<String, Object>> getAppInfoById(Long appId, int start,
+			int limit) {
+		SelectBuilder select = dalTemplate
+				.startFor("dal.appleAppInfo.select.like.appName");
+		if (appId != null) {
+			select.cond("appId", Criteria.eq, appId);
+		}
+		return select.select(start, limit);
+	}
+
+	@Override
+	public int countAppInfoById(Long appId) {
+		SelectBuilder select = dalTemplate
+				.startFor("dal.appleAppInfo.select.like.appName");
+		if (appId != null) {
+			select.cond("appId", Criteria.eq, appId);
+		}
+		return (int) select.count();
+	}
 }

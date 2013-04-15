@@ -1,5 +1,7 @@
 package com.nali.spreader.controller;
 
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,14 +49,14 @@ public class ExtjsComponentsUtilController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/strategygroupcombo")
-	public String testComboBoxStore(String groupName, Integer groupType, Long id, String query,
-			Integer start, Integer limit) {
+	public String testComboBoxStore(String groupName, Integer groupType,
+			Long id, String query, Integer start, Integer limit) {
 		StrategyGroup sg = new StrategyGroup();
 		sg.setId(id);
 		sg.setGroupName(query);
 		sg.setGroupType(groupType);
-		PageResult<StrategyGroup> pr = groupService.findStrategyGroupPageResult(sg,
-				this.initLimit(start, limit));
+		PageResult<StrategyGroup> pr = groupService
+				.findStrategyGroupPageResult(sg, this.initLimit(start, limit));
 		return this.write(pr);
 	}
 
@@ -85,8 +87,8 @@ public class ExtjsComponentsUtilController extends BaseController {
 				name = StringUtils.trim(str[1]);
 			}
 		}
-		PageResult<UserComboxDisplayDto> pr = extjsService.findUserByNameAndWebsite(name,
-				websiteId, lit);
+		PageResult<UserComboxDisplayDto> pr = extjsService
+				.findUserByNameAndWebsite(name, websiteId, lit);
 		return this.write(pr);
 	}
 
@@ -100,9 +102,11 @@ public class ExtjsComponentsUtilController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/usergroupcombo")
-	public String userGroupComboxStore(String query, Integer start, Integer limit) {
+	public String userGroupComboxStore(String query, Integer start,
+			Integer limit) {
 		Limit lit = this.initLimit(start, limit);
-		PageResult<UserGroup> pr = this.extjsService.findUserGroupByName(query, lit);
+		PageResult<UserGroup> pr = this.extjsService.findUserGroupByName(query,
+				lit);
 		return this.write(pr);
 	}
 
@@ -118,8 +122,33 @@ public class ExtjsComponentsUtilController extends BaseController {
 	@RequestMapping(value = "/categorycombo")
 	public String categoryComboxStore(String query, Integer start, Integer limit) {
 		Limit lit = this.initLimit(start, limit);
-		PageResult<Category> pr = this.extjsService.findCategoryByName(query, lit);
+		PageResult<Category> pr = this.extjsService.findCategoryByName(query,
+				lit);
 		return this.write(pr);
+	}
+
+	/**
+	 * 查询app信息
+	 * 
+	 * @param query
+	 * @param start
+	 * @param limit
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/appscombo")
+	public String appInfoStore(String query, Integer start, Integer limit) {
+		Limit lit = this.initLimit(start, limit);
+		try {
+			Long appId = Long.parseLong(query);
+			PageResult<Map<String, Object>> pr = extjsService.findAppInfoById(
+					appId, lit);
+			return write(pr);
+		} catch (NumberFormatException e) {
+			PageResult<Map<String, Object>> pr = extjsService
+					.findAppInfoLikeName((String) query, lit);
+			return write(pr);
+		}
 	}
 
 	/**

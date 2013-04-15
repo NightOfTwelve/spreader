@@ -26,8 +26,8 @@ public interface IExtjsComponentsUtilService {
 	 * @param websiteId
 	 * @return
 	 */
-	PageResult<UserComboxDisplayDto> findUserByNameAndWebsite(String name, int websiteId,
-			Limit limit);
+	PageResult<UserComboxDisplayDto> findUserByNameAndWebsite(String name,
+			int websiteId, Limit limit);
 
 	/**
 	 * 根据Name模糊查询用户分组基本信息
@@ -55,6 +55,25 @@ public interface IExtjsComponentsUtilService {
 	 * @return
 	 */
 	PageResult<HelpEnumInfo> findHelpEnumInfoByName(String enumName, Limit limit);
+
+	/**
+	 * 模糊查询APP信息
+	 * 
+	 * @param appName
+	 * @param limit
+	 * @return
+	 */
+	PageResult<Map<String, Object>> findAppInfoLikeName(String appName,
+			Limit limit);
+
+	/**
+	 * 通过ID查询App信息
+	 * 
+	 * @param appId
+	 * @param limit
+	 * @return
+	 */
+	PageResult<Map<String, Object>> findAppInfoById(Long appId, Limit limit);
 
 	/**
 	 * 获取所有website

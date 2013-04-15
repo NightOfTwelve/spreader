@@ -19,7 +19,6 @@
 	<bean id="dal.appleAppInfo.select" class="com.nali.dal.statement.query.SelectStatement">
 		<property name="select">
 			<list>
-				<value>id</value>
 				<value>appId</value>
 				<value>appName</value>
 				<value>appUrl</value>
@@ -31,6 +30,16 @@
 		</property>
 		<property name="from" value="appleAppInfo" />
 		<property name="orderBy" value="appId" />
+	</bean>
+	<bean id="dal.appleAppInfo.select.like.appName" class="com.nali.dal.statement.query.SelectStatement">
+		<property name="select">
+			<list>
+				<value>appId</value>
+				<value>appName</value>
+			</list>
+		</property>
+		<property name="from" value="appleAppInfo" />
+		<property name="orderBy" value="appName" />
 	</bean>
 	<bean id="dal.appleAppInfo.upsert" class="com.nali.dal.statement.upsert.OperateUpsertStatement">
 		<property name="into" value="appleAppInfo" />
@@ -55,7 +64,6 @@
 	<bean id="dal.appleAppCurrentTop.select" class="com.nali.dal.statement.query.SelectStatement">
 		<property name="select">
 			<list>
-				<value>id</value>
 				<value>appId</value>
 				<value>ranking</value>
 				<value>genreId</value>
@@ -88,7 +96,6 @@
 	<bean id="dal.appleAppHistoryTop.select" class="com.nali.dal.statement.query.SelectStatement">
 		<property name="select">
 			<list>
-				<value>id</value>
 				<value>appId</value>
 				<value>ranking</value>
 				<value>genreId</value>
