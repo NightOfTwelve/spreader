@@ -153,6 +153,9 @@
 			<isNotNull prepend="and" property="id">
 				u.id = #id#
 			</isNotNull>
+			<isNotNull prepend="and" property="vType">
+				u.v_type = #vType#
+			</isNotNull>
 			<isNotNull prepend="and" property="isRobot">
 				u.is_robot = #isRobot#
 			</isNotNull>
@@ -216,6 +219,9 @@
 		<dynamic prepend="where">
 			<isNotNull prepend="and" property="id">
 				u.id = #id#
+			</isNotNull>
+			<isNotNull prepend="and" property="vType">
+				u.v_type = #vType#
 			</isNotNull>
 			<isNotNull prepend="and" property="websiteUid">
 				u.website_uid =
