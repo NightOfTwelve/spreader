@@ -164,9 +164,15 @@ public class AppleAppTopDaoImpl implements IAppleAppTopDao {
 	public int countCurrentTop(Long appId, Integer genreId, Integer popId) {
 		SelectBuilder builder = dalTemplate
 				.startFor("dal.appleAppCurrentTop.select");
-		builder.cond("appId", Criteria.eq, appId);
-		builder.cond("genreId", Criteria.eq, genreId);
-		builder.cond("popId", Criteria.eq, popId);
+		if (appId != null) {
+			builder.cond("appId", Criteria.eq, appId);
+		}
+		if (genreId != null) {
+			builder.cond("genreId", Criteria.eq, genreId);
+		}
+		if (popId != null) {
+			builder.cond("popId", Criteria.eq, popId);
+		}
 		return (int) builder.count();
 	}
 

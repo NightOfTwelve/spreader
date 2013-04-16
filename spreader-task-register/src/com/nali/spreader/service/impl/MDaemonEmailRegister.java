@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -14,6 +16,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
@@ -23,7 +26,6 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.nali.spreader.service.IEmailRegisterService;
-
 
 public class MDaemonEmailRegister implements IEmailRegisterService {
 	private static final Logger logger = Logger
@@ -37,7 +39,14 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	private String mailRegisterUrl;
 	@Value("${spreader.email.mdaemon.mailDeleteUrl}")
 	private String mailDeleteUrl;
-	private static final DefaultHttpClient httpClient = new DefaultHttpClient();
+	private static DefaultHttpClient httpClient;
+
+	@PostConstruct
+	public void init() {
+		PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
+		cm.setMaxTotal(5);
+		httpClient = new DefaultHttpClient(cm);
+	}
 
 	/**
 	 * 注册
