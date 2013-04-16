@@ -185,6 +185,29 @@ Ext.onReady(function() {
 				fields : ['appId', 'appName', 'rankTime', 'ranking'],
 				data : []
 			});
+	var curTopStore = new Ext.data.Store({
+				proxy : new Ext.data.HttpProxy({
+							url : '../appletop/currtop?_time='
+									+ new Date().getTime()
+						}),
+				reader : new Ext.data.JsonReader({
+							totalProperty : 'totalCount',
+							root : 'list'
+						}, [{
+									name : 'genre'
+								}, {
+									name : 'genreId'
+								}, {
+									name : 'ranking'
+								}, {
+									name : 'appId'
+								}, {
+									name : 'popId'
+								}, {
+									name : 'appName'
+								}]),
+				autoLoad : true
+			});
 	// 页数
 	var number = 20;
 	var numtext = new Ext.form.TextField({
@@ -210,29 +233,6 @@ Ext.onReady(function() {
 				}
 			});
 
-	var curTopStore = new Ext.data.Store({
-				proxy : new Ext.data.HttpProxy({
-							url : '../appletop/currtop?_time='
-									+ new Date().getTime()
-						}),
-				reader : new Ext.data.JsonReader({
-							totalProperty : 'totalCount',
-							root : 'list'
-						}, [{
-									name : 'genre'
-								}, {
-									name : 'genreId'
-								}, {
-									name : 'ranking'
-								}, {
-									name : 'appId'
-								}, {
-									name : 'popId'
-								}, {
-									name : 'appName'
-								}]),
-				autoLoad : true
-			});
 	// 分页带上查询条件
 	curTopStore.on('beforeload', function() {
 				var appCombo = Ext.getCmp('appInfoComboUtil2');
@@ -355,11 +355,11 @@ Ext.onReady(function() {
 				var data = getHisTopData(appId, popId, genreId, new Date(),
 						null);
 				hisTopChartStore.loadData(data);
-				var appIdForm = Ext.getCmp('appId');
+				var appIdCombo = Ext.getCmp('appInfoComboUtil');
 				var genreCombo = Ext.getCmp('genreCombo');
 				var popCombo = Ext.getCmp('popCombo');
 				var startCreateDateForm = Ext.getCmp('startCreateDateForm').form;
-				appIdForm.setValue(appId);
+				appIdCombo.setValue(appId);
 				genreCombo.setValue(genreId);
 				popCombo.setValue(popId);
 				startCreateDateForm.findField("startCreateDate")
