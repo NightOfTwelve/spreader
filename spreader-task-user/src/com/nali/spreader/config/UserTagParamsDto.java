@@ -40,6 +40,16 @@ public class UserTagParamsDto implements Serializable {
 	private Limit lit;
 	private Date startCreateTime;
 	private Date endCreateTime;
+	// 加V
+	private Integer vType;
+
+	public Integer getvType() {
+		return vType;
+	}
+
+	public void setvType(Integer vType) {
+		this.vType = vType;
+	}
 
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

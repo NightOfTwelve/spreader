@@ -36,10 +36,18 @@
 		<property name="cronExpression" value="#{jobs['cronTrigger.regularTaskProduce']}" />
 	</bean>
      -->
-		
+		<bean id="fetchAppleAppTopJobDetail" parent="abstractJobDetail">
+		<property name="targetObject" ref="fetchAppleAppTopJob" />
+		<property name="targetMethod" value="run" />
+	</bean>
+	<bean id="fetchAppleAppTopCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="fetchAppleAppTopJobDetail"/>
+		<property name="cronExpression" value="#{jobs['fetchAppleAppTopJob.regularTaskProduce']}" />
+	</bean>
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
+				<ref bean="fetchAppleAppTopCronTrigger" />
 				<!-- 
 				<ref bean="regularTaskProduceInitTrigger" />
 	    		<ref bean="regularTaskProduceCronTrigger" />

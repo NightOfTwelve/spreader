@@ -167,4 +167,5 @@
 	<import resource="classpath:application-lwtmq-context.xml" />
 	<import resource="classpath:application-lts-context.xml" />
 	<import resource="classpath:application-dal-context.xml" />
+	<import resource="classpath:application-schedule-context.xml" />
 </beans>

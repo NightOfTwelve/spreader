@@ -9,6 +9,10 @@ var isRobotStore = new Ext.data.ArrayStore({
 			fields : ['ID', 'NAME'],
 			data : [[null, '不限'], [true, '是'], [false, '否']]
 		});
+var isVtype = new Ext.data.ArrayStore({
+			fields : ['ID', 'NAME'],
+			data : [[null, '不限'], [1, '是'], [0, '否']]
+		});
 // 页数
 var number = 20;
 var numtext = new Ext.form.TextField({
@@ -159,6 +163,27 @@ var userSinaForm = new Ext.form.FormPanel({
 									items : [calendarCmp('endCreateTime',
 											'endCreateTime', '结束时间')]
 								}]
+					}, { // 行5
+						layout : "column",
+						items : [{
+									columnWidth : .33,
+									layout : "form",
+									items : [{
+												fieldLabel : '是否加V',
+												xtype : 'combo',
+												store : isVtype,
+												id : 'isVtype',
+												name : 'isVtype',
+												hiddenName : 'vType',
+												valueField : 'ID',
+												editable : false,
+												displayField : 'NAME',
+												mode : 'local',
+												forceSelection : false,// 必须选择一项
+												emptyText : '...',// 默认值
+												triggerAction : 'all'
+											}]
+								}]
 					}],
 			buttonAlign : "center",
 			buttons : [{
@@ -176,6 +201,7 @@ var userSinaForm = new Ext.form.FormPanel({
 							.getValue();
 					var tag = tform.findField("tag").getValue();
 					var isRobot = tform.findField("isRobot").getValue();
+					var vType = tform.findField("isVtype").getValue();
 					var websiteId = Ext.getCmp('selectWebSiteComboUtil')
 							.getValue();
 					var num = numtext.getValue();
@@ -194,6 +220,7 @@ var userSinaForm = new Ext.form.FormPanel({
 					sinaUserStore.setBaseParam('isRobot', isRobot);
 					sinaUserStore.setBaseParam('websiteId', websiteId);
 					sinaUserStore.setBaseParam('websiteUid', websiteUid);
+					sinaUserStore.setBaseParam('vType', vType);
 					sinaUserStore.setBaseParam('id', uid);
 					sinaUserStore.load();
 				}
@@ -202,6 +229,7 @@ var userSinaForm = new Ext.form.FormPanel({
 				handler : function() { // 按钮响应函数
 					userSinaForm.form.reset();
 					Ext.getCmp('isRobot').setValue(null);
+					Ext.getCmp('isVtype').setValue(null);
 				}
 			}]
 		});
@@ -264,12 +292,15 @@ var sinaUserStore = new Ext.data.Store({
 								name : 'city'
 							}, {
 								name : 'createTime'
+							}, {
+								name : 'vType'
 							}]),
 			autoLoad : true
 		});
 // 分页带上查询条件
 sinaUserStore.on('beforeload', function() {
 			var pfrom = userSinaForm.getForm();
+			var vType = pfrom.findField("isVtype").getValue();
 			var pnickName = pfrom.findField("nickName").getValue();
 			var pminFans = pfrom.findField("minFans").getValue();
 			var pmaxFans = pfrom.findField("maxFans").getValue();
@@ -302,7 +333,8 @@ sinaUserStore.on('beforeload', function() {
 				id : uid,
 				websiteUid : websiteUid,
 				startCreateTime : startCreateTime,
-				endCreateTime : endCreateTime
+				endCreateTime : endCreateTime,
+				vType : vType
 			};
 		});
 // 导入excel文件窗口
@@ -464,6 +496,10 @@ var cm = new Ext.grid.ColumnModel([rownums, sm, {
 			dataIndex : 'isRobot',
 			// locked : true,
 			renderer : rendTrueFalse,
+			width : 80
+		}, {
+			header : '加V',
+			dataIndex : 'vType',
 			width : 80
 		}, {
 			header : '昵称',
