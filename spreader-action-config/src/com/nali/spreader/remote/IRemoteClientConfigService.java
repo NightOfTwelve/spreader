@@ -15,4 +15,14 @@ public interface IRemoteClientConfigService {
 	 * @return
 	 */
 	String readClientConfig(String configName, String configMD5);
+
+	/**
+	 * 通过客户端ID和配置名称 分类获取配置信息
+	 * 
+	 * @param configName
+	 * @param configMD5
+	 * @param type
+	 * @return
+	 */
+	String readClientConfig(String configName, String configMD5, Integer type);
 }

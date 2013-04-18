@@ -22,7 +22,7 @@ public interface IClitentConfigService {
 	 * @param cfgs
 	 */
 	void saveClientConfigs(Long id, Long clientId, String configName,
-			int configType, String cfgs, String cfgMD5);
+			int configType, String cfgs, String cfgMD5, int clientType);
 
 	/**
 	 * 根据ID获取配置对象
@@ -30,7 +30,7 @@ public interface IClitentConfigService {
 	 * @param clientId
 	 * @return
 	 */
-	ClientConfig getConfigByClientId(Long clientId, String configName);
+	ClientConfig getConfigByClientId(Long clientId, String configName,int clientType);
 
 	/**
 	 * 获取配置对象
