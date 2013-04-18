@@ -21,3 +21,6 @@ CREATE TABLE `tb_account_log` (
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 alter table spreader.tb_account_logon modify column password varchar(150)  comment '密码';
+
+alter table tb_client_config Add column type int not null
+CREATE UNIQUE INDEX uk_client_config_id_name_type ON tb_client_config (client_id,config_name,type);

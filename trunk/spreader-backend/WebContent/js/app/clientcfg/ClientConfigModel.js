@@ -51,6 +51,8 @@ Ext.onReady(function() {
 									name : 'configType'
 								}, {
 									name : 'clientConfig'
+								}, {
+									name : 'type'
 								}])
 			});
 	var cfgcm = new Ext.grid.ColumnModel([{
@@ -60,6 +62,10 @@ Ext.onReady(function() {
 			}, {
 				header : '客户端编号',
 				dataIndex : 'clientId',
+				width : 80
+			}, {
+				header : '客户端类型',
+				dataIndex : 'type',
 				width : 80
 			}, {
 				header : '配置名称',
@@ -95,6 +101,10 @@ Ext.onReady(function() {
 	var configTypes = new Ext.data.ArrayStore({
 				fields : ['ID', 'NAME'],
 				data : [[1, '普通文本模式'], [2, '属性表格模式'], [3, '多行表格模式']]
+			});
+	var clientTypes = new Ext.data.ArrayStore({
+				fields : ['ID', 'NAME'],
+				data : [[0, '客户端'], [1, '客户端组']]
 			});
 	var selectConfigTypes = new Ext.data.ArrayStore({
 				fields : ['ID', 'NAME'],
@@ -173,6 +183,20 @@ Ext.onReady(function() {
 							forceSelection : false,// 必须选择一项
 							emptyText : '...',// 默认值
 							triggerAction : 'all'
+						}, {
+							fieldLabel : '客户端/组',
+							xtype : 'combo',
+							store : clientTypes,
+							id : 'clientType',
+							name : 'clientType',
+							hiddenName : 'clientType',
+							valueField : 'ID',
+							editable : false,
+							displayField : 'NAME',
+							mode : 'local',
+							forceSelection : false,// 必须选择一项
+							emptyText : '...',// 默认值
+							triggerAction : 'all'
 						}],
 				buttons : [{
 					text : '保存',
@@ -182,6 +206,8 @@ Ext.onReady(function() {
 						var configName = tform.findField('configName')
 								.getValue();
 						var configType = tform.findField('configType')
+								.getValue();
+						var clientType = tform.findField('clientType')
 								.getValue();
 						if (Ext.isEmpty(clientId)) {
 							Ext.Msg.alert("提示", "请输入客户端编号");
@@ -195,6 +221,10 @@ Ext.onReady(function() {
 							Ext.Msg.alert("提示", "请输入配置类型");
 							return;
 						}
+						if (Ext.isEmpty(clientType)) {
+							Ext.Msg.alert("提示", "请输入分组类型");
+							return;
+						}
 						Ext.Ajax.request({
 									url : '/spreader-front/clientcfg/savecfg?_time='
 											+ new Date().getTime(),
@@ -202,7 +232,8 @@ Ext.onReady(function() {
 									params : {
 										'clientId' : clientId,
 										'configName' : configName,
-										'configType' : configType
+										'configType' : configType,
+										'clientType' : clientType
 									},
 									success : function(response, opts) {
 										var result = Ext.util.JSON
@@ -297,6 +328,7 @@ Ext.onReady(function() {
 					var cfg = selesm[0].data.clientConfig;
 					var configName = selesm[0].data.configName;
 					var configType = selesm[0].data.configType;
+					var clientType = selesm[0].data.type;
 					var cardPanelCmp = Ext.getCmp('cardPanel');
 					if (butname == '编辑') {
 						if (configType == 1) {
@@ -315,7 +347,8 @@ Ext.onReady(function() {
 						} else {
 							cardPanelLayout.setActiveItem(0);
 						}
-						editorCmp(configId, clientId, configName, configType);
+						editorCmp(configId, clientId, configName, configType,
+								clientType);
 					}
 				}
 			});
@@ -421,11 +454,25 @@ Ext.onReady(function() {
 											cardPanelLayout.setActiveItem(0);
 										}
 									}
+								}, {
+									fieldLabel : '客户端/组',
+									xtype : 'combo',
+									store : clientTypes,
+									id : 'selectClientType',
+									name : 'selectClientType',
+									hiddenName : 'clientType',
+									valueField : 'ID',
+									editable : false,
+									displayField : 'NAME',
+									mode : 'local',
+									forceSelection : false,// 必须选择一项
+									emptyText : '...',// 默认值
+									triggerAction : 'all'
 								}]
 					}]
 		}]
 	});
-	function editorCmp(configId, clientId, configName, configType) {
+	function editorCmp(configId, clientId, configName, configType, clientType) {
 		if (!editorWin) {
 			// 组件存在，先销毁
 			// editorWin.destroy();
@@ -448,6 +495,7 @@ Ext.onReady(function() {
 					tform.findField("clientId").setValue(clientId);
 					tform.findField("configName").setValue(configName);
 					tform.findField("selectConfigType").setValue(configType);
+					tform.findField("selectClientType").setValue(clientType);
 				});
 		editorWin.show(this);
 	}
@@ -455,7 +503,8 @@ Ext.onReady(function() {
 	/**
 	 * 提交修改的配置
 	 */
-	function submitGrid(id, clientId, configName, configType, configs) {
+	function submitGrid(id, clientId, configName, configType, configs,
+			clientType) {
 		var success = false;
 		Ext.Ajax.request({
 					url : '/spreader-front/clientcfg/savecfg?_time='
@@ -465,7 +514,8 @@ Ext.onReady(function() {
 						'clientId' : clientId,
 						'configName' : configName,
 						'configType' : configType,
-						'cfg' : configs
+						'cfg' : configs,
+						'clientType' : clientType
 					},
 					async : false,
 					success : function(response) {
@@ -588,6 +638,8 @@ Ext.onReady(function() {
 								.getValue();
 						var configType = tform.findField("selectConfigType")
 								.getValue();
+						var clientType = tform.findField("selectClientType")
+								.getValue();
 						if (clientId != null && !Ext.isEmpty(configType)) {
 							var tt = new Array();
 							for (var i = 0; i < modsize; i++) {
@@ -606,7 +658,7 @@ Ext.onReady(function() {
 							}
 							var configs = Ext.util.JSON.encode(tt);
 							if (submitGrid(cfgId, clientId, configName,
-									configType, configs)) {
+									configType, configs, clientType)) {
 								storeData.commitChanges();
 								Ext.Msg.alert("提示", "保存成功");
 								store.load();
@@ -671,34 +723,35 @@ Ext.onReady(function() {
 				text : '保存',
 				handler : function() {
 					Ext.MessageBox.confirm('提示', '确认提交?', function(e) {
-								if (e == 'yes') {
-									var textform = txtForm.getForm();
-									var textcfg = textform.findField('textcfg')
-											.getValue();
-									var tform = infoForm.getForm();
-									var cfgId = tform.findField("id")
-											.getValue();
-									var clientId = tform.findField("clientId")
-											.getValue();
-									var configName = tform
-											.findField("configName").getValue();
-									var configType = tform
-											.findField("selectConfigType")
-											.getValue();
-									if (Ext.isEmpty(cfgId)) {
-										Ext.MessageBox.alert('提示', '配置ID不能为空');
-										return;
-									}
-									var result = submitGrid(cfgId, clientId,
-											configName, configType, textcfg);
-									if (result) {
-										Ext.MessageBox.alert('提示', '保存成功');
-									} else {
-										Ext.MessageBox.alert('提示', '保存失败');
-									}
-									store.load();
-								}
-							});
+						if (e == 'yes') {
+							var textform = txtForm.getForm();
+							var textcfg = textform.findField('textcfg')
+									.getValue();
+							var tform = infoForm.getForm();
+							var cfgId = tform.findField("id").getValue();
+							var clientId = tform.findField("clientId")
+									.getValue();
+							var configName = tform.findField("configName")
+									.getValue();
+							var configType = tform
+									.findField("selectConfigType").getValue();
+							var clientType = tform
+									.findField("selectClientType").getValue();
+
+							if (Ext.isEmpty(cfgId)) {
+								Ext.MessageBox.alert('提示', '配置ID不能为空');
+								return;
+							}
+							var result = submitGrid(cfgId, clientId,
+									configName, configType, textcfg, clientType);
+							if (result) {
+								Ext.MessageBox.alert('提示', '保存成功');
+							} else {
+								Ext.MessageBox.alert('提示', '保存失败');
+							}
+							store.load();
+						}
+					});
 				}
 			}, {
 				text : "重置",
@@ -758,13 +811,17 @@ Ext.onReady(function() {
 									var configType = tform
 											.findField("selectConfigType")
 											.getValue();
+									var clientType = tform
+											.findField("selectClientType")
+											.getValue();
 									if (Ext.isEmpty(cfgId)) {
 										Ext.MessageBox.alert('提示', '配置ID不能为空');
 										return;
 									}
 									var configs = Ext.util.JSON.encode(prop);
 									var result = submitGrid(cfgId, clientId,
-											configName, configType, configs);
+											configName, configType, configs,
+											clientType);
 									if (result) {
 										Ext.MessageBox.alert('提示', '保存成功');
 									} else {
