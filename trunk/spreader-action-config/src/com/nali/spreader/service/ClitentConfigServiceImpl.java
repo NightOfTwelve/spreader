@@ -26,19 +26,19 @@ public class ClitentConfigServiceImpl implements IClitentConfigService {
 		}
 		int count = crudClientConfigDao.countByExample(exa);
 		exa.setLimit(limit);
-		List<ClientConfig> list = crudClientConfigDao.selectByExample(exa);
+		List<ClientConfig> list = crudClientConfigDao
+				.selectByExampleWithBLOBs(exa);
 		return new PageResult<ClientConfig>(list, limit, count);
 	}
 
 	@Override
 	public void saveClientConfigs(Long id, Long clientId, String configName,
-			int configType, String cfgs, String cfgMD5) {
+			int configType, String cfgs, String cfgMD5, int clientType) {
 		if (id != null) {
 			ClientConfig exists = crudClientConfigDao.selectByPrimaryKey(id);
 			exists.setClientConfig(cfgs);
 			exists.setConfigName(configName);
 			exists.setConfigType(configType);
-			exists.setClientId(clientId);
 			exists.setConfigMd5(cfgMD5);
 			crudClientConfigDao.updateByPrimaryKeySelective(exists);
 		} else {
@@ -48,23 +48,27 @@ public class ClitentConfigServiceImpl implements IClitentConfigService {
 			cc.setConfigName(configName);
 			cc.setConfigType(configType);
 			cc.setConfigMd5(cfgMD5);
+			cc.setType(clientType);
 			try {
 				crudClientConfigDao.insertSelective(cc);
 			} catch (DuplicateKeyException e) {
-				ClientConfig cfg = getConfigByClientId(clientId, configName);
+				ClientConfig cfg = getConfigByClientId(clientId, configName,
+						clientType);
 				saveClientConfigs(cfg.getId(), clientId, configName,
-						configType, cfgs, cfgMD5);
+						configType, cfgs, cfgMD5, clientType);
 			}
 		}
 	}
 
 	@Override
-	public ClientConfig getConfigByClientId(Long clientId, String configName) {
+	public ClientConfig getConfigByClientId(Long clientId, String configName,
+			int clientType) {
 		ClientConfigExample exa = new ClientConfigExample();
 		ClientConfigExample.Criteria c = exa.createCriteria();
 		c.andClientIdEqualTo(clientId);
 		c.andConfigNameEqualTo(configName);
-		return crudClientConfigDao.selectByExample(exa).get(0);
+		c.andTypeEqualTo(clientType);
+		return crudClientConfigDao.selectByExampleWithBLOBs(exa).get(0);
 	}
 
 	@Override
