@@ -9,11 +9,10 @@ import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
-import org.springframework.stereotype.Service;
 
 import com.nali.spreader.service.IEmailRegisterService;
 
-@Service
+
 public class EmailRegister implements IEmailRegisterService{
 	private static Logger logger = Logger.getLogger(EmailRegister.class);
 	private static final int RETRY_TIME = 5;

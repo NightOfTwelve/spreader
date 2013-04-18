@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,15 +22,17 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.nali.spreader.service.IEmailRegisterService;
 
+@Service
 public class MDaemonEmailRegister implements IEmailRegisterService {
 	private static final Logger logger = Logger
 			.getLogger(MDaemonEmailRegister.class);
 	private static final String DEFAULT_CHARSET = "UTF-8";
-	private static final String MAIL_USER_ADMIN = "admin@abc.com";
-	private static final String MAIL_USER_ADMIN_PSW = "admin";
+	private static final String MAIL_USER_ADMIN = "admin@360ke.net";
+	private static final String MAIL_USER_ADMIN_PSW = "samadmin";
 	@Value("${spreader.email.mdaemon.mailLoginUrl}")
 	private String mailLoginUrl;
 	@Value("${spreader.email.mdaemon.mailRegisterUrl}")
@@ -41,11 +41,18 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 	private String mailDeleteUrl;
 	private static DefaultHttpClient httpClient;
 
-	@PostConstruct
-	public void init() {
+	public MDaemonEmailRegister() {
 		PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
 		cm.setMaxTotal(5);
 		httpClient = new DefaultHttpClient(cm);
+	}
+
+	public MDaemonEmailRegister(String mailLoginUrl, String mailRegisterUrl,
+			String mailDeleteUrl) {
+		this();
+		this.mailLoginUrl = mailLoginUrl;
+		this.mailRegisterUrl = mailRegisterUrl;
+		this.mailDeleteUrl = mailDeleteUrl;
 	}
 
 	/**
@@ -213,22 +220,4 @@ public class MDaemonEmailRegister implements IEmailRegisterService {
 		buff.append("]]>");
 		return buff.toString();
 	}
-
-	// public static void main(String[] args) throws IOException {
-	// MDaemonEmailRegister m = new MDaemonEmailRegister();
-	// String names[] = { "t1", "t2", "t3", "t4", "t5" };
-	// for (String x : names) {
-	// // m.del(x, "360ke.net");
-	// boolean r = m.register(x, "360ke.net", "123");
-	// System.out.println(r);
-	// }
-	//
-	// // m.del("", "abc2.com");
-	// // private String mailLoginUrl =
-	// "http://192.168.3.133:1000/login.wdm";
-	// // private String mailRegisterUrl =
-	// // "http://192.168.3.133:1000/useredit_account.wdm?postXML=1";
-	// // private String mailDeleteUrl =
-	// // "http://192.168.3.133:1000/userlist.wdm?postXML=1";
-	// }
 }
