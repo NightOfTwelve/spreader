@@ -9,20 +9,11 @@ package com.nali.spreader.remote;
 public interface IRemoteClientConfigService {
 	/**
 	 * 通过客户端ID和配置名称获取配置信息
-	 * 
-	 * @param configName
-	 * @param configMD5
-	 * @return
 	 */
 	String readClientConfig(String configName, String configMD5);
 
 	/**
-	 * 通过客户端ID和配置名称 分类获取配置信息
-	 * 
-	 * @param configName
-	 * @param configMD5
-	 * @param type
-	 * @return
+	 * 通过分组ID和配置名称 分类获取配置信息
 	 */
-	String readClientConfig(String configName, String configMD5, Integer type);
+	String readGroupConfig(Long groupId, String configName, String configMD5);
 }
