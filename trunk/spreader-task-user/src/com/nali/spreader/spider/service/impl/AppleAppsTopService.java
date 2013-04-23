@@ -47,17 +47,17 @@ public class AppleAppsTopService implements IAppleAppsTopService {
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private static final DefaultHttpClient httpClient = new DefaultHttpClient();
 
-	public static void main(String[] args) {
-		// AppleAppsTopService as = new AppleAppsTopService();
-		// List<Map<String, Object>> data = as.getTopData(6011, 10, 27, 0);
-		// System.out.println(data);
-		// String x = "1. 史上最牛的游戏2";
-		// String[] b = StringUtils.split(x, '.');
-		// System.out.println(Arrays.asList(b));
-		// System.out.println(as.getPage(99));
-		String x = DateFormatUtils.format(new Date(), "HH:mm");
-		System.out.println(x);
-	}
+//	public static void main(String[] args) {
+//		 AppleAppsTopService as = new AppleAppsTopService();
+//		 List<Map<String, Object>> data = as.getTopData(6011, 10, 27, 0);
+//		 System.out.println(data);
+//		// String x = "1. 史上最牛的游戏2";
+//		// String[] b = StringUtils.split(x, '.');
+//		// System.out.println(Arrays.asList(b));
+//		// System.out.println(as.getPage(99));
+////		String x = DateFormatUtils.format(new Date(), "HH:mm");
+////		System.out.println(x);
+//	}
 
 	private int getPage(int total) {
 		if (total <= 0) {
@@ -197,11 +197,11 @@ public class AppleAppsTopService implements IAppleAppsTopService {
 				return objectMapper.readValue(json, ref);
 			}
 		} catch (JsonParseException e) {
-			logger.error(e, e);
+			logger.error(" error json :" + json, e);
 		} catch (JsonMappingException e) {
-			logger.error(e, e);
+			logger.error(" error json :" + json, e);
 		} catch (IOException e) {
-			logger.error(e, e);
+			logger.error(" error json :" + json, e);
 		}
 		return null;
 	}
