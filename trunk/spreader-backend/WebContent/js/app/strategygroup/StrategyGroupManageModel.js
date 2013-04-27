@@ -273,23 +273,22 @@ Ext.onReady(function() {
 			});
 	// 表达式配置FORM
 	var triggerDispForm = new Ext.form.FormPanel({
-				autoWidth : true,
 				height : 150,
+				labelWidth : 150,
+				labelAlign : "right",
 				id : 'trgcard',
 				frame : true,
 				layout : "form", // 整个大的表单是form布局
-				labelWidth : 100,
-				labelAlign : "left",
 				items : [{ // 行1
 					layout : "column", // 从左往右的布局
 					items : [{
-								columnWidth : .3, // 该列有整行中所占百分比
+								columnWidth : 1, // 该列有整行中所占百分比
 								layout : "form", // 从上往下的布局
 								items : [{
 											xtype : "textfield",
 											fieldLabel : "表达式",
 											name : 'cron',
-											width : 100
+											width : 120
 										}]
 							}]
 				}],
