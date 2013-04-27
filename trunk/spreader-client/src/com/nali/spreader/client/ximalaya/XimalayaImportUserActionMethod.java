@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,10 +25,12 @@ public class XimalayaImportUserActionMethod implements ActionMethod {
 	private IRobotRemoteService robotRemoteService;
 	@Autowired
 	private IXimalayInterfaceCheckService interfaceCheckService;
-	private static Logger logger = Logger.getLogger(XimalayaImportUserActionMethod.class);
+	private static Logger logger = Logger
+			.getLogger(XimalayaImportUserActionMethod.class);
 
 	@Override
-	public Object execute(Map<String, Object> params, Map<String, Object> userContext, Long uid) {
+	public Object execute(Map<String, Object> params,
+			Map<String, Object> userContext, Long uid) {
 		String keyword = (String) params.get("keyword");
 		int offset = (Integer) params.get("offset");
 		int limit = (Integer) params.get("limit");
@@ -39,15 +43,23 @@ public class XimalayaImportUserActionMethod implements ActionMethod {
 			fansGte = ((Number) params.get("fansLte")).longValue();
 		}
 		Integer vType = (Integer) params.get("vType");
+		Integer relativeDays = (Integer) params.get("relativeDays");
 		Date startCreateTime = long2Date((Long) params.get("startCreateTime"));
 		Date endCreateTime = long2Date((Long) params.get("endCreateTime"));
 		Date startUpdateTime = long2Date((Long) params.get("startUpdateTime"));
 		Date endUpdateTime = long2Date((Long) params.get("endUpdateTime"));
+		if (relativeDays != null) {
+			Date today = new Date();
+			Date relaStartTime = DateUtils.addDays(today, -1 * relativeDays);
+			startCreateTime = com.nali.common.util.DateUtils
+					.truncateTime(relaStartTime);
+			endCreateTime = com.nali.common.util.DateUtils.truncateTime(today);
+		}
 		byte[] md5 = ArrayUtils.EMPTY_BYTE_ARRAY;
 		try {
-			md5 = interfaceCheckService.getParamsMD5(new Object[] { keyword, offset, limit,
-					fansGte, fansLte, vType, startCreateTime, endCreateTime, startUpdateTime,
-					endUpdateTime });
+			md5 = interfaceCheckService.getParamsMD5(new Object[] { keyword,
+					offset, limit, fansGte, fansLte, vType, startCreateTime,
+					endCreateTime, startUpdateTime, endUpdateTime });
 		} catch (NoSuchAlgorithmException e) {
 			logger.error(e, e);
 		} catch (IOException e) {
@@ -55,8 +67,9 @@ public class XimalayaImportUserActionMethod implements ActionMethod {
 		}
 		List<Map<String, Object>> maps;
 		try {
-			maps = robotRemoteService.queryUser(keyword, offset, limit, fansGte, fansLte, vType,
-					startCreateTime, endCreateTime, startUpdateTime, endUpdateTime, md5);
+			maps = robotRemoteService.queryUser(keyword, offset, limit,
+					fansGte, fansLte, vType, startCreateTime, endCreateTime,
+					startUpdateTime, endUpdateTime, md5);
 		} catch (AuthenticationException e) {
 			maps = new ArrayList<Map<String, Object>>();
 			logger.error(e, e);
@@ -74,5 +87,12 @@ public class XimalayaImportUserActionMethod implements ActionMethod {
 			return null;
 		}
 		return new Date(time);
+	}
+
+	public static void main(String[] args) {
+		Date time = DateUtils.addDays(new Date(), 0);
+		Date t = com.nali.common.util.DateUtils.truncateTime(time);
+		String x = DateFormatUtils.format(t, "yyyyMMdd HH:mm:ss");
+		System.out.println(x);
 	}
 }
