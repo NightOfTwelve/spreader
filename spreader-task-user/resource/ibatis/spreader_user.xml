@@ -187,10 +187,12 @@
 				#websiteId#
 			</isNotNull>
 			<isNotNull prepend="and" property="startCreateTime">
-				u.create_time &gt;=#startCreateTime#
+				u.create_time
+				&gt;=#startCreateTime#
 			</isNotNull>
 			<isNotNull prepend="and" property="endCreateTime">
-				u.create_time &lt;=#endCreateTime#
+				u.create_time
+				&lt;=#endCreateTime#
 			</isNotNull>
 			<isNotNull prepend="and" property="websiteUid">
 				u.website_uid =
@@ -255,10 +257,12 @@
 				#websiteId#
 			</isNotNull>
 			<isNotNull prepend="and" property="startCreateTime">
-				u.create_time &gt;=#startCreateTime#
+				u.create_time
+				&gt;=#startCreateTime#
 			</isNotNull>
 			<isNotNull prepend="and" property="endCreateTime">
-				u.create_time &lt;=#endCreateTime#
+				u.create_time
+				&lt;=#endCreateTime#
 			</isNotNull>
 		</dynamic>
 	</select>
@@ -479,11 +483,17 @@
 			<isNotNull prepend="and" property="articles.lte">
 	  			<![CDATA[ u.articles<= #articles.lte#]]>
 			</isNotNull>
-			<isNotNull prepend="and" property="startCreateTime">
-	  			<![CDATA[ u.create_time>= #startCreateTime#]]>
-			</isNotNull>
-			<isNotNull prepend="and" property="endCreateTime">
-	  			<![CDATA[ u.create_time<= #endCreateTime#]]>
+			<isNull property="relativeDays">
+				<isNotNull prepend="and" property="startCreateTime">
+	  				<![CDATA[ u.create_time>= #startCreateTime#]]>
+				</isNotNull>
+				<isNotNull prepend="and" property="endCreateTime">
+	  				<![CDATA[ u.create_time<= #endCreateTime#]]>
+				</isNotNull>
+			</isNull>
+			<isNotNull prepend="and" property="relativeDays">
+				date_format(u.create_time,'%Y-%m-%d') = date_sub(curdate(),interval
+				#relativeDays# day)
 			</isNotNull>
 			<!-- 关注数 -->
 			<isNotNull prepend="and" property="attentions.gte">
@@ -492,12 +502,10 @@
 			<isNotNull prepend="and" property="attentions.lte">
 	  			<![CDATA[ u.attentions<= #attentions.lte#]]>
 			</isNotNull>
-
 			<!-- 城市 -->
 			<isNotEmpty prepend="and" property="city">
 				u.city = #city#
 			</isNotEmpty>
-
 			<!-- 粉丝数 -->
 			<isNotNull prepend="and" property="fans.gte">
 	  		  <![CDATA[ u.fans>= #fans.gte#]]>

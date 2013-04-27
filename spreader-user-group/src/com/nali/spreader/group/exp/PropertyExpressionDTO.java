@@ -52,14 +52,23 @@ public class PropertyExpressionDTO implements Serializable {
 
 	@PropertyDescription("需要排除的用户分组")
 	private List<Long> excludeGids;
-	
+
 	@PropertyDescription("用户创时间(开始)")
 	private Date startCreateTime;
-	
+
 	@PropertyDescription("用户创时间(结束)")
 	private Date endCreateTime;
-	
+	@PropertyDescription("相对于今天的几天前，必须填整数，比如3天前就填3")
+	private Integer relativeDays;
 	private Integer propVal;
+
+	public Integer getRelativeDays() {
+		return relativeDays;
+	}
+
+	public void setRelativeDays(Integer relativeDays) {
+		this.relativeDays = relativeDays;
+	}
 
 	public Date getStartCreateTime() {
 		return startCreateTime;
