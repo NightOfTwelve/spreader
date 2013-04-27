@@ -25,6 +25,14 @@ public class XimalayaUserImport implements RegularAnalyzer,
 	public void init(XimalayaUserImport.QueryXimalayaConfig config) {
 		this.config = config;
 		Integer maxSize = config.getMaxSize();
+		Integer relativeDays = config.getRelativeDays();
+		Date satrtCreateTime = config.getStartCreateTime();
+		Date endCreateTime = config.getEndCreateTime();
+		if (relativeDays != null
+				&& (satrtCreateTime != null || endCreateTime != null)) {
+			throw new IllegalArgumentException(
+					" relativeDays , satrtCreateTime  and endCreateTime is not null");
+		}
 		if (maxSize == null || maxSize.intValue() <= 0) {
 			throw new IllegalArgumentException(" maxSize is null ");
 		}
@@ -53,7 +61,7 @@ public class XimalayaUserImport implements RegularAnalyzer,
 		@PropertyDescription("关键字")
 		private String keyword;
 		// @PropertyDescription("大于等于的粉丝数")
-//		 private Long fansGte;
+		// private Long fansGte;
 		// @PropertyDescription("小于等于的粉丝数")
 		// private Long fansLte;
 		@PropertyDescription("加V类型")
@@ -70,7 +78,17 @@ public class XimalayaUserImport implements RegularAnalyzer,
 		private Integer maxSize;
 		@PropertyDescription("每次爬取多少条数据")
 		private Integer limitSize;
+		@PropertyDescription("相对于今天的几天前，必须填整数，比如3天前就填3")
+		private Integer relativeDays;
 		private Integer offset;
+
+		public Integer getRelativeDays() {
+			return relativeDays;
+		}
+
+		public void setRelativeDays(Integer relativeDays) {
+			this.relativeDays = relativeDays;
+		}
 
 		public Integer getOffset() {
 			return offset;

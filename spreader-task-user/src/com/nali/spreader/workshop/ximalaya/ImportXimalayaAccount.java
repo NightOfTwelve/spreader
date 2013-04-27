@@ -25,7 +25,8 @@ public class ImportXimalayaAccount extends SingleTaskMachineImpl implements
 	private IGlobalUserService globalUserService;
 
 	public ImportXimalayaAccount() {
-		super(SimpleActionConfig.importXimalaya, Website.ximalaya, Channel.normal);
+		super(SimpleActionConfig.importXimalaya, Website.ximalaya,
+				Channel.normal);
 	}
 
 	@Override
@@ -34,23 +35,27 @@ public class ImportXimalayaAccount extends SingleTaskMachineImpl implements
 		int offset = data.getOffset();
 		int limit = data.getLimitSize();
 		Integer vType = data.getvType();
+		Integer relativeDays = data.getRelativeDays();
 		Date startCreateTime = data.getStartCreateTime();
 		Date endCreateTime = data.getEndCreateTime();
 		Date startUpdateTime = data.getStartUpateTime();
 		Date endUpdateTime = data.getEndUpdateTime();
-		work(keyword, offset, limit, null, null, vType, startCreateTime, endCreateTime,
-				startUpdateTime, endUpdateTime, exporter);
+		work(keyword, offset, limit, null, null, vType, startCreateTime,
+				endCreateTime, startUpdateTime, endUpdateTime, relativeDays,
+				exporter);
 	}
 
-	private void work(String keyword, int offset, int limit, Long fansGte, Long fansLte,
-			Integer vType, Date startCreateTime, Date endCreateTime, Date startUpdateTime,
-			Date endUpdateTime, SingleTaskExporter exporter) {
+	private void work(String keyword, int offset, int limit, Long fansGte,
+			Long fansLte, Integer vType, Date startCreateTime,
+			Date endCreateTime, Date startUpdateTime, Date endUpdateTime,
+			Integer relativeDays, SingleTaskExporter exporter) {
 		exporter.setProperty("keyword", keyword);
 		exporter.setProperty("offset", offset);
 		exporter.setProperty("limit", limit);
 		exporter.setProperty("fansGte", fansGte);
 		exporter.setProperty("fansLte", fansLte);
 		exporter.setProperty("vType", vType);
+		exporter.setProperty("relativeDays", relativeDays);
 		exporter.setProperty("startCreateTime", startCreateTime);
 		exporter.setProperty("endCreateTime", endCreateTime);
 		exporter.setProperty("startUpdateTime", startUpdateTime);
