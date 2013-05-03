@@ -32,7 +32,7 @@ public class TaskChannel implements Runnable {
 	private static final int SLEEP_COUNT_WHEN_NO_TASKS = 10;
 	private Integer taskType;
 	private int handlerCount = 5;
-	private long executeInterval=5*1000L;
+	private long executeInterval=100L;
 	private long clientId = 0L;
 	@Autowired
 	private IRemoteTaskService remoteTaskService;
