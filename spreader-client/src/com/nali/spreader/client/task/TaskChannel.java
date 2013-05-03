@@ -54,7 +54,7 @@ public class TaskChannel implements Runnable {
 			throw new IllegalArgumentException("taskType hasn't been setted");
 		}
 		userContextHolder = new UserContextHolder(actionMethodHolder, remoteLoginConfigService);
-		executorService = new ThreadPoolExecutor(handlerCount, Integer.MAX_VALUE,
+		executorService = new ThreadPoolExecutor(handlerCount, handlerCount*2,
                 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 		new Thread(this).start();
 	}
