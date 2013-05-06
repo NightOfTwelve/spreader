@@ -18,10 +18,11 @@ public class AndroidController {
 	public String tencentAppDownload(String mPageNoPath, int mProductID,
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
 			int mStatPosition, String mSearchInfo, int p20, int p21,
-			int mVersionCode, String pack) {
+			int mVersionCode, String pack, int mCategoryId, int mTopicId) {
 		String post = tencentAppCenterSevice.getAppDownloadPost(mPageNoPath,
 				mProductID, mFileID, mUrl, clientIP, mTotalSize, mStatPosition,
-				mSearchInfo, p20, p21, mVersionCode, pack);
+				mSearchInfo, p20, p21, mVersionCode, pack, mCategoryId,
+				mTopicId);
 		return post;
 	}
 

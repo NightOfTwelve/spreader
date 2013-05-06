@@ -10,5 +10,6 @@ public interface ITencentAppCenterSevice {
 
 	String getAppDownloadPost(String mPageNoPath, int mProductID, int mFileID,
 			String mUrl, String clientIP, int mTotalSize, int mStatPosition,
-			String mSearchInfo, int p20, int p21, int mVersionCode, String pack);
+			String mSearchInfo, int p20, int p21, int mVersionCode,
+			String pack, int mCategoryId, int mTopicId);
 }
