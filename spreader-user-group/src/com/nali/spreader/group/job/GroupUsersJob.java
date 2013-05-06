@@ -27,7 +27,7 @@ public class GroupUsersJob {
 	}
 
 	@SuppressWarnings("unused")
-	@Scheduled(cron = "0 00 00 * * ?")
+	@Scheduled(cron = "0 00 06 * * ?")
 	private void timingRefreshAllGroupUsers() {
 		PerformanceLogger.infoStart();
 		refreshAllGroupUsers();
