@@ -68,13 +68,13 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 	public String getAppDownloadPost(String mPageNoPath, int mProductID,
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
 			int mStatPosition, String mSearchInfo, int p20, int p21,
-			int mVersionCode, String pack) {
+			int mVersionCode, String pack, int mCategoryId, int mTopicId) {
 		TencentParamsContext ctx = new TencentParamsContext(
 				System.currentTimeMillis() - 10 * 1000L);
 		TencentParamsContext.setTencentParamsContext(ctx);
 		DownloadInfo paramDownloadInfo = getDownloadInfo(mPageNoPath,
 				mProductID, mFileID, mUrl, clientIP, mTotalSize, mStatPosition,
-				mSearchInfo, mVersionCode);
+				mSearchInfo, mVersionCode, mCategoryId, mTopicId);
 		try {
 			byte[] downReport = getDownloadReport(paramDownloadInfo, clientIP);
 			StringBuilder builder = new StringBuilder();
@@ -96,7 +96,8 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 
 	private DownloadInfo getDownloadInfo(String mPageNoPath, int mProductID,
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
-			int mStatPosition, String mSearchInfo, int mVersionCode) {
+			int mStatPosition, String mSearchInfo, int mVersionCode,
+			int mCategoryId, int mTopicId) {
 		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
 		DownloadInfo paramDownloadInfo = new DownloadInfo();
 		paramDownloadInfo.mPageNoPath = mPageNoPath;// 2
@@ -115,6 +116,8 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		paramDownloadInfo.mStatPosition = mStatPosition;// 25
 		paramDownloadInfo.mSearchInfo = mSearchInfo;
 		paramDownloadInfo.mVersionCode = mVersionCode;
+		paramDownloadInfo.mCategoryId = mCategoryId;
+		paramDownloadInfo.mTopicId = mTopicId;
 		return paramDownloadInfo;
 	}
 
@@ -259,6 +262,14 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		DownloadParamsUtil.a(clientreportparam, (byte) 26, (byte) 1);// p1
 		DownloadParamsUtil.a(clientreportparam, (byte) 25,
 				paramDownloadInfo.mStatPosition);// p2
+		if (paramDownloadInfo.mCategoryId > 0) {
+			DownloadParamsUtil.a(clientreportparam, (byte) 24,
+					paramDownloadInfo.mCategoryId);// p2
+		}
+		if (paramDownloadInfo.mTopicId > 0) {
+			DownloadParamsUtil.a(clientreportparam, (byte) 23,
+					paramDownloadInfo.mTopicId);// p2
+		}
 		return param2Byte(arraylist);
 	}
 
