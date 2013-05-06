@@ -41,7 +41,8 @@ public class CheckAccountStatusFilter implements Filter, InitializingBean {
 		String serverName = req.getServerName();
 		int port = req.getServerPort();
 		String url = getServerUrl(serverName, port);
-		if (!uri.startsWith("/spreader-backend/account/") && !canPass(uri)) {
+		if (!uri.startsWith("/spreader-backend/account/") && !canPass(uri)
+				&& !uri.startsWith("/spreader-front/android/")) {
 			if (StringUtils.isEmpty(accountId)) {
 				if (isAjaxRequest(req) || isExtJsRequest(req)) {
 					// 未授权
