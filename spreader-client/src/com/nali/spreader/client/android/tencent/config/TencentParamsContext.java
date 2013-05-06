@@ -9,7 +9,7 @@ import com.nali.spreader.util.random.NumberRandomer;
 public class TencentParamsContext {
 	private static final ThreadLocal<TencentParamsContext> ctx = new ThreadLocal<TencentParamsContext>();
 	private static final NumberRandomer guidRandom = new NumberRandomer(
-			100000000, 999999999);
+			1000000, 642747645);
 	private static final Random androidRandom = new Random();
 	private long time;
 
