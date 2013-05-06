@@ -25,13 +25,14 @@ public class RemoteClientConfigService implements IRemoteClientConfigService {
 		Assert.notNull(clientId, "clientId must no null");
 		return readClientConfig(configName, configMD5, clientId, 0);
 	}
-	
+
 	@Override
-	public String readGroupConfig(Long groupId, String configName, String configMD5) {
+	public String readGroupConfig(Long groupId, String configName,
+			String configMD5) {
 		return readClientConfig(configName, configMD5, groupId, 1);
 	}
 
-	public String readClientConfig(String configName, String configMD5,
+	private String readClientConfig(String configName, String configMD5,
 			Long id, Integer type) {
 		Assert.notNull(configName, "configName must no null");
 		Assert.notNull(type, "type must no null");
@@ -45,7 +46,7 @@ public class RemoteClientConfigService implements IRemoteClientConfigService {
 		if (cfgList.size() > 0) {
 			ClientConfig cc = cfgList.get(0);
 			String md5 = cc.getConfigMd5();
-			if (StringUtils.isEmpty(configMD5)||!configMD5.equals(md5)) {
+			if (StringUtils.isEmpty(configMD5) || !configMD5.equals(md5)) {
 				String cfg = cc.getClientConfig();
 				return cfg;
 			}
