@@ -41,7 +41,11 @@
 		<property name="addDirSuffix" value="true" />
 		<property name="fileSuffixs" value="html" />
 	</bean>
-
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- one of the properties available; the maximum file size in bytes -->
+		<property name="maxUploadSize" value="100000" />
+	</bean>
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 		<property name="messageConverters">
@@ -49,10 +53,12 @@
 				<ref bean="strHttpMessageConverter" />
 			</util:list>
 		</property>
-        <property name="webBindingInitializer">
-        	<bean class="com.nali.spreader.util.web.WebBinder" />
-        </property>
+		<property name="webBindingInitializer">
+			<bean class="com.nali.spreader.util.web.WebBinder" />
+		</property>
 	</bean>
-	<bean id="strHttpMessageConverter" class="com.nali.common.springplus.XmlStringHttpMessageConverter" />
-	<bean id="controllerExceptionHandler" class="com.nali.common.exception.i18n.ControllerExceptionHandler" />
+	<bean id="strHttpMessageConverter"
+		class="com.nali.common.springplus.XmlStringHttpMessageConverter" />
+	<bean id="controllerExceptionHandler"
+		class="com.nali.common.exception.i18n.ControllerExceptionHandler" />
 </beans>
