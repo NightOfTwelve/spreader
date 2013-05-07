@@ -1,9 +1,20 @@
 package com.nali.spreader.front.controller;
 
+import java.io.IOException;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.nali.spreader.client.android.tencent.service.ITencentAppCenterSevice;
 
@@ -26,4 +37,28 @@ public class AndroidController {
 		return post;
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/tencent/reportdata", method = RequestMethod.POST)
+	public String tencentReportData(String report) {
+		Assert.notNull(report, "report is null");
+		byte[] data = Base64.decodeBase64(report);
+		return tencentAppCenterSevice.getReport(data);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/tencent/reportfile")
+	public String tencentReportFile(@RequestParam("file") MultipartFile report)
+			throws IOException {
+		Assert.notNull(report, "report is null");
+		return tencentAppCenterSevice.getReport(report.getBytes());
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/tencent/reportbytes")
+	public String tencentReportFile(HttpServletRequest request)
+			throws IOException {
+		ServletInputStream in = request.getInputStream();
+		byte[] bs = IOUtils.toByteArray(in);
+		return tencentAppCenterSevice.getReport(bs);
+	}
 }

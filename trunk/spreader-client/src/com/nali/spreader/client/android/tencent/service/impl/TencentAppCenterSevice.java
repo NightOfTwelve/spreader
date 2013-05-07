@@ -1,15 +1,19 @@
 package com.nali.spreader.client.android.tencent.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Service;
 import acs.ClientReportInfo;
 import acs.ClientReportParam;
 import acs.JceRequestType;
+import acs.ReqHandshake;
 import acs.ReqHeader;
 import acs.ReqReportClientData;
 
@@ -30,6 +35,7 @@ import com.nali.spreader.client.android.tencent.utils.Phone;
 import com.nali.spreader.util.random.NumberRandomer;
 import com.qq.jce.wup.UniAttribute;
 import com.qq.jce.wup.UniPacket;
+import com.qq.taf.jce.JceInputStream;
 import com.tencent.android.qqdownloader.data.DownloadInfo;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -282,8 +288,7 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		return (int) ((1000L * (long) size) / (long) useTime);
 	}
 
-	// TODO
-	public byte[] param2Byte(ArrayList paramArrayList) {
+	private byte[] param2Byte(ArrayList paramArrayList) {
 		UniPacket localUniPacket = new UniPacket();
 		a(localUniPacket, JceRequestType.reportClientData.toString());
 		ReqReportClientData localReqReportClientData = new ReqReportClientData();
@@ -346,23 +351,54 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		}
 	}
 
-	public static void main(String[] args) throws ParseException {
-		// TencentAppCenterSevice t = new TencentAppCenterSevice();
-		// String post = t
-		// .getAppDownloadPost(
-		// "100104-101504-101301",
-		// 644950,
-		// 704300,
-		// "http://down.myapp.com/android_new/950/644950/704300/yinshense1.1.5_qq.apk",
-		// "210.22.153.254", 650854, 1,
-		// "8]lIl]lIl0]lIl]lIl隐身]lIl]lIl隐身", 103, 103);
-		// // System.out.println(post);
-		// String name = RandomUtil.randomItem(Phone.phone
-		// .toArray(new String[] {}));
-		// System.out.println(name);
-		// long d = com.nali.common.util.DateUtils.parse("20130503 15:56:49",
-		// "yyyyMMdd hh:mm:ss").getTime();
+	@Override
+	public String getReport(byte[] bytes) {
+		StringBuilder sb = new StringBuilder();
+		JceInputStream in = new JceInputStream(bytes);
+		in.setServerEncoding("utf8");
+		UniPacket up = new UniPacket();
+		up.setEncodeName("UTF-8");
+		up.decode(bytes);
+		sb.append(up.getFuncName());
+		sb.append("\r\n");
+		sb.append("<header>");
+		sb.append("\r\n");
+		sb.append(up.get("reqHeader"));
+		sb.append("\r\n");
+		sb.append("requestId:" + up.getRequestId());
+		sb.append("\r\n");
+		try {
+			Object obj = up.get("body");
+			byte[] by = (byte[]) obj;
+			GZIPInputStream i = new GZIPInputStream(
+					new ByteArrayInputStream(by));
+			UniAttribute ua = new UniAttribute();
+			byte[] bs = IOUtils.toByteArray(i);
+			ua.decode(bs);
+			sb.append(ua.get("b"));
+		} catch (Exception e) {
+			logger.debug(" print Report error", e);
+			sb.append(up.get("body"));
+		}
+		return sb.toString();
+	}
 
-		System.out.println(1367567809000l - 1366957528000l);
+	public static void main(String[] args) throws IOException {
+		String filename = "hs1";
+		byte[] bb = FileUtils.readFileToByteArray(new File(filename));
+		TencentAppCenterSevice s = new TencentAppCenterSevice();
+		String x = s.getReport(bb);
+		System.out.println(x);
+	}
+
+	@Override
+	public byte[] getHandshake() {
+		UniPacket localUniPacket = new UniPacket();
+		a(localUniPacket, JceRequestType.handshake.toString());
+		ReqHandshake localReqHandshake = new ReqHandshake();
+//		localReqHandshake.setSIMEI(str);TODO
+		localReqHandshake.setSROM("15");// Build.VERSION.SDK
+		a(localUniPacket, localReqHandshake, false, true);
+		return localUniPacket.encode();
 	}
 }
