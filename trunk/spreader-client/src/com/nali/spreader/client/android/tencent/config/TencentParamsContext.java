@@ -2,8 +2,10 @@ package com.nali.spreader.client.android.tencent.config;
 
 import java.util.Random;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 
+import com.nali.spreader.client.android.tencent.utils.Phone;
 import com.nali.spreader.util.random.NumberRandomer;
 
 public class TencentParamsContext {
@@ -16,9 +18,27 @@ public class TencentParamsContext {
 	private int guid = guidRandom.get();
 	private String machineUniqueId = genMachineUniqueId();
 	private int requestId = RandomUtils.nextInt(99);
+	private String phoneName = Phone.get();
 
-	public TencentParamsContext(long time) {
+	public TencentParamsContext() {
 		super();
+	}
+
+	public TencentParamsContext(String machineUniqueId, int requestId,
+			String phoneName, int guid, long time) {
+		super();
+		if (StringUtils.isNotBlank(machineUniqueId)) {
+			this.machineUniqueId = machineUniqueId;
+		}
+		if (requestId > 0) {
+			this.requestId = requestId;
+		}
+		if (StringUtils.isNotBlank(phoneName)) {
+			this.phoneName = phoneName;
+		}
+		if (guid > 1000000 && guid < 642747645) {
+			this.guid = guid;
+		}
 		this.time = time;
 	}
 
@@ -76,5 +96,13 @@ public class TencentParamsContext {
 
 	public String getMachineUniqueId() {
 		return machineUniqueId;
+	}
+
+	public String getPhoneName() {
+		return phoneName;
+	}
+
+	public void setPhoneName(String phoneName) {
+		this.phoneName = phoneName;
 	}
 }
