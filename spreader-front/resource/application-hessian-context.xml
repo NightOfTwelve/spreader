@@ -57,6 +57,11 @@
 	    <property name="serviceInterface" value="com.nali.spreader.remote.IRemoteCooldownConfigService"/>
 	</bean>
 	
+	<bean name="/clientReportService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+	    <property name="service" ref="clientReportService"/>
+	    <property name="serviceInterface" value="com.nali.spreader.remote.IClientReportService"/>
+	</bean>
+	
 	<bean name="/remoteClientConfigService" class="org.springframework.remoting.caucho.HessianServiceExporter">
 	    <property name="service" ref="remoteClientConfigService"/>
 	    <property name="serviceInterface" value="com.nali.spreader.remote.IRemoteClientConfigService"/>

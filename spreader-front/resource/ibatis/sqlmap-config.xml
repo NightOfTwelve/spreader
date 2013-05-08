@@ -13,6 +13,7 @@
   <sqlMap resource="ibatis/spreader_tb_client_task_log_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_client_error_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_ip_record_SqlMap.xml" />
+  <sqlMap resource="ibatis/spreader_tb_client_report_SqlMap.xml" />
   <sqlMap resource="ibatis/spreader_tb_client_config_SqlMap.xml" /> 
   
   <!-- ×Ô¶¨Òå -->
