@@ -10,7 +10,7 @@ create table tb_client_report
    client_seq			bigint,
    task_date            datetime comment '任务日期',
    task_type            int,
-   update_time          timestamp default 0 ON UPDATE CURRENT_TIMESTAMP,
+   update_time          timestamp default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
    create_time          datetime,
    expect_count         int comment '计划执行数量',
    actual_count         int comment '实际执行数量'
