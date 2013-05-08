@@ -31,7 +31,6 @@ import com.nali.spreader.client.android.tencent.config.ReportType;
 import com.nali.spreader.client.android.tencent.config.TencentParamsContext;
 import com.nali.spreader.client.android.tencent.service.ITencentAppCenterSevice;
 import com.nali.spreader.client.android.tencent.utils.DownloadParamsUtil;
-import com.nali.spreader.client.android.tencent.utils.Phone;
 import com.nali.spreader.util.random.NumberRandomer;
 import com.qq.jce.wup.UniAttribute;
 import com.qq.jce.wup.UniPacket;
@@ -46,7 +45,8 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 	private static final NumberRandomer maxSpeedRandom = new NumberRandomer(
 			100, 200);
 	private static final String AQQMM = "AQQMM_34C";
-	private String androidVersion = "Android4.0.4";
+	private static final String androidVersion = "Android4.0.4";
+	private static final String BUILD_VERSION_SDK = "15";
 	@Value("${spreader.tx.app.download.mDownType}")
 	private byte mDownType;
 	@Value("${spreader.tx.app.header.version}")
@@ -74,8 +74,10 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 	public String getAppDownloadPost(String mPageNoPath, int mProductID,
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
 			int mStatPosition, String mSearchInfo, int p20, int p21,
-			int mVersionCode, String pack, int mCategoryId, int mTopicId) {
-		TencentParamsContext ctx = new TencentParamsContext(
+			int mVersionCode, String pack, int mCategoryId, int mTopicId,
+			String machineUniqueId, int requestId, String phoneName, int guid) {
+		TencentParamsContext ctx = new TencentParamsContext(machineUniqueId,
+				requestId, phoneName, guid,
 				System.currentTimeMillis() - 10 * 1000L);
 		TencentParamsContext.setTencentParamsContext(ctx);
 		DownloadInfo paramDownloadInfo = getDownloadInfo(mPageNoPath,
@@ -149,10 +151,11 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 
 	public String getQua(int widthPixels, int heightPixels) {
 		StringBuilder stringbuilder = new StringBuilder();
+		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
 		String s2 = stringbuilder.append(AQQMM).append("/").append(0x53136)
 				.append("&na_2/000000").append("&ADR&")
 				.append(widthPixels / 16).append("").append(heightPixels / 16)
-				.append("").append("14").append("&").append(Phone.get())
+				.append("").append("14").append("&").append(ctx.getPhoneName())
 				.append("&").append(androidVersion).append("&0").append("&V3")
 				.toString();
 		return s2;
@@ -392,12 +395,36 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 	}
 
 	@Override
-	public byte[] getHandshake() {
+	public String getHandshakeReport() {
+		TencentParamsContext ctx = new TencentParamsContext();
+		TencentParamsContext.setTencentParamsContext(ctx);
+		TencentParamsContext curr = TencentParamsContext.getCurrentContext();
+		StringBuilder sb = new StringBuilder();
+		try {
+			String machineUniqueId = curr.getMachineUniqueId();
+			int requestId = curr.getRequestId();
+			byte[] handshake = getHandshake(machineUniqueId);
+			sb.append(Base64.encodeBase64String(handshake));
+			sb.append("\r\n");
+			sb.append(machineUniqueId);
+			sb.append("\r\n");
+			sb.append(requestId);
+			sb.append("\r\n");
+			sb.append(curr.getPhoneName());
+		} catch (Exception e) {
+			logger.error("getHandshake error", e);
+		} finally {
+			TencentParamsContext.remove();
+		}
+		return sb.toString();
+	}
+
+	private byte[] getHandshake(String machineUniqueId) {
 		UniPacket localUniPacket = new UniPacket();
 		a(localUniPacket, JceRequestType.handshake.toString());
 		ReqHandshake localReqHandshake = new ReqHandshake();
-//		localReqHandshake.setSIMEI(str);TODO
-		localReqHandshake.setSROM("15");// Build.VERSION.SDK
+		localReqHandshake.setSIMEI(machineUniqueId);
+		localReqHandshake.setSROM(BUILD_VERSION_SDK);
 		a(localUniPacket, localReqHandshake, false, true);
 		return localUniPacket.encode();
 	}
