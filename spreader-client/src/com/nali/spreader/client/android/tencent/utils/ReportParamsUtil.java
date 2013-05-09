@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import acs.ClientReportParam;
 
-public class DownloadParamsUtil {
+public class ReportParamsUtil {
 	public static void a(ClientReportParam paramClientReportParam,
 			byte paramByte1, byte paramByte2) {
 		if (paramClientReportParam.p1 == null)
