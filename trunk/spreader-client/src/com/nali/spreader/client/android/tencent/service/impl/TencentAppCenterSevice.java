@@ -30,7 +30,7 @@ import com.nali.spreader.client.android.tencent.config.Network;
 import com.nali.spreader.client.android.tencent.config.ReportType;
 import com.nali.spreader.client.android.tencent.config.TencentParamsContext;
 import com.nali.spreader.client.android.tencent.service.ITencentAppCenterSevice;
-import com.nali.spreader.client.android.tencent.utils.DownloadParamsUtil;
+import com.nali.spreader.client.android.tencent.utils.ReportParamsUtil;
 import com.nali.spreader.util.random.NumberRandomer;
 import com.qq.jce.wup.UniAttribute;
 import com.qq.jce.wup.UniPacket;
@@ -183,15 +183,15 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		localClientReportInfo.params = new ArrayList();
 		ClientReportParam localClientReportParam = new ClientReportParam();
 		localClientReportInfo.params.add(localClientReportParam);
-		DownloadParamsUtil.a(localClientReportParam, (byte) 0,
+		ReportParamsUtil.a(localClientReportParam, (byte) 0,
 				paramDownloadInfo.mProductID);
-		DownloadParamsUtil.a(localClientReportParam, (byte) 1,
+		ReportParamsUtil.a(localClientReportParam, (byte) 1,
 				paramDownloadInfo.mFileID);
-		DownloadParamsUtil.a(localClientReportParam, (byte) 2, pack);
-		DownloadParamsUtil.a(localClientReportParam, (byte) 3,
+		ReportParamsUtil.a(localClientReportParam, (byte) 2, pack);
+		ReportParamsUtil.a(localClientReportParam, (byte) 3,
 				paramDownloadInfo.mVersionCode);
 		ctx.timeGo(useTimeRandom.get());
-		DownloadParamsUtil.a(localClientReportParam, (byte) 4,
+		ReportParamsUtil.a(localClientReportParam, (byte) 4,
 				ctx.getTime() / 1000L);
 		return param2Byte(localArrayList);
 	}
@@ -205,11 +205,11 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		ClientReportParam clientreportparam = new ClientReportParam();
 		clientreportparam.p4 = new HashMap();
 		clientreportinfo.params.add(clientreportparam);
-		DownloadParamsUtil.a(clientreportparam, (byte) 3, (byte) 1);
-		DownloadParamsUtil.a(clientreportparam, (byte) 0, p20);
-		DownloadParamsUtil.a(clientreportparam, (byte) 1, p21);
-		DownloadParamsUtil.a(clientreportparam, (byte) 2, 1);
-		DownloadParamsUtil.a(clientreportparam, (byte) 4, (long) mProductID);
+		ReportParamsUtil.a(clientreportparam, (byte) 3, (byte) 1);
+		ReportParamsUtil.a(clientreportparam, (byte) 0, p20);
+		ReportParamsUtil.a(clientreportparam, (byte) 1, p21);
+		ReportParamsUtil.a(clientreportparam, (byte) 2, 1);
+		ReportParamsUtil.a(clientreportparam, (byte) 4, (long) mProductID);
 		return param2Byte(arraylist);
 	}
 
@@ -222,38 +222,38 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		clientreportinfo.params = new ArrayList();
 		ClientReportParam clientreportparam = new ClientReportParam();
 		clientreportinfo.params.add(clientreportparam);
-		DownloadParamsUtil.a(clientreportparam, (byte) 0, Network.WIFI.getId());
+		ReportParamsUtil.a(clientreportparam, (byte) 0, Network.WIFI.getId());
 		// (0 3) 0
 		// 这个key，3表示WIFI
-		DownloadParamsUtil.a(clientreportparam, (byte) 1, clientIP);// cc.w P4
+		ReportParamsUtil.a(clientreportparam, (byte) 1, clientIP);// cc.w P4
 																	// IP
-		DownloadParamsUtil.a(clientreportparam, (byte) 2,
+		ReportParamsUtil.a(clientreportparam, (byte) 2,
 				paramDownloadInfo.mPageNoPath);// p4
-		DownloadParamsUtil.a(clientreportparam, (byte) 4,
+		ReportParamsUtil.a(clientreportparam, (byte) 4,
 				paramDownloadInfo.mProductID);// P4
-		DownloadParamsUtil.a(clientreportparam, (byte) 5,
+		ReportParamsUtil.a(clientreportparam, (byte) 5,
 				paramDownloadInfo.mFileID);// P2
-		DownloadParamsUtil.a(clientreportparam, (byte) 3, 1);// p2
-		DownloadParamsUtil.a(clientreportparam, (byte) 7,
+		ReportParamsUtil.a(clientreportparam, (byte) 3, 1);// p2
+		ReportParamsUtil.a(clientreportparam, (byte) 7,
 				paramDownloadInfo.mUrl);// p4
-		DownloadParamsUtil.a(clientreportparam, (byte) 27,
+		ReportParamsUtil.a(clientreportparam, (byte) 27,
 				getDownIP(paramDownloadInfo.mUrl));// p4
 		// IP
-		DownloadParamsUtil.a(clientreportparam, (byte) 8,
+		ReportParamsUtil.a(clientreportparam, (byte) 8,
 				paramDownloadInfo.mDownType);// p1
-		DownloadParamsUtil.a(clientreportparam, (byte) 9, (byte) 1);// p1
-		DownloadParamsUtil.a(clientreportparam, (byte) 10, 0);// p2
-		DownloadParamsUtil.a(clientreportparam, (byte) 11,
+		ReportParamsUtil.a(clientreportparam, (byte) 9, (byte) 1);// p1
+		ReportParamsUtil.a(clientreportparam, (byte) 10, 0);// p2
+		ReportParamsUtil.a(clientreportparam, (byte) 11,
 				paramDownloadInfo.mStarttime);// p3
-		DownloadParamsUtil.a(clientreportparam, (byte) 12,
+		ReportParamsUtil.a(clientreportparam, (byte) 12,
 				paramDownloadInfo.mEndtime);// p3
-		DownloadParamsUtil.a(clientreportparam, (byte) 13,
+		ReportParamsUtil.a(clientreportparam, (byte) 13,
 				paramDownloadInfo.mUsedTime);// p2
 		int speed = getDownloadSpeed(paramDownloadInfo.mTotalSize,
 				paramDownloadInfo.mUsedTime);
-		DownloadParamsUtil.a(clientreportparam, (byte) 14, getMaxSpeed(speed));// p2
-		DownloadParamsUtil.a(clientreportparam, (byte) 15, speed);
-		DownloadParamsUtil.a(clientreportparam, (byte) 16,
+		ReportParamsUtil.a(clientreportparam, (byte) 14, getMaxSpeed(speed));// p2
+		ReportParamsUtil.a(clientreportparam, (byte) 15, speed);
+		ReportParamsUtil.a(clientreportparam, (byte) 16,
 				paramDownloadInfo.mTotalSize);
 		if (!StringUtils.isEmpty(paramDownloadInfo.mSearchInfo)) {
 			ArrayList arraylist2 = new ArrayList();
@@ -262,21 +262,21 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 			if (as1 != null && as1.length > 3) {
 				for (int l = 0; l < as1.length; l++)
 					arraylist2.add(as1[l]);
-				DownloadParamsUtil.a(clientreportparam, (byte) 19, as1[0]);// p4
-				DownloadParamsUtil.a(clientreportparam, (byte) 20, as1[1]);// p4
-				DownloadParamsUtil.a(clientreportparam, (byte) 21, as1[2]);// p4
-				DownloadParamsUtil.a(clientreportparam, (byte) 22, as1[3]);// p4
+				ReportParamsUtil.a(clientreportparam, (byte) 19, as1[0]);// p4
+				ReportParamsUtil.a(clientreportparam, (byte) 20, as1[1]);// p4
+				ReportParamsUtil.a(clientreportparam, (byte) 21, as1[2]);// p4
+				ReportParamsUtil.a(clientreportparam, (byte) 22, as1[3]);// p4
 			}
 		}
-		DownloadParamsUtil.a(clientreportparam, (byte) 26, (byte) 1);// p1
-		DownloadParamsUtil.a(clientreportparam, (byte) 25,
+		ReportParamsUtil.a(clientreportparam, (byte) 26, (byte) 1);// p1
+		ReportParamsUtil.a(clientreportparam, (byte) 25,
 				paramDownloadInfo.mStatPosition);// p2
 		if (paramDownloadInfo.mCategoryId > 0) {
-			DownloadParamsUtil.a(clientreportparam, (byte) 24,
+			ReportParamsUtil.a(clientreportparam, (byte) 24,
 					paramDownloadInfo.mCategoryId);// p2
 		}
 		if (paramDownloadInfo.mTopicId > 0) {
-			DownloadParamsUtil.a(clientreportparam, (byte) 23,
+			ReportParamsUtil.a(clientreportparam, (byte) 23,
 					paramDownloadInfo.mTopicId);// p2
 		}
 		return param2Byte(arraylist);
