@@ -12,7 +12,7 @@ public interface ITencentAppCenterSevice {
 			String mUrl, String clientIP, int mTotalSize, int mStatPosition,
 			String mSearchInfo, int p20, int p21, int mVersionCode,
 			String pack, int mCategoryId, int mTopicId, String machineUniqueId,
-			int requestId, String phoneName, int guid);
+			int requestId, String phoneName, String handshake);
 
 	String getReport(byte[] bytes);
 

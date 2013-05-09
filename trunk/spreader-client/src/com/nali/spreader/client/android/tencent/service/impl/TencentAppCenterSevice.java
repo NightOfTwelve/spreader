@@ -2,7 +2,6 @@ package com.nali.spreader.client.android.tencent.service.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
@@ -12,12 +11,12 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import acs.ClientReportInfo;
 import acs.ClientReportParam;
@@ -25,6 +24,7 @@ import acs.JceRequestType;
 import acs.ReqHandshake;
 import acs.ReqHeader;
 import acs.ReqReportClientData;
+import acs.ResHandshake;
 
 import com.nali.spreader.client.android.tencent.config.Network;
 import com.nali.spreader.client.android.tencent.config.ReportType;
@@ -75,7 +75,10 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
 			int mStatPosition, String mSearchInfo, int p20, int p21,
 			int mVersionCode, String pack, int mCategoryId, int mTopicId,
-			String machineUniqueId, int requestId, String phoneName, int guid) {
+			String machineUniqueId, int requestId, String phoneName,
+			String handshake) {
+		Assert.notNull(handshake, " handshake is null ");
+		int guid = getGuid(handshake);
 		TencentParamsContext ctx = new TencentParamsContext(machineUniqueId,
 				requestId, phoneName, guid,
 				System.currentTimeMillis() - 10 * 1000L);
@@ -100,6 +103,19 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		}
 		// builder.append(Base64.encodeBase64String(userOpReport));
 		return null;
+	}
+
+	private int getGuid(String handshake) {
+		byte[] bytes = Base64.decodeBase64(handshake);
+		UniPacket up = new UniPacket();
+		up.setEncodeName("UTF-8");
+		up.decode(bytes);
+		ResHandshake hs = up.get("body");
+		if (hs != null) {
+			return hs.getNGUID();
+		} else {
+			throw new IllegalArgumentException(" ResHandshake is null");
+		}
 	}
 
 	private DownloadInfo getDownloadInfo(String mPageNoPath, int mProductID,
@@ -234,8 +250,7 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		ReportParamsUtil.a(clientreportparam, (byte) 5,
 				paramDownloadInfo.mFileID);// P2
 		ReportParamsUtil.a(clientreportparam, (byte) 3, 1);// p2
-		ReportParamsUtil.a(clientreportparam, (byte) 7,
-				paramDownloadInfo.mUrl);// p4
+		ReportParamsUtil.a(clientreportparam, (byte) 7, paramDownloadInfo.mUrl);// p4
 		ReportParamsUtil.a(clientreportparam, (byte) 27,
 				getDownIP(paramDownloadInfo.mUrl));// p4
 		// IP
@@ -295,7 +310,6 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		UniPacket localUniPacket = new UniPacket();
 		a(localUniPacket, JceRequestType.reportClientData.toString());
 		ReqReportClientData localReqReportClientData = new ReqReportClientData();
-		// System.out.println(paramArrayList);// TODO print
 		localReqReportClientData.setReports(paramArrayList);
 		a(localUniPacket, localReqReportClientData, true, false);
 		return localUniPacket.encode();
@@ -384,14 +398,6 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 			sb.append(up.get("body"));
 		}
 		return sb.toString();
-	}
-
-	public static void main(String[] args) throws IOException {
-		String filename = "hs1";
-		byte[] bb = FileUtils.readFileToByteArray(new File(filename));
-		TencentAppCenterSevice s = new TencentAppCenterSevice();
-		String x = s.getReport(bb);
-		System.out.println(x);
 	}
 
 	@Override
