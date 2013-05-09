@@ -373,9 +373,7 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		StringBuilder sb = new StringBuilder();
 		JceInputStream in = new JceInputStream(bytes);
 		in.setServerEncoding("utf8");
-		UniPacket up = new UniPacket();
-		up.setEncodeName("UTF-8");
-		up.decode(bytes);
+		UniPacket up = getUniPacket(bytes);
 		sb.append(up.getFuncName());
 		sb.append("\r\n");
 		sb.append("<header>");
@@ -384,6 +382,18 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		sb.append("\r\n");
 		sb.append("requestId:" + up.getRequestId());
 		sb.append("\r\n");
+		sb.append(getObject(up));
+		return sb.toString();
+	}
+
+	private UniPacket getUniPacket(byte[] bytes) {
+		UniPacket up = new UniPacket();
+		up.setEncodeName("UTF-8");
+		up.decode(bytes);
+		return up;
+	}
+
+	private Object getObject(UniPacket up) {
 		try {
 			Object obj = up.get("body");
 			byte[] by = (byte[]) obj;
@@ -392,12 +402,61 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 			UniAttribute ua = new UniAttribute();
 			byte[] bs = IOUtils.toByteArray(i);
 			ua.decode(bs);
-			sb.append(ua.get("b"));
+			return ua.get("b");
 		} catch (Exception e) {
 			logger.debug(" print Report error", e);
-			sb.append(up.get("body"));
+			return up.get("body");
 		}
-		return sb.toString();
+	}
+
+	private ClientReportParam getClientReportParam(ReqReportClientData data) {
+		ArrayList list = data.getReports();
+		ClientReportInfo cri = (ClientReportInfo) list.get(0);
+		ArrayList params = cri.getParams();
+		return (ClientReportParam) params.get(0);
+	}
+
+	public String getDownUrl(String host, byte[] down, byte[] install) {
+		ReqReportClientData downData = (ReqReportClientData) getObject(getUniPacket(down));
+		ReqReportClientData installData = (ReqReportClientData) getObject(getUniPacket(install));
+		return getDownUrl(host, downData, installData);
+	}
+
+	private String getDownUrl(String host, ReqReportClientData down,
+			ReqReportClientData install) {
+		StringBuilder url = new StringBuilder(host);
+		url.append("/spreader-front/android/tencent/down?");
+		ClientReportParam downParam = getClientReportParam(down);
+		ClientReportParam installParam = getClientReportParam(install);
+		url.append("mPageNoPath=");
+		url.append(downParam.p4.get((byte) 2));
+		url.append("&mProductID=");
+		url.append(downParam.p2.get((byte) 5));
+		url.append("&mFileID=");
+		url.append(downParam.p2.get((byte) 5));
+		url.append("&mUrl=");
+		url.append(downParam.p4.get((byte) 7));
+		url.append("&clientIP=");
+		url.append(downParam.p4.get((byte) 1));
+		url.append("&mTotalSize=");
+		url.append(downParam.p2.get((byte) 16));
+		url.append("&mStatPosition=");
+		url.append(downParam.p2.get((byte) 25));
+		url.append("&mSearchInfo=");
+		url.append("&p20=0");
+		url.append("&p21=0");
+		url.append("&mVersionCode=");
+		url.append(installParam.p2.get((byte) 3));
+		url.append("&pack=");
+		url.append(installParam.p4.get((byte) 2));
+		url.append("&mCategoryId=");
+		url.append(downParam.p2.get((byte) 24));
+		url.append("&mTopicId=0");
+		url.append("&machineUniqueId=8888888888888");
+		url.append("&requestId=9");
+		url.append("&phoneName=ZTTTTTTTTT");
+		url.append("&guid=1000099");
+		return url.toString();
 	}
 
 	@Override
