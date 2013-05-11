@@ -6,6 +6,7 @@ import java.util.List;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.dto.CurrentClientIpRecordDto;
+import com.nali.spreader.model.ClientReport;
 import com.nali.spreader.model.IpRecord;
 
 public interface IClientService {
@@ -42,5 +43,12 @@ public interface IClientService {
 	 * @param endTime
 	 * @return
 	 */
-	PageResult<IpRecord> getIpRecordPageData(Long clientId, Date startTime, Date endTime, Limit lit);
+	PageResult<IpRecord> getIpRecordPageData(Long clientId, Date startTime,
+			Date endTime, Limit lit);
+
+	PageResult<ClientReport> findClientReportByCreateTime(Date startCreateTime,
+			Date endCreateTime, Long clientId, Integer taskType, Limit lit);
+
+	PageResult<ClientReport> findClientReportByTaskDate(Date taskDate,
+			Long clientId, Integer taskType, Limit lit);
 }

@@ -19,8 +19,11 @@ import org.springframework.util.Assert;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.spreader.dao.ICrudClientReportDao;
 import com.nali.spreader.dao.ICrudIpRecordDao;
 import com.nali.spreader.dto.CurrentClientIpRecordDto;
+import com.nali.spreader.model.ClientReport;
+import com.nali.spreader.model.ClientReportExample;
 import com.nali.spreader.model.IpRecord;
 import com.nali.spreader.model.IpRecordExample;
 import com.nali.spreader.model.IpRecordExample.Criteria;
@@ -34,6 +37,8 @@ public class ClientService implements IClientService {
 	private ConcurrentLinkedQueue<IpRecord> recordQueue = new ConcurrentLinkedQueue<IpRecord>();
 	@Autowired
 	private ICrudIpRecordDao crudIpRecordDao;
+	@Autowired
+	private ICrudClientReportDao crudClientReportDao;
 
 	@Override
 	public String login(String userName, String pwd, String ip) {
@@ -189,7 +194,8 @@ public class ClientService implements IClientService {
 		 * 删除过期的记录
 		 */
 		private void removeIpRecord() {
-			Date thisTime = DateUtils.addMinutes(new Date(), -1 * EFFECTIVE_TIME_MINUTE);
+			Date thisTime = DateUtils.addMinutes(new Date(), -1
+					* EFFECTIVE_TIME_MINUTE);
 			Iterator<ClientInfo> iter = recordMap.values().iterator();
 			while (iter.hasNext()) {
 				ClientInfo clientInfo = iter.next();
@@ -222,8 +228,8 @@ public class ClientService implements IClientService {
 	}
 
 	@Override
-	public PageResult<IpRecord> getIpRecordPageData(Long clientId, Date startTime, Date endTime,
-			Limit lit) {
+	public PageResult<IpRecord> getIpRecordPageData(Long clientId,
+			Date startTime, Date endTime, Limit lit) {
 		IpRecordExample exp = new IpRecordExample();
 		Criteria c = exp.createCriteria();
 		if (clientId != null) {
@@ -237,8 +243,54 @@ public class ClientService implements IClientService {
 		}
 		exp.setLimit(lit);
 		exp.setOrderByClause("id desc");
-		List<IpRecord> list = this.crudIpRecordDao.selectByExample(exp);
-		int count = this.crudIpRecordDao.countByExample(exp);
+		List<IpRecord> list = crudIpRecordDao.selectByExample(exp);
+		int count = crudIpRecordDao.countByExample(exp);
 		return new PageResult<IpRecord>(list, lit, count);
+	}
+
+	@Override
+	public PageResult<ClientReport> findClientReportByCreateTime(
+			Date startCreateTime, Date endCreateTime, Long clientId,
+			Integer taskType, Limit lit) {
+		ClientReportExample cre = new ClientReportExample();
+		ClientReportExample.Criteria c = cre.createCriteria();
+		if (startCreateTime != null) {
+			c.andCreateTimeGreaterThanOrEqualTo(startCreateTime);
+		}
+		if (endCreateTime != null) {
+			c.andCreateTimeLessThanOrEqualTo(endCreateTime);
+		}
+		if (clientId != null) {
+			c.andClientIdEqualTo(clientId);
+		}
+		if (taskType != null) {
+			c.andTaskTypeEqualTo(taskType);
+		}
+		cre.setLimit(lit);
+		cre.setOrderByClause(" update_time desc");
+		List<ClientReport> list = crudClientReportDao.selectByExample(cre);
+		int count = crudClientReportDao.countByExample(cre);
+		return new PageResult<ClientReport>(list, lit, count);
+	}
+
+	@Override
+	public PageResult<ClientReport> findClientReportByTaskDate(Date taskDate,
+			Long clientId, Integer taskType, Limit lit) {
+		ClientReportExample cre = new ClientReportExample();
+		ClientReportExample.Criteria c = cre.createCriteria();
+		if (taskDate != null) {
+			c.andTaskDateEqualTo(taskDate);
+		}
+		if (clientId != null) {
+			c.andClientIdEqualTo(clientId);
+		}
+		if (taskType != null) {
+			c.andTaskTypeEqualTo(taskType);
+		}
+		cre.setLimit(lit);
+		cre.setOrderByClause(" task_date desc");
+		List<ClientReport> list = crudClientReportDao.selectByExample(cre);
+		int count = crudClientReportDao.countByExample(cre);
+		return new PageResult<ClientReport>(list, lit, count);
 	}
 }
