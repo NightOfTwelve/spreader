@@ -133,6 +133,11 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "App排行查询",
 									leaf : true,
 									url : '../appletop/init'
+								}, {
+									id : 'clientReportExecu',
+									text : "客户端任务执行统计",
+									leaf : true,
+									url : '../cr/init'
 								}]
 					}),
 			// 添加监听事件
