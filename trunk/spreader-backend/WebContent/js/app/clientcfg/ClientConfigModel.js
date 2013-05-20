@@ -691,6 +691,13 @@ Ext.onReady(function() {
 									plain : true,
 									items : [copyTextForm]
 								});
+						copyWin.on('show', function() {
+									var storeData = grid.getStore();
+									var mod = storeData.data.items;
+									var copyCmp = Ext.getCmp('copycfg');
+									var text = grid2Text(mod);
+									copyCmp.setValue(text);
+								});
 					}
 					copyWin.show(this);
 				}
@@ -876,6 +883,24 @@ Ext.onReady(function() {
 			"list" : d
 		};
 		multiGridStore.loadData(loadData);
+	}
+
+	function grid2Text(gridMod) {
+		if (Ext.isEmpty(gridMod)) {
+			return null;
+		} else {
+			var len = gridMod.length;
+			var text = '';
+			for (var i = 0; i < len; i++) {
+				var data = gridMod[i].data;
+				for (var j in data) {
+					var col = data[j];
+					text += col + '\t';
+				}
+				text += '\r';
+			}
+			return text;
+		}
 	}
 	function renderEditorType(value) {
 		if (value == 1) {
