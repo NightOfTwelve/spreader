@@ -416,6 +416,7 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		return (ClientReportParam) params.get(0);
 	}
 
+	@Override
 	public String getDownUrl(String host, byte[] down, byte[] install) {
 		ReqReportClientData downData = (ReqReportClientData) getObject(getUniPacket(down));
 		ReqReportClientData installData = (ReqReportClientData) getObject(getUniPacket(install));
@@ -431,7 +432,7 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		url.append("mPageNoPath=");
 		url.append(downParam.p4.get((byte) 2));
 		url.append("&mProductID=");
-		url.append(downParam.p2.get((byte) 5));
+		url.append(downParam.p2.get((byte) 4));
 		url.append("&mFileID=");
 		url.append(downParam.p2.get((byte) 5));
 		url.append("&mUrl=");
@@ -492,5 +493,49 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		localReqHandshake.setSROM(BUILD_VERSION_SDK);
 		a(localUniPacket, localReqHandshake, false, true);
 		return localUniPacket.encode();
+	}
+
+	@Override
+	public String getDownProperty(byte[] down, byte[] install) {
+		ReqReportClientData downData = (ReqReportClientData) getObject(getUniPacket(down));
+		ReqReportClientData installData = (ReqReportClientData) getObject(getUniPacket(install));
+		ClientReportParam downParam = getClientReportParam(downData);
+		ClientReportParam installParam = getClientReportParam(installData);
+		StringBuilder build = new StringBuilder();
+		build.append("path=");
+		build.append(downParam.p4.get((byte) 2));
+		build.append("\r\n");
+		build.append("id=");
+		build.append(downParam.p2.get((byte) 4));
+		build.append("\r\n");
+		build.append("fileid=");
+		build.append(downParam.p2.get((byte) 5));
+		build.append("\r\n");
+		build.append("urlapk=");
+		build.append(downParam.p4.get((byte) 7));
+		build.append("\r\n");
+		build.append("size=");
+		build.append(downParam.p2.get((byte) 16));
+		build.append("\r\n");
+		build.append("stat=");
+		build.append(downParam.p2.get((byte) 25));
+		build.append("\r\n");
+		build.append("search=");
+		build.append("\r\n");
+		build.append("p20=0");
+		build.append("\r\n");
+		build.append("p21=0");
+		build.append("\r\n");
+		build.append("version=");
+		build.append(installParam.p2.get((byte) 3));
+		build.append("\r\n");
+		build.append("pack=");
+		build.append(installParam.p4.get((byte) 2));
+		build.append("\r\n");
+		build.append("categoryid=");
+		build.append(downParam.p2.get((byte) 24));
+		build.append("\r\n");
+		build.append("topicid=0");
+		return build.toString();
 	}
 }
