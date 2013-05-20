@@ -288,7 +288,7 @@ public class ClientService implements IClientService {
 			c.andTaskTypeEqualTo(taskType);
 		}
 		cre.setLimit(lit);
-		cre.setOrderByClause(" task_date desc");
+		cre.setOrderByClause(" task_date desc,client_id,client_seq,task_type ");
 		List<ClientReport> list = crudClientReportDao.selectByExample(cre);
 		int count = crudClientReportDao.countByExample(cre);
 		return new PageResult<ClientReport>(list, lit, count);

@@ -17,4 +17,8 @@ public interface ITencentAppCenterSevice {
 	String getReport(byte[] bytes);
 
 	String getHandshakeReport();
+
+	String getDownUrl(String host, byte[] down, byte[] install);
+
+	String getDownProperty(byte[] down, byte[] install);
 }
