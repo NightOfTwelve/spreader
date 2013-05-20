@@ -691,14 +691,14 @@ Ext.onReady(function() {
 									plain : true,
 									items : [copyTextForm]
 								});
-						copyWin.on('show', function() {
-									var storeData = grid.getStore();
-									var mod = storeData.data.items;
-									var copyCmp = Ext.getCmp('copycfg');
-									var text = grid2Text(mod);
-									copyCmp.setValue(text);
-								});
 					}
+					copyWin.on('show', function() {
+								// TODO
+								var mod = multiGridStore.data.items;
+								var copyCmp = Ext.getCmp('copycfg');
+								var text = grid2Text(mod);
+								copyCmp.setValue(text);
+							});
 					copyWin.show(this);
 				}
 			}]
