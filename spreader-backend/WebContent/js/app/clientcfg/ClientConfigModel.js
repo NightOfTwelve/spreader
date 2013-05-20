@@ -693,7 +693,6 @@ Ext.onReady(function() {
 								});
 					}
 					copyWin.on('show', function() {
-								// TODO
 								var mod = multiGridStore.data.items;
 								var copyCmp = Ext.getCmp('copycfg');
 								var text = grid2Text(mod);
