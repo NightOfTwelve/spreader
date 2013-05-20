@@ -36,6 +36,21 @@ var menuTree_Stg = new Ext.tree.TreePanel({
 									text : "用户分组配置",
 									leaf : true,
 									url : '../usergroup/init'
+								}, {
+									id : 'querymenu3',
+									text : "队列查询",
+									leaf : true,
+									url : '../queuemoitor/init'
+								}, {
+									id : 'clientTaskStat',
+									text : "客户端任务检索",
+									leaf : true,
+									url : '../taskstat/init'
+								}, {
+									id : 'clientTaskStatReport',
+									text : "报表查询",
+									leaf : true,
+									url : '../taskreport/init'
 								}]
 					}),
 			// 添加监听事件
@@ -64,7 +79,7 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 			rootVisible : true,
 			root : new Ext.tree.AsyncTreeNode({
 						id : '-1',
-						text : '信息查询',
+						text : '查询',
 						expanded : true,
 						children : [{
 									id : 'querymenu1',
@@ -76,31 +91,6 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "虚拟身份查询",
 									leaf : true,
 									url : '../rbtregist/init'
-								}, {
-									id : 'querymenu3',
-									text : "队列查询",
-									leaf : true,
-									url : '../queuemoitor/init'
-								}, {
-									id : 'clientTaskStat',
-									text : "客户端任务检索",
-									leaf : true,
-									url : '../taskstat/init'
-								}, {
-									id : 'iprecord',
-									text : "客户端IP查询",
-									leaf : true,
-									url : '/spreader-front/iprecord/init'
-								}, {
-									id : 'cooldownsetting',
-									text : "下载曲线设置",
-									leaf : true,
-									url : '/spreader-front/cooldown/init'
-								}, {
-									id : 'clientCfgsetting',
-									text : "客户端配置",
-									leaf : true,
-									url : '../clientcfg/init'
 								},
 								// {
 								// id : 'clientTaskStatDtl',
@@ -109,11 +99,6 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 								// url : '../taskstatdtl/init'
 								// },
 								{
-									id : 'clientTaskStatReport',
-									text : "报表查询",
-									leaf : true,
-									url : '../taskreport/init'
-								}, {
 									id : 'helpManage',
 									text : "帮助信息维护",
 									leaf : true,
@@ -133,11 +118,6 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "App排行查询",
 									leaf : true,
 									url : '../appletop/init'
-								}, {
-									id : 'clientReportExecu',
-									text : "客户端任务执行统计",
-									leaf : true,
-									url : '../cr/init'
 								}]
 					}),
 			// 添加监听事件
@@ -183,6 +163,54 @@ var menuTree_ContentLibQuery = new Ext.tree.TreePanel({
 									text : "微博回复搜索",
 									leaf : true,
 									url : '../reply/init'
+								}]
+					}),
+			// 添加监听事件
+			listeners : {
+				'click' : function(view, rec) {
+					var nodeurl = view.attributes.url;
+					var nodetext = view.attributes.text;
+					var nodeid = view.attributes.id;
+					var leaf = view.attributes.leaf;
+					if (leaf) {
+						addTabNew(nodeurl, nodetext, nodeid, nodetext, '');
+					}
+				}
+			}
+		});
+// TODO
+var menuTree_ClientMgr = new Ext.tree.TreePanel({
+			id : 'menuTree_ClientMgr',
+			// autoScroll : true,
+			// autoHeight : true,
+			expanded : true,
+			singleExpand : true,
+			useArrows : true,
+			rootVisible : true,
+			root : new Ext.tree.AsyncTreeNode({
+						id : '-1',
+						text : '客户端管理',
+						expanded : true,
+						children : [{
+									id : 'iprecord',
+									text : "客户端IP查询",
+									leaf : true,
+									url : '/spreader-front/iprecord/init'
+								}, {
+									id : 'cooldownsetting',
+									text : "下载曲线设置",
+									leaf : true,
+									url : '/spreader-front/cooldown/init'
+								}, {
+									id : 'clientCfgsetting',
+									text : "客户端配置",
+									leaf : true,
+									url : '../clientcfg/init'
+								}, {
+									id : 'clientReportExecu',
+									text : "客户端任务执行统计",
+									leaf : true,
+									url : '../cr/init'
 								}]
 					}),
 			// 添加监听事件
@@ -292,21 +320,15 @@ var accordPanel = new Ext.Panel({
 			items : [{
 						autoScroll : true,
 						border : false,
-						title : '基础信息查询',
-						iconCls : 'app_boxesIcon',
-						items : [menuTree_InfoQuery]
+						title : '客户端管理',
+						iconCls : 'wrenchIcon',
+						items : [menuTree_ClientMgr]
 					}, {
 						autoScroll : true,
 						border : false,
 						title : '策略及调度维护',
 						iconCls : 'wrenchIcon',
 						items : [menuTree_Stg]
-					}, {
-						autoScroll : true,
-						border : false,
-						title : '微博内容库',
-						iconCls : 'folder_cameraIcon',
-						items : [menuTree_ContentLibQuery]
 					}, {
 						autoScroll : true,
 						border : false,
@@ -319,6 +341,18 @@ var accordPanel = new Ext.Panel({
 						title : '消息管理',
 						iconCls : 'folder_cameraIcon',
 						items : [menuTree_NoticeSystem]
+					}, {
+						autoScroll : true,
+						border : false,
+						title : '基础信息查询',
+						iconCls : 'app_boxesIcon',
+						items : [menuTree_InfoQuery]
+					}, {
+						autoScroll : true,
+						border : false,
+						title : '微博内容库',
+						iconCls : 'folder_cameraIcon',
+						items : [menuTree_ContentLibQuery]
 					}]
 		});
 
