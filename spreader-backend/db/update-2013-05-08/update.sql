@@ -21,3 +21,5 @@ COLLATE = utf8_bin;
 
 alter table tb_client_report comment '客户端自动执行任务报告';
 alter table tb_client_report add index (task_date, task_type, client_id, client_seq);
+
+alter table tb_client_config add column note varchar(1500);
