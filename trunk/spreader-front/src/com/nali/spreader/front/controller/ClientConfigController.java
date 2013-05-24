@@ -63,7 +63,7 @@ public class ClientConfigController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/savecfg")
 	public String saveConfigs(Long id, Long clientId, String configName,
-			Integer configType, String cfg, Integer clientType) {
+			Integer configType, String cfg, Integer clientType, String note) {
 		Assert.notNull(clientId, "clientId is null");
 		Map<String, Boolean> result = CollectionUtils.newHashMap(1);
 		result.put("success", false);
@@ -74,7 +74,7 @@ public class ClientConfigController extends BaseController {
 				configMD5 = DigestUtils.md5DigestAsHex(cfgByte);
 			}
 			clitentConfigService.saveClientConfigs(id, clientId, configName,
-					configType, cfg, configMD5, clientType);
+					configType, cfg, configMD5, clientType, note);
 			result.put("success", true);
 		} catch (Exception e) {
 			logger.error(e, e);
