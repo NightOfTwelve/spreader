@@ -33,13 +33,15 @@ public class ClitentConfigServiceImpl implements IClitentConfigService {
 
 	@Override
 	public void saveClientConfigs(Long id, Long clientId, String configName,
-			int configType, String cfgs, String cfgMD5, int clientType) {
+			int configType, String cfgs, String cfgMD5, int clientType,
+			String note) {
 		if (id != null) {
 			ClientConfig exists = crudClientConfigDao.selectByPrimaryKey(id);
 			exists.setClientConfig(cfgs);
 			exists.setConfigName(configName);
 			exists.setConfigType(configType);
 			exists.setConfigMd5(cfgMD5);
+			exists.setNote(note);
 			crudClientConfigDao.updateByPrimaryKeySelective(exists);
 		} else {
 			ClientConfig cc = new ClientConfig();
@@ -49,13 +51,14 @@ public class ClitentConfigServiceImpl implements IClitentConfigService {
 			cc.setConfigType(configType);
 			cc.setConfigMd5(cfgMD5);
 			cc.setType(clientType);
+			cc.setNote(note);
 			try {
 				crudClientConfigDao.insertSelective(cc);
 			} catch (DuplicateKeyException e) {
 				ClientConfig cfg = getConfigByClientId(clientId, configName,
 						clientType);
 				saveClientConfigs(cfg.getId(), clientId, configName,
-						configType, cfgs, cfgMD5, clientType);
+						configType, cfgs, cfgMD5, clientType, note);
 			}
 		}
 	}
