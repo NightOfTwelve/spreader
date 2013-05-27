@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -55,7 +56,7 @@ public class TaskChannel implements Runnable {
 		}
 		userContextHolder = new UserContextHolder(actionMethodHolder, remoteLoginConfigService);
 		executorService = new ThreadPoolExecutor(handlerCount, handlerCount*2,
-                60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+                60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new CallerRunsPolicy());
 		new Thread(this).start();
 	}
 	
