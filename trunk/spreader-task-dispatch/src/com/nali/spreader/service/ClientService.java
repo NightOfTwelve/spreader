@@ -275,7 +275,7 @@ public class ClientService implements IClientService {
 
 	@Override
 	public PageResult<ClientReport> findClientReportByTaskDate(Date taskDate,
-			Long clientId, Integer taskType, Limit lit) {
+			Long clientId, Long actionId, Long appId, Limit lit) {
 		ClientReportExample cre = new ClientReportExample();
 		ClientReportExample.Criteria c = cre.createCriteria();
 		if (taskDate != null) {
@@ -284,11 +284,14 @@ public class ClientService implements IClientService {
 		if (clientId != null) {
 			c.andClientIdEqualTo(clientId);
 		}
-		if (taskType != null) {
-			c.andTaskTypeEqualTo(taskType);
+		if (actionId != null) {
+			c.andActionIdEqualTo(actionId);
+		}
+		if (appId != null) {
+			c.andAppIdEqualTo(appId);
 		}
 		cre.setLimit(lit);
-		cre.setOrderByClause(" task_date desc,client_id,client_seq,task_type ");
+		cre.setOrderByClause(" task_date desc,client_id,client_seq,task_type,action_id,app_id ");
 		List<ClientReport> list = crudClientReportDao.selectByExample(cre);
 		int count = crudClientReportDao.countByExample(cre);
 		return new PageResult<ClientReport>(list, lit, count);
