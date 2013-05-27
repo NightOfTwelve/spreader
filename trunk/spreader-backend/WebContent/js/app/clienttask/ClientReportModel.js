@@ -23,7 +23,12 @@ Ext.onReady(function() {
 											name : 'expectCount'
 										}, {
 											name : 'actualCount'
+										}, {
+											name : 'actionId'
+										}, {
+											name : 'appId'
 										}]),
+						// remoteSort : true,
 						autoLoad : true
 					});
 			// 页数
@@ -55,14 +60,17 @@ Ext.onReady(function() {
 			store.on('beforeload', function() {
 						var dateCmp = Ext.getCmp('taskDate');
 						var clientIdCmp = Ext.getCmp('clientId');
-						var taskTypeCmp = Ext.getCmp('taskType');
+						var actionIdCmp = Ext.getCmp('actionId');
+						var appIdCmp = Ext.getCmp('appId');
 						var taskDate = dateCmp.getValue();
 						var clientId = clientIdCmp.getValue();
-						var taskType = taskTypeCmp.getValue();
+						var actionId = actionIdCmp.getValue();
+						var appId = appIdCmp.getValue();
 						this.baseParams = {
 							clientId : clientId,
 							taskDate : taskDate,
-							taskType : taskType
+							actionId : actionId,
+							appId : appId
 						};
 					});
 			var sm = new Ext.grid.CheckboxSelectionModel();
@@ -74,36 +82,49 @@ Ext.onReady(function() {
 			var cm = new Ext.grid.ColumnModel([rownums, sm, {
 						header : '客户端ID',
 						dataIndex : 'clientId',
+						sortable : true,
 						width : 120
 					}, {
-						header : '任务通道',
-						dataIndex : 'taskType',
+						header : 'ActionId',
+						dataIndex : 'actionId',
+						sortable : true,
+						width : 120
+					}, {
+						header : 'AppId',
+						dataIndex : 'appId',
+						sortable : true,
 						width : 120
 					}, {
 						header : '执行数量',
 						dataIndex : 'actualCount',
+						sortable : true,
 						width : 150
 					}, {
 						header : '计划数量',
 						dataIndex : 'expectCount',
+						sortable : true,
 						width : 150
 					}, {
 						header : '任务日期',
 						dataIndex : 'taskDate',
+						sortable : true,
 						renderer : renderDate,
 						width : 200
 					}, {
 						header : '任务批次',
 						dataIndex : 'clientSeq',
+						sortable : true,
 						width : 200
 					}, {
 						header : '更新时间',
 						dataIndex : 'updateTime',
+						sortable : true,
 						renderer : renderDateHis,
 						width : 200
 					}, {
 						header : '创建时间',
 						dataIndex : 'createTime',
+						sortable : true,
 						renderer : renderDateHis,
 						width : 200
 					}]);
@@ -146,9 +167,13 @@ Ext.onReady(function() {
 											emptyText : '请输入客户端ID',
 											width : 130
 										}), '-', new Ext.form.TextField({
-											id : 'taskType',
-											name : 'taskType',
-											emptyText : '请输入任务通道',
+											id : 'actionId',
+											name : 'actionId',
+											emptyText : '请输入ActionId',
+											width : 130
+										}), '-', new Ext.form.TextField({
+											id : 'appId',
+											emptyText : '请输入AppID',
 											width : 130
 										}), '-', {
 									text : '查询',
@@ -157,11 +182,13 @@ Ext.onReady(function() {
 										var dateCmp = Ext.getCmp('taskDate');
 										var clientIdCmp = Ext
 												.getCmp('clientId');
-										var taskTypeCmp = Ext
-												.getCmp('taskType');
+										var actionIdCmp = Ext
+												.getCmp('actionId');
+										var appIdCmp = Ext.getCmp('appId');
 										var taskDate = dateCmp.getValue();
 										var clientId = clientIdCmp.getValue();
-										var taskType = taskTypeCmp.getValue();
+										var actionId = actionIdCmp.getValue();
+										var appId = appIdCmp.getValue();
 										store
 												.setBaseParam('taskDate',
 														taskDate);
@@ -169,8 +196,9 @@ Ext.onReady(function() {
 												.setBaseParam('clientId',
 														clientId);
 										store
-												.setBaseParam('taskType',
-														taskType);
+												.setBaseParam('actionId',
+														actionId);
+										store.setBaseParam('appId', appId);
 										store.load();
 									}
 								}]
