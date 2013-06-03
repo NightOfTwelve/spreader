@@ -45,8 +45,9 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 	private static final NumberRandomer maxSpeedRandom = new NumberRandomer(
 			100, 200);
 	private static final String AQQMM = "AQQMM_34C";
-	private static final String androidVersion = "Android4.0.4";
 	private static final String BUILD_VERSION_SDK = "15";
+	@Value("${spreader.tx.app.download.androidVersion}")
+	private String androidVersion;
 	@Value("${spreader.tx.app.download.mDownType}")
 	private byte mDownType;
 	@Value("${spreader.tx.app.header.version}")
@@ -67,6 +68,10 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 	private int channel;
 	@Value("${spreader.tx.app.header.outSideChannel}")
 	private int outSideChannel;
+	@Value("${spreader.tx.app.header.cpuSerial}")
+	private String cpuSerial;
+	@Value("${spreader.tx.app.header.mask}")
+	private int mask;
 	private static final NumberRandomer useTimeRandom = new NumberRandomer(
 			10000, 59999);
 
@@ -75,13 +80,15 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
 			int mStatPosition, String mSearchInfo, int p20, int p21,
 			int mVersionCode, String pack, int mCategoryId, int mTopicId,
-			String machineUniqueId, int requestId, String phoneName,
-			String handshake) {
+			String data, String handshake) {
 		Assert.notNull(handshake, " handshake is null ");
+		Assert.notNull(data, " globalParams is null ");
 		int guid = getGuid(handshake);
-		TencentParamsContext ctx = new TencentParamsContext(machineUniqueId,
-				requestId, phoneName, guid,
-				System.currentTimeMillis() - 10 * 1000L);
+		String[] dataArray = getGlobalParams(data);
+		TencentParamsContext ctx = new TencentParamsContext(dataArray[0],
+				Integer.parseInt(dataArray[1]), dataArray[2], guid,
+				System.currentTimeMillis() - 10 * 1000L, dataArray[3],
+				dataArray[4]);
 		TencentParamsContext.setTencentParamsContext(ctx);
 		DownloadInfo paramDownloadInfo = getDownloadInfo(mPageNoPath,
 				mProductID, mFileID, mUrl, clientIP, mTotalSize, mStatPosition,
@@ -103,6 +110,17 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		}
 		// builder.append(Base64.encodeBase64String(userOpReport));
 		return null;
+	}
+
+	private String[] getGlobalParams(String data) {
+		String[] paramArr = new String[] {};
+		try {
+			String dataStr = new String(Base64.decodeBase64(data), "utf-8");
+			paramArr = StringUtils.split(dataStr, "\r\n");
+		} catch (Exception e) {
+			logger.error(" Base64.decodeBase64 error,data:" + data, e);
+		}
+		return paramArr;
 	}
 
 	private int getGuid(String handshake) {
@@ -162,18 +180,23 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		localReqHeader.channel = channel;
 		localReqHeader.networkType = (byte) Network.WIFI.getId();
 		localReqHeader.outSideChannel = outSideChannel;
+		localReqHeader.mask = mask;
+		localReqHeader.lastRespMD5 = null;
+		localReqHeader.CPUSerial = cpuSerial;
+		localReqHeader.mac = ctx.getMacAddres();
+		localReqHeader.imsi = ctx.getImsi();
 		return localReqHeader;
 	}
 
 	public String getQua(int widthPixels, int heightPixels) {
 		StringBuilder stringbuilder = new StringBuilder();
 		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
-		String s2 = stringbuilder.append(AQQMM).append("/").append(0x53136)
+		String s2 = stringbuilder.append(AQQMM).append("/").append(version)
 				.append("&na_2/000000").append("&ADR&")
 				.append(widthPixels / 16).append("").append(heightPixels / 16)
 				.append("").append("14").append("&").append(ctx.getPhoneName())
-				.append("&").append(androidVersion).append("&0").append("&V3")
-				.toString();
+				.append("&").append(androidVersion).append("&")
+				.append(outSideChannel).append("&0").append("&V3").toString();
 		return s2;
 	}
 
@@ -465,24 +488,34 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		TencentParamsContext ctx = new TencentParamsContext();
 		TencentParamsContext.setTencentParamsContext(ctx);
 		TencentParamsContext curr = TencentParamsContext.getCurrentContext();
-		StringBuilder sb = new StringBuilder();
+		StringBuilder param = new StringBuilder();
+		StringBuilder data = new StringBuilder();
 		try {
 			String machineUniqueId = curr.getMachineUniqueId();
 			int requestId = curr.getRequestId();
+			String phoneName = curr.getPhoneName();
+			String macAddress = curr.getMacAddres();
+			String imsi = curr.getImsi();
 			byte[] handshake = getHandshake(machineUniqueId);
-			sb.append(Base64.encodeBase64String(handshake));
-			sb.append("\r\n");
-			sb.append(machineUniqueId);
-			sb.append("\r\n");
-			sb.append(requestId);
-			sb.append("\r\n");
-			sb.append(curr.getPhoneName());
+			param.append(Base64.encodeBase64String(handshake));
+			param.append("\r\n");
+			data.append(machineUniqueId);
+			data.append("\r\n");
+			data.append(requestId);
+			data.append("\r\n");
+			data.append(phoneName);
+			data.append("\r\n");
+			data.append(macAddress);
+			data.append("\r\n");
+			data.append(imsi);
+			param.append(Base64.encodeBase64String(data.toString().getBytes(
+					"utf-8")));
 		} catch (Exception e) {
 			logger.error("getHandshake error", e);
 		} finally {
 			TencentParamsContext.remove();
 		}
-		return sb.toString();
+		return param.toString();
 	}
 
 	private byte[] getHandshake(String machineUniqueId) {
