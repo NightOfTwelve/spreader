@@ -30,12 +30,11 @@ public class AndroidController {
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
 			int mStatPosition, String mSearchInfo, int p20, int p21,
 			int mVersionCode, String pack, int mCategoryId, int mTopicId,
-			String machineUniqueId, int requestId, String phoneName,
-			String handshake) {
+			String data, String handshake) {
 		String post = tencentAppCenterSevice.getAppDownloadPost(mPageNoPath,
 				mProductID, mFileID, mUrl, clientIP, mTotalSize, mStatPosition,
 				mSearchInfo, p20, p21, mVersionCode, pack, mCategoryId,
-				mTopicId, machineUniqueId, requestId, phoneName, handshake);
+				mTopicId, data, handshake);
 		return post;
 	}
 
