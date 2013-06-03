@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>com.nali.spreader</groupId>
 			<artifactId>tencent-yyb</artifactId>
-			<version>3.5</version>
+			<version>3.6</version>
 		</dependency>
 	</dependencies>
 	<build>

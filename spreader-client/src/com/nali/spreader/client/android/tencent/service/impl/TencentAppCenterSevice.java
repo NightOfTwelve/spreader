@@ -44,9 +44,10 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 			.getLogger(TencentAppCenterSevice.class);
 	private static final NumberRandomer maxSpeedRandom = new NumberRandomer(
 			100, 200);
-	private static final String AQQMM = "AQQMM_34C";
 	private static final String BUILD_VERSION_SDK = "15";
-	@Value("${spreader.tx.app.download.androidVersion}")
+	@Value("${spreader.tx.app.header.AQQMM}")
+	private String AQQMM;
+	@Value("${spreader.tx.app.header.androidVersion}")
 	private String androidVersion;
 	@Value("${spreader.tx.app.download.mDownType}")
 	private byte mDownType;
