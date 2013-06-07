@@ -400,7 +400,6 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		UniPacket up = getUniPacket(bytes);
 		sb.append(up.getFuncName());
 		sb.append("\r\n");
-		sb.append("<header>");
 		sb.append("\r\n");
 		sb.append(up.get("reqHeader"));
 		sb.append("\r\n");
