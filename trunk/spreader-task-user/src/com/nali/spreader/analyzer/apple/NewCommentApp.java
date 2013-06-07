@@ -3,9 +3,12 @@ package com.nali.spreader.analyzer.apple;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,6 +26,7 @@ import com.nali.spreader.factory.config.desc.PropertyDescription;
 import com.nali.spreader.factory.passive.AutowireProductLine;
 import com.nali.spreader.factory.regular.RegularAnalyzer;
 import com.nali.spreader.service.IAppDownlodService;
+import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.util.random.WeightRandomer;
 import com.nali.spreader.workshop.apple.DownloadApp;
 import com.nali.spreader.workshop.apple.DownloadApp.AppCommentDto;
@@ -40,15 +44,25 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 	private Integer starOnlyCount;
 	private Integer offset;
 	private Integer secondsDelay;
+	private Integer dailyComment;
+	private Date offsetDate;
 
 	@Override
 	public String work() {
-		int normalCount = comments.size();
+		int normalCount;
+		int commentOffset;
+		if(dailyComment==null) {
+			commentOffset = 0;
+			normalCount = comments.size();
+		} else {
+			commentOffset = calOffsetDate() * dailyComment;
+			normalCount = Math.min(comments.size() - commentOffset, dailyComment);
+		}
 		int count = normalCount + starOnlyCount;
 		List<Long> assignUids = appDownlodService.assignUids(Website.apple.getId(), appInfo.getAppSource(),
 				appInfo.getAppId(), count, offset);
 		Collections.shuffle(assignUids);
-		List<String[]> comments = new ArrayList<String[]>(this.comments);
+		List<String[]> comments = new ArrayList<String[]>(this.comments.subList(commentOffset, this.comments.size()));
 		Collections.shuffle(comments);
 		int errorCount=0;
 		Date startTime = null;
@@ -93,6 +107,10 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 		return errorMsg + "预计下载：" + assignUids.size();
 	}
 
+	private int calOffsetDate() {
+		return (int) ((SpecialDateUtil.getExactTodayMillis()-offsetDate.getTime())/TimeUnit.DAYS.toMillis(1));
+	}
+
 	@Override
 	public void init(NewCommentAppConfig dto) {
 		if (dto.getUrl() == null) {
@@ -111,11 +129,18 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 		starRandomer.add(4, fourStar);
 		starRandomer.add(5, 100 - fourStar);
 		comments = Arrays.asList(parseComments(dto.getComments()));
+		Random r = new Random(dto.getUrl().hashCode());
+		Collections.shuffle(comments, r);
 		offset = dto.getOffset();
 		if (offset == null) {
 			offset = 0;
 		}
 		secondsDelay=dto.secondsDelay;
+		dailyComment = dto.dailyComment;
+		offsetDate = DateUtils.truncate(dto.offsetDate, Calendar.DATE);
+		if(dailyComment!=null && offsetDate==null) {
+			throw new IllegalArgumentException("missing offsetDate, dailyComment:" + dailyComment);
+		}
 	}
 
 	private static Pattern lineSpliter = Pattern.compile("[\r\n]+");
@@ -142,8 +167,13 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 		private Integer fourStar;
 		@PropertyDescription("跳过多少个帐号")
 		private Integer offset;
-		@PropertyDescription("每次回复间隔（秒）")
+		@PropertyDescription("每次评论间隔（秒）")
 		private Integer secondsDelay;
+		
+		@PropertyDescription("每次评论数，不填就以评论条数作为评论数")
+		private Integer dailyComment;
+		@PropertyDescription("评论起点日期，每次取评论时，会跳过（评论数x距离起点日期天数）条评论")
+		private Date offsetDate;
 
 		public String getUrl() {
 			return url;
@@ -191,6 +221,22 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 
 		public void setSecondsDelay(Integer secondsDelay) {
 			this.secondsDelay = secondsDelay;
+		}
+
+		public Integer getDailyComment() {
+			return dailyComment;
+		}
+
+		public void setDailyComment(Integer dailyComment) {
+			this.dailyComment = dailyComment;
+		}
+
+		public Date getOffsetDate() {
+			return offsetDate;
+		}
+
+		public void setOffsetDate(Date offsetDate) {
+			this.offsetDate = offsetDate;
 		}
 	}
 }
