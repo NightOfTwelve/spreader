@@ -118,6 +118,11 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "App排行查询",
 									leaf : true,
 									url : '../appletop/init'
+								}, {
+									id : 'androidUtils',
+									text : "安卓市场帮助",
+									leaf : true,
+									url : '../androidutil/init'
 								}]
 					}),
 			// 添加监听事件
