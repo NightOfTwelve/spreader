@@ -120,7 +120,7 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									url : '../appletop/init'
 								}, {
 									id : 'androidUtils',
-									text : "安卓市场帮助",
+									text : "apk反编译帮助",
 									leaf : true,
 									url : '../androidutil/init'
 								}]
