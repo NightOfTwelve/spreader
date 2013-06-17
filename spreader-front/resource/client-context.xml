@@ -21,8 +21,10 @@
 			value="${ximalaya.hessian}/robot/hessian/robotRemoteService" />
 		<property name="serviceInterface"
 			value="com.nali.spreader.client.ximalaya.service.IRobotRemoteService" />
-	</bean> 
-	<bean id="taskChannel" class="com.nali.spreader.client.task.TaskChannel" lazy-init="false">
+		<property name="readTimeout" value="300000" />
+	</bean>
+	<bean id="taskChannel" class="com.nali.spreader.client.task.TaskChannel"
+		lazy-init="false">
 		<property name="taskType">
 			<value>301</value>
 		</property>
