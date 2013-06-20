@@ -107,7 +107,7 @@ public class RandomCommentApp implements RegularAnalyzer,
 		comments = Arrays.asList(lineSpliter.split(dto.getComments()));
 		secondsDelay=dto.getSecondsDelay();
 	}
-	public class RandomCommentAppConfig implements Serializable {
+	public static class RandomCommentAppConfig implements Serializable {
 		private static final long serialVersionUID = -2158991250931661L;
 		@PropertyDescription("app的url")
 		private String url;
