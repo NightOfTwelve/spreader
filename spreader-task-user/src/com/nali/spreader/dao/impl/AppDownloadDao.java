@@ -48,6 +48,10 @@ public class AppDownloadDao implements IAppDownloadDao {
 	public Long getLastEndpoint(String appSource, Long appId) {
 		return hash.get(endpointKey(appSource), appId);
 	}
+	
+	public void removeLastEndpoint(String appSource, Long appId) {
+		hash.delete(endpointKey(appSource), appId);
+	}
 
 	@Override
 	public void saveEndpoint(String appSource, Long appId, Long uid) {
