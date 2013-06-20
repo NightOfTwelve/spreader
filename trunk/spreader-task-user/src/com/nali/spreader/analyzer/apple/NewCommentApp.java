@@ -56,7 +56,11 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 			normalCount = comments.size();
 		} else {
 			commentOffset = calOffsetDate() * dailyComment;
-			normalCount = Math.min(comments.size() - commentOffset, dailyComment);
+			if(commentOffset>=comments.size()) {
+				normalCount = 0;
+			} else {
+				normalCount = Math.min(comments.size() - commentOffset, dailyComment);
+			}
 		}
 		int count = normalCount + starOnlyCount;
 		List<Long> assignUids = appDownlodService.assignUids(Website.apple.getId(), appInfo.getAppSource(),
