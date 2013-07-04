@@ -17,6 +17,7 @@ import com.nali.spreader.factory.base.ContextMeta;
 import com.nali.spreader.factory.base.TaskMeta;
 import com.nali.spreader.factory.config.Configable;
 import com.nali.spreader.factory.config.ConfigableListener;
+import com.nali.spreader.factory.exporter.ThreadLocalResultInfo;
 import com.nali.spreader.factory.passive.PassiveConfigService;
 import com.nali.spreader.factory.regular.RegularObject;
 import com.nali.spreader.model.Task;
@@ -36,6 +37,8 @@ public class ResultReceive {
 	private PassiveConfigService passiveConfigService;
 	@Autowired
 	private ITaskService taskService;
+	@Autowired
+	private ThreadLocalResultInfo threadLocalResultInfo;
 	
 	@PostConstruct
 	public void init() {
@@ -100,16 +103,19 @@ public class ResultReceive {
 		if(logger.isInfoEnabled()) {
 			logger.info("handle result, code:" + taskCode);
 		}
-		
-		Long taskId = result.getTaskId();//TODO add trace for passiveProduce
+
+		Long taskId = result.getTaskId();
 		Object resultObject = result.getResult();
 		Date updateTime = result.getExecutedTime();
+		threadLocalResultInfo.setParentTaskId(taskId);
 		try {
 			dispatcher.handle(taskId, resultObject, updateTime);
 			taskService.updateStatus(taskId, Task.STATUS_SUCCESS, updateTime);
 		} catch (Exception e) {
 			logger.error("handle result error, taskCode:"+taskCode, e);
 			taskService.updateStatus(taskId, Task.STATUS_EXCEPTION, updateTime);
+		} finally {
+			threadLocalResultInfo.clean();
 		}
 	}
 	
