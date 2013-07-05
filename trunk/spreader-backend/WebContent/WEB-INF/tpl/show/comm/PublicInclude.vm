@@ -1,7 +1,7 @@
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/extgridselect.css')" />
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/FixComboBug.css')" />
 <link rel="stylesheet" type="text/css" href="$StaticConfig.u('/js/extjs3/resources/css/ext-all.css')" />
-<link rel="stylesheet" type="text/css" href="$StaticConfig.u('/css/extcss/ext_icon.css')" />
+<link rel="stylesheet" type="text/css" href="$UriCacheRefreshUtil.addTimestamp($StaticConfig.u('/css/extcss/ext_icon.css'))" />
 <script>
 	$CONFIG = {
 		BLANK_IMAGE_URL:"$StaticConfig.u('/js/extjs3/resources/images/default/s.gif')",
@@ -10,7 +10,7 @@
 	var NO_SELECT = '_no_select';
 </script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/adapter/ext/ext-base.js')" ></script>
-<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all-debug.js')" ></script>
+<script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-all.js')" ></script>
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/ext-basex.js')" ></script>
 #parse("/show/comm/FixInclude.vm")
 <script type="text/javascript" src="$StaticConfig.u('/js/extjs3/gridselect.js')" ></script>
