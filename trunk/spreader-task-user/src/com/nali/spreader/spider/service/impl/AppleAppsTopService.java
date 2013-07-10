@@ -96,7 +96,8 @@ public class AppleAppsTopService implements IAppleAppsTopService {
 					rankTime, ranking, popId);
 			appleAppTopDao.upsertCurrentTop(appId, genre, genreId, ranking,
 					popId);
-			logger.debug("ok,appId:" + appId);
+			// TODO
+//			logger.debug("ok,appId:" + appId);
 		}
 	}
 
