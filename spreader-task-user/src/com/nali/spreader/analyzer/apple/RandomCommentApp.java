@@ -42,24 +42,27 @@ public class RandomCommentApp implements RegularAnalyzer,
 	private int count;
 	private Integer starOnlyRate;
 	private Integer secondsDelay;
-	
+	private Integer offset;
+
 	@Override
 	public String work() {
 		List<Long> assignUids = appDownlodService.assignUids(
 				Website.apple.getId(), appInfo.getAppSource(),
-				appInfo.getAppId(), count);
+				appInfo.getAppId(), count, offset);
 		int startOnlyCount = starOnlyRate * assignUids.size() / 100;
 		int normalCount = assignUids.size() - startOnlyCount;
-		List<String> titles = RandomUtil.fakeRandomItems(this.titles, normalCount);
-		List<String> comments = RandomUtil.fakeRandomItems(this.comments, normalCount);
+		List<String> titles = RandomUtil.fakeRandomItems(this.titles,
+				normalCount);
+		List<String> comments = RandomUtil.fakeRandomItems(this.comments,
+				normalCount);
 		Collections.shuffle(assignUids);
 		Date startTime = null;
-		if(secondsDelay!=null) {
+		if (secondsDelay != null) {
 			startTime = DateUtils.addMinutes(new Date(), 10);
 		}
 		for (int i = 0; i < assignUids.size(); i++) {
 			Long uid = assignUids.get(i);
-			
+
 			DownloadApp.AppCommentDto dto = new AppCommentDto();
 			dto.setUid(uid);
 			dto.setAppId(appInfo.getAppId());
@@ -74,7 +77,7 @@ public class RandomCommentApp implements RegularAnalyzer,
 				dto.setTitle(titles.get(i - startOnlyCount));
 				dto.setComment(comments.get(i - startOnlyCount));
 			}
-			if(startTime!=null) {
+			if (startTime != null) {
 				startTime = DateUtils.addSeconds(startTime, secondsDelay);
 				dto.setCommentStartTime(startTime);
 			}
@@ -84,6 +87,7 @@ public class RandomCommentApp implements RegularAnalyzer,
 	}
 
 	private static Pattern lineSpliter = Pattern.compile("[\r\n]+");
+
 	@Override
 	public void init(RandomCommentAppConfig dto) {
 		if (dto.getUrl() == null || dto.getCount() == null) {
@@ -100,13 +104,17 @@ public class RandomCommentApp implements RegularAnalyzer,
 		if (starOnlyRate == null) {
 			starOnlyRate = 0;
 		}
+		if (offset == null) {
+			offset = 0;
+		}
 		starRandomer = new WeightRandomer<Integer>();
 		starRandomer.add(4, fourStar);
 		starRandomer.add(5, 100 - fourStar);
 		titles = Arrays.asList(lineSpliter.split(dto.getTitle()));
 		comments = Arrays.asList(lineSpliter.split(dto.getComments()));
-		secondsDelay=dto.getSecondsDelay();
+		secondsDelay = dto.getSecondsDelay();
 	}
+
 	public static class RandomCommentAppConfig implements Serializable {
 		private static final long serialVersionUID = -2158991250931661L;
 		@PropertyDescription("app的url")
@@ -125,6 +133,8 @@ public class RandomCommentApp implements RegularAnalyzer,
 		private Integer fourStar;
 		@PropertyDescription("每次回复间隔（秒）")
 		private Integer secondsDelay;
+		@PropertyDescription("跳过多少个帐号")
+		private Integer offset;
 
 		public String getUrl() {
 			return url;
@@ -189,6 +199,13 @@ public class RandomCommentApp implements RegularAnalyzer,
 		public void setComments(String comments) {
 			this.comments = comments;
 		}
-	}
 
+		public Integer getOffset() {
+			return offset;
+		}
+
+		public void setOffset(Integer offset) {
+			this.offset = offset;
+		}
+	}
 }

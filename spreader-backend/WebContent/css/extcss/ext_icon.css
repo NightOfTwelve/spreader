@@ -298,6 +298,12 @@
 .arrow_switchIcon {
     background-image:url(../images/icon/arrow_switch.png) !important;
  }
+.page_save {
+    background-image:url(../images/icon/page_save.png) !important;
+ }
+.page_copy_grid {
+    background-image:url(../images/icon/layout_edit.png) !important;
+ }
 .xxx{
 	white-space:nowrap;overflow:scroll;
 }

@@ -8,7 +8,8 @@ import com.nali.spreader.util.EnumUtils;
 public enum Website {
 	weibo(1, "weibo.com", "微博", "新浪微博", "新浪weibo"),
 	apple(2, "apple.com", "苹果"),
-	ximalaya(3,"ximalaya.com","喜马拉雅")
+	ximalaya(3,"ximalaya.com","喜马拉雅"),
+	google(4,"google.com","google play")
 	;
 
 	private final Integer id;
