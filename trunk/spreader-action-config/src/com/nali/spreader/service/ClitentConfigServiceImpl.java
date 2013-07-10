@@ -2,9 +2,11 @@ package com.nali.spreader.service;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
@@ -45,7 +47,11 @@ public class ClitentConfigServiceImpl implements IClitentConfigService {
 			crudClientConfigDao.updateByPrimaryKeySelective(exists);
 		} else {
 			ClientConfig cc = new ClientConfig();
-			cc.setClientId(clientId);
+			if (clientType == ClientConfig.CONFIG_TYPE_CLIENT) {
+				cc.setClientId(clientId);
+			} else {
+				cc.setClientId(ClientConfig.GROUP_DEFAULT_CLIENT_ID);
+			}
 			cc.setClientConfig(cfgs);
 			cc.setConfigName(configName);
 			cc.setConfigType(configType);
@@ -71,11 +77,38 @@ public class ClitentConfigServiceImpl implements IClitentConfigService {
 		c.andClientIdEqualTo(clientId);
 		c.andConfigNameEqualTo(configName);
 		c.andTypeEqualTo(clientType);
-		return crudClientConfigDao.selectByExampleWithBLOBs(exa).get(0);
+		List<ClientConfig> list = crudClientConfigDao
+				.selectByExampleWithBLOBs(exa);
+		if (list.size() > 0) {
+			return list.get(0);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public ClientConfig getConfigById(Long id) {
 		return crudClientConfigDao.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public boolean groupConfigNameIsExists(String configName) {
+		if (StringUtils.isBlank(configName)) {
+			return true;
+		}
+		ClientConfig cc = getConfigByClientId(
+				ClientConfig.GROUP_DEFAULT_CLIENT_ID, configName,
+				ClientConfig.CONFIG_TYPE_GROUP);
+		if (cc != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public void deleteConfig(Long id) {
+		Assert.notNull(id, " configId is null");
+		crudClientConfigDao.deleteByPrimaryKey(id);
 	}
 }

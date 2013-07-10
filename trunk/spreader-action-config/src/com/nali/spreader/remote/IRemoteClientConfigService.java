@@ -16,4 +16,14 @@ public interface IRemoteClientConfigService {
 	 * 通过分组ID和配置名称 分类获取配置信息
 	 */
 	String readGroupConfig(Long groupId, String configName, String configMD5);
+
+	/**
+	 * 按类型读取客户端配置
+	 * 
+	 * @param configName
+	 * @param configMD5
+	 * @param configType
+	 * @return
+	 */
+	String readConfig(String configName, String configMD5, Integer configType);
 }
