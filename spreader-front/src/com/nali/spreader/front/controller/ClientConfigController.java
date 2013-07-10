@@ -122,6 +122,34 @@ public class ClientConfigController extends BaseController {
 		return write(keys);
 	}
 
+	/**
+	 * 检查组配置的名称是否存在
+	 * 
+	 * @param cfgName
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/checkgroupname")
+	public String checkGroupConfigName(String cfgName) {
+		boolean isExists = clitentConfigService
+				.groupConfigNameIsExists(cfgName);
+		return write(isExists);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/deletecfg")
+	public String deleteConfig(Long cfgId) {
+		Map<String, Boolean> m = CollectionUtils.newHashMap(1);
+		m.put("success", false);
+		try {
+			clitentConfigService.deleteConfig(cfgId);
+			m.put("success", true);
+		} catch (Exception e) {
+			logger.error(" delete fail", e);
+		}
+		return write(m);
+	}
+
 	private Map<String, Object>[] string2Array(String json) {
 		TypeReference<Map<String, Object>[]> ref = new TypeReference<Map<String, Object>[]>() {
 		};

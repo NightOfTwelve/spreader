@@ -42,4 +42,18 @@ public interface IClitentConfigService {
 	 */
 	ClientConfig getConfigById(Long id);
 
+	/**
+	 * 检查客户端组配置名称是否已经存在
+	 * 
+	 * @param configName
+	 * @return
+	 */
+	boolean groupConfigNameIsExists(String configName);
+
+	/**
+	 * 删除配置
+	 * 
+	 * @param id
+	 */
+	void deleteConfig(Long id);
 }

@@ -23,13 +23,15 @@ public class RemoteClientConfigService implements IRemoteClientConfigService {
 		ClientContext ctx = ClientContext.getCurrentContext();
 		Long clientId = ctx.getClientId();
 		Assert.notNull(clientId, "clientId must no null");
-		return readClientConfig(configName, configMD5, clientId, 0);
+		return readClientConfig(configName, configMD5, clientId,
+				ClientConfig.CONFIG_TYPE_CLIENT);
 	}
 
 	@Override
 	public String readGroupConfig(Long groupId, String configName,
 			String configMD5) {
-		return readClientConfig(configName, configMD5, groupId, 1);
+		return readClientConfig(configName, configMD5, groupId,
+				ClientConfig.CONFIG_TYPE_GROUP);
 	}
 
 	private String readClientConfig(String configName, String configMD5,
@@ -50,6 +52,22 @@ public class RemoteClientConfigService implements IRemoteClientConfigService {
 				String cfg = cc.getClientConfig();
 				return cfg;
 			}
+		}
+		return null;
+	}
+
+	@Override
+	public String readConfig(String configName, String configMD5,
+			Integer configType) {
+		Assert.notNull(configName, "configName must no null");
+		Assert.notNull(configType, "type must no null");
+		if (configType.intValue() == ClientConfig.CONFIG_TYPE_CLIENT) {
+			return readClientConfig(configName, configMD5);
+		}
+		if (configType.intValue() == ClientConfig.CONFIG_TYPE_GROUP) {
+			return readClientConfig(configName, configMD5,
+					ClientConfig.GROUP_DEFAULT_CLIENT_ID,
+					ClientConfig.CONFIG_TYPE_GROUP);
 		}
 		return null;
 	}
