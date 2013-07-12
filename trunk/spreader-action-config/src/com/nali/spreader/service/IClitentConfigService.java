@@ -48,7 +48,7 @@ public interface IClitentConfigService {
 	 * @param configName
 	 * @return
 	 */
-	boolean groupConfigNameIsExists(String configName);
+	boolean groupConfigNameIsValid (Long id, String configName);
 
 	/**
 	 * 删除配置

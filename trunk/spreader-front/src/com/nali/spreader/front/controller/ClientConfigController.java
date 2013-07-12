@@ -130,9 +130,9 @@ public class ClientConfigController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/checkgroupname")
-	public String checkGroupConfigName(String cfgName) {
-		boolean isExists = clitentConfigService
-				.groupConfigNameIsExists(cfgName);
+	public String checkGroupConfigName(Long id, String cfgName) {
+		boolean isExists = clitentConfigService.groupConfigNameIsValid(id,
+				cfgName);
 		return write(isExists);
 	}
 
