@@ -249,8 +249,8 @@ Ext.onReady(function() {
 						}
 						// TODO 如果是客户端组需要检查组配置名称
 						if (clientType == 1) {
-							var flg = configNameIsExists(configName);
-							if (flg) {
+							var flg = configNameIsValid(null, configName);
+							if (!flg) {
 								Ext.Msg.alert("提示", "客户端组配置名称已存在，请修改后再保存");
 								return;
 							}
@@ -270,7 +270,13 @@ Ext.onReady(function() {
 										var result = Ext.util.JSON
 												.decode(response.responseText);
 										Ext.MessageBox.alert('提示', '保存成功');
-										store.load();
+										// TODO
+										store.load({
+													params : {
+														start : bbar.cursor,
+														limit : bbar.pageSize
+													}
+												});
 									},
 									failure : function(response, opts) {
 										Ext.MessageBox.alert('提示', '保存失败');
@@ -668,6 +674,10 @@ Ext.onReady(function() {
 									cols.push(text)
 									colsHidden.setValue(cols);
 									columns = new Ext.grid.ColumnModel(colcfg);
+									var rows = multiGridStore.data.items;
+									for (var k = 0; k < rows.length; k++) {
+										rows[k].data[text] = null;
+									}
 									grid.reconfigure(multiGridStore, columns);
 								}
 							});
@@ -720,27 +730,29 @@ Ext.onReady(function() {
 						var note = tform.findField("note").getValue();
 						if (clientId != null && !Ext.isEmpty(configType)) {
 							var tt = new Array();
-							for (var i = 0; i < modsize; i++) {
+							for (var j = 0; j < cmcfg.length; j++) {
 								// TODO
-								var cmCfgData = cmcfg[i];
-								var tData = mod[i].data;
-								if (!Ext.isEmpty(cmCfgData)) {
-									for (var h = 0; h < hideIdx.length; h++) {
-										tData[hideIdx[h]] = undefined;
+								var cmCfgData = cmcfg[j];
+								for (var i = 0; i < modsize; i++) {
+									var tData = mod[i].data;
+									if (!Ext.isEmpty(cmCfgData)) {
+										for (var h = 0; h < hideIdx.length; h++) {
+											tData[hideIdx[h]] = undefined;
+										}
+										if (checkObjProperty(tData)) {
+											tt[i] = tData;
+										}
 									}
-									if (checkObjProperty(tData)) {
-										tt[i] = tData;
-									}
-								}
-								if (Ext.isEmpty(cmCfgData) && i > 0) {
-									if (checkObjProperty(tData)) {
-										tt[i] = tData;
+									if (Ext.isEmpty(cmCfgData) && i > 0) {
+										if (checkObjProperty(tData)) {
+											tt[i] = tData;
+										}
 									}
 								}
 							}
 							if (clientType == 1) {
-								var flg = configNameIsExists(configName);
-								if (flg) {
+								var flg = configNameIsValid(cfgId, configName);
+								if (!flg) {
 									Ext.Msg.alert("提示", "客户端组配置名称已存在，请修改后再保存");
 									return;
 								}
@@ -878,8 +890,9 @@ Ext.onReady(function() {
 										return;
 									}
 									if (clientType == 1) {
-										var flg = configNameIsExists(configName);
-										if (flg) {
+										var flg = configNameIsValid(cfgId,
+												configName);
+										if (!flg) {
 											Ext.Msg.alert("提示",
 													"客户端组配置名称已存在，请修改后再保存");
 											return;
@@ -970,8 +983,9 @@ Ext.onReady(function() {
 										return;
 									}
 									if (clientType == 1) {
-										var flg = configNameIsExists(configName);
-										if (flg) {
+										var flg = configNameIsValid(cfgId,
+												configName);
+										if (!flg) {
 											Ext.Msg.alert("提示",
 													"客户端组配置名称已存在，请修改后再保存");
 											return;
@@ -1072,24 +1086,25 @@ Ext.onReady(function() {
 	/**
 	 * 检查组配置的名称是否重名
 	 */
-	function configNameIsExists(cfgName) {
+	function configNameIsValid(id, cfgName) {
 		// TODO
-		var isExists = false;
+		var IsValid = false;
 		Ext.Ajax.request({
 					url : '/spreader-front/clientcfg/checkgroupname?_time='
 							+ new Date().getTime(),
 					params : {
+						'id' : id,
 						'cfgName' : cfgName
 					},
 					async : false,
 					success : function(response) {
 						var result = Ext.decode(response.responseText);
-						isExists = result;
+						IsValid = result;
 					},
 					failure : function() {
 					}
 				});
-		return isExists;
+		return IsValid;
 	}
 	// 布局模型
 	var viewport = new Ext.Viewport({
