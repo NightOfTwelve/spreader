@@ -92,17 +92,22 @@ public class ClitentConfigServiceImpl implements IClitentConfigService {
 	}
 
 	@Override
-	public boolean groupConfigNameIsExists(String configName) {
+	public boolean groupConfigNameIsValid(Long id, String configName) {
 		if (StringUtils.isBlank(configName)) {
-			return true;
+			return false;
 		}
 		ClientConfig cc = getConfigByClientId(
 				ClientConfig.GROUP_DEFAULT_CLIENT_ID, configName,
 				ClientConfig.CONFIG_TYPE_GROUP);
 		if (cc != null) {
-			return true;
+			Long existsId = cc.getId();
+			if (existsId.equals(id)) {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
-			return false;
+			return true;
 		}
 	}
 
