@@ -43,17 +43,21 @@ public interface IClitentConfigService {
 	ClientConfig getConfigById(Long id);
 
 	/**
-	 * 检查客户端组配置名称是否已经存在
-	 * 
-	 * @param configName
-	 * @return
-	 */
-	boolean groupConfigNameIsValid (Long id, String configName);
-
-	/**
 	 * 删除配置
 	 * 
 	 * @param id
 	 */
 	void deleteConfig(Long id);
+
+	/**
+	 * 检查客户端配置的名称是否有效
+	 * 
+	 * @param id
+	 * @param configName
+	 * @param configType
+	 * @param clientId
+	 * @return
+	 */
+	boolean configNameIsValid(Long id, String configName, int configType,
+			Long clientId);
 }
