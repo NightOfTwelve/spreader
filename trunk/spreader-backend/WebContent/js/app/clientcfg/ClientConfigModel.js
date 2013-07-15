@@ -248,7 +248,7 @@ Ext.onReady(function() {
 							// return;
 						}
 						// TODO 需要检查组配置名称
-						var flg = configNameIsValid(null, configName,
+						var flg = configNameIsValid(clientId, configName,
 								clientType, clientId);
 						if (!flg) {
 							Ext.Msg.alert("提示", "客户端配置名称已存在，请修改后再保存");
@@ -772,7 +772,7 @@ Ext.onReady(function() {
 									}
 								}
 							}
-							var flg = configNameIsValid(null, configName,
+							var flg = configNameIsValid(cfgId, configName,
 									clientType, clientId);
 							if (!flg) {
 								Ext.Msg.alert("提示", "客户端配置名称已存在，请修改后再保存");
@@ -935,7 +935,7 @@ Ext.onReady(function() {
 										Ext.MessageBox.alert('提示', '配置ID不能为空');
 										return;
 									}
-									var flg = configNameIsValid(null,
+									var flg = configNameIsValid(cfgId,
 											configName, clientType, clientId);
 									if (!flg) {
 										Ext.Msg.alert("提示",
