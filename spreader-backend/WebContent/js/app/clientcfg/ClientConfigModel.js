@@ -410,7 +410,12 @@ Ext.onReady(function() {
 										Ext.MessageBox.alert('提示', '删除失败');
 									}
 								});
-						store.load();
+						store.load({
+									params : {
+										start : bbar.cursor,
+										limit : bbar.pageSize
+									}
+								});
 					}
 				});
 			}
@@ -715,7 +720,15 @@ Ext.onReady(function() {
 					// all data
 					var mod = storeData.data.items;
 					var modsize = mod.length;
-					var cmcfg = grid.cm.config;
+					// grid.colModel.addListener('hiddenchange', function(col,
+					// idx, hidden) {
+					// var cfg = col.config;
+					// if (isAllHidden(cfg)) {
+					// Ext.Msg.alert("提示", "请至少保留一列数据");
+					// return;
+					// }
+					// });
+					var cmcfg = grid.colModel.config;
 					var hideIdx = getHideIndex(cmcfg);
 					if (modsize > 0) {
 						var tform = infoForm.getForm();
@@ -808,13 +821,38 @@ Ext.onReady(function() {
 				}
 			}]
 		});
-		grid.cm = columns;
+		for (var g = 0; g < columns.config.length; g++) {
+			if (!Ext.isEmpty(columns.config[g].hidden)
+					&& columns.config[g].hidden) {
+				columns.config[g].hidden = false;
+			}
+		}
+		// columns.addListener('hiddenchange', function(col, idx, hidden) {
+		// var cfg = col.config;
+		// if (isAllHidden(cfg)) {
+		// Ext.Msg.alert("提示", "请至少保留一列数据");
+		// return;
+		// }
+		// });
+		grid.colModel = columns;
 		cardPanelCmp.add(grid);
 		multiGridStore.setBaseParam('id', configId);
 		multiGridStore.clearData();
 		multiGridStore.load();
 	}
 
+	function isAllHidden(cfgs) {
+		for (var i = 0; i < cfgs.length; i++) {
+			if (!Ext.isEmpty(cfgs[i].hidden)) {
+				if (cfgs[i].hidden) {
+					continue;
+				} else {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	function checkObjProperty(o) {
 		for (var i in o) {
 			var t = o[i];
@@ -837,8 +875,8 @@ Ext.onReady(function() {
 				if (!Ext.isEmpty(cmCfgData)) {
 					var hide = cmCfgData.hidden;
 					// 如果列隐藏了就当作是删除了该列
-					if (!Ext.isEmpty(hide) || hide) {
-						indexes[i] = idx;
+					if (!Ext.isEmpty(hide) && hide) {
+						indexes.push(idx);
 					}
 				}
 			}
