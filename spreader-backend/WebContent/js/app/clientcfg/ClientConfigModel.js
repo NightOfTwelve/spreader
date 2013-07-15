@@ -247,13 +247,12 @@ Ext.onReady(function() {
 							// Ext.Msg.alert("提示", "请输入分组类型");
 							// return;
 						}
-						// TODO 如果是客户端组需要检查组配置名称
-						if (clientType == 1) {
-							var flg = configNameIsValid(null, configName);
-							if (!flg) {
-								Ext.Msg.alert("提示", "客户端组配置名称已存在，请修改后再保存");
-								return;
-							}
+						// TODO 需要检查组配置名称
+						var flg = configNameIsValid(null, configName,
+								clientType, clientId);
+						if (!flg) {
+							Ext.Msg.alert("提示", "客户端配置名称已存在，请修改后再保存");
+							return;
 						}
 						Ext.Ajax.request({
 									url : '/spreader-front/clientcfg/savecfg?_time='
@@ -313,11 +312,17 @@ Ext.onReady(function() {
 					text : '刷新',
 					iconCls : 'arrow_refreshIcon',
 					handler : function() {
-						store.load();
+						store.setBaseParam('clientId', null);
+						store.load({
+									params : {
+										start : bbar.cursor,
+										limit : bbar.pageSize
+									}
+								});
 					}
 				}, '-', new Ext.form.TextField({
-							id : 'clientId',
-							name : 'clientId',
+							id : 'clientIdQuery',
+							name : 'clientIdQuery',
 							fieldLabel : '客户端编号',
 							emptyText : '请输入客户端编号',
 							allowBlank : true,
@@ -327,7 +332,8 @@ Ext.onReady(function() {
 					text : '查询记录',
 					iconCls : 'page_findIcon',
 					handler : function() {
-						var clientId = Ext.getCmp('clientId').getValue();
+						// TODO
+						var clientId = Ext.getCmp('clientIdQuery').getValue();
 						if (Ext.isEmpty(clientId)) {
 							Ext.Msg.alert("提示", "请输入要搜索的客户端编号");
 							return;
@@ -372,6 +378,9 @@ Ext.onReady(function() {
 					createTextModel(cardPanelCmp, cfg);
 				}
 				if (configType == 2) {
+					if (Ext.isEmpty(cfg)) {
+						cfg = "{}";
+					}
 					createPropertyModel(cardPanelCmp, cfg, configId, clientId);
 				}
 				if (configType == 3) {
@@ -763,12 +772,11 @@ Ext.onReady(function() {
 									}
 								}
 							}
-							if (clientType == 1) {
-								var flg = configNameIsValid(cfgId, configName);
-								if (!flg) {
-									Ext.Msg.alert("提示", "客户端组配置名称已存在，请修改后再保存");
-									return;
-								}
+							var flg = configNameIsValid(null, configName,
+									clientType, clientId);
+							if (!flg) {
+								Ext.Msg.alert("提示", "客户端配置名称已存在，请修改后再保存");
+								return;
 							}
 							var configs = Ext.util.JSON.encode(tt);
 							if (submitGrid(cfgId, clientId, configName,
@@ -927,14 +935,12 @@ Ext.onReady(function() {
 										Ext.MessageBox.alert('提示', '配置ID不能为空');
 										return;
 									}
-									if (clientType == 1) {
-										var flg = configNameIsValid(cfgId,
-												configName);
-										if (!flg) {
-											Ext.Msg.alert("提示",
-													"客户端组配置名称已存在，请修改后再保存");
-											return;
-										}
+									var flg = configNameIsValid(null,
+											configName, clientType, clientId);
+									if (!flg) {
+										Ext.Msg.alert("提示",
+												"客户端配置名称已存在，请修改后再保存");
+										return;
 									}
 									var result = submitGrid(cfgId, clientId,
 											configName, configType, textcfg,
@@ -986,26 +992,28 @@ Ext.onReady(function() {
 						}
 					}, '-', {
 						text : '删除一行',
-						iconCls : 'addIcon',
+						iconCls : 'deleteIcon',
 						handler : function() {
 							var data = propGrid.getSelectionModel().selection.record.data;
 							var porp = data.name;
 							Ext.MessageBox.confirm('提示', '是否确认删除?',
 									function(e) {
-										if (e == 'ok') {
+										if (e == 'yes') {
 											propGrid.removeProperty(porp);
 										}
 										return;
 									});
 						}
-					}, '-', {
+					}, '->', {
 						text : '保存',
-						iconCls : 'addIcon',
+						iconCls : 'page_save',
 						handler : function() {
 							var prop = propGrid.getSource();
 							Ext.MessageBox.confirm('提示', '确认提交?', function(e) {
 								if (e == 'yes') {
 									var tform = infoForm.getForm();
+									var configId = tform.findField("id")
+											.getValue();
 									var configName = tform
 											.findField("configName").getValue();
 									var configType = tform
@@ -1014,20 +1022,20 @@ Ext.onReady(function() {
 									var clientType = tform
 											.findField("selectClientType")
 											.getValue();
+									var clientId = tform.findField("clientId")
+											.getValue();
 									var note = tform.findField("note")
 											.getValue();
 									if (Ext.isEmpty(cfgId)) {
 										Ext.MessageBox.alert('提示', '配置ID不能为空');
 										return;
 									}
-									if (clientType == 1) {
-										var flg = configNameIsValid(cfgId,
-												configName);
-										if (!flg) {
-											Ext.Msg.alert("提示",
-													"客户端组配置名称已存在，请修改后再保存");
-											return;
-										}
+									var flg = configNameIsValid(configId,
+											configName, clientType, clientId);
+									if (!flg) {
+										Ext.Msg.alert("提示",
+												"客户端配置名称已存在，请修改后再保存");
+										return;
 									}
 									var configs = Ext.util.JSON.encode(prop);
 									var result = submitGrid(cfgId, clientId,
@@ -1124,7 +1132,7 @@ Ext.onReady(function() {
 	/**
 	 * 检查组配置的名称是否重名
 	 */
-	function configNameIsValid(id, cfgName) {
+	function configNameIsValid(id, cfgName, clientType, clientId) {
 		// TODO
 		var IsValid = false;
 		Ext.Ajax.request({
@@ -1132,7 +1140,9 @@ Ext.onReady(function() {
 							+ new Date().getTime(),
 					params : {
 						'id' : id,
-						'cfgName' : cfgName
+						'cfgName' : cfgName,
+						'clientType' : clientType,
+						'clientId' : clientId
 					},
 					async : false,
 					success : function(response) {
