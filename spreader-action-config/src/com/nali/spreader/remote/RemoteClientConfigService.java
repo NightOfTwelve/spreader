@@ -51,6 +51,8 @@ public class RemoteClientConfigService implements IRemoteClientConfigService {
 			if (StringUtils.isEmpty(configMD5) || !configMD5.equals(md5)) {
 				String cfg = cc.getClientConfig();
 				return cfg;
+			} else {
+				return configMD5;
 			}
 		}
 		return null;
