@@ -91,8 +91,7 @@ public class ClitentConfigServiceImpl implements IClitentConfigService {
 		return crudClientConfigDao.selectByPrimaryKey(id);
 	}
 
-	@Override
-	public boolean groupConfigNameIsValid(Long id, String configName) {
+	private boolean groupConfigNameIsValid(Long id, String configName) {
 		if (StringUtils.isBlank(configName)) {
 			return false;
 		}
@@ -111,9 +110,43 @@ public class ClitentConfigServiceImpl implements IClitentConfigService {
 		}
 	}
 
+	private boolean clientConfigNameIsValid(Long id, String configName,
+			Long clientId) {
+		if (StringUtils.isBlank(configName)) {
+			return false;
+		}
+		if (clientId == null) {
+			return false;
+		}
+		ClientConfig cc = getConfigByClientId(clientId, configName,
+				ClientConfig.CONFIG_TYPE_CLIENT);
+		if (cc != null) {
+			Long existsId = cc.getId();
+			if (existsId.equals(id)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
+
 	@Override
 	public void deleteConfig(Long id) {
 		Assert.notNull(id, " configId is null");
 		crudClientConfigDao.deleteByPrimaryKey(id);
+	}
+
+	@Override
+	public boolean configNameIsValid(Long id, String configName,
+			int configType, Long clientId) {
+		if (configType == ClientConfig.CONFIG_TYPE_CLIENT) {
+			return clientConfigNameIsValid(id, configName, clientId);
+		}
+		if (configType == ClientConfig.CONFIG_TYPE_GROUP) {
+			return groupConfigNameIsValid(id, configName);
+		}
+		return false;
 	}
 }
