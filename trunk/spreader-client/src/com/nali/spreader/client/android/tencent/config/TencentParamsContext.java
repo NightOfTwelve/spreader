@@ -137,5 +137,6 @@ public class TencentParamsContext {
 		System.out.println("mac:" + tc.getMacAddres());
 		System.out.println("mid:" + tc.getMachineUniqueId());
 		System.out.println("imsi:" + tc.getImsi());
+		System.out.println("contime:"+RandomUtils.nextInt(20000));
 	}
 }
