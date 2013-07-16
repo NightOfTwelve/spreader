@@ -173,7 +173,7 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		localReqHeader.qua = getQua(resolutionX, resolutionY);
 		localReqHeader.version = version;
 		localReqHeader.businessId = businessId;
-		localReqHeader.sid = null;
+//		localReqHeader.sid = null;
 		localReqHeader.qq = qq;
 		localReqHeader.apiLevel = apiLevel;
 		localReqHeader.densityDpi = densityDpi;
@@ -184,7 +184,7 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		localReqHeader.networkType = (byte) Network.WIFI.getId();
 		localReqHeader.outSideChannel = outSideChannel;
 		localReqHeader.mask = mask;
-		localReqHeader.lastRespMD5 = null;
+//		localReqHeader.lastRespMD5 = null;
 		localReqHeader.CPUSerial = cpuSerial;
 		localReqHeader.mac = ctx.getMacAddres();
 		localReqHeader.imsi = ctx.getImsi();
