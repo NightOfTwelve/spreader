@@ -573,9 +573,6 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		build.append(downParam.p2.get((byte) 24));
 		build.append("\r\n");
 		build.append("topicid=0");
-		build.append("\r\n");
-		build.append("conntime=0");
-		build.append(downParam.p2.get((byte) 32));
 		return build.toString();
 	}
 }
