@@ -247,7 +247,7 @@ Ext.onReady(function() {
 							// Ext.Msg.alert("提示", "请输入分组类型");
 							// return;
 						}
-						// TODO 需要检查组配置名称
+						// 需要检查组配置名称
 						var flg = configNameIsValid(clientId, configName,
 								clientType, clientId);
 						if (!flg) {
@@ -269,13 +269,7 @@ Ext.onReady(function() {
 										var result = Ext.util.JSON
 												.decode(response.responseText);
 										Ext.MessageBox.alert('提示', '保存成功');
-										// TODO
-										store.load({
-													params : {
-														start : bbar.cursor,
-														limit : bbar.pageSize
-													}
-												});
+										storeLoad();
 									},
 									failure : function(response, opts) {
 										Ext.MessageBox.alert('提示', '保存失败');
@@ -293,146 +287,145 @@ Ext.onReady(function() {
 
 	// 定义grid表格
 	var cfgGrid = new Ext.grid.GridPanel({
-		region : 'center',
-		id : 'cfgGrid',
-		// height : 440,
-		stripeRows : true, // 斑马线
-		frame : true,
-		// autoScroll : true,
-		store : store,
-		loadMask : {
-			msg : '正在加载表格数据,请稍等...'
-		},
-		bbar : bbar,
-		sm : new Ext.grid.CheckboxSelectionModel({
-					singleSelect : true
-				}),
-		cm : cfgcm,
-		tbar : [{
-					text : '刷新',
-					iconCls : 'arrow_refreshIcon',
-					handler : function() {
-						store.setBaseParam('clientId', null);
-						store.load({
-									params : {
-										start : bbar.cursor,
-										limit : bbar.pageSize
-									}
-								});
-					}
-				}, '-', new Ext.form.TextField({
-							id : 'clientIdQuery',
-							name : 'clientIdQuery',
-							fieldLabel : '客户端编号',
-							emptyText : '请输入客户端编号',
-							allowBlank : true,
-							enableKeyEvents : true,
-							width : 130
-						}), '-', {
-					text : '查询记录',
-					iconCls : 'page_findIcon',
-					handler : function() {
-						// TODO
-						var clientId = Ext.getCmp('clientIdQuery').getValue();
-						if (Ext.isEmpty(clientId)) {
-							Ext.Msg.alert("提示", "请输入要搜索的客户端编号");
-							return;
+				region : 'center',
+				id : 'cfgGrid',
+				// height : 440,
+				stripeRows : true, // 斑马线
+				frame : true,
+				// autoScroll : true,
+				store : store,
+				loadMask : {
+					msg : '正在加载表格数据,请稍等...'
+				},
+				bbar : bbar,
+				sm : new Ext.grid.CheckboxSelectionModel({
+							singleSelect : true
+						}),
+				cm : cfgcm,
+				tbar : [{
+							text : '刷新',
+							iconCls : 'arrow_refreshIcon',
+							handler : function() {
+								store.setBaseParam('clientId', null);
+								storeLoad();
+							}
+						}, '-', new Ext.form.TextField({
+									id : 'clientIdQuery',
+									name : 'clientIdQuery',
+									fieldLabel : '客户端编号',
+									emptyText : '请输入客户端编号',
+									allowBlank : true,
+									enableKeyEvents : true,
+									width : 130
+								}), '-', {
+							text : '查询记录',
+							iconCls : 'page_findIcon',
+							handler : function() {
+								var clientId = Ext.getCmp('clientIdQuery')
+										.getValue();
+								if (Ext.isEmpty(clientId)) {
+									Ext.Msg.alert("提示", "请输入要搜索的客户端编号");
+									return;
+								}
+								store.setBaseParam('clientId', clientId);
+								store.load();
+							}
+						}, '-', {
+							text : '新增配置',
+							iconCls : 'uploadIcon',
+							handler : function() {
+								if (!addwin) {
+									addwin = new Ext.Window({
+												title : '新增配置',
+												layout : 'fit',
+												width : 300,
+												height : 300,
+												closeAction : 'hide',
+												plain : true,
+												items : [addForm]
+											});
+									addwin.on('show', function() {
+												addForm.form.reset();
+											});
+								}
+								addwin.show(this);
+							}
+						}],
+				onCellClick : function(grid, rowIndex, columnIndex, e) {
+					var butname = e.target.defaultValue;
+					var selesm = grid.getSelectionModel().getSelections();
+					var configId = selesm[0].data.id;
+					var clientId = selesm[0].data.clientId;
+					var cfg = selesm[0].data.clientConfig;
+					var configName = selesm[0].data.configName;
+					var configType = selesm[0].data.configType;
+					var clientType = selesm[0].data.type;
+					var note = selesm[0].data.note;
+					var cardPanelCmp = Ext.getCmp('cardPanel');
+					if (butname == '编辑') {
+						if (configType == 1) {
+							createTextModel(cardPanelCmp, cfg);
 						}
-						store.setBaseParam('clientId', clientId);
-						store.load();
-					}
-				}, '-', {
-					text : '新增配置',
-					iconCls : 'uploadIcon',
-					handler : function() {
-						if (!addwin) {
-							addwin = new Ext.Window({
-										title : '新增配置',
-										layout : 'fit',
-										width : 300,
-										height : 300,
-										closeAction : 'hide',
-										plain : true,
-										items : [addForm]
-									});
-							addwin.on('show', function() {
-										addForm.form.reset();
-									});
+						if (configType == 2) {
+							if (Ext.isEmpty(cfg)) {
+								cfg = "{}";
+							}
+							createPropertyModel(cardPanelCmp, cfg, configId,
+									clientId);
 						}
-						addwin.show(this);
+						if (configType == 3) {
+							createMultiGridModel(cardPanelCmp, configId);
+						}
+						var cardPanelLayout = cardPanelCmp.layout;
+						if (Ext.isEmpty(cardPanelLayout.id)) {
+							cardPanelCmp.activeItem = 0;
+						} else {
+							cardPanelLayout.setActiveItem(0);
+						}
+						editorCmp(configId, clientId, configName, configType,
+								clientType, note);
 					}
-				}],
-		onCellClick : function(grid, rowIndex, columnIndex, e) {
-			var butname = e.target.defaultValue;
-			var selesm = grid.getSelectionModel().getSelections();
-			var configId = selesm[0].data.id;
-			var clientId = selesm[0].data.clientId;
-			var cfg = selesm[0].data.clientConfig;
-			var configName = selesm[0].data.configName;
-			var configType = selesm[0].data.configType;
-			var clientType = selesm[0].data.type;
-			var note = selesm[0].data.note;
-			var cardPanelCmp = Ext.getCmp('cardPanel');
-			if (butname == '编辑') {
-				if (configType == 1) {
-					createTextModel(cardPanelCmp, cfg);
-				}
-				if (configType == 2) {
-					if (Ext.isEmpty(cfg)) {
-						cfg = "{}";
-					}
-					createPropertyModel(cardPanelCmp, cfg, configId, clientId);
-				}
-				if (configType == 3) {
-					createMultiGridModel(cardPanelCmp, configId);
-				}
-				var cardPanelLayout = cardPanelCmp.layout;
-				if (Ext.isEmpty(cardPanelLayout.id)) {
-					cardPanelCmp.activeItem = 0;
-				} else {
-					cardPanelLayout.setActiveItem(0);
-				}
-				editorCmp(configId, clientId, configName, configType,
-						clientType, note);
-			}
-			// TODO
-			if (butname == '删除') {
-				Ext.MessageBox.confirm('提示', '确认删除?', function(e) {
-					if (e == 'yes') {
-						Ext.Ajax.request({
-									url : '/spreader-front/clientcfg/deletecfg?_time='
-											+ new Date().getTime(),
-									params : {
-										'cfgId' : configId
-									},
-									success : function(response) {
-										var result = Ext
-												.decode(response.responseText);
-										var success = result.success;
-										if (success) {
-											Ext.MessageBox.alert('提示', '删除成功');
-										} else {
-											Ext.MessageBox.alert('提示', '删除失败');
-										}
-									},
-									failure : function() {
-										Ext.MessageBox.alert('提示', '删除失败');
-									}
-								});
-						store.load({
-									params : {
-										start : bbar.cursor,
-										limit : bbar.pageSize
+					if (butname == '删除') {
+						Ext.MessageBox.confirm('提示', '确认删除?', function(e) {
+									if (e == 'yes') {
+										deleteConfig(configId);
+										storeLoad();
 									}
 								});
 					}
-				});
-			}
-		}
-	});
+				}
+			});
 	// 注册点击事件
 	cfgGrid.on('cellclick', cfgGrid.onCellClick, cfgGrid);
 
+	/**
+	 * 删除整条配置
+	 */
+	function deleteConfig(cfgId) {
+		if (Ext.isEmpty(cfgId)) {
+			Ext.MessageBox.alert('提示', '配置ID为空，删除失败');
+			return;
+		}
+		Ext.Ajax.request({
+					url : '/spreader-front/clientcfg/deletecfg?_time='
+							+ new Date().getTime(),
+					params : {
+						'cfgId' : cfgId
+					},
+					success : function(response) {
+						var result = Ext.decode(response.responseText);
+						var success = result.success;
+						if (success) {
+							Ext.MessageBox.alert('提示', '删除成功');
+						} else {
+							Ext.MessageBox.alert('提示', '删除失败');
+						}
+					},
+					failure : function() {
+						Ext.MessageBox.alert('提示', '删除失败');
+					}
+				});
+	}
 	var cardPanel = new Ext.Panel({
 				region : 'center',
 				id : 'cardPanel',
@@ -737,11 +730,23 @@ Ext.onReady(function() {
 					// return;
 					// }
 					// });
+					var tform = infoForm.getForm();
+					var cfgId = tform.findField("id").getValue();
+					if (modsize == 0) {
+						Ext.MessageBox.confirm('提示', '数据已经清空是否删除该配置?',
+								function(e) {
+									if (e == 'yes') {
+										deleteConfig(cfgId);
+										// TODO
+										editorWin.hide();
+										storeLoad();
+										return;
+									}
+								});
+					}
 					var cmcfg = grid.colModel.config;
 					var hideIdx = getHideIndex(cmcfg);
 					if (modsize > 0) {
-						var tform = infoForm.getForm();
-						var cfgId = tform.findField("id").getValue();
 						var clientId = tform.findField("clientId").getValue();
 						var configName = tform.findField("configName")
 								.getValue();
@@ -753,7 +758,6 @@ Ext.onReady(function() {
 						if (clientId != null && !Ext.isEmpty(configType)) {
 							var tt = new Array();
 							for (var j = 0; j < cmcfg.length; j++) {
-								// TODO
 								var cmCfgData = cmcfg[j];
 								for (var i = 0; i < modsize; i++) {
 									var tData = mod[i].data;
@@ -783,12 +787,7 @@ Ext.onReady(function() {
 									configType, configs, clientType, note)) {
 								storeData.commitChanges();
 								Ext.Msg.alert("提示", "保存成功");
-								store.load({
-											params : {
-												start : bbar.cursor,
-												limit : bbar.pageSize
-											}
-										});
+								storeLoad();
 								return;
 							} else {
 								storeData.rejectChanges();
@@ -849,6 +848,14 @@ Ext.onReady(function() {
 		multiGridStore.load();
 	}
 
+	function storeLoad() {
+		store.load({
+					params : {
+						start : bbar.cursor,
+						limit : bbar.pageSize
+					}
+				});
+	}
 	function isAllHidden(cfgs) {
 		for (var i = 0; i < cfgs.length; i++) {
 			if (!Ext.isEmpty(cfgs[i].hidden)) {
@@ -950,12 +957,7 @@ Ext.onReady(function() {
 									} else {
 										Ext.MessageBox.alert('提示', '保存失败');
 									}
-									store.load({
-												params : {
-													start : bbar.cursor,
-													limit : bbar.pageSize
-												}
-											});
+									storeLoad();
 								}
 							});
 				}
@@ -1046,12 +1048,7 @@ Ext.onReady(function() {
 									} else {
 										Ext.MessageBox.alert('提示', '保存失败');
 									}
-									store.load({
-												params : {
-													start : bbar.cursor,
-													limit : bbar.pageSize
-												}
-											});
+									storeLoad();
 								}
 							});
 						}
@@ -1133,7 +1130,6 @@ Ext.onReady(function() {
 	 * 检查组配置的名称是否重名
 	 */
 	function configNameIsValid(id, cfgName, clientType, clientId) {
-		// TODO
 		var IsValid = false;
 		Ext.Ajax.request({
 					url : '/spreader-front/clientcfg/checkgroupname?_time='
