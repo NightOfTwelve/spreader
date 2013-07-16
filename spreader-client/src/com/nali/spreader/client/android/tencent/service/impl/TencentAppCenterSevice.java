@@ -13,6 +13,7 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -161,6 +162,7 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		paramDownloadInfo.mVersionCode = mVersionCode;
 		paramDownloadInfo.mCategoryId = mCategoryId;
 		paramDownloadInfo.mTopicId = mTopicId;
+		paramDownloadInfo.mConnectNetworkUsedTime = RandomUtils.nextInt(20000);
 		return paramDownloadInfo;
 	}
 
@@ -270,9 +272,9 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		ReportParamsUtil.a(clientreportparam, (byte) 2,
 				paramDownloadInfo.mPageNoPath);// p4
 		ReportParamsUtil.a(clientreportparam, (byte) 4,
-				paramDownloadInfo.mProductID);// P4
+				paramDownloadInfo.mProductID);// P3
 		ReportParamsUtil.a(clientreportparam, (byte) 5,
-				paramDownloadInfo.mFileID);// P2
+				paramDownloadInfo.mFileID);// P3
 		ReportParamsUtil.a(clientreportparam, (byte) 3, 1);// p2
 		ReportParamsUtil.a(clientreportparam, (byte) 7, paramDownloadInfo.mUrl);// p4
 		ReportParamsUtil.a(clientreportparam, (byte) 27,
@@ -318,6 +320,8 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 			ReportParamsUtil.a(clientreportparam, (byte) 23,
 					paramDownloadInfo.mTopicId);// p2
 		}
+		ReportParamsUtil.a(clientreportparam, (byte) 32,
+				paramDownloadInfo.mConnectNetworkUsedTime);
 		return param2Byte(arraylist);
 	}
 
@@ -539,10 +543,10 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		build.append(downParam.p4.get((byte) 2));
 		build.append("\r\n");
 		build.append("id=");
-		build.append(downParam.p2.get((byte) 4));
+		build.append(downParam.p3.get((byte) 4));
 		build.append("\r\n");
 		build.append("fileid=");
-		build.append(downParam.p2.get((byte) 5));
+		build.append(downParam.p3.get((byte) 5));
 		build.append("\r\n");
 		build.append("urlapk=");
 		build.append(downParam.p4.get((byte) 7));
@@ -569,6 +573,9 @@ public class TencentAppCenterSevice implements ITencentAppCenterSevice {
 		build.append(downParam.p2.get((byte) 24));
 		build.append("\r\n");
 		build.append("topicid=0");
+		build.append("\r\n");
+		build.append("conntime=0");
+		build.append(downParam.p2.get((byte) 32));
 		return build.toString();
 	}
 }
