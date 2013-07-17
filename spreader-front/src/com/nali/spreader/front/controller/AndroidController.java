@@ -1,6 +1,7 @@
 package com.nali.spreader.front.controller;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.nali.spreader.client.android.tencent.service.ITencentAppCenterSevice;
+import com.nali.spreader.client.android.google.service.IGooglePlayService;
+import com.nali.spreader.client.android.tencent.service.ITencentAppCenterService;
 import com.nali.spreader.client.android.wandoujia.service.IWandoujiaAppService;
 import com.nali.spreader.front.controller.base.BaseController;
 
@@ -29,9 +31,16 @@ public class AndroidController extends BaseController {
 	private static final Logger logger = Logger
 			.getLogger(AndroidController.class);
 	@Autowired
-	private ITencentAppCenterSevice tencentAppCenterSevice;
+	private ITencentAppCenterService tencentAppCenterSevice;
 	@Autowired
 	private IWandoujiaAppService wandoujiaAppService;
+	@Autowired
+	private IGooglePlayService googlePlayService;
+
+	@Override
+	public String init() {
+		return null;
+	}
 
 	@ResponseBody
 	@RequestMapping(value = "/tencent/down", method = RequestMethod.POST)
@@ -146,8 +155,15 @@ public class AndroidController extends BaseController {
 		return write(m);
 	}
 
-	@Override
-	public String init() {
-		return null;
+	@ResponseBody
+	@RequestMapping(value = "/googleplay/encryptpsw")
+	public String encryptGooglePlayPsw(String email, String psw)
+			throws IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, ClassNotFoundException {
+		Assert.notNull(email, " email is null");
+		Assert.notNull(psw, " psw is null");
+		String s = googlePlayService.encryptAccountPassword(email, psw);
+		return s;
 	}
 }

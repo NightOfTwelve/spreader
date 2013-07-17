@@ -6,7 +6,7 @@ package com.nali.spreader.client.android.tencent.service;
  * @author xiefei
  * 
  */
-public interface ITencentAppCenterSevice {
+public interface ITencentAppCenterService {
 
 	String getAppDownloadPost(String mPageNoPath, int mProductID, int mFileID,
 			String mUrl, String clientIP, int mTotalSize, int mStatPosition,
