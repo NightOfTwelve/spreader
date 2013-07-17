@@ -30,7 +30,7 @@ import acs.ResHandshake;
 import com.nali.spreader.client.android.tencent.config.Network;
 import com.nali.spreader.client.android.tencent.config.ReportType;
 import com.nali.spreader.client.android.tencent.config.TencentParamsContext;
-import com.nali.spreader.client.android.tencent.service.ITencentAppCenterSevice;
+import com.nali.spreader.client.android.tencent.service.ITencentAppCenterService;
 import com.nali.spreader.client.android.tencent.utils.ReportParamsUtil;
 import com.nali.spreader.util.random.NumberRandomer;
 import com.qq.jce.wup.UniAttribute;
@@ -40,9 +40,9 @@ import com.tencent.android.qqdownloader.data.DownloadInfo;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Service
-public class TencentAppCenterSevice implements ITencentAppCenterSevice {
+public class TencentAppCenterService implements ITencentAppCenterService {
 	private static final Logger logger = Logger
-			.getLogger(TencentAppCenterSevice.class);
+			.getLogger(TencentAppCenterService.class);
 	private static final NumberRandomer maxSpeedRandom = new NumberRandomer(
 			100, 200);
 	private static final String BUILD_VERSION_SDK = "15";
