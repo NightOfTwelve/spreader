@@ -5,7 +5,7 @@ import java.util.HashMap;
 import acs.ClientReportParam;
 
 public class ReportParamsUtil {
-	public static void a(ClientReportParam paramClientReportParam,
+	public static void p1(ClientReportParam paramClientReportParam,
 			byte paramByte1, byte paramByte2) {
 		if (paramClientReportParam.p1 == null)
 			paramClientReportParam.p1 = new HashMap();
@@ -13,7 +13,7 @@ public class ReportParamsUtil {
 				Byte.valueOf(paramByte2));
 	}
 
-	public static void a(ClientReportParam paramClientReportParam,
+	public static void p2(ClientReportParam paramClientReportParam,
 			byte paramByte, int paramInt) {
 		if (paramClientReportParam.p2 == null)
 			paramClientReportParam.p2 = new HashMap();
@@ -21,7 +21,7 @@ public class ReportParamsUtil {
 				Integer.valueOf(paramInt));
 	}
 
-	public static void a(ClientReportParam paramClientReportParam,
+	public static void p3(ClientReportParam paramClientReportParam,
 			byte paramByte, long paramLong) {
 		if (paramClientReportParam.p3 == null)
 			paramClientReportParam.p3 = new HashMap();
@@ -29,7 +29,7 @@ public class ReportParamsUtil {
 				Long.valueOf(paramLong));
 	}
 
-	public static void a(ClientReportParam paramClientReportParam,
+	public static void p4(ClientReportParam paramClientReportParam,
 			byte paramByte, String paramString) {
 		if (paramClientReportParam.p4 == null)
 			paramClientReportParam.p4 = new HashMap();
