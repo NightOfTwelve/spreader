@@ -26,7 +26,7 @@ Ext.onReady(function() {
 										}, {
 											name : 'actionId'
 										}, {
-											name : 'appId'
+											name : 'appName'
 										}]),
 						// remoteSort : true,
 						autoLoad : true
@@ -61,16 +61,16 @@ Ext.onReady(function() {
 						var dateCmp = Ext.getCmp('taskDate');
 						var clientIdCmp = Ext.getCmp('clientId');
 						var actionIdCmp = Ext.getCmp('actionId');
-						var appIdCmp = Ext.getCmp('appId');
+						var appNameCmp = Ext.getCmp('appName');
 						var taskDate = dateCmp.getValue();
 						var clientId = clientIdCmp.getValue();
 						var actionId = actionIdCmp.getValue();
-						var appId = appIdCmp.getValue();
+						var appName = appNameCmp.getValue();
 						this.baseParams = {
 							clientId : clientId,
 							taskDate : taskDate,
 							actionId : actionId,
-							appId : appId
+							appName : appName
 						};
 					});
 			var sm = new Ext.grid.CheckboxSelectionModel();
@@ -90,8 +90,8 @@ Ext.onReady(function() {
 						sortable : true,
 						width : 120
 					}, {
-						header : 'AppId',
-						dataIndex : 'appId',
+						header : 'AppName',
+						dataIndex : 'appName',
 						sortable : true,
 						width : 120
 					}, {
@@ -172,8 +172,8 @@ Ext.onReady(function() {
 											emptyText : '请输入ActionId',
 											width : 130
 										}), '-', new Ext.form.TextField({
-											id : 'appId',
-											emptyText : '请输入AppID',
+											id : 'appName',
+											emptyText : '请输入AppName',
 											width : 130
 										}), '-', {
 									text : '查询',
@@ -184,11 +184,11 @@ Ext.onReady(function() {
 												.getCmp('clientId');
 										var actionIdCmp = Ext
 												.getCmp('actionId');
-										var appIdCmp = Ext.getCmp('appId');
+										var appNameCmp = Ext.getCmp('appName');
 										var taskDate = dateCmp.getValue();
 										var clientId = clientIdCmp.getValue();
 										var actionId = actionIdCmp.getValue();
-										var appId = appIdCmp.getValue();
+										var appName = appNameCmp.getValue();
 										store
 												.setBaseParam('taskDate',
 														taskDate);
@@ -198,7 +198,7 @@ Ext.onReady(function() {
 										store
 												.setBaseParam('actionId',
 														actionId);
-										store.setBaseParam('appId', appId);
+										store.setBaseParam('appName', appName);
 										store.load();
 									}
 								}]
