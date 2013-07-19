@@ -28,11 +28,11 @@ public class ClientReportController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/data")
 	public String store(Date taskDate, Long clientId, Long actionId,
-			Long appId, Integer start, Integer limit) {
+			String appName, Integer start, Integer limit) {
 		Limit lit = initLimit(start, limit);
 		PageResult<ClientReport> page = clientService
 				.findClientReportByTaskDate(taskDate, clientId, actionId,
-						appId, lit);
+						appName, lit);
 		return write(page);
 	}
 
