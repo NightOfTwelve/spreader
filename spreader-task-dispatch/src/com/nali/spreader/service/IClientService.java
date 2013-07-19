@@ -50,5 +50,5 @@ public interface IClientService {
 			Date endCreateTime, Long clientId, Integer taskType, Limit lit);
 
 	PageResult<ClientReport> findClientReportByTaskDate(Date taskDate,
-			Long clientId, Long actionId, Long appId, Limit lit);
+			Long clientId, Long actionId, String appName, Limit lit);
 }

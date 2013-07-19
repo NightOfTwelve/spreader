@@ -275,7 +275,7 @@ public class ClientService implements IClientService {
 
 	@Override
 	public PageResult<ClientReport> findClientReportByTaskDate(Date taskDate,
-			Long clientId, Long actionId, Long appId, Limit lit) {
+			Long clientId, Long actionId, String appName, Limit lit) {
 		ClientReportExample cre = new ClientReportExample();
 		ClientReportExample.Criteria c = cre.createCriteria();
 		if (taskDate != null) {
@@ -287,8 +287,8 @@ public class ClientService implements IClientService {
 		if (actionId != null) {
 			c.andActionIdEqualTo(actionId);
 		}
-		if (appId != null) {
-			c.andAppIdEqualTo(appId);
+		if (appName != null) {
+			c.andAppNameEqualTo(appName);
 		}
 		cre.setLimit(lit);
 		cre.setOrderByClause(" task_date desc,client_id,client_seq,task_type,action_id,app_id ");

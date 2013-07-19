@@ -17,7 +17,7 @@ import com.nali.spreader.model.ClientReportExample;
 @Service
 public class ClientReportService implements IClientReportService {
 	private static Logger logger = Logger.getLogger(ClientReportService.class);
-	private static ObjectMapper jsonParser=new ObjectMapper();
+	private static ObjectMapper jsonParser = new ObjectMapper();
 	@Autowired
 	private ICrudClientReportDao crudClientReportDao;
 
@@ -36,34 +36,31 @@ public class ClientReportService implements IClientReportService {
 		Long clientId = clientContext.getClientId();
 		Integer taskType = clientContext.getTaskType();
 		Long actionId = report.getActionId();
-		Long appId = report.getAppId();
+		String appName = report.getAppName();
 		Assert.notNull(taskDate, "taskDate cannot be null");
 		Assert.notNull(clientSeq, "clientSeq cannot be null");
 		Assert.notNull(clientId, "clientId cannot be null");
 		Assert.notNull(taskType, "taskType cannot be null");
 		Assert.notNull(actionId, "actionId cannot be null");
-		Assert.notNull(appId, "appId cannot be null");
+		Assert.notNull(appName, "appName cannot be null");
 		report.setTaskDate(null);
 		report.setClientSeq(null);
 		report.setActionId(null);
-		report.setAppId(null);
+		report.setAppName(null);
 		ClientReportExample example = new ClientReportExample();
-		example.createCriteria()
-			.andClientIdEqualTo(clientId)
-			.andTaskTypeEqualTo(taskType)
-			.andTaskDateEqualTo(taskDate)
-			.andClientSeqEqualTo(clientSeq)
-			.andActionIdEqualTo(actionId)
-			.andAppIdEqualTo(appId)
-			;
-		int updateCount = crudClientReportDao.updateByExampleSelective(report, example);
-		if(updateCount==0) {
+		example.createCriteria().andClientIdEqualTo(clientId)
+				.andTaskTypeEqualTo(taskType).andTaskDateEqualTo(taskDate)
+				.andClientSeqEqualTo(clientSeq).andActionIdEqualTo(actionId)
+				.andAppNameEqualTo(appName);
+		int updateCount = crudClientReportDao.updateByExampleSelective(report,
+				example);
+		if (updateCount == 0) {
 			report.setTaskDate(taskDate);
 			report.setClientSeq(clientSeq);
 			report.setClientId(clientId);
 			report.setTaskType(taskType);
 			report.setActionId(actionId);
-			report.setAppId(appId);
+			report.setAppName(appName);
 			report.setCreateTime(new Date());
 			crudClientReportDao.insertSelective(report);
 		}
