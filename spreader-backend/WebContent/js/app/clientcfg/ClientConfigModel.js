@@ -612,6 +612,8 @@ Ext.onReady(function() {
 		var idx = new Array();
 		for (var i = 0; i < idxArray.length; i++) {
 			idx[i] = {
+				// name : Ext.util.Format.trim(idxArray[i])
+				// TODO
 				name : idxArray[i]
 			}
 		}
@@ -667,23 +669,25 @@ Ext.onReady(function() {
 				iconCls : 'page_addIcon',
 				handler : function() {
 					Ext.Msg.prompt('请输入', '列名:', function(btn, text) {
+						 var trimText = Ext.util.Format.trim(text);
 								if (btn == 'ok') {
-									if (checkExistsCol(colcfg, text)) {
+									if (checkExistsCol(colcfg, trimText)) {
 										Ext.Msg.alert("提示", "该列已存在请勿重复添加");
 										return;
 									}
 									colcfg.push({
-												header : text,
-												dataIndex : text,
+												header : trimText,
+												dataIndex : trimText,
 												editor : new Ext.form.TextField(),
 												width : 180
 											});
-									cols.push(text)
+									// TODO
+									 cols.push(trimText);
 									colsHidden.setValue(cols);
 									columns = new Ext.grid.ColumnModel(colcfg);
 									var rows = multiGridStore.data.items;
 									for (var k = 0; k < rows.length; k++) {
-										rows[k].data[text] = null;
+										rows[k].data[trimText] = null;
 									}
 									grid.reconfigure(multiGridStore, columns);
 								}
@@ -1089,7 +1093,7 @@ Ext.onReady(function() {
 			var c = r[i].split("\t");
 			var a = {};
 			for (var j = 0, size2 = c.length; j < size2; j++) {
-				a[cols[j]] = c[j];
+				a[cols[j]] = Ext.util.Format.trim(c[j]);
 			}
 			d.push(a);
 		}
