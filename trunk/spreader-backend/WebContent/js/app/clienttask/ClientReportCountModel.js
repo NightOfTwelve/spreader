@@ -297,15 +297,13 @@ Ext.onReady(function() {
 		title : '<span class="commoncss"><font color="red">按客户端统计打榜情况</font></span>',
 		id : 'clientCountTab',
 		layout : 'border',
-		items : [clientGrid],
-		closable : true
+		items : [clientGrid]
 	});
 	tabs.add({
 		id : 'marketCountTab',
 		title : '<span class="commoncss"><font color="blue">按市场统计打榜情况</font></span>',
 		layout : 'border',
-		items : [marketGrid],
-		closable : true
+		items : [marketGrid]
 	});
 	tabs.activate(0);
 	// 布局模型
