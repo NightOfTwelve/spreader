@@ -216,6 +216,11 @@ var menuTree_ClientMgr = new Ext.tree.TreePanel({
 									text : "客户端任务执行统计",
 									leaf : true,
 									url : '../cr/init'
+								}, {
+									id : 'clientMarketReportExecu',
+									text : "执行总量统计",
+									leaf : true,
+									url : '../crcount/init'
 								}]
 					}),
 			// 添加监听事件
