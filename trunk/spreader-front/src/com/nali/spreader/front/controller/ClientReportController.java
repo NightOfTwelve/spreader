@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.common.util.DateUtils;
+import com.nali.spreader.dto.MarketTaskCount;
 import com.nali.spreader.front.controller.base.BaseController;
 import com.nali.spreader.model.ClientReport;
 import com.nali.spreader.service.IClientService;
@@ -50,6 +51,30 @@ public class ClientReportController extends BaseController {
 		PageResult<ClientReport> page = clientService
 				.findClientReportByCreateTime(startCreateTime, endCreateTime,
 						clientId, taskType, lit);
+		return write(page);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/clientStore")
+	public String clientStore(Integer clientDays, Integer start, Integer limit) {
+		Limit lit = initLimit(start, limit);
+		if (clientDays == null) {
+			clientDays = 0;
+		}
+		PageResult<ClientReport> page = clientService.countClientTask(
+				clientDays, lit);
+		return write(page);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/marketStore")
+	public String marketStore(Integer marketDays, Integer start, Integer limit) {
+		Limit lit = initLimit(start, limit);
+		if (marketDays == null) {
+			marketDays = 0;
+		}
+		PageResult<MarketTaskCount> page = clientService.countMarketTask(
+				marketDays, lit);
 		return write(page);
 	}
 }

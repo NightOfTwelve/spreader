@@ -19,9 +19,11 @@ import org.springframework.util.Assert;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.spreader.dao.IClientReportDao;
 import com.nali.spreader.dao.ICrudClientReportDao;
 import com.nali.spreader.dao.ICrudIpRecordDao;
 import com.nali.spreader.dto.CurrentClientIpRecordDto;
+import com.nali.spreader.dto.MarketTaskCount;
 import com.nali.spreader.model.ClientReport;
 import com.nali.spreader.model.ClientReportExample;
 import com.nali.spreader.model.IpRecord;
@@ -39,6 +41,8 @@ public class ClientService implements IClientService {
 	private ICrudIpRecordDao crudIpRecordDao;
 	@Autowired
 	private ICrudClientReportDao crudClientReportDao;
+	@Autowired
+	private IClientReportDao clientReportDao;
 
 	@Override
 	public String login(String userName, String pwd, String ip) {
@@ -295,5 +299,21 @@ public class ClientService implements IClientService {
 		List<ClientReport> list = crudClientReportDao.selectByExample(cre);
 		int count = crudClientReportDao.countByExample(cre);
 		return new PageResult<ClientReport>(list, lit, count);
+	}
+
+	@Override
+	public PageResult<ClientReport> countClientTask(int days, Limit lit) {
+		List<ClientReport> list = clientReportDao.queryClientTaskCount(days,
+				lit);
+		int count = clientReportDao.countClientTaskCount(days);
+		return new PageResult<ClientReport>(list, lit, count);
+	}
+
+	@Override
+	public PageResult<MarketTaskCount> countMarketTask(int days, Limit lit) {
+		List<MarketTaskCount> list = clientReportDao.queryMarketTaskCount(days,
+				lit);
+		int count = clientReportDao.countMarketTaskCount(days);
+		return new PageResult<MarketTaskCount>(list, lit, count);
 	}
 }

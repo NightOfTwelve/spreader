@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="spreader_client_report">
+	<select id="queryClientTaskCount" parameterClass="java.util.Map"
+		resultClass="com.nali.spreader.model.ClientReport">
+		select
+		client_id as clientId,action_id as actionId,app_name as
+		appName,expect_count as expectCount,actual_count as
+		actualCount,client_seq as clientSeq,task_date as taskDate,update_time
+		as updateTime,create_time as createTime
+		from tb_client_report where
+		task_date=date_sub(curdate(),interval
+		#days#
+		day) order by
+		client_id,client_seq,task_type,action_id,app_name
+		<isNotNull property="limit">
+			limit $limit.offset$,$limit.maxRows$
+		</isNotNull>
+	</select>
+	<select id="countClientTaskCount" parameterClass="java.lang.Integer"
+		resultClass="java.lang.Integer">
+		select
+		count(*) cnt
+		from tb_client_report where
+		task_date=date_sub(curdate(),interval
+		#days# day)
+	</select>
+	<select id="queryMarketTaskCount" parameterClass="java.util.Map"
+		resultClass="com.nali.spreader.dto.MarketTaskCount">
+		select action_id as actionId,app_name as appName,sum(expect_count) as
+		sumExpectCount,sum(actual_count) as sumActualCount
+		from
+		tb_client_report where task_date=date_sub(curdate(),interval #days#
+		day)
+		group by task_type,action_id,app_name
+		<isNotNull property="limit">
+			limit $limit.offset$,$limit.maxRows$
+		</isNotNull>
+	</select>
+	<select id="countMarketTaskCount" parameterClass="java.lang.Integer"
+		resultClass="java.lang.Integer">
+		select count(*) cnt
+		from
+		tb_client_report where
+		task_date=date_sub(curdate(),interval #days#
+		day)
+		group by
+		task_type,action_id,app_name;
+	</select>
+</sqlMap>
