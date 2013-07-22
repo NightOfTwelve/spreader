@@ -39,12 +39,12 @@
 	</select>
 	<select id="countMarketTaskCount" parameterClass="java.lang.Integer"
 		resultClass="java.lang.Integer">
-		select count(*) cnt
-		from
+		select count(*) cnt from (
+		select * from
 		tb_client_report where
 		task_date=date_sub(curdate(),interval #days#
 		day)
 		group by
-		task_type,action_id,app_name;
+		task_type,action_id,app_name) as t
 	</select>
 </sqlMap>
