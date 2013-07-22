@@ -64,13 +64,12 @@ Ext.onReady(function() {
 					clientDays : clientDays
 				};
 			});
-	var sm = new Ext.grid.CheckboxSelectionModel();
 	var rownums = new Ext.grid.RowNumberer({
 				header : 'NO',
 				locked : true
 			});
 
-	var cm = new Ext.grid.ColumnModel([rownums, sm, {
+	var cm = new Ext.grid.ColumnModel([rownums, {
 				header : '客户端ID',
 				dataIndex : 'clientId',
 				sortable : true,
@@ -142,7 +141,6 @@ Ext.onReady(function() {
 					msg : '正在加载表格数据,请稍等...'
 				},
 				bbar : bbar,
-				sm : sm,
 				cm : cm,
 				tbar : [new Ext.form.TextField({
 									id : 'clientDays',
@@ -215,13 +213,12 @@ Ext.onReady(function() {
 					marketDays : marketDays
 				};
 			});
-	var sm2 = new Ext.grid.CheckboxSelectionModel();
 	var rownums2 = new Ext.grid.RowNumberer({
 				header : 'NO',
 				locked : true
 			});
 
-	var cm2 = new Ext.grid.ColumnModel([rownums, sm, {
+	var cm2 = new Ext.grid.ColumnModel([rownums, {
 				header : 'ActionId',
 				dataIndex : 'actionId',
 				sortable : true,
@@ -265,7 +262,6 @@ Ext.onReady(function() {
 					msg : '正在加载表格数据,请稍等...'
 				},
 				bbar : bbar2,
-				sm : sm2,
 				cm : cm2,
 				tbar : [new Ext.form.TextField({
 									id : 'marketDays',
