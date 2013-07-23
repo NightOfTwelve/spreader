@@ -75,10 +75,16 @@ Ext.onReady(function() {
 				sortable : true,
 				width : 80
 			}, {
-				header : 'ActionId',
+				header : '市场代码',
 				dataIndex : 'actionId',
 				sortable : true,
 				width : 90
+			}, {
+				header : '市场',
+				dataIndex : 'actionId',
+				renderer : renderMarketName,
+				sortable : true,
+				width : 100
 			}, {
 				header : 'AppName',
 				dataIndex : 'appName',
@@ -104,7 +110,7 @@ Ext.onReady(function() {
 				header : '任务批次',
 				dataIndex : 'clientSeq',
 				sortable : true,
-				width : 200
+				width : 150
 			}, {
 				header : '更新时间',
 				dataIndex : 'updateTime',
@@ -221,8 +227,14 @@ Ext.onReady(function() {
 			});
 
 	var cm2 = new Ext.grid.ColumnModel([rownums, {
-				header : 'ActionId',
+				header : '市场代码',
 				dataIndex : 'actionId',
+				sortable : true,
+				width : 100
+			}, {
+				header : '市场',
+				dataIndex : 'actionId',
+				renderer : renderMarketName,
 				sortable : true,
 				width : 100
 			}, {
@@ -314,4 +326,50 @@ Ext.onReady(function() {
 				layout : 'border',
 				items : [tabs]
 			});
+
+	function renderMarketName(value) {
+		if (value == '4009') {
+			return '360手机助手';
+		}
+		if (value == '4010') {
+			return '安卓市场';
+		}
+		if (value == '4011') {
+			return '应用汇';
+		}
+		if (value == '4012') {
+			return '91助手';
+		}
+		if (value == '4013') {
+			return '机锋市场';
+		}
+		if (value == '4014') {
+			return '安智市场';
+		}
+		if (value == '4015') {
+			return '百度手机助手';
+		}
+		if (value == '4016') {
+			return '搜狐应用中心';
+		}
+		if (value == '4017') {
+			return '网易应用中心';
+		}
+		if (value == '4018') {
+			return '腾讯应用宝';
+		}
+		if (value == '4019') {
+			return '360桌面端';
+		}
+		if (value == '4020') {
+			return '小米市场';
+		}
+		if (value == '4021') {
+			return '豌豆荚';
+		}
+		if (value == '4022') {
+			return '安智桌面端';
+		}
+		return '新增市场';
+	}
 });
