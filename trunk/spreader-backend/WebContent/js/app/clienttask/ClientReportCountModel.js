@@ -73,33 +73,33 @@ Ext.onReady(function() {
 				header : '客户端ID',
 				dataIndex : 'clientId',
 				sortable : true,
-				width : 120
+				width : 90
 			}, {
 				header : 'ActionId',
 				dataIndex : 'actionId',
 				sortable : true,
-				width : 120
+				width : 90
 			}, {
 				header : 'AppName',
 				dataIndex : 'appName',
 				sortable : true,
-				width : 120
+				width : 90
 			}, {
 				header : '执行数量',
 				dataIndex : 'actualCount',
 				sortable : true,
-				width : 150
+				width : 100
 			}, {
 				header : '计划数量',
 				dataIndex : 'expectCount',
 				sortable : true,
-				width : 150
+				width : 100
 			}, {
 				header : '任务日期',
 				dataIndex : 'taskDate',
 				sortable : true,
 				renderer : renderDate,
-				width : 200
+				width : 150
 			}, {
 				header : '任务批次',
 				dataIndex : 'clientSeq',
@@ -110,13 +110,13 @@ Ext.onReady(function() {
 				dataIndex : 'updateTime',
 				sortable : true,
 				renderer : renderDateHis,
-				width : 200
+				width : 150
 			}, {
 				header : '创建时间',
 				dataIndex : 'createTime',
 				sortable : true,
 				renderer : renderDateHis,
-				width : 200
+				width : 150
 			}]);
 	// // 分页菜单
 	var bbar = new Ext.PagingToolbar({
@@ -177,6 +177,8 @@ Ext.onReady(function() {
 									name : 'sumExpectCount'
 								}, {
 									name : 'sumActualCount'
+								}, {
+									name : 'scale'
 								}]),
 				autoLoad : true
 			});
@@ -222,22 +224,27 @@ Ext.onReady(function() {
 				header : 'ActionId',
 				dataIndex : 'actionId',
 				sortable : true,
-				width : 120
+				width : 100
 			}, {
 				header : 'AppName',
 				dataIndex : 'appName',
 				sortable : true,
-				width : 120
+				width : 80
 			}, {
 				header : '执行总量',
 				dataIndex : 'sumActualCount',
 				sortable : true,
-				width : 150
+				width : 100
 			}, {
 				header : '计划总量',
 				dataIndex : 'sumExpectCount',
 				sortable : true,
-				width : 150
+				width : 100
+			}, {
+				header : '完成比例',
+				dataIndex : 'scale',
+				sortable : true,
+				width : 90
 			}]);
 	// // 分页菜单
 	var bbar2 = new Ext.PagingToolbar({
