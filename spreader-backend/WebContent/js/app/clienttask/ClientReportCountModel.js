@@ -341,10 +341,10 @@ Ext.onReady(function() {
 			return '91助手';
 		}
 		if (value == '4013') {
-			return '机锋市场';
+			return '安智市场';
 		}
 		if (value == '4014') {
-			return '安智市场';
+			return '机锋市场';
 		}
 		if (value == '4015') {
 			return '百度手机助手';
