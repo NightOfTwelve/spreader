@@ -73,7 +73,7 @@ Ext.onReady(function() {
 				header : '客户端ID',
 				dataIndex : 'clientId',
 				sortable : true,
-				width : 90
+				width : 80
 			}, {
 				header : 'ActionId',
 				dataIndex : 'actionId',
@@ -99,7 +99,7 @@ Ext.onReady(function() {
 				dataIndex : 'taskDate',
 				sortable : true,
 				renderer : renderDate,
-				width : 150
+				width : 100
 			}, {
 				header : '任务批次',
 				dataIndex : 'clientSeq',
@@ -110,13 +110,13 @@ Ext.onReady(function() {
 				dataIndex : 'updateTime',
 				sortable : true,
 				renderer : renderDateHis,
-				width : 150
+				width : 120
 			}, {
 				header : '创建时间',
 				dataIndex : 'createTime',
 				sortable : true,
 				renderer : renderDateHis,
-				width : 150
+				width : 120
 			}]);
 	// // 分页菜单
 	var bbar = new Ext.PagingToolbar({
