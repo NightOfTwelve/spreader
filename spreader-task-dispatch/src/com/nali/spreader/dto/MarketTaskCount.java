@@ -8,6 +8,7 @@ public class MarketTaskCount implements Serializable {
 	private String appName;
 	private int sumExpectCount;
 	private int sumActualCount;
+	private String scale;
 
 	public Long getActionId() {
 		return actionId;
@@ -39,5 +40,13 @@ public class MarketTaskCount implements Serializable {
 
 	public void setSumActualCount(int sumActualCount) {
 		this.sumActualCount = sumActualCount;
+	}
+
+	public String getScale() {
+		return scale;
+	}
+
+	public void setScale(String scale) {
+		this.scale = scale;
 	}
 }

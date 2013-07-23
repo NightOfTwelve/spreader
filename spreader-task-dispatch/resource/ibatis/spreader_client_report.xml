@@ -28,11 +28,15 @@
 	<select id="queryMarketTaskCount" parameterClass="java.util.Map"
 		resultClass="com.nali.spreader.dto.MarketTaskCount">
 		select action_id as actionId,app_name as appName,sum(expect_count) as
-		sumExpectCount,sum(actual_count) as sumActualCount
+		sumExpectCount,sum(actual_count) as
+		sumActualCount,concat(round(sum(actual_count)/sum(expect_count)*100,2),'%')
+		as scale
 		from
-		tb_client_report where task_date=date_sub(curdate(),interval #days#
+		tb_client_report where
+		task_date=date_sub(curdate(),interval #days#
 		day)
-		group by task_type,action_id,app_name
+		group by
+		task_type,action_id,app_name
 		<isNotNull property="limit">
 			limit $limit.offset$,$limit.maxRows$
 		</isNotNull>
@@ -41,7 +45,8 @@
 		resultClass="java.lang.Integer">
 		select count(*) cnt from (
 		select * from
-		tb_client_report where
+		tb_client_report
+		where
 		task_date=date_sub(curdate(),interval #days#
 		day)
 		group by
