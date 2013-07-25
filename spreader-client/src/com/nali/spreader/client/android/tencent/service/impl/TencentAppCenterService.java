@@ -592,45 +592,40 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		ClientReportParam downParam = getClientReportParam(downData);
 		ClientReportParam installParam = getClientReportParam(installData);
 		StringBuilder build = new StringBuilder();
-		build.append("path=");
+		build.append("androidYYBDownload.path\t");
 		build.append(downParam.p4.get((byte) 2));
 		build.append("\r\n");
-		build.append("id=");
+		build.append("androidYYBDownload.id\t");
 		build.append(downParam.p3.get((byte) 4));
 		build.append("\r\n");
-		build.append("fileid=");
+		build.append("androidYYBDownload.fileid\t");
 		build.append(downParam.p3.get((byte) 5));
 		build.append("\r\n");
-		build.append("urlapk=");
+		build.append("androidYYBDownload.urlapk\t");
 		build.append(downParam.p4.get((byte) 7));
 		build.append("\r\n");
-		build.append("size=");
+		build.append("androidYYBDownload.size\t");
 		build.append(downParam.p2.get((byte) 16));
 		build.append("\r\n");
-		build.append("stat=");
+		build.append("androidYYBDownload.stat\t");
 		build.append(downParam.p2.get((byte) 25));
 		build.append("\r\n");
-		build.append("search=");
+		build.append("androidYYBDownload.search\t");
 		build.append("\r\n");
-		build.append("p20=0");
+		build.append("androidYYBDownload.p20\t0");
 		build.append("\r\n");
-		build.append("p21=0");
+		build.append("androidYYBDownload.p21\t0");
 		build.append("\r\n");
-		build.append("version=");
+		build.append("androidYYBDownload.version\t");
 		build.append(installParam.p2.get((byte) 3));
 		build.append("\r\n");
-		build.append("pack=");
+		build.append("androidYYBDownload.pack\t");
 		build.append(installParam.p4.get((byte) 2));
 		build.append("\r\n");
-		build.append("categoryid=");
+		build.append("androidYYBDownload.categoryid\t");
 		build.append(downParam.p2.get((byte) 24));
 		build.append("\r\n");
-		build.append("topicid=0");
+		build.append("androidYYBDownload.topicid\t0");
 		return build.toString();
-	}
-
-	public static void main(String[] args) {
-		int si = 650240 + RandomUtils.nextInt(999);
-		System.out.println(si);
 	}
 }
