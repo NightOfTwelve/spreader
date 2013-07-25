@@ -24,6 +24,8 @@ Ext.onReady(function() {
 										}, {
 											name : 'actualCount'
 										}, {
+											name : 'successCount'
+										}, {
 											name : 'actionId'
 										}, {
 											name : 'appName'
@@ -102,6 +104,11 @@ Ext.onReady(function() {
 					}, {
 						header : '计划数量',
 						dataIndex : 'expectCount',
+						sortable : true,
+						width : 150
+					}, {
+						header : '成功数',
+						dataIndex : 'successCount',
 						sortable : true,
 						width : 150
 					}, {

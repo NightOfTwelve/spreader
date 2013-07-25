@@ -27,6 +27,8 @@ Ext.onReady(function() {
 									name : 'actionId'
 								}, {
 									name : 'appName'
+								}, {
+									name : 'successCount'
 								}]),
 				// remoteSort : true,
 				autoLoad : true
@@ -98,6 +100,11 @@ Ext.onReady(function() {
 			}, {
 				header : '计划数量',
 				dataIndex : 'expectCount',
+				sortable : true,
+				width : 100
+			}, {
+				header : '成功数',
+				dataIndex : 'successCount',
 				sortable : true,
 				width : 100
 			}, {
@@ -184,7 +191,11 @@ Ext.onReady(function() {
 								}, {
 									name : 'sumActualCount'
 								}, {
-									name : 'scale'
+									name : 'actualScale'
+								}, {
+									name : 'sumSuccessCount'
+								}, {
+									name : 'successScale'
 								}]),
 				autoLoad : true
 			});
@@ -243,18 +254,28 @@ Ext.onReady(function() {
 				sortable : true,
 				width : 80
 			}, {
-				header : '执行总量',
-				dataIndex : 'sumActualCount',
-				sortable : true,
-				width : 100
-			}, {
 				header : '计划总量',
 				dataIndex : 'sumExpectCount',
 				sortable : true,
 				width : 100
 			}, {
-				header : '完成比例',
-				dataIndex : 'scale',
+				header : '执行总量',
+				dataIndex : 'sumActualCount',
+				sortable : true,
+				width : 100
+			}, {
+				header : '完成率(%)',
+				dataIndex : 'actualScale',
+				sortable : true,
+				width : 90
+			}, {
+				header : '成功总量',
+				dataIndex : 'sumSuccessCount',
+				sortable : true,
+				width : 90
+			}, {
+				header : '成功率(%)',
+				dataIndex : 'successScale',
 				sortable : true,
 				width : 90
 			}]);
