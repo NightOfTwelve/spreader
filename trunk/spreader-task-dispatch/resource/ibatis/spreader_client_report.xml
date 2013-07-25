@@ -6,8 +6,10 @@
 		select
 		client_id as clientId,action_id as actionId,app_name as
 		appName,expect_count as expectCount,actual_count as
-		actualCount,client_seq as clientSeq,task_date as taskDate,update_time
-		as updateTime,create_time as createTime
+		actualCount,success_count as successCount,client_seq as
+		clientSeq,task_date as taskDate,update_time
+		as updateTime,create_time
+		as createTime
 		from tb_client_report where
 		task_date=date_sub(curdate(),interval
 		#days#
@@ -29,8 +31,12 @@
 		resultClass="com.nali.spreader.dto.MarketTaskCount">
 		select action_id as actionId,app_name as appName,sum(expect_count) as
 		sumExpectCount,sum(actual_count) as
-		sumActualCount,concat(round(sum(actual_count)/sum(expect_count)*100,2),'%')
-		as scale
+		sumActualCount,round(sum(actual_count)/sum(expect_count)*100,2)
+		as
+		actualScale,sum(success_count) as
+		sumSuccessCount,round(sum(success_count)/sum(actual_count)*100,2)
+		as
+		successScale
 		from
 		tb_client_report where
 		task_date=date_sub(curdate(),interval #days#
