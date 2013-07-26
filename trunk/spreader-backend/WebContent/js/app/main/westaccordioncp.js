@@ -118,11 +118,6 @@ var menuTree_InfoQuery = new Ext.tree.TreePanel({
 									text : "App排行查询",
 									leaf : true,
 									url : '../appletop/init'
-								}, {
-									id : 'androidUtils',
-									text : "apk反编译帮助",
-									leaf : true,
-									url : '../androidutil/init'
 								}]
 					}),
 			// 添加监听事件
@@ -221,6 +216,11 @@ var menuTree_ClientMgr = new Ext.tree.TreePanel({
 									text : "执行总量统计",
 									leaf : true,
 									url : '../crcount/init'
+								}, {
+									id : 'androidUtils',
+									text : "apk反编译帮助",
+									leaf : true,
+									url : '../androidutil/init'
 								}]
 					}),
 			// 添加监听事件
