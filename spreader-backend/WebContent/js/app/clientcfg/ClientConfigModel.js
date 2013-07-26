@@ -16,7 +16,7 @@ Ext.onReady(function() {
 						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
 							bbar.pageSize = Number(numtext.getValue());
 							number = Number(numtext.getValue());
-							sinaUserStore.reload({
+							store.reload({
 										params : {
 											start : 0,
 											limit : bbar.pageSize
@@ -60,32 +60,39 @@ Ext.onReady(function() {
 	var cfgcm = new Ext.grid.ColumnModel([{
 				header : '编号',
 				dataIndex : 'id',
+				sortable : true,
 				width : 60
 			}, {
 				header : '客户端编号',
 				dataIndex : 'clientId',
+				sortable : true,
 				width : 80
 			}, {
 				header : '客户端类型',
 				dataIndex : 'type',
+				sortable : true,
 				width : 80
 			}, {
 				header : '配置名称',
 				dataIndex : 'configName',
+				sortable : true,
 				width : 80
 			}, {
 				header : '配置类型',
 				dataIndex : 'configType',
 				renderer : renderEditorType,
+				sortable : true,
 				width : 80
 			}, {
 				header : '配置信息',
 				dataIndex : 'clientConfig',
+				sortable : true,
 				width : 100
 			}, {
 				header : '说明',
 				dataIndex : 'note',
 				renderer : renderBrief,
+				sortable : true,
 				width : 100
 			}, {
 				header : '属性配置',
@@ -669,7 +676,7 @@ Ext.onReady(function() {
 				iconCls : 'page_addIcon',
 				handler : function() {
 					Ext.Msg.prompt('请输入', '列名:', function(btn, text) {
-						 var trimText = Ext.util.Format.trim(text);
+								var trimText = Ext.util.Format.trim(text);
 								if (btn == 'ok') {
 									if (checkExistsCol(colcfg, trimText)) {
 										Ext.Msg.alert("提示", "该列已存在请勿重复添加");
@@ -682,7 +689,7 @@ Ext.onReady(function() {
 												width : 180
 											});
 									// TODO
-									 cols.push(trimText);
+									cols.push(trimText);
 									colsHidden.setValue(cols);
 									columns = new Ext.grid.ColumnModel(colcfg);
 									var rows = multiGridStore.data.items;
