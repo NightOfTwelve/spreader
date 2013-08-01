@@ -24,10 +24,12 @@ import acs.ClientReportParam;
 import acs.JceRequestType;
 import acs.ReqHandshake;
 import acs.ReqHeader;
+import acs.ReqNewmd5ofDownSoft;
 import acs.ReqReportClientData;
 import acs.ResHandshake;
 
 import com.nali.spreader.client.android.tencent.config.DownloadStatus;
+import com.nali.spreader.client.android.tencent.config.DownloadType;
 import com.nali.spreader.client.android.tencent.config.Network;
 import com.nali.spreader.client.android.tencent.config.ReportType;
 import com.nali.spreader.client.android.tencent.config.TencentParamsContext;
@@ -53,8 +55,6 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	private String AQQMM;
 	@Value("${spreader.tx.app.header.androidVersion}")
 	private String androidVersion;
-	@Value("${spreader.tx.app.download.mDownType}")
-	private byte mDownType;
 	@Value("${spreader.tx.app.header.version}")
 	private int version;
 	@Value("${spreader.tx.app.header.businessId}")
@@ -79,6 +79,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	private int mask;
 	private static final NumberRandomer useTimeRandom = new NumberRandomer(
 			10000, 59999);
+	private static final NumberRandomer updateTimeDifference = new NumberRandomer(
+			100, 999);
 
 	@Override
 	public String getAppDownloadPost(String mPageNoPath, int mProductID,
@@ -97,13 +99,17 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		TencentParamsContext.setTencentParamsContext(ctx);
 		DownloadInfo paramDownloadInfo = getDownloadInfo(mPageNoPath,
 				mProductID, mFileID, mUrl, clientIP, mTotalSize, mStatPosition,
-				mSearchInfo, mVersionCode, mCategoryId, mTopicId);
+				mSearchInfo, mVersionCode, mCategoryId, mTopicId,
+				DownloadType.download.getId());
 		try {
+			byte[] newmd5DownReport = getNewmd5DownSoftReport(mFileID);
 			byte[] downReport = getDownloadReport(paramDownloadInfo, clientIP);
 			byte[] userDownloadActionReport = getUserDownloadAction(
 					paramDownloadInfo, clientIP, pack);
 			byte[] installReport = getAppInstallReport(paramDownloadInfo, pack);
 			StringBuilder builder = new StringBuilder();
+			builder.append(Base64.encodeBase64String(newmd5DownReport));
+			builder.append("\r\n");
 			builder.append(Base64.encodeBase64String(downReport));
 			// byte[] userOpReport = getUserOperationReport(mProductID, p20,
 			// p21);
@@ -148,13 +154,13 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	private DownloadInfo getDownloadInfo(String mPageNoPath, int mProductID,
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
 			int mStatPosition, String mSearchInfo, int mVersionCode,
-			int mCategoryId, int mTopicId) {
+			int mCategoryId, int mTopicId, byte downType) {
 		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
 		DownloadInfo paramDownloadInfo = new DownloadInfo();
 		paramDownloadInfo.mPageNoPath = mPageNoPath;// 2
 		paramDownloadInfo.mProductID = mProductID;// 4
 		paramDownloadInfo.mFileID = mFileID;// 5
-		paramDownloadInfo.mDownType = mDownType;// 8
+		paramDownloadInfo.mDownType = downType;// 8
 		paramDownloadInfo.mUrl = mUrl;
 		paramDownloadInfo.mStarttime = ctx.getTime();// 11
 		int usedTime = useTimeRandom.get();
@@ -201,13 +207,13 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	private String getQua(int widthPixels, int heightPixels) {
 		StringBuilder stringbuilder = new StringBuilder();
 		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
-		String s2 = stringbuilder.append(AQQMM).append("/").append(version)
-				.append(" na_2/000000").append(" ADR ")
-				.append(widthPixels / 16).append("").append(heightPixels / 16)
-				.append("").append("14").append("&").append(ctx.getPhoneName())
-				.append("&").append(androidVersion).append("&")
-				.append(outSideChannel).append("&0").append("&V3").toString();
-		return s2;
+		String qua = stringbuilder.append(AQQMM).append("/").append(version)
+				.append("&na_2/000000").append("&ADR&")
+				.append(widthPixels / 16).append(heightPixels / 16)
+				.append("14&").append(ctx.getPhoneName()).append("&")
+				.append(androidVersion).append("&").append(outSideChannel)
+				.append("&0&V3").toString();
+		return qua;
 	}
 
 	private String getDownIP(String apkUrl) {
@@ -241,7 +247,17 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		ctx.timeGo(useTimeRandom.get());
 		ReportParamsUtil.p3(localClientReportParam, (byte) 4,
 				ctx.getTime() / 1000L);
-		return param2Byte(localArrayList);
+		return reportClientData2Byte(localArrayList);
+	}
+
+	private byte[] getNewmd5DownSoftReport(long fileId) {
+		UniPacket localUniPacket = new UniPacket();
+		a(localUniPacket, JceRequestType.newmd5ofDownSoft.toString());
+		ReqNewmd5ofDownSoft md5Req = new ReqNewmd5ofDownSoft();
+		md5Req.setId(fileId);
+		md5Req.setType((byte) 0);
+		a(localUniPacket, md5Req, true, false);
+		return localUniPacket.encode();
 	}
 
 	// apt.java
@@ -277,7 +293,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		ReportParamsUtil.p3(clientReportParam, (byte) 13,
 				paramDownloadInfo.mTotalSize);
 		ReportParamsUtil.p4(clientReportParam, (byte) 14, getSdcardPath(pack));
-		return param2Byte(localArrayList);
+		return reportClientData2Byte(localArrayList);
 	}
 
 	private String getSdcardPath(String pack) {
@@ -303,7 +319,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		ReportParamsUtil.p2(clientreportparam, (byte) 1, p21);
 		ReportParamsUtil.p2(clientreportparam, (byte) 2, 1);
 		ReportParamsUtil.p3(clientreportparam, (byte) 4, (long) mProductID);
-		return param2Byte(arraylist);
+		return reportClientData2Byte(arraylist);
 	}
 
 	private byte[] getDownloadReport(DownloadInfo paramDownloadInfo,
@@ -374,7 +390,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		}
 		ReportParamsUtil.p2(clientreportparam, (byte) 32,
 				paramDownloadInfo.mConnectNetworkUsedTime);
-		return param2Byte(arraylist);
+		return reportClientData2Byte(arraylist);
 	}
 
 	public int getMaxSpeed(int speed) {
@@ -386,7 +402,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		return (int) ((1000L * (long) size) / (long) useTime);
 	}
 
-	private byte[] param2Byte(ArrayList paramArrayList) {
+	private byte[] reportClientData2Byte(ArrayList paramArrayList) {
 		UniPacket localUniPacket = new UniPacket();
 		a(localUniPacket, JceRequestType.reportClientData.toString());
 		ReqReportClientData localReqReportClientData = new ReqReportClientData();
@@ -627,5 +643,40 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		build.append("\r\n");
 		build.append("androidYYBDownload.topicid\t0");
 		return build.toString();
+	}
+
+	private String updateReport(String handshake, String data, int totalSize,
+			int patchSize, int mProductID, int mFileID, String mUrl) {
+		int guid = getGuid(handshake);
+		String[] dataArray = getGlobalParams(data);
+		TencentParamsContext ctx = new TencentParamsContext(dataArray[0],
+				Integer.parseInt(dataArray[1]), dataArray[2], guid,
+				System.currentTimeMillis() - 10 * 1000L, dataArray[3],
+				dataArray[4]);
+		TencentParamsContext.setTencentParamsContext(ctx);
+		int useTime = useTimeRandom.get();
+		ArrayList arraylist = new ArrayList();
+		ClientReportInfo clientreportinfo = new ClientReportInfo();
+		arraylist.add(clientreportinfo);
+		clientreportinfo.type = ReportType.patchDownload.getId();
+		clientreportinfo.params = new ArrayList();
+		ClientReportParam clientreportparam = new ClientReportParam();
+		clientreportinfo.params.add(clientreportparam);
+		ReportParamsUtil.p2(clientreportparam, (byte) 0, Network.WIFI.getId());// WIFI
+		ReportParamsUtil.p1(clientreportparam, (byte) 1, (byte) 2);
+		ReportParamsUtil.p2(clientreportparam, (byte) 2, totalSize);
+		ReportParamsUtil.p2(clientreportparam, (byte) 3, useTime);
+		ReportParamsUtil.p3(clientreportparam, (byte) 4,
+				updateTimeDifference.get());
+		ReportParamsUtil.p3(clientreportparam, (byte) 5, patchSize);
+		ReportParamsUtil.p1(clientreportparam, (byte) 6, (byte) 0);
+		ReportParamsUtil.p3(clientreportparam, (byte) 7, mProductID);
+		ReportParamsUtil.p3(clientreportparam, (byte) 8, mFileID);
+		ReportParamsUtil.p4(clientreportparam, (byte) 9, mUrl);
+		ReportParamsUtil.p4(clientreportparam, (byte) 10, getDownIP(mUrl));
+		ReportParamsUtil.p2(clientreportparam, (byte) 11, 0);
+		ReportParamsUtil.p2(clientreportparam, (byte) 12, 1);
+
+		return null;
 	}
 }
