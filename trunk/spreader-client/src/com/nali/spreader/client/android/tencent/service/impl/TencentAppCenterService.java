@@ -473,14 +473,28 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		sb.append(up.getFuncName());
 		sb.append("\r\n");
 		sb.append("\r\n");
-		sb.append(up.get("reqHeader"));
+		Object header = up.get("reqHeader");
+		if (header == null) {
+			header = up.get("resHeader");
+			if (header == null) {
+				header = up.get("detail");
+				if (header == null) {
+					header = "====Unknown type====";
+				}
+			}
+		}
+		sb.append(header);
 		sb.append("\r\n");
 		sb.append("requestId:" + up.getRequestId());
 		sb.append("\r\n");
-		sb.append(getObject(up));
+		Object body = getReportClientDataBody(up);
+		if (body != null) {
+			sb.append(body);
+		}
 		return sb.toString();
 	}
 
+	// private Object getReport
 	private UniPacket getUniPacket(byte[] bytes) {
 		UniPacket up = new UniPacket();
 		up.setEncodeName("UTF-8");
@@ -488,7 +502,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		return up;
 	}
 
-	private Object getObject(UniPacket up) {
+	private Object getReportClientDataBody(UniPacket up) {
 		try {
 			Object obj = up.get("body");
 			byte[] by = (byte[]) obj;
@@ -513,8 +527,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 
 	@Override
 	public String getDownUrl(String host, byte[] down, byte[] install) {
-		ReqReportClientData downData = (ReqReportClientData) getObject(getUniPacket(down));
-		ReqReportClientData installData = (ReqReportClientData) getObject(getUniPacket(install));
+		ReqReportClientData downData = (ReqReportClientData) getReportClientDataBody(getUniPacket(down));
+		ReqReportClientData installData = (ReqReportClientData) getReportClientDataBody(getUniPacket(install));
 		return getDownUrl(host, downData, installData);
 	}
 
@@ -603,8 +617,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 
 	@Override
 	public String getDownProperty(byte[] down, byte[] install) {
-		ReqReportClientData downData = (ReqReportClientData) getObject(getUniPacket(down));
-		ReqReportClientData installData = (ReqReportClientData) getObject(getUniPacket(install));
+		ReqReportClientData downData = (ReqReportClientData) getReportClientDataBody(getUniPacket(down));
+		ReqReportClientData installData = (ReqReportClientData) getReportClientDataBody(getUniPacket(install));
 		ClientReportParam downParam = getClientReportParam(downData);
 		ClientReportParam installParam = getClientReportParam(installData);
 		StringBuilder build = new StringBuilder();
