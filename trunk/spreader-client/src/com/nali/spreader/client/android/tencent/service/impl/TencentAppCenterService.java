@@ -659,8 +659,10 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		return build.toString();
 	}
 
-	private String updateReport(String handshake, String data, int totalSize,
-			int patchSize, int mProductID, int mFileID, String mUrl) {
+	public String getAppUpdatePost(String mPageNoPath, int mProductID,
+			int mFileID, String mUrl, String clientIP, int mTotalSize,
+			int patchSize, int mStatPosition, int mVersionCode, String pack,
+			String data, String handshake) {
 		int guid = getGuid(handshake);
 		String[] dataArray = getGlobalParams(data);
 		TencentParamsContext ctx = new TencentParamsContext(dataArray[0],
@@ -668,6 +670,36 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 				System.currentTimeMillis() - 10 * 1000L, dataArray[3],
 				dataArray[4]);
 		TencentParamsContext.setTencentParamsContext(ctx);
+		DownloadInfo paramDownloadInfo = getDownloadInfo(mPageNoPath,
+				mProductID, mFileID, mUrl, clientIP, mTotalSize, mStatPosition,
+				null, mVersionCode, 0, 0, DownloadType.update.getId());
+
+		try {
+			byte[] patchDown = getPatchDownload(mTotalSize, patchSize,
+					mProductID, mFileID, mUrl);
+			byte[] download = getDownloadReport(paramDownloadInfo, clientIP);
+			byte[] downAction = getUserDownloadAction(paramDownloadInfo,
+					clientIP, getAppPatchName(mUrl));
+			byte[] install = getAppInstallReport(paramDownloadInfo, pack);
+			StringBuilder builder = new StringBuilder();
+			builder.append(Base64.encodeBase64String(patchDown));
+			builder.append("\r\n");
+			builder.append(Base64.encodeBase64String(download));
+			builder.append("\r\n");
+			builder.append(Base64.encodeBase64String(downAction));
+			builder.append("\r\n");
+			builder.append(Base64.encodeBase64String(install));
+			return builder.toString();
+		} catch (Exception e) {
+			logger.error(e, e);
+		} finally {
+			TencentParamsContext.remove();
+		}
+		return null;
+	}
+
+	private byte[] getPatchDownload(int totalSize, int patchSize,
+			int mProductID, int mFileID, String mUrl) {
 		int useTime = useTimeRandom.get();
 		ArrayList arraylist = new ArrayList();
 		ClientReportInfo clientreportinfo = new ClientReportInfo();
@@ -690,7 +722,17 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		ReportParamsUtil.p4(clientreportparam, (byte) 10, getDownIP(mUrl));
 		ReportParamsUtil.p2(clientreportparam, (byte) 11, 0);
 		ReportParamsUtil.p2(clientreportparam, (byte) 12, 1);
+		return reportClientData2Byte(arraylist);
+	}
 
-		return null;
+	private String getAppPatchName(String url) {
+		String fileName = "";
+		if (StringUtils.isNotBlank(url)) {
+			String[] strArr = StringUtils.split(url, '/');
+			if (strArr.length > 0) {
+				fileName = strArr[strArr.length - 1];
+			}
+		}
+		return fileName;
 	}
 }

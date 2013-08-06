@@ -62,8 +62,4 @@ public class MacAddress {
 		int rInt = rand.nextInt(chars.length);
 		return chars[rInt];
 	}
-
-	public static void main(String[] args) {
-		System.out.println(MacAddress.randomUpperCaseMacAddress(null));
-	}
 }

@@ -21,7 +21,7 @@ public class TencentParamsContext {
 	private String imsi = genMachineUniqueId();
 	private int requestId = RandomUtils.nextInt(99);
 	private String phoneName = Phone.get();
-	private String macAddres = MacAddress.randomUpperCaseMacAddress(null);
+	private String macAddres = MacAddress.randomLowerCaseMacAddress(null);
 
 	public TencentParamsContext() {
 		super();
@@ -137,6 +137,6 @@ public class TencentParamsContext {
 		System.out.println("mac:" + tc.getMacAddres());
 		System.out.println("mid:" + tc.getMachineUniqueId());
 		System.out.println("imsi:" + tc.getImsi());
-		System.out.println("contime:"+RandomUtils.nextInt(20000));
+		System.out.println("contime:" + RandomUtils.nextInt(20000));
 	}
 }

@@ -57,6 +57,18 @@ public class AndroidController extends BaseController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/tencent/update", method = RequestMethod.POST)
+	public String tencentAppUpdate(String mPageNoPath, int mProductID,
+			int mFileID, String mUrl, String clientIP, int mTotalSize,
+			int patchSize, int mStatPosition, int mVersionCode, String pack,
+			String data, String handshake) {
+		String post = tencentAppCenterSevice.getAppUpdatePost(mPageNoPath,
+				mProductID, mFileID, mUrl, clientIP, mTotalSize, patchSize,
+				mStatPosition, mVersionCode, pack, data, handshake);
+		return post;
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/tencent/reportdata", method = RequestMethod.POST)
 	public String tencentReportData(String report) {
 		Assert.notNull(report, "report is null");
