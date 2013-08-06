@@ -14,6 +14,11 @@ public interface ITencentAppCenterService {
 			String pack, int mCategoryId, int mTopicId, String data,
 			String handshake);
 
+	String getAppUpdatePost(String mPageNoPath, int mProductID, int mFileID,
+			String mUrl, String clientIP, int mTotalSize, int patchSize,
+			int mStatPosition, int mVersionCode, String pack, String data,
+			String handshake);
+
 	String getReport(byte[] bytes);
 
 	String getHandshakeReport();
