@@ -34,7 +34,8 @@
 		sumActualCount,round(sum(actual_count)/sum(expect_count)*100,2)
 		as
 		actualScale,sum(success_count) as
-		sumSuccessCount,IF(round(sum(success_count)/sum(actual_count)*100,2),null,0.0)
+		sumSuccessCount,if(round(sum(success_count)/sum(actual_count)*100,2)
+		is null,0.0,round(sum(success_count)/sum(actual_count)*100,2))
 		as
 		successScale
 		from
