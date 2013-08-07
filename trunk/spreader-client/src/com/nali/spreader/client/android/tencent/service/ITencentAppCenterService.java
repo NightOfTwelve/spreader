@@ -21,7 +21,7 @@ public interface ITencentAppCenterService {
 
 	String getReport(byte[] bytes);
 
-	String getHandshakeReport();
+	String getHandshakeReport(String phoneName, String androidVersion);
 
 	String getDownUrl(String host, byte[] down, byte[] install);
 
