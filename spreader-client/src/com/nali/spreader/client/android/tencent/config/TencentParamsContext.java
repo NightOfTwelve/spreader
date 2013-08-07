@@ -15,20 +15,27 @@ public class TencentParamsContext {
 			1000000, 642747645);
 	private static final Random androidRandom = new Random();
 	private long time;
-
 	private int guid = guidRandom.get();
 	private String machineUniqueId = genMachineUniqueId();
 	private String imsi = genMachineUniqueId();
 	private int requestId = RandomUtils.nextInt(99);
 	private String phoneName = Phone.get();
+	private String androidVersion = "Android4.1.2";
 	private String macAddres = MacAddress.randomLowerCaseMacAddress(null);
 
 	public TencentParamsContext() {
 		super();
 	}
 
+	public TencentParamsContext(String phoneName, String androidVersion) {
+		super();
+		this.phoneName = phoneName;
+		this.androidVersion = androidVersion;
+	}
+
 	public TencentParamsContext(String machineUniqueId, int requestId,
-			String phoneName, int guid, long time, String macAddres, String imsi) {
+			String phoneName, int guid, long time, String macAddres,
+			String imsi, String androidVersion) {
 		super();
 		if (StringUtils.isNotBlank(machineUniqueId)) {
 			this.machineUniqueId = machineUniqueId;
@@ -47,6 +54,9 @@ public class TencentParamsContext {
 		}
 		if (StringUtils.isNotBlank(imsi)) {
 			this.imsi = imsi;
+		}
+		if (StringUtils.isNotBlank(androidVersion)) {
+			this.androidVersion = androidVersion;
 		}
 		this.time = time;
 	}
@@ -131,12 +141,11 @@ public class TencentParamsContext {
 		this.imsi = imsi;
 	}
 
-	public static void main(String[] args) {
-		TencentParamsContext tc = new TencentParamsContext();
-		TencentParamsContext.setTencentParamsContext(tc);
-		System.out.println("mac:" + tc.getMacAddres());
-		System.out.println("mid:" + tc.getMachineUniqueId());
-		System.out.println("imsi:" + tc.getImsi());
-		System.out.println("contime:" + RandomUtils.nextInt(20000));
+	public String getAndroidVersion() {
+		return androidVersion;
+	}
+
+	public void setAndroidVersion(String androidVersion) {
+		this.androidVersion = androidVersion;
 	}
 }

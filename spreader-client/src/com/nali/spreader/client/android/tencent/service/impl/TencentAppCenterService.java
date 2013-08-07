@@ -53,8 +53,6 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	private String buildVersionSdk;
 	@Value("${spreader.tx.app.header.AQQMM}")
 	private String AQQMM;
-	@Value("${spreader.tx.app.header.androidVersion}")
-	private String androidVersion;
 	@Value("${spreader.tx.app.header.version}")
 	private int version;
 	@Value("${spreader.tx.app.header.businessId}")
@@ -95,7 +93,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		TencentParamsContext ctx = new TencentParamsContext(dataArray[0],
 				Integer.parseInt(dataArray[1]), dataArray[2], guid,
 				System.currentTimeMillis() - 10 * 1000L, dataArray[3],
-				dataArray[4]);
+				dataArray[4], dataArray[5]);
 		TencentParamsContext.setTencentParamsContext(ctx);
 		DownloadInfo paramDownloadInfo = getDownloadInfo(mPageNoPath,
 				mProductID, mFileID, mUrl, clientIP, mTotalSize, mStatPosition,
@@ -183,7 +181,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
 		ReqHeader localReqHeader = new ReqHeader();
 		localReqHeader.guid = ctx.getGuid();
-		localReqHeader.qua = getQua(resolutionX, resolutionY);
+		localReqHeader.qua = getQua(resolutionX, resolutionY,
+				ctx.getPhoneName());
 		localReqHeader.version = version;
 		localReqHeader.businessId = businessId;
 		localReqHeader.sid = "";
@@ -204,15 +203,15 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		return localReqHeader;
 	}
 
-	private String getQua(int widthPixels, int heightPixels) {
+	private String getQua(int widthPixels, int heightPixels, String phoneName) {
 		StringBuilder stringbuilder = new StringBuilder();
 		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
 		String qua = stringbuilder.append(AQQMM).append("/").append(version)
 				.append("&na_2/000000").append("&ADR&")
 				.append(widthPixels / 16).append(heightPixels / 16)
 				.append("14&").append(ctx.getPhoneName()).append("&")
-				.append(androidVersion).append("&").append(outSideChannel)
-				.append("&0&V3").toString();
+				.append(ctx.getAndroidVersion()).append("&")
+				.append(outSideChannel).append("&0&V3").toString();
 		return qua;
 	}
 
@@ -445,12 +444,12 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		return localReqHeader;
 	}
 
-	private static Object a(UniAttribute uniattribute, UniPacket unipacket) {
+	private Object a(UniAttribute uniattribute, UniPacket unipacket) {
 		byte abyte0[] = uniattribute.encode();
 		return ado_b(abyte0);
 	}
 
-	private static byte[] ado_b(byte abyte0[]) {
+	private byte[] ado_b(byte abyte0[]) {
 		ByteArrayOutputStream bytearrayoutputstream1 = new ByteArrayOutputStream();
 		GZIPOutputStream gzipoutputstream;
 		try {
@@ -570,8 +569,12 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	}
 
 	@Override
-	public String getHandshakeReport() {
-		TencentParamsContext ctx = new TencentParamsContext();
+	public String getHandshakeReport(String phoneName, String androidVersion) {
+		if (StringUtils.isBlank(phoneName)) {
+			throw new IllegalArgumentException("phoneName is empty");
+		}
+		TencentParamsContext ctx = new TencentParamsContext(phoneName,
+				androidVersion);
 		TencentParamsContext.setTencentParamsContext(ctx);
 		TencentParamsContext curr = TencentParamsContext.getCurrentContext();
 		StringBuilder param = new StringBuilder();
@@ -579,7 +582,6 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		try {
 			String machineUniqueId = curr.getMachineUniqueId();
 			int requestId = curr.getRequestId();
-			String phoneName = curr.getPhoneName();
 			String macAddress = curr.getMacAddres();
 			String imsi = curr.getImsi();
 			byte[] handshake = getHandshake(machineUniqueId);
@@ -594,6 +596,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 			data.append(macAddress);
 			data.append("\r\n");
 			data.append(imsi);
+			data.append("\r\n");
+			data.append(androidVersion);
 			param.append(Base64.encodeBase64String(data.toString().getBytes(
 					"utf-8")));
 		} catch (Exception e) {
@@ -668,7 +672,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		TencentParamsContext ctx = new TencentParamsContext(dataArray[0],
 				Integer.parseInt(dataArray[1]), dataArray[2], guid,
 				System.currentTimeMillis() - 10 * 1000L, dataArray[3],
-				dataArray[4]);
+				dataArray[4], dataArray[5]);
 		TencentParamsContext.setTencentParamsContext(ctx);
 		DownloadInfo paramDownloadInfo = getDownloadInfo(mPageNoPath,
 				mProductID, mFileID, mUrl, clientIP, mTotalSize, mStatPosition,
