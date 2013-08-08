@@ -46,9 +46,6 @@ public class TencentParamsContext {
 		if (StringUtils.isNotBlank(phoneName)) {
 			this.phoneName = phoneName;
 		}
-		if (guid > 1000000 && guid < 642747645) {
-			this.guid = guid;
-		}
 		if (StringUtils.isNotBlank(macAddres)) {
 			this.macAddres = macAddres;
 		}
@@ -58,6 +55,7 @@ public class TencentParamsContext {
 		if (StringUtils.isNotBlank(androidVersion)) {
 			this.androidVersion = androidVersion;
 		}
+		this.guid = guid;
 		this.time = time;
 	}
 
