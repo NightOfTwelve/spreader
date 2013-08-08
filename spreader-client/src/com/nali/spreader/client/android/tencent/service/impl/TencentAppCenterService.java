@@ -677,7 +677,6 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		DownloadInfo paramDownloadInfo = getDownloadInfo(mPageNoPath,
 				mProductID, mFileID, mUrl, clientIP, mTotalSize, mStatPosition,
 				null, mVersionCode, 0, 0, DownloadType.update.getId());
-
 		try {
 			byte[] patchDown = getPatchDownload(mTotalSize, patchSize,
 					mProductID, mFileID, mUrl);
