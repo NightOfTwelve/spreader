@@ -34,7 +34,7 @@ Ext.onReady(function() {
 				autoLoad : true
 			});
 	// 页数
-	var number = 20;
+	var number = 200;
 	var numtext = new Ext.form.TextField({
 				id : 'maxpage',
 				name : 'maxpage',
@@ -200,7 +200,7 @@ Ext.onReady(function() {
 				autoLoad : true
 			});
 	// 页数
-	var number2 = 20;
+	var number2 = 200;
 	var numtext2 = new Ext.form.TextField({
 				id : 'maxpage2',
 				name : 'maxpage2',
