@@ -46,13 +46,13 @@ public class AndroidController extends BaseController {
 	@RequestMapping(value = "/tencent/down", method = RequestMethod.POST)
 	public String tencentAppDownload(String mPageNoPath, int mProductID,
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
-			int mStatPosition, String mSearchInfo, int p20, int p21,
-			int mVersionCode, String pack, int mCategoryId, int mTopicId,
-			String data, String handshake) {
+			int mDownloadSize, int mStatPosition, String mSearchInfo, int p20,
+			int p21, int mVersionCode, String pack, int mCategoryId,
+			int mTopicId, String data, String handshake) {
 		String post = tencentAppCenterSevice.getAppDownloadPost(mPageNoPath,
-				mProductID, mFileID, mUrl, clientIP, mTotalSize, mStatPosition,
-				mSearchInfo, p20, p21, mVersionCode, pack, mCategoryId,
-				mTopicId, data, handshake);
+				mProductID, mFileID, mUrl, clientIP, mTotalSize, mDownloadSize,
+				mStatPosition, mSearchInfo, p20, p21, mVersionCode, pack,
+				mCategoryId, mTopicId, data, handshake);
 		return post;
 	}
 
@@ -60,11 +60,11 @@ public class AndroidController extends BaseController {
 	@RequestMapping(value = "/tencent/update", method = RequestMethod.POST)
 	public String tencentAppUpdate(String mPageNoPath, int mProductID,
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
-			int patchSize, int mStatPosition, int mVersionCode, String pack,
-			String data, String handshake) {
+			int mDownloadSize, int patchSize, int mStatPosition,
+			int mVersionCode, String pack, String data, String handshake) {
 		String post = tencentAppCenterSevice.getAppUpdatePost(mPageNoPath,
-				mProductID, mFileID, mUrl, clientIP, mTotalSize, patchSize,
-				mStatPosition, mVersionCode, pack, data, handshake);
+				mProductID, mFileID, mUrl, clientIP, mTotalSize, mDownloadSize,
+				patchSize, mStatPosition, mVersionCode, pack, data, handshake);
 		return post;
 	}
 
