@@ -9,15 +9,15 @@ package com.nali.spreader.client.android.tencent.service;
 public interface ITencentAppCenterService {
 
 	String getAppDownloadPost(String mPageNoPath, int mProductID, int mFileID,
-			String mUrl, String clientIP, int mTotalSize, int mStatPosition,
-			String mSearchInfo, int p20, int p21, int mVersionCode,
-			String pack, int mCategoryId, int mTopicId, String data,
-			String handshake);
+			String mUrl, String clientIP, int mTotalSize, int mDownloadSize,
+			int mStatPosition, String mSearchInfo, int p20, int p21,
+			int mVersionCode, String pack, int mCategoryId, int mTopicId,
+			String data, String handshake);
 
 	String getAppUpdatePost(String mPageNoPath, int mProductID, int mFileID,
-			String mUrl, String clientIP, int mTotalSize, int patchSize,
-			int mStatPosition, int mVersionCode, String pack, String data,
-			String handshake);
+			String mUrl, String clientIP, int mTotalSize, int mDownloadSize,
+			int patchSize, int mStatPosition, int mVersionCode, String pack,
+			String data, String handshake);
 
 	String getReport(byte[] bytes);
 

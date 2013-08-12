@@ -48,7 +48,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 			.getLogger(TencentAppCenterService.class);
 	private static final NumberRandomer maxSpeedRandom = new NumberRandomer(
 			100, 200);
-	private static final String APK_DIR = "/storage/sdcard0/bao/Apk/";
+	private static final String APK_DIR = "/mnt/sdcard/bao/Apk/";
 	@Value("${spreader.tx.app.handshake.buildVersionSdk}")
 	private String buildVersionSdk;
 	@Value("${spreader.tx.app.header.AQQMM}")
@@ -83,9 +83,9 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	@Override
 	public String getAppDownloadPost(String mPageNoPath, int mProductID,
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
-			int mStatPosition, String mSearchInfo, int p20, int p21,
-			int mVersionCode, String pack, int mCategoryId, int mTopicId,
-			String data, String handshake) {
+			int mDownloadSize, int mStatPosition, String mSearchInfo, int p20,
+			int p21, int mVersionCode, String pack, int mCategoryId,
+			int mTopicId, String data, String handshake) {
 		Assert.notNull(handshake, " handshake is null ");
 		Assert.notNull(data, " globalParams is null ");
 		int guid = getGuid(handshake);
@@ -96,23 +96,28 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 				dataArray[4], dataArray[5]);
 		TencentParamsContext.setTencentParamsContext(ctx);
 		DownloadInfo paramDownloadInfo = getDownloadInfo(mPageNoPath,
-				mProductID, mFileID, mUrl, clientIP, mTotalSize, mStatPosition,
-				mSearchInfo, mVersionCode, mCategoryId, mTopicId,
-				DownloadType.download.getId());
+				mProductID, mFileID, mUrl, clientIP, mTotalSize, mDownloadSize,
+				mStatPosition, mSearchInfo, mVersionCode, mCategoryId,
+				mTopicId, DownloadType.download.getId());
 		try {
 			byte[] newmd5DownReport = getNewmd5DownSoftReport(mFileID);
+			byte[] userOpReport = getUserOperationReport(mProductID, p20, p21);
+			byte[] actionStart = getUserDownloadAction(paramDownloadInfo,
+					clientIP, pack, DownloadStatus.start);
 			byte[] downReport = getDownloadReport(paramDownloadInfo, clientIP);
-			byte[] userDownloadActionReport = getUserDownloadAction(
-					paramDownloadInfo, clientIP, pack);
+			byte[] actionFinish = getUserDownloadAction(paramDownloadInfo,
+					clientIP, pack, DownloadStatus.finish);
 			byte[] installReport = getAppInstallReport(paramDownloadInfo, pack);
 			StringBuilder builder = new StringBuilder();
 			builder.append(Base64.encodeBase64String(newmd5DownReport));
 			builder.append("\r\n");
-			builder.append(Base64.encodeBase64String(downReport));
-			// byte[] userOpReport = getUserOperationReport(mProductID, p20,
-			// p21);
+			builder.append(Base64.encodeBase64String(userOpReport));
 			builder.append("\r\n");
-			builder.append(Base64.encodeBase64String(userDownloadActionReport));
+			builder.append(Base64.encodeBase64String(actionStart));
+			builder.append("\r\n");
+			builder.append(Base64.encodeBase64String(downReport));
+			builder.append("\r\n");
+			builder.append(Base64.encodeBase64String(actionFinish));
 			builder.append("\r\n");
 			builder.append(Base64.encodeBase64String(installReport));
 			return builder.toString();
@@ -121,7 +126,6 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		} finally {
 			TencentParamsContext.remove();
 		}
-		// builder.append(Base64.encodeBase64String(userOpReport));
 		return null;
 	}
 
@@ -151,8 +155,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 
 	private DownloadInfo getDownloadInfo(String mPageNoPath, int mProductID,
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
-			int mStatPosition, String mSearchInfo, int mVersionCode,
-			int mCategoryId, int mTopicId, byte downType) {
+			int mDownloadSize, int mStatPosition, String mSearchInfo,
+			int mVersionCode, int mCategoryId, int mTopicId, byte downType) {
 		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
 		DownloadInfo paramDownloadInfo = new DownloadInfo();
 		paramDownloadInfo.mPageNoPath = mPageNoPath;// 2
@@ -166,6 +170,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		paramDownloadInfo.mEndtime = ctx.getTime();// 12
 		paramDownloadInfo.mUsedTime = usedTime;// 13
 		paramDownloadInfo.mTotalSize = mTotalSize;// 16
+		paramDownloadInfo.mDownloadSize = mDownloadSize;
 		paramDownloadInfo.mPackageName = String.valueOf(mProductID);// 4
 		paramDownloadInfo.mBookId = mProductID;// 4
 		paramDownloadInfo.mStatPosition = mStatPosition;// 25
@@ -261,7 +266,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 
 	// apt.java
 	private byte[] getUserDownloadAction(DownloadInfo paramDownloadInfo,
-			String clientIP, String pack) {
+			String clientIP, String pack, DownloadStatus status) {
 		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
 		ArrayList localArrayList = new ArrayList();
 		ClientReportInfo localClientReportInfo = new ClientReportInfo();
@@ -276,8 +281,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 				paramDownloadInfo.mDownType);
 		ReportParamsUtil
 				.p4(clientReportParam, (byte) 2, paramDownloadInfo.mUrl);
-		ReportParamsUtil.p2(clientReportParam, (byte) 3,
-				DownloadStatus.finish.getId());
+		ReportParamsUtil.p2(clientReportParam, (byte) 3, status.getId());
 		// 异常，无异常 -1
 		ReportParamsUtil.p2(clientReportParam, (byte) 4, -1);
 		ReportParamsUtil.p4(clientReportParam, (byte) 5, "");
@@ -287,11 +291,17 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		ReportParamsUtil.p4(clientReportParam, (byte) 9, "wifi");
 		ReportParamsUtil.p4(clientReportParam, (byte) 10, "");
 		ReportParamsUtil.p1(clientReportParam, (byte) 11, (byte) -1);
-		ReportParamsUtil.p3(clientReportParam, (byte) 12,
-				paramDownloadInfo.mTotalSize + 517);
+		if (status.getId() == 0) {
+			ReportParamsUtil.p3(clientReportParam, (byte) 12, 0);
+			ReportParamsUtil.p4(clientReportParam, (byte) 14, "");
+		} else {
+			ReportParamsUtil.p3(clientReportParam, (byte) 12,
+					paramDownloadInfo.mDownloadSize);
+			ReportParamsUtil.p4(clientReportParam, (byte) 14,
+					getSdcardPath(pack));
+		}
 		ReportParamsUtil.p3(clientReportParam, (byte) 13,
 				paramDownloadInfo.mTotalSize);
-		ReportParamsUtil.p4(clientReportParam, (byte) 14, getSdcardPath(pack));
 		return reportClientData2Byte(localArrayList);
 	}
 
@@ -665,8 +675,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 
 	public String getAppUpdatePost(String mPageNoPath, int mProductID,
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
-			int patchSize, int mStatPosition, int mVersionCode, String pack,
-			String data, String handshake) {
+			int mDownloadSize, int patchSize, int mStatPosition,
+			int mVersionCode, String pack, String data, String handshake) {
 		int guid = getGuid(handshake);
 		String[] dataArray = getGlobalParams(data);
 		TencentParamsContext ctx = new TencentParamsContext(dataArray[0],
@@ -675,14 +685,15 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 				dataArray[4], dataArray[5]);
 		TencentParamsContext.setTencentParamsContext(ctx);
 		DownloadInfo paramDownloadInfo = getDownloadInfo(mPageNoPath,
-				mProductID, mFileID, mUrl, clientIP, mTotalSize, mStatPosition,
-				null, mVersionCode, 0, 0, DownloadType.update.getId());
+				mProductID, mFileID, mUrl, clientIP, mTotalSize, mDownloadSize,
+				mStatPosition, null, mVersionCode, 0, 0,
+				DownloadType.update.getId());
 		try {
 			byte[] patchDown = getPatchDownload(mTotalSize, patchSize,
 					mProductID, mFileID, mUrl);
 			byte[] download = getDownloadReport(paramDownloadInfo, clientIP);
 			byte[] downAction = getUserDownloadAction(paramDownloadInfo,
-					clientIP, getAppPatchName(mUrl));
+					clientIP, getAppPatchName(mUrl), DownloadStatus.start);
 			byte[] install = getAppInstallReport(paramDownloadInfo, pack);
 			StringBuilder builder = new StringBuilder();
 			builder.append(Base64.encodeBase64String(patchDown));
