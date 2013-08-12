@@ -377,13 +377,15 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 			ArrayList arraylist2 = new ArrayList();
 			String as1[] = StringUtils.split(paramDownloadInfo.mSearchInfo,
 					"]lIl]lIl");
-			if (as1 != null && as1.length > 3) {
+			if (as1 != null && as1.length > 2) {
 				for (int l = 0; l < as1.length; l++)
 					arraylist2.add(as1[l]);
-				ReportParamsUtil.p4(clientreportparam, (byte) 19, as1[0]);// p4
-				ReportParamsUtil.p4(clientreportparam, (byte) 20, as1[1]);// p4
-				ReportParamsUtil.p4(clientreportparam, (byte) 21, as1[2]);// p4
-				ReportParamsUtil.p4(clientreportparam, (byte) 22, as1[3]);// p4
+
+				if (!as1[0].equals("#")) {
+					ReportParamsUtil.p4(clientreportparam, (byte) 30, as1[0]);
+				}
+				ReportParamsUtil.p4(clientreportparam, (byte) 20, as1[1]);
+				ReportParamsUtil.p4(clientreportparam, (byte) 21, as1[2]);
 			}
 		}
 		ReportParamsUtil.p1(clientreportparam, (byte) 26, (byte) 1);// p1
