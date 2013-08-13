@@ -48,11 +48,11 @@ public class AndroidController extends BaseController {
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
 			int mDownloadSize, int mStatPosition, String mSearchInfo, int p20,
 			int p21, int mVersionCode, String pack, int mCategoryId,
-			int mTopicId, String data, String handshake) {
+			int mTopicId, String data, String handshake, String search) {
 		String post = tencentAppCenterSevice.getAppDownloadPost(mPageNoPath,
 				mProductID, mFileID, mUrl, clientIP, mTotalSize, mDownloadSize,
 				mStatPosition, mSearchInfo, p20, p21, mVersionCode, pack,
-				mCategoryId, mTopicId, data, handshake);
+				mCategoryId, mTopicId, data, handshake, search);
 		return post;
 	}
 
@@ -98,6 +98,13 @@ public class AndroidController extends BaseController {
 	public String tencentHandshake(String phoneName, String androidVersion) {
 		return tencentAppCenterSevice.getHandshakeReport(phoneName,
 				androidVersion);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/tencent/search")
+	public String tencentSearch(String keyword, String handshake, String data) {
+		return tencentAppCenterSevice.getAccurateSearchReport(keyword,
+				handshake, data);
 	}
 
 	@ResponseBody
