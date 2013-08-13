@@ -17,15 +17,16 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import acs.ClientReportInfo;
 import acs.ClientReportParam;
 import acs.JceRequestType;
+import acs.ReqAccurateSearch;
 import acs.ReqHandshake;
 import acs.ReqHeader;
 import acs.ReqNewmd5ofDownSoft;
 import acs.ReqReportClientData;
+import acs.ResAccurateSearch;
 import acs.ResHandshake;
 
 import com.nali.spreader.client.android.tencent.config.DownloadStatus;
@@ -85,20 +86,16 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
 			int mDownloadSize, int mStatPosition, String mSearchInfo, int p20,
 			int p21, int mVersionCode, String pack, int mCategoryId,
-			int mTopicId, String data, String handshake) {
-		Assert.notNull(handshake, " handshake is null ");
-		Assert.notNull(data, " globalParams is null ");
-		int guid = getGuid(handshake);
-		String[] dataArray = getGlobalParams(data);
-		TencentParamsContext ctx = new TencentParamsContext(dataArray[0],
-				Integer.parseInt(dataArray[1]), dataArray[2], guid,
-				System.currentTimeMillis() - 10 * 1000L, dataArray[3],
-				dataArray[4], dataArray[5]);
-		TencentParamsContext.setTencentParamsContext(ctx);
+			int mTopicId, String data, String handshake, String search) {
+		if (StringUtils.isBlank(search)) {
+			throw new IllegalArgumentException(" search is blank ");
+		}
+		setContent(handshake, data);
+		String searchId = getSearchId(search);
 		DownloadInfo paramDownloadInfo = getDownloadInfo(mPageNoPath,
 				mProductID, mFileID, mUrl, clientIP, mTotalSize, mDownloadSize,
-				mStatPosition, mSearchInfo, mVersionCode, mCategoryId,
-				mTopicId, DownloadType.download.getId());
+				mStatPosition, mSearchInfo, searchId, mVersionCode,
+				mCategoryId, mTopicId, DownloadType.download.getId());
 		try {
 			byte[] newmd5DownReport = getNewmd5DownSoftReport(mFileID);
 			byte[] userOpReport = getUserOperationReport(mProductID, p20, p21);
@@ -129,6 +126,45 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		return null;
 	}
 
+	private String getSearchId(String search) {
+		byte[] bytes = Base64.decodeBase64(search);
+		UniPacket up = new UniPacket();
+		up.setEncodeName("UTF-8");
+		up.decode(bytes);
+		try {
+			GZIPInputStream i = new GZIPInputStream(new ByteArrayInputStream(
+					(byte[]) up.get("body")));
+			UniAttribute ua = new UniAttribute();
+			byte[] bs = IOUtils.toByteArray(i);
+			ua.decode(bs);
+			ResAccurateSearch as = ua.get("b");
+			if (as != null) {
+				return as.getSearchId();
+			} else {
+				throw new IllegalArgumentException(" ResAccurateSearch is null");
+			}
+		} catch (Exception e) {
+			logger.error(" UniAttribute decode error", e);
+		}
+		return null;
+	}
+
+	private void setContent(String handshake, String globalParams) {
+		if (StringUtils.isBlank(handshake)) {
+			throw new IllegalArgumentException(" handshake is blank");
+		}
+		if (StringUtils.isBlank(globalParams)) {
+			throw new IllegalArgumentException(" globalParams is blank");
+		}
+		int guid = getGuid(handshake);
+		String[] dataArray = getGlobalParams(globalParams);
+		TencentParamsContext ctx = new TencentParamsContext(dataArray[0],
+				Integer.parseInt(dataArray[1]), dataArray[2], guid,
+				System.currentTimeMillis() - 10 * 1000L, dataArray[3],
+				dataArray[4], dataArray[5]);
+		TencentParamsContext.setTencentParamsContext(ctx);
+	}
+
 	private String[] getGlobalParams(String data) {
 		String[] paramArr = new String[] {};
 		try {
@@ -156,7 +192,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	private DownloadInfo getDownloadInfo(String mPageNoPath, int mProductID,
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
 			int mDownloadSize, int mStatPosition, String mSearchInfo,
-			int mVersionCode, int mCategoryId, int mTopicId, byte downType) {
+			String searchId, int mVersionCode, int mCategoryId, int mTopicId,
+			byte downType) {
 		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
 		DownloadInfo paramDownloadInfo = new DownloadInfo();
 		paramDownloadInfo.mPageNoPath = mPageNoPath;// 2
@@ -174,7 +211,9 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		paramDownloadInfo.mPackageName = String.valueOf(mProductID);// 4
 		paramDownloadInfo.mBookId = mProductID;// 4
 		paramDownloadInfo.mStatPosition = mStatPosition;// 25
-		paramDownloadInfo.mSearchInfo = mSearchInfo;
+		if (searchId != null) {
+			paramDownloadInfo.mSearchInfo = searchId + "]lIl]lIl" + mSearchInfo;
+		}
 		paramDownloadInfo.mVersionCode = mVersionCode;
 		paramDownloadInfo.mCategoryId = mCategoryId;
 		paramDownloadInfo.mTopicId = mTopicId;
@@ -380,7 +419,6 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 			if (as1 != null && as1.length > 2) {
 				for (int l = 0; l < as1.length; l++)
 					arraylist2.add(as1[l]);
-
 				if (!as1[0].equals("#")) {
 					ReportParamsUtil.p4(clientreportparam, (byte) 30, as1[0]);
 				}
@@ -590,28 +628,14 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		TencentParamsContext.setTencentParamsContext(ctx);
 		TencentParamsContext curr = TencentParamsContext.getCurrentContext();
 		StringBuilder param = new StringBuilder();
-		StringBuilder data = new StringBuilder();
+		String globa = getGlobalParams(curr.getMachineUniqueId(),
+				curr.getRequestId(), curr.getPhoneName(), curr.getMacAddres(),
+				curr.getImsi(), curr.getAndroidVersion());
 		try {
-			String machineUniqueId = curr.getMachineUniqueId();
-			int requestId = curr.getRequestId();
-			String macAddress = curr.getMacAddres();
-			String imsi = curr.getImsi();
-			byte[] handshake = getHandshake(machineUniqueId);
+			byte[] handshake = getReqHandshake(curr.getMachineUniqueId());
 			param.append(Base64.encodeBase64String(handshake));
 			param.append("\r\n");
-			data.append(machineUniqueId);
-			data.append("\r\n");
-			data.append(requestId);
-			data.append("\r\n");
-			data.append(phoneName);
-			data.append("\r\n");
-			data.append(macAddress);
-			data.append("\r\n");
-			data.append(imsi);
-			data.append("\r\n");
-			data.append(androidVersion);
-			param.append(Base64.encodeBase64String(data.toString().getBytes(
-					"utf-8")));
+			param.append(Base64.encodeBase64String(globa.getBytes("utf-8")));
 		} catch (Exception e) {
 			logger.error("getHandshake error", e);
 		} finally {
@@ -620,7 +644,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		return param.toString();
 	}
 
-	private byte[] getHandshake(String machineUniqueId) {
+	private byte[] getReqHandshake(String machineUniqueId) {
 		UniPacket localUniPacket = new UniPacket();
 		a(localUniPacket, JceRequestType.handshake.toString());
 		ReqHandshake localReqHandshake = new ReqHandshake();
@@ -628,6 +652,20 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		localReqHandshake.setSROM(buildVersionSdk);
 		localReqHandshake.setActiveTime(0l);
 		a(localUniPacket, localReqHandshake, false, true);
+		return localUniPacket.encode();
+	}
+
+	private byte[] getReqAccurateSearch(String keyword) {
+		UniPacket localUniPacket = new UniPacket();
+		a(localUniPacket, JceRequestType.accurateSearch.toString());
+		ReqAccurateSearch search = new ReqAccurateSearch();
+		search.setWord(keyword);
+		search.setSearchId("");
+		search.setPageSize(20);
+		search.setPageNo(1);
+		search.setSearchType((byte) 6);
+		search.setSearchId(null);
+		a(localUniPacket, search, false, true);
 		return localUniPacket.encode();
 	}
 
@@ -679,16 +717,10 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 			int mFileID, String mUrl, String clientIP, int mTotalSize,
 			int mDownloadSize, int patchSize, int mStatPosition,
 			int mVersionCode, String pack, String data, String handshake) {
-		int guid = getGuid(handshake);
-		String[] dataArray = getGlobalParams(data);
-		TencentParamsContext ctx = new TencentParamsContext(dataArray[0],
-				Integer.parseInt(dataArray[1]), dataArray[2], guid,
-				System.currentTimeMillis() - 10 * 1000L, dataArray[3],
-				dataArray[4], dataArray[5]);
-		TencentParamsContext.setTencentParamsContext(ctx);
+		setContent(handshake, data);
 		DownloadInfo paramDownloadInfo = getDownloadInfo(mPageNoPath,
 				mProductID, mFileID, mUrl, clientIP, mTotalSize, mDownloadSize,
-				mStatPosition, null, mVersionCode, 0, 0,
+				mStatPosition, null, null, mVersionCode, 0, 0,
 				DownloadType.update.getId());
 		try {
 			byte[] patchDown = getPatchDownload(mTotalSize, patchSize,
@@ -750,5 +782,47 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 			}
 		}
 		return fileName;
+	}
+
+	@Override
+	public String getAccurateSearchReport(String keyword, String handshake,
+			String data) {
+		if (StringUtils.isBlank(keyword)) {
+			throw new IllegalArgumentException(" keyword is blank");
+		}
+		setContent(handshake, data);
+		TencentParamsContext curr = TencentParamsContext.getCurrentContext();
+		StringBuilder param = new StringBuilder();
+		String globa = getGlobalParams(curr.getMachineUniqueId(),
+				curr.getRequestId(), curr.getPhoneName(), curr.getMacAddres(),
+				curr.getImsi(), curr.getAndroidVersion());
+		try {
+			byte[] search = getReqAccurateSearch(keyword);
+			param.append(Base64.encodeBase64String(search));
+			param.append("\r\n");
+			param.append(Base64.encodeBase64String(globa.getBytes("utf-8")));
+		} catch (Exception e) {
+			logger.error("getAccurateSearch error", e);
+		} finally {
+			TencentParamsContext.remove();
+		}
+		return param.toString();
+	}
+
+	private String getGlobalParams(String machineUniqueId, int reqId,
+			String phoneName, String mac, String imsi, String android) {
+		StringBuilder data = new StringBuilder();
+		data.append(machineUniqueId);
+		data.append("\r\n");
+		data.append(reqId);
+		data.append("\r\n");
+		data.append(phoneName);
+		data.append("\r\n");
+		data.append(mac);
+		data.append("\r\n");
+		data.append(imsi);
+		data.append("\r\n");
+		data.append(android);
+		return data.toString();
 	}
 }
