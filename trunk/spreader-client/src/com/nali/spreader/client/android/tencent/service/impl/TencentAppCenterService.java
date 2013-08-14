@@ -670,11 +670,16 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	}
 
 	@Override
-	public String getDownProperty(byte[] down, byte[] install) {
+	public String getDownProperty(byte[] down, byte[] install, byte[] action,
+			byte[] userop) {
 		ReqReportClientData downData = (ReqReportClientData) getReportClientDataBody(getUniPacket(down));
 		ReqReportClientData installData = (ReqReportClientData) getReportClientDataBody(getUniPacket(install));
+		ReqReportClientData actionData = (ReqReportClientData) getReportClientDataBody(getUniPacket(action));
+		ReqReportClientData useropData = (ReqReportClientData) getReportClientDataBody(getUniPacket(userop));
 		ClientReportParam downParam = getClientReportParam(downData);
 		ClientReportParam installParam = getClientReportParam(installData);
+		ClientReportParam actionParam = getClientReportParam(actionData);
+		ClientReportParam useropParam = getClientReportParam(useropData);
 		StringBuilder build = new StringBuilder();
 		build.append("androidYYBDownload.path\t");
 		build.append(downParam.p4.get((byte) 2));
@@ -695,10 +700,14 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		build.append(downParam.p2.get((byte) 25));
 		build.append("\r\n");
 		build.append("androidYYBDownload.search\t");
+		build.append(getSearchStr(downParam.p4.get((byte) 20).toString(),
+				downParam.p4.get((byte) 21).toString()));
 		build.append("\r\n");
-		build.append("androidYYBDownload.p20\t0");
+		build.append("androidYYBDownload.p20\t");
+		build.append(useropParam.p2.get((byte) 0));
 		build.append("\r\n");
-		build.append("androidYYBDownload.p21\t0");
+		build.append("androidYYBDownload.p21\t");
+		build.append(useropParam.p2.get((byte) 1));
 		build.append("\r\n");
 		build.append("androidYYBDownload.version\t");
 		build.append(installParam.p2.get((byte) 3));
@@ -707,10 +716,27 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		build.append(installParam.p4.get((byte) 2));
 		build.append("\r\n");
 		build.append("androidYYBDownload.categoryid\t");
-		build.append(downParam.p2.get((byte) 24));
+		Object ca = downParam.p2.get((byte) 24);
+		if (ca == null) {
+			ca = 0;
+		}
+		build.append(ca);
 		build.append("\r\n");
 		build.append("androidYYBDownload.topicid\t0");
+		build.append("\r\n");
+		build.append("androidYYBDownload.mDownloadSize\t");
+		build.append(actionParam.p3.get((byte) 12));
+		build.append("\r\n");
+		build.append("androidYYBDownload.keyword\t");
+		build.append(downParam.p4.get((byte) 21));
 		return build.toString();
+	}
+
+	private String getSearchStr(String p420, String p421) {
+		StringBuilder sb = new StringBuilder(p420);
+		sb.append("]lIl]lIl");
+		sb.append(p421);
+		return sb.toString();
 	}
 
 	public String getAppUpdatePost(String mPageNoPath, int mProductID,

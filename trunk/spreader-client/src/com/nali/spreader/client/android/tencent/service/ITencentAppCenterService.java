@@ -27,5 +27,5 @@ public interface ITencentAppCenterService {
 
 	String getDownUrl(String host, byte[] down, byte[] install);
 
-	String getDownProperty(byte[] down, byte[] install);
+	String getDownProperty(byte[] down, byte[] install,byte[] action, byte[] userop);
 }
