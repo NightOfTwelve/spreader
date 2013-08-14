@@ -168,15 +168,29 @@ Ext.onReady(function() {
 					xtype : 'fileuploadfield',
 					id : 'downReport',
 					emptyText : '请选择数据文件',
-					fieldLabel : '下载包',
+					fieldLabel : '下载包Type0',
 					name : 'downReport',
 					buttonText : '···'
 				}, {
 					xtype : 'fileuploadfield',
 					id : 'installReport',
 					emptyText : '请选择数据文件',
-					fieldLabel : '安装包',
+					fieldLabel : '安装包Type8',
 					name : 'installReport',
+					buttonText : '···'
+				}, {
+					xtype : 'fileuploadfield',
+					id : 'actionReport',
+					emptyText : '请选择数据文件',
+					fieldLabel : 'ActionDownload包Type15',
+					name : 'actionReport',
+					buttonText : '···'
+				}, {
+					xtype : 'fileuploadfield',
+					id : 'useropReport',
+					emptyText : '请选择数据文件',
+					fieldLabel : 'userOperation包Type4',
+					name : 'useropReport',
 					buttonText : '···'
 				}],
 		buttons : [{
@@ -253,7 +267,7 @@ Ext.onReady(function() {
 												title : '上传文件',
 												layout : 'fit',
 												width : 400,
-												height : 140,
+												height : 280,
 												closeAction : 'hide',
 												plain : true,
 												items : [yybPropForm]
