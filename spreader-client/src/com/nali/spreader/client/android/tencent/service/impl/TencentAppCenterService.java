@@ -97,6 +97,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 				mStatPosition, mSearchInfo, searchId, mVersionCode,
 				mCategoryId, mTopicId, DownloadType.download.getId());
 		try {
+			byte[] access = getUserAccess(mProductID);
 			byte[] newmd5DownReport = getNewmd5DownSoftReport(mFileID);
 			byte[] userOpReport = getUserOperationReport(mProductID, p20, p21);
 			byte[] actionStart = getUserDownloadAction(paramDownloadInfo,
@@ -106,6 +107,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 					clientIP, pack, DownloadStatus.finish);
 			byte[] installReport = getAppInstallReport(paramDownloadInfo, pack);
 			StringBuilder builder = new StringBuilder();
+			builder.append(Base64.encodeBase64String(access));
+			builder.append("\r\n");
 			builder.append(Base64.encodeBase64String(newmd5DownReport));
 			builder.append("\r\n");
 			builder.append(Base64.encodeBase64String(userOpReport));
@@ -291,6 +294,27 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		ReportParamsUtil.p3(localClientReportParam, (byte) 4,
 				ctx.getTime() / 1000L);
 		return reportClientData2Byte(localArrayList);
+	}
+
+	private byte[] getUserAccess(int mProductID) {
+		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
+		ArrayList list = new ArrayList();
+		ClientReportInfo rep = new ClientReportInfo();
+		list.add(rep);
+		rep.type = ReportType.userAccess.getId();
+		rep.params = new ArrayList();
+		ClientReportParam params = new ClientReportParam();
+		rep.params.add(params);
+		ReportParamsUtil.p2(params, (byte) 0, 1013);
+		ReportParamsUtil.p2(params, (byte) 1, 101504);
+		ReportParamsUtil.p2(params, (byte) 2, 101301);
+		ReportParamsUtil.p2(params, (byte) 3, 101302);
+		ReportParamsUtil.p1(params, (byte) 7, (byte) 1);
+		ReportParamsUtil.p3(params, (byte) 8, mProductID);
+		ReportParamsUtil.p2(params, (byte) 9, 1);
+		ReportParamsUtil.p2(params, (byte) 10, 1);
+		ReportParamsUtil.p3(params, (byte) 11, ctx.getTime());
+		return reportClientData2Byte(list);
 	}
 
 	private byte[] getNewmd5DownSoftReport(long fileId) {

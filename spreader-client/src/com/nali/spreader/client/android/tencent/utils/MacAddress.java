@@ -1,8 +1,7 @@
 package com.nali.spreader.client.android.tencent.utils;
 
-import java.util.Random;
-
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 
 public class MacAddress {
 
@@ -58,8 +57,7 @@ public class MacAddress {
 	private static String createRandomChar() {
 		String[] chars = new String[] { "a", "b", "c", "d", "e", "f", "0", "1",
 				"2", "3", "4", "5", "6", "7", "8", "9", };
-		Random rand = new Random();
-		int rInt = rand.nextInt(chars.length);
+		int rInt = RandomUtils.nextInt(chars.length);
 		return chars[rInt];
 	}
 }
