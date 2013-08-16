@@ -904,10 +904,4 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		data.append(android);
 		return data.toString();
 	}
-
-	public static void main(String[] args) {
-		TencentAppCenterService s = new TencentAppCenterService();
-		String url = "http://down.myapp.com/android_new/399/113399/15811677/55F883AE90575C4E38FF2DD6B0D43CCA.apk";
-		System.out.println(s.getSdcardPath(s.getApkNameByUrl(url)));
-	}
 }
