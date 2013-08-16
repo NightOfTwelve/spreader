@@ -367,7 +367,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 			ReportParamsUtil.p3(clientReportParam, (byte) 12,
 					paramDownloadInfo.mTotalSize);
 			ReportParamsUtil.p4(clientReportParam, (byte) 14,
-					getSdcardPath(paramDownloadInfo.mUrl));
+					getSdcardPath(getApkNameByUrl(paramDownloadInfo.mUrl)));
 			ReportParamsUtil.p3(clientReportParam, (byte) 13,
 					paramDownloadInfo.mTotalSize);
 		}
