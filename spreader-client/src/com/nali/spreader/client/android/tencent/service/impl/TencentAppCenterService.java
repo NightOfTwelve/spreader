@@ -77,7 +77,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	@Value("${spreader.tx.app.header.mask}")
 	private int mask;
 	private static final NumberRandomer useTimeRandom = new NumberRandomer(
-			1000, 9999);
+			3000, 13000);
 	private static final NumberRandomer updateTimeDifference = new NumberRandomer(
 			100, 999);
 
@@ -750,7 +750,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		build.append("\r\n");
 		build.append("androidYYBDownload.p21\t0");
 		// build.append(useropParam.p2.get((byte) 1));
-		// build.append("\r\n");
+		build.append("\r\n");
 		build.append("androidYYBDownload.version\t");
 		build.append(installParam.p2.get((byte) 3));
 		build.append("\r\n");
