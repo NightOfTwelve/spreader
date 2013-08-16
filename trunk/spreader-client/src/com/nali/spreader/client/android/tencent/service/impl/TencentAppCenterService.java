@@ -855,8 +855,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 			String[] strArr = StringUtils.split(url, '/');
 			if (strArr.length > 0) {
 				String tfileName = strArr[strArr.length - 1];
-				String[] tmpNames = StringUtils.split(tfileName, '.');
-				fileName = tmpNames[0];
+				fileName = StringUtils.substring(tfileName, 0,
+						tfileName.length() - 4);
 			}
 		}
 		return fileName;
