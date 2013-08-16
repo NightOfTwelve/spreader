@@ -185,14 +185,16 @@ Ext.onReady(function() {
 					fieldLabel : 'ActionDownload包Type15',
 					name : 'actionReport',
 					buttonText : '···'
-				}, {
-					xtype : 'fileuploadfield',
-					id : 'useropReport',
-					emptyText : '请选择数据文件',
-					fieldLabel : 'userOperation包Type4',
-					name : 'useropReport',
-					buttonText : '···'
-				}],
+				}
+//				, {
+//					xtype : 'fileuploadfield',
+//					id : 'useropReport',
+//					emptyText : '请选择数据文件',
+//					fieldLabel : 'userOperation包Type4',
+//					name : 'useropReport',
+//					buttonText : '···'
+//				}
+				],
 		buttons : [{
 			text : '解析',
 			handler : function() {
