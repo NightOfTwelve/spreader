@@ -77,7 +77,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	@Value("${spreader.tx.app.header.mask}")
 	private int mask;
 	private static final NumberRandomer useTimeRandom = new NumberRandomer(
-			10000, 59999);
+			1000, 9999);
 	private static final NumberRandomer updateTimeDifference = new NumberRandomer(
 			100, 999);
 
@@ -224,7 +224,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		paramDownloadInfo.mVersionCode = mVersionCode;
 		paramDownloadInfo.mCategoryId = mCategoryId;
 		paramDownloadInfo.mTopicId = mTopicId;
-		paramDownloadInfo.mConnectNetworkUsedTime = RandomUtils.nextInt(20000);
+		paramDownloadInfo.mConnectNetworkUsedTime = RandomUtils.nextInt(99);
 		return paramDownloadInfo;
 	}
 
@@ -361,20 +361,23 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		if (status.getId() == 0) {
 			ReportParamsUtil.p3(clientReportParam, (byte) 12, 0);
 			ReportParamsUtil.p4(clientReportParam, (byte) 14, "");
+			ReportParamsUtil.p3(clientReportParam, (byte) 13,
+					paramDownloadInfo.mDownloadSize);
 		} else {
 			ReportParamsUtil.p3(clientReportParam, (byte) 12,
-					paramDownloadInfo.mDownloadSize);
+					paramDownloadInfo.mTotalSize);
 			ReportParamsUtil.p4(clientReportParam, (byte) 14,
-					getSdcardPath(pack));
+					getSdcardPath(paramDownloadInfo.mUrl));
+			ReportParamsUtil.p3(clientReportParam, (byte) 13,
+					paramDownloadInfo.mTotalSize);
 		}
-		ReportParamsUtil.p3(clientReportParam, (byte) 13,
-				paramDownloadInfo.mTotalSize);
 		return reportClientData2Byte(localArrayList);
 	}
 
-	private String getSdcardPath(String pack) {
+	// TODO
+	public String getSdcardPath(String fileName) {
 		StringBuilder sb = new StringBuilder(APK_DIR);
-		sb.append(pack);
+		sb.append(fileName);
 		sb.append("_");
 		sb.append(System.currentTimeMillis());
 		sb.append(".apk");
@@ -729,8 +732,15 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		build.append(downParam.p2.get((byte) 25));
 		build.append("\r\n");
 		build.append("androidYYBDownload.search\t");
-		build.append(getSearchStr(downParam.p4.get((byte) 20).toString(),
-				downParam.p4.get((byte) 21).toString()));
+		Object p420 = downParam.p4.get((byte) 20);
+		Object p421 = downParam.p4.get((byte) 21);
+		if (p420 == null) {
+			p420 = StringUtils.EMPTY;
+		}
+		if (p421 == null) {
+			p421 = StringUtils.EMPTY;
+		}
+		build.append(getSearchStr(p420.toString(), p421.toString()));
 		build.append("\r\n");
 		// build.append("androidYYBDownload.p20\t");
 		// build.append(useropParam.p2.get((byte) 0));
@@ -738,7 +748,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		build.append("androidYYBDownload.p20\t");// TODO 暂时用p20代替p26
 		build.append(downParam.p1.get((byte) 26));
 		build.append("\r\n");
-		// build.append("androidYYBDownload.p21\t");
+		build.append("androidYYBDownload.p21\t0");
 		// build.append(useropParam.p2.get((byte) 1));
 		// build.append("\r\n");
 		build.append("androidYYBDownload.version\t");
@@ -757,14 +767,21 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		build.append("androidYYBDownload.topicid\t0");
 		build.append("\r\n");
 		build.append("androidYYBDownload.mDownloadSize\t");
-		build.append(actionParam.p3.get((byte) 12));
+		build.append(actionParam.p3.get((byte) 13));
 		build.append("\r\n");
 		build.append("androidYYBDownload.keyword\t");
-		build.append(downParam.p4.get((byte) 21));
+		Object word = downParam.p4.get((byte) 21);
+		if (word == null) {
+			word = StringUtils.EMPTY;
+		}
+		build.append(word);
 		return build.toString();
 	}
 
 	private String getSearchStr(String p420, String p421) {
+		if (StringUtils.isBlank(p420) && StringUtils.isBlank(p421)) {
+			return StringUtils.EMPTY;
+		}
 		StringBuilder sb = new StringBuilder(p420);
 		sb.append("]lIl]lIl");
 		sb.append(p421);
@@ -786,7 +803,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 			byte[] download = getDownloadReport(paramDownloadInfo, clientIP, 0);// TODO
 																				// 0用p26替换
 			byte[] downAction = getUserDownloadAction(paramDownloadInfo,
-					clientIP, getAppPatchName(mUrl), DownloadStatus.start);
+					clientIP, getApkNameByUrl(mUrl), DownloadStatus.start);
 			byte[] install = getAppInstallReport(paramDownloadInfo, pack);
 			StringBuilder builder = new StringBuilder();
 			builder.append(Base64.encodeBase64String(patchDown));
@@ -832,12 +849,14 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		return reportClientData2Byte(arraylist);
 	}
 
-	private String getAppPatchName(String url) {
+	public String getApkNameByUrl(String url) {
 		String fileName = "";
 		if (StringUtils.isNotBlank(url)) {
 			String[] strArr = StringUtils.split(url, '/');
 			if (strArr.length > 0) {
-				fileName = strArr[strArr.length - 1];
+				String tfileName = strArr[strArr.length - 1];
+				String[] tmpNames = StringUtils.split(tfileName, '.');
+				fileName = tmpNames[0];
 			}
 		}
 		return fileName;
@@ -884,5 +903,11 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		data.append("\r\n");
 		data.append(android);
 		return data.toString();
+	}
+
+	public static void main(String[] args) {
+		TencentAppCenterService s = new TencentAppCenterService();
+		String url = "http://down.myapp.com/android_new/399/113399/15811677/55F883AE90575C4E38FF2DD6B0D43CCA.apk";
+		System.out.println(s.getSdcardPath(s.getApkNameByUrl(url)));
 	}
 }

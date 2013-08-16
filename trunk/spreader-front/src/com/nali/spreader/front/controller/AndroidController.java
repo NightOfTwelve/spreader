@@ -161,14 +161,13 @@ public class AndroidController extends BaseController {
 	public String yybReportProperties(
 			@RequestParam("downReport") MultipartFile downReport,
 			@RequestParam("installReport") MultipartFile installReport,
-			@RequestParam("actionReport") MultipartFile actionReport,
-			@RequestParam("useropReport") MultipartFile useropReport)
+			@RequestParam("actionReport") MultipartFile actionReport)
+	// @RequestParam("useropReport") MultipartFile useropReport
 			throws IOException {
 		String str = null;
 		try {
 			str = tencentAppCenterSevice.getDownProperty(downReport.getBytes(),
-					installReport.getBytes(), actionReport.getBytes(),
-					useropReport.getBytes());
+					installReport.getBytes(), actionReport.getBytes(), null);
 		} catch (Exception e) {
 			logger.error(e, e);
 			str = e.toString();
