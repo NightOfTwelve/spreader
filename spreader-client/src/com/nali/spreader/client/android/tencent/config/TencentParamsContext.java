@@ -8,15 +8,12 @@ import org.apache.commons.lang.math.RandomUtils;
 
 import com.nali.spreader.client.android.tencent.utils.MacAddress;
 import com.nali.spreader.client.android.tencent.utils.Phone;
-import com.nali.spreader.util.random.NumberRandomer;
 
 public class TencentParamsContext {
 	private static final ThreadLocal<TencentParamsContext> ctx = new ThreadLocal<TencentParamsContext>();
-	private static final NumberRandomer guidRandom = new NumberRandomer(
-			1000000, 642747645);
 	private static final Random androidRandom = new Random();
 	private long time;
-	private int guid = guidRandom.get();
+	private int guid = 0;
 	private String machineUniqueId = genMachineUniqueId();
 	private String imsi = genImsi();
 	private int requestId = RandomUtils.nextInt(99);

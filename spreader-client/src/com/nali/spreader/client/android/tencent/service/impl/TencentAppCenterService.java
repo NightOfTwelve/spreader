@@ -519,7 +519,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		if (paramBoolean1)
 			i = (byte) 1;
 		if (paramBoolean2)
-			i = (byte) (i | 0x2);
+			i = (byte) 2;
 		localReqHeader.setMask(i);
 		paramUniPacket.put("reqHeader", localReqHeader);
 		return localReqHeader;
@@ -695,7 +695,6 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		a(localUniPacket, JceRequestType.accurateSearch.toString());
 		ReqAccurateSearch search = new ReqAccurateSearch();
 		search.setWord(keyword);
-		search.setSearchId("");
 		search.setPageSize(20);
 		search.setPageNo(1);
 		search.setSearchType((byte) 6);
@@ -907,5 +906,14 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		data.append("\r\n");
 		data.append(android);
 		return data.toString();
+	}
+
+	public static void main(String[] args) {
+		int i = 0;
+		int j = 0;
+		i = (byte) (0x0 | 0x1);
+		System.out.println(i);
+		j = (byte) (j | 0x2);
+		System.out.println(j);
 	}
 }
