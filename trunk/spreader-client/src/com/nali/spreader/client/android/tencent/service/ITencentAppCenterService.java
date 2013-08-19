@@ -21,11 +21,13 @@ public interface ITencentAppCenterService {
 
 	String getReport(byte[] bytes);
 
-	String getHandshakeReport(String phoneName, String androidVersion);
+	String getHandshakeReport(String phoneName, String androidVersion,
+			String imsi);
 
 	String getAccurateSearchReport(String keyword, String handshake, String data);
 
 	String getDownUrl(String host, byte[] down, byte[] install);
 
-	String getDownProperty(byte[] down, byte[] install,byte[] action, byte[] userop);
+	String getDownProperty(byte[] down, byte[] install, byte[] action,
+			byte[] userop);
 }

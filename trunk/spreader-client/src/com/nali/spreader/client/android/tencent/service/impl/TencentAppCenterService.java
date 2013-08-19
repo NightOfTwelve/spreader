@@ -293,7 +293,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 				paramDownloadInfo.mFileID);
 		ReportParamsUtil.p4(localClientReportParam, (byte) 2, pack);
 		ReportParamsUtil.p2(localClientReportParam, (byte) 3,
-				paramDownloadInfo.mVersionCode);
+				paramDownloadInfo.mVersionCode); // TODO
 		ctx.timeGo(useTimeRandom.get());
 		ReportParamsUtil.p3(localClientReportParam, (byte) 4,
 				ctx.getTime() / 1000L);
@@ -650,12 +650,16 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	}
 
 	@Override
-	public String getHandshakeReport(String phoneName, String androidVersion) {
+	public String getHandshakeReport(String phoneName, String androidVersion,
+			String imsi) {
 		if (StringUtils.isBlank(phoneName)) {
 			throw new IllegalArgumentException("phoneName is empty");
 		}
+		if (StringUtils.isBlank(imsi)) {
+			throw new IllegalArgumentException("imsi is empty");
+		}
 		TencentParamsContext ctx = new TencentParamsContext(phoneName,
-				androidVersion);
+				androidVersion, imsi);
 		TencentParamsContext.setTencentParamsContext(ctx);
 		TencentParamsContext curr = TencentParamsContext.getCurrentContext();
 		StringBuilder param = new StringBuilder();
