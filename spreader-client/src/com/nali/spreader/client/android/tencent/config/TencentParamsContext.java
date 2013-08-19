@@ -2,6 +2,7 @@ package com.nali.spreader.client.android.tencent.config;
 
 import java.util.Random;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 
@@ -17,7 +18,7 @@ public class TencentParamsContext {
 	private long time;
 	private int guid = guidRandom.get();
 	private String machineUniqueId = genMachineUniqueId();
-	private String imsi = genMachineUniqueId();
+	private String imsi = genImsi();
 	private int requestId = RandomUtils.nextInt(99);
 	private String phoneName = Phone.get();
 	private String androidVersion = "Android4.1.2";
@@ -27,10 +28,12 @@ public class TencentParamsContext {
 		super();
 	}
 
-	public TencentParamsContext(String phoneName, String androidVersion) {
+	public TencentParamsContext(String phoneName, String androidVersion,
+			String imsi) {
 		super();
 		this.phoneName = phoneName;
 		this.androidVersion = androidVersion;
+		this.imsi = imsi;
 	}
 
 	public TencentParamsContext(String machineUniqueId, int requestId,
@@ -65,6 +68,15 @@ public class TencentParamsContext {
 			id += androidRandom.nextInt(100000) + id * 100000L;
 		}
 		return String.valueOf(id);
+	}
+
+	private static String genImsi() {
+		StringBuilder imsi = new StringBuilder("460");
+		String[] mncs = { "00", "01", "02", "03", "05", "06", "07" };
+		String mnc = mncs[RandomUtils.nextInt(7)];
+		imsi.append(mnc);
+		imsi.append(RandomStringUtils.randomNumeric(10));
+		return imsi.toString();
 	}
 
 	public void setMachineUniqueId(String machineUniqueId) {

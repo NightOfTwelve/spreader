@@ -95,9 +95,10 @@ public class AndroidController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "/tencent/handshake")
-	public String tencentHandshake(String phoneName, String androidVersion) {
+	public String tencentHandshake(String phoneName, String androidVersion,
+			String imsi) {
 		return tencentAppCenterSevice.getHandshakeReport(phoneName,
-				androidVersion);
+				androidVersion, imsi);
 	}
 
 	@ResponseBody
