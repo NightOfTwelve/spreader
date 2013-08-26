@@ -30,7 +30,6 @@ Ext.onReady(function() {
 								}, {
 									name : 'clientId'
 								}]),
-				// remoteSort : true,
 				autoLoad : true
 			});
 	// 页数
@@ -45,8 +44,10 @@ Ext.onReady(function() {
 				listeners : {
 					specialKey : function(field, e) {
 						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							bbar.pageSize = Number(numtext.getValue());
-							number = Number(numtext.getValue());
+							if (!Ext.isEmpty(numtext.getValue())) {
+								number = Number(numtext.getValue());
+							}
+							bbar.pageSize = Number(number);
 							packetStore.reload({
 										params : {
 											start : 0,
@@ -66,10 +67,16 @@ Ext.onReady(function() {
 				var clientId = clientIdCmp.getValue();
 				var postDateCmp = Ext.getCmp('postDate');
 				var postDate = postDateCmp.getValue();
+				if (!Ext.isEmpty(numtext.getValue())) {
+					number = Number(numtext.getValue());
+				}
+				bbar.pageSize = Number(number);
 				this.baseParams = {
 					productId : productId,
 					clientId : clientId,
-					postDate : postDate
+					postDate : postDate,
+					start : 0,
+					limit : bbar.pageSize
 				};
 			});
 	var cm = new Ext.grid.ColumnModel([{
@@ -219,8 +226,10 @@ Ext.onReady(function() {
 				listeners : {
 					specialKey : function(field, e) {
 						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							bbar2.pageSize = Number(numtext2.getValue());
-							number2 = Number(numtext2.getValue());
+							if (!Ext.isEmpty(numtext2.getValue())) {
+								number2 = Number(numtext2.getValue());
+							}
+							bbar2.pageSize = Number(number2);
 							phoneStore.reload({
 										params : {
 											start : 0,
@@ -309,8 +318,10 @@ Ext.onReady(function() {
 				listeners : {
 					specialKey : function(field, e) {
 						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							bbar3.pageSize = Number(numtext3.getValue());
-							number3 = Number(numtext3.getValue());
+							if (!Ext.isEmpty(numtext3.getValue())) {
+								number3 = Number(numtext3.getValue());
+							}
+							bbar3.pageSize = Number(number3);
 							adverStore.reload({
 										params : {
 											start : 0,
@@ -399,8 +410,10 @@ Ext.onReady(function() {
 				listeners : {
 					specialKey : function(field, e) {
 						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							bbar4.pageSize = Number(numtext4.getValue());
-							number4 = Number(numtext4.getValue());
+							if (!Ext.isEmpty(numtext4.getValue())) {
+								number4 = Number(numtext4.getValue());
+							}
+							bbar4.pageSize = Number(number4);
 							ipStore.reload({
 										params : {
 											start : 0,
