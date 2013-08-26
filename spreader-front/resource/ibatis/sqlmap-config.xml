@@ -16,10 +16,13 @@
 	<sqlMap resource="ibatis/spreader_tb_ip_record_SqlMap.xml" />
 	<sqlMap resource="ibatis/spreader_tb_client_report_SqlMap.xml" />
 	<sqlMap resource="ibatis/spreader_tb_client_config_SqlMap.xml" />
+	<sqlMap resource="ibatis/spreader_tb_yyb_packet_SqlMap.xml" />
+	<sqlMap resource="ibatis/spreader_tb_phone_info_SqlMap.xml" />
 
 	<!-- ×Ô¶¨Òå -->
 	<sqlMap resource="ibatis/spreader_task.xml" />
 	<sqlMap resource="ibatis/spreader_captcha.xml" />
 	<sqlMap resource="ibatis/spreader_client_report.xml" />
+	<sqlMap resource="ibatis/spreader_yyb_packet.xml" />
 </sqlMapConfig>
 

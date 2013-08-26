@@ -20,10 +20,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nali.common.model.Limit;
+import com.nali.common.pagination.PageResult;
 import com.nali.spreader.client.android.google.service.IGooglePlayService;
 import com.nali.spreader.client.android.tencent.service.ITencentAppCenterService;
+import com.nali.spreader.client.android.tencent.service.ITencentStatisticsService;
 import com.nali.spreader.client.android.wandoujia.service.IWandoujiaAppService;
+import com.nali.spreader.dto.YybPacketAdvCount;
+import com.nali.spreader.dto.YybPacketClientIpCount;
+import com.nali.spreader.dto.YybPacketPhoneCount;
 import com.nali.spreader.front.controller.base.BaseController;
+import com.nali.spreader.model.YybPacket;
 
 @Controller
 @RequestMapping(value = "/android")
@@ -36,6 +43,8 @@ public class AndroidController extends BaseController {
 	private IWandoujiaAppService wandoujiaAppService;
 	@Autowired
 	private IGooglePlayService googlePlayService;
+	@Autowired
+	private ITencentStatisticsService tencentStatisticsService;
 
 	@Override
 	public String init() {
@@ -188,5 +197,57 @@ public class AndroidController extends BaseController {
 		Assert.notNull(psw, " psw is null");
 		String s = googlePlayService.encryptAccountPassword(email, psw);
 		return s;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/tencent/packet")
+	public String tencentPacket(Integer productId, String postDate,
+			Long clientId, Integer start, Integer limit)
+			throws IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, ClassNotFoundException {
+		Limit lit = initLimit(start, limit);
+		PageResult<YybPacket> pages = tencentStatisticsService
+				.getYybPostRecord(productId, postDate, clientId, lit);
+		return write(pages);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/tencent/adv")
+	public String tencentAdv(Integer productId, String postDate, Long clientId,
+			Integer start, Integer limit) throws IllegalArgumentException,
+			SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException,
+			ClassNotFoundException {
+		Limit lit = initLimit(start, limit);
+		PageResult<YybPacketAdvCount> pages = tencentStatisticsService
+				.getAdvCount(productId, postDate, clientId, lit);
+		return write(pages);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/tencent/ip")
+	public String tencentIp(Integer productId, String postDate, Long clientId,
+			Integer start, Integer limit) throws IllegalArgumentException,
+			SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException,
+			ClassNotFoundException {
+		Limit lit = initLimit(start, limit);
+		PageResult<YybPacketClientIpCount> pages = tencentStatisticsService
+				.getIpCount(productId, postDate, clientId, lit);
+		return write(pages);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/tencent/phone")
+	public String tencentPhone(Integer productId, String postDate,
+			Long clientId, Integer start, Integer limit)
+			throws IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, ClassNotFoundException {
+		Limit lit = initLimit(start, limit);
+		PageResult<YybPacketPhoneCount> pages = tencentStatisticsService
+				.getPhoneCount(productId, postDate, clientId, lit);
+		return write(pages);
 	}
 }
