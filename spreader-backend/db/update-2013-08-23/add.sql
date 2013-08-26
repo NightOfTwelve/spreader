@@ -30,3 +30,9 @@ CREATE TABLE `tb_phone_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='手机参数表';
 
 ALTER TABLE tb_user ADD INDEX idx_user_robot_website (is_robot,website_id);
+
+alter table `tb_client_config` 
+Add column create_time timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+
+alter table `tb_client_config` 
+Add column update_time timestamp ;
