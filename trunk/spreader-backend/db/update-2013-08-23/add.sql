@@ -28,3 +28,5 @@ CREATE TABLE `tb_phone_info` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `uk_tb_phone_info_name` (`phone_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='手机参数表';
+
+ALTER TABLE tb_user ADD INDEX idx_user_robot_website (is_robot,website_id);
