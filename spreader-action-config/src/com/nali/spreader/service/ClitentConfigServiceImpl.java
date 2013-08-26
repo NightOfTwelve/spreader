@@ -1,5 +1,6 @@
 package com.nali.spreader.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -44,6 +45,7 @@ public class ClitentConfigServiceImpl implements IClitentConfigService {
 			exists.setConfigType(configType);
 			exists.setConfigMd5(cfgMD5);
 			exists.setNote(note);
+			exists.setUpdateTime(new Date());
 			crudClientConfigDao.updateByPrimaryKeySelective(exists);
 		} else {
 			ClientConfig cc = new ClientConfig();
@@ -58,6 +60,9 @@ public class ClitentConfigServiceImpl implements IClitentConfigService {
 			cc.setConfigMd5(cfgMD5);
 			cc.setType(clientType);
 			cc.setNote(note);
+			Date date = new Date();
+			cc.setCreateTime(date);
+			cc.setUpdateTime(date);
 			try {
 				crudClientConfigDao.insertSelective(cc);
 			} catch (DuplicateKeyException e) {
