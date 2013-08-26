@@ -1,5 +1,6 @@
 package com.nali.spreader.client.android.tencent.service;
 
+
 /**
  * 腾讯应用市场相关服务
  * 
@@ -30,4 +31,5 @@ public interface ITencentAppCenterService {
 
 	String getDownProperty(byte[] down, byte[] install, byte[] action,
 			byte[] userop);
+
 }

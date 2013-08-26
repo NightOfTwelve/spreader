@@ -5,17 +5,28 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import acs.ClientReportInfo;
@@ -35,7 +46,12 @@ import com.nali.spreader.client.android.tencent.config.Network;
 import com.nali.spreader.client.android.tencent.config.ReportType;
 import com.nali.spreader.client.android.tencent.config.TencentParamsContext;
 import com.nali.spreader.client.android.tencent.service.ITencentAppCenterService;
+import com.nali.spreader.client.android.tencent.utils.Phone;
 import com.nali.spreader.client.android.tencent.utils.ReportParamsUtil;
+import com.nali.spreader.dao.ICrudPhoneInfoDao;
+import com.nali.spreader.dao.ICrudYybPacketDao;
+import com.nali.spreader.model.PhoneInfo;
+import com.nali.spreader.model.YybPacket;
 import com.nali.spreader.util.random.NumberRandomer;
 import com.qq.jce.wup.UniAttribute;
 import com.qq.jce.wup.UniPacket;
@@ -62,12 +78,12 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	private long qq;
 	@Value("${spreader.tx.app.header.apiLevel}")
 	private int apiLevel;
-	@Value("${spreader.tx.app.header.densityDpi}")
-	private int densityDpi;
-	@Value("${spreader.tx.app.header.resolutionX}")
-	private int resolutionX;
-	@Value("${spreader.tx.app.header.resolutionY}")
-	private int resolutionY;
+	// @Value("${spreader.tx.app.header.densityDpi}")
+	// private int densityDpi;
+	// @Value("${spreader.tx.app.header.resolutionX}")
+	// private int resolutionX;
+	// @Value("${spreader.tx.app.header.resolutionY}")
+	// private int resolutionY;
 	@Value("${spreader.tx.app.header.channel}")
 	private int channel;
 	@Value("${spreader.tx.app.header.outSideChannel}")
@@ -80,6 +96,23 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 			3000, 13000);
 	private static final NumberRandomer updateTimeDifference = new NumberRandomer(
 			100, 999);
+	@Autowired
+	private ICrudYybPacketDao crudYybPacketDao;
+	@Autowired
+	private ICrudPhoneInfoDao crudPhoneInfoDao;
+	private ThreadPoolExecutor postDataPool;
+	private Lock lock = new ReentrantLock();
+
+	@PostConstruct
+	public void init() {
+		try {
+			postDataPool = new ThreadPoolExecutor(2, 5, 5, TimeUnit.MINUTES,
+					new LinkedBlockingQueue<Runnable>(5),
+					new ThreadPoolExecutor.CallerRunsPolicy());
+		} catch (Exception e) {
+			logger.debug("postDataPool create fail", e);
+		}
+	}
 
 	@Override
 	public String getAppDownloadPost(String mPageNoPath, int mProductID,
@@ -122,6 +155,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 			builder.append(Base64.encodeBase64String(actionFinish));
 			builder.append("\r\n");
 			builder.append(Base64.encodeBase64String(installReport));
+			recordPacket(mProductID, mFileID, mUrl, clientIP, pack, 999l);
 			return builder.toString();
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -166,7 +200,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		TencentParamsContext ctx = new TencentParamsContext(dataArray[0],
 				Integer.parseInt(dataArray[1]), dataArray[2], guid,
 				System.currentTimeMillis() - 10 * 1000L, dataArray[3],
-				dataArray[4], dataArray[5]);
+				dataArray[4], dataArray[5], Integer.parseInt(dataArray[6]),
+				Integer.parseInt(dataArray[7]), Integer.parseInt(dataArray[8]));
 		TencentParamsContext.setTencentParamsContext(ctx);
 	}
 
@@ -232,6 +267,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
 		ReqHeader localReqHeader = new ReqHeader();
 		localReqHeader.guid = ctx.getGuid();
+		int resolutionX = ctx.getResX();
+		int resolutionY = ctx.getResY();
 		localReqHeader.qua = getQua(resolutionX, resolutionY,
 				ctx.getPhoneName());
 		localReqHeader.version = version;
@@ -239,7 +276,7 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		localReqHeader.sid = "";
 		localReqHeader.qq = qq;
 		localReqHeader.apiLevel = apiLevel;
-		localReqHeader.densityDpi = densityDpi;
+		localReqHeader.densityDpi = ctx.getDpi();
 		localReqHeader.resolutionX = resolutionX;
 		localReqHeader.resolutionY = resolutionY;
 		localReqHeader.machineUniqueId = ctx.getMachineUniqueId();
@@ -658,14 +695,17 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		if (StringUtils.isBlank(imsi)) {
 			throw new IllegalArgumentException("imsi is empty");
 		}
+		PhoneInfo phone = assignPhone(phoneName);
 		TencentParamsContext ctx = new TencentParamsContext(phoneName,
-				androidVersion, imsi);
+				androidVersion, imsi, phone.getDpi(), phone.getResolutionX(),
+				phone.getResolutionY());
 		TencentParamsContext.setTencentParamsContext(ctx);
 		TencentParamsContext curr = TencentParamsContext.getCurrentContext();
 		StringBuilder param = new StringBuilder();
 		String globa = getGlobalParams(curr.getMachineUniqueId(),
 				curr.getRequestId(), curr.getPhoneName(), curr.getMacAddres(),
-				curr.getImsi(), curr.getAndroidVersion());
+				curr.getImsi(), curr.getAndroidVersion(), curr.getDpi(),
+				curr.getResX(), curr.getResY());
 		try {
 			byte[] handshake = getReqHandshake(curr.getMachineUniqueId());
 			param.append(Base64.encodeBase64String(handshake));
@@ -877,7 +917,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		StringBuilder param = new StringBuilder();
 		String globa = getGlobalParams(curr.getMachineUniqueId(),
 				curr.getRequestId(), curr.getPhoneName(), curr.getMacAddres(),
-				curr.getImsi(), curr.getAndroidVersion());
+				curr.getImsi(), curr.getAndroidVersion(), curr.getDpi(),
+				curr.getResX(), curr.getResY());
 		try {
 			byte[] search = getReqAccurateSearch(keyword);
 			param.append(Base64.encodeBase64String(search));
@@ -892,7 +933,8 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 	}
 
 	private String getGlobalParams(String machineUniqueId, int reqId,
-			String phoneName, String mac, String imsi, String android) {
+			String phoneName, String mac, String imsi, String android, int dpi,
+			int resX, int resY) {
 		StringBuilder data = new StringBuilder();
 		data.append(machineUniqueId);
 		data.append("\r\n");
@@ -905,15 +947,66 @@ public class TencentAppCenterService implements ITencentAppCenterService {
 		data.append(imsi);
 		data.append("\r\n");
 		data.append(android);
+		data.append("\r\n");
+		data.append(dpi);
+		data.append("\r\n");
+		data.append(resX);
+		data.append("\r\n");
+		data.append(resY);
 		return data.toString();
 	}
 
-	public static void main(String[] args) {
-		int i = 0;
-		int j = 0;
-		i = (byte) (0x0 | 0x1);
-		System.out.println(i);
-		j = (byte) (j | 0x2);
-		System.out.println(j);
+	private void recordPacket(int productId, int fileId, String apkUrl,
+			String clientIp, String pack, long clientId) {
+		Date postTime = new Date();
+		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+		String postDate = df.format(postTime);
+		TencentParamsContext ctx = TencentParamsContext.getCurrentContext();
+		final YybPacket yyb = new YybPacket();
+		yyb.setAndroidVersion(ctx.getAndroidVersion());
+		yyb.setApkPack(pack);
+		yyb.setApkUrl(apkUrl);
+		yyb.setClientId(clientId);
+		yyb.setClientIp(clientIp);
+		yyb.setFileId(fileId);
+		yyb.setGuid(ctx.getGuid());
+		yyb.setImsi(ctx.getImsi());
+		yyb.setMac(ctx.getMacAddres());
+		yyb.setMachineId(ctx.getMachineUniqueId());
+		yyb.setPhone(ctx.getPhoneName());
+		yyb.setPostDate(postDate);
+		yyb.setPostTime(postTime);
+		yyb.setProductId(productId);
+		if (postDataPool != null) {
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						if (lock.tryLock()) {
+							long id = crudYybPacketDao.insert(yyb);
+							if (logger.isDebugEnabled()) {
+								logger.debug("id:" + id);
+							}
+						}
+					} catch (Exception e) {
+						logger.error("save yybPacket error:", e);
+					} finally {
+						lock.unlock();
+					}
+				}
+			});
+			postDataPool.submit(t);
+		}
+	}
+
+	private PhoneInfo assignPhone(String name) {
+		PhoneInfo phoneDpi = Phone.getPhoneInfo();
+		phoneDpi.setPhoneName(name);
+		try {
+			crudPhoneInfoDao.insert(phoneDpi);
+			return phoneDpi;
+		} catch (DuplicateKeyException e) {
+			return phoneDpi;
+		}
 	}
 }

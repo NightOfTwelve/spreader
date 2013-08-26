@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="spreader_yyb_packet">
+	<sql id="condition">
+		<isNotNull prepend="and" property="productId">
+			product_id = #productId#
+		</isNotNull>
+		<isNotNull prepend="and" property="postDate">
+			post_date = #postDate#
+		</isNotNull>
+		<isNotNull prepend="and" property="clientId">
+			client_id = #clientId#
+		</isNotNull>
+	</sql>
+	<select id="queryPhoneCount" parameterClass="java.util.Map"
+		resultClass="com.nali.spreader.dto.YybPacketPhoneCount">
+		select phone,count(phone) as phoneCount from tb_yyb_packet
+		<dynamic prepend="where">
+			<include refid="condition" />
+		</dynamic>
+		group by
+		phone order by phoneCount desc
+		<isNotNull property="limit">
+			limit $limit.offset$,$limit.maxRows$
+		</isNotNull>
+	</select>
+	<select id="queryIpCount" parameterClass="java.util.Map"
+		resultClass="com.nali.spreader.dto.YybPacketClientIpCount">
+		select client_ip as clientIp,count(client_ip) as ipCount
+		from
+		tb_yyb_packet
+		<dynamic prepend="where">
+			<include refid="condition" />
+		</dynamic>
+		group by client_ip order by ipCount desc
+		<isNotNull property="limit">
+			limit $limit.offset$,$limit.maxRows$
+		</isNotNull>
+	</select>
+	<select id="queryAdvCount" parameterClass="java.util.Map"
+		resultClass="com.nali.spreader.dto.YybPacketAdvCount">
+		select android_version as androidVersion,count(android_version) as
+		verCount from tb_yyb_packet
+		<dynamic prepend="where">
+			<include refid="condition" />
+		</dynamic>
+		group by android_version order by verCount desc
+		<isNotNull property="limit">
+			limit $limit.offset$,$limit.maxRows$
+		</isNotNull>
+	</select>
+</sqlMap>

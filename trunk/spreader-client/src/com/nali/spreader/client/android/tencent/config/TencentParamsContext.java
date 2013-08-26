@@ -18,6 +18,9 @@ public class TencentParamsContext {
 	private String imsi = genImsi();
 	private int requestId = RandomUtils.nextInt(99);
 	private String phoneName = Phone.get();
+	private int dpi;
+	private int resX;
+	private int resY;
 	private String androidVersion = "Android4.1.2";
 	private String macAddres = MacAddress.randomLowerCaseMacAddress(null);
 
@@ -26,16 +29,19 @@ public class TencentParamsContext {
 	}
 
 	public TencentParamsContext(String phoneName, String androidVersion,
-			String imsi) {
+			String imsi, int dpi, int x, int y) {
 		super();
 		this.phoneName = phoneName;
 		this.androidVersion = androidVersion;
 		this.imsi = imsi;
+		this.dpi = dpi;
+		this.resX = x;
+		this.resY = y;
 	}
 
 	public TencentParamsContext(String machineUniqueId, int requestId,
 			String phoneName, int guid, long time, String macAddres,
-			String imsi, String androidVersion) {
+			String imsi, String androidVersion, int dpi, int x, int y) {
 		super();
 		if (StringUtils.isNotBlank(machineUniqueId)) {
 			this.machineUniqueId = machineUniqueId;
@@ -57,6 +63,9 @@ public class TencentParamsContext {
 		}
 		this.guid = guid;
 		this.time = time;
+		this.dpi = dpi;
+		this.resX = x;
+		this.resY = y;
 	}
 
 	private static String genMachineUniqueId() {
@@ -154,5 +163,29 @@ public class TencentParamsContext {
 
 	public void setAndroidVersion(String androidVersion) {
 		this.androidVersion = androidVersion;
+	}
+
+	public int getDpi() {
+		return dpi;
+	}
+
+	public void setDpi(int dpi) {
+		this.dpi = dpi;
+	}
+
+	public int getResX() {
+		return resX;
+	}
+
+	public void setResX(int resX) {
+		this.resX = resX;
+	}
+
+	public int getResY() {
+		return resY;
+	}
+
+	public void setResY(int resY) {
+		this.resY = resY;
 	}
 }
