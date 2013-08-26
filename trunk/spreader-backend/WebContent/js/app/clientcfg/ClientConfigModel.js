@@ -55,6 +55,10 @@ Ext.onReady(function() {
 									name : 'type'
 								}, {
 									name : 'note'
+								}, {
+									name : 'createTime'
+								}, {
+									name : 'updateTime'
 								}])
 			});
 	var cfgcm = new Ext.grid.ColumnModel([{
@@ -94,6 +98,18 @@ Ext.onReady(function() {
 				renderer : renderBrief,
 				sortable : true,
 				width : 100
+			}, {
+				header : '创建时间',
+				dataIndex : 'createTime',
+				renderer : renderDateHis,
+				sortable : true,
+				width : 120
+			}, {
+				header : '最后更新时间',
+				dataIndex : 'updateTime',
+				renderer : renderDateHis,
+				sortable : true,
+				width : 120
 			}, {
 				header : '属性配置',
 				renderer : function showbutton() {
