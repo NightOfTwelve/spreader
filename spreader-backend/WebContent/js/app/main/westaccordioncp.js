@@ -221,6 +221,11 @@ var menuTree_ClientMgr = new Ext.tree.TreePanel({
 									text : "apk反编译帮助",
 									leaf : true,
 									url : '../androidutil/init'
+								}, {
+									id : 'yybPostData',
+									text : "应用宝发包数据统计",
+									leaf : true,
+									url : '../yyb/init'
 								}]
 					}),
 			// 添加监听事件
