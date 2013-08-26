@@ -30,7 +30,6 @@ Ext.onReady(function() {
 								}, {
 									name : 'successCount'
 								}]),
-				// remoteSort : true,
 				autoLoad : true
 			});
 	// 页数
@@ -45,8 +44,10 @@ Ext.onReady(function() {
 				listeners : {
 					specialKey : function(field, e) {
 						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							bbar.pageSize = Number(numtext.getValue());
-							number = Number(numtext.getValue());
+							if (!Ext.isEmpty(numtext.getValue())) {
+								number = Number(numtext.getValue());
+							}
+							bbar.pageSize = Number(number);
 							clientStore.reload({
 										params : {
 											start : 0,
@@ -62,8 +63,14 @@ Ext.onReady(function() {
 	clientStore.on('beforeload', function() {
 				var clientDaysCmp = Ext.getCmp('clientDays');
 				var clientDays = clientDaysCmp.getValue();
+				if (!Ext.isEmpty(numtext.getValue())) {
+					number = Number(numtext.getValue());
+				}
+				bbar.pageSize = Number(number);
 				this.baseParams = {
-					clientDays : clientDays
+					clientDays : clientDays,
+					start : 0,
+					limit : bbar.pageSize
 				};
 			});
 	var rownums = new Ext.grid.RowNumberer({
@@ -211,8 +218,10 @@ Ext.onReady(function() {
 				listeners : {
 					specialKey : function(field, e) {
 						if (e.getKey() == Ext.EventObject.ENTER) {// 响应回车
-							bbar2.pageSize = Number(numtext2.getValue());
-							number2 = Number(numtext2.getValue());
+							if (!Ext.isEmpty(numtext2.getValue())) {
+								number2 = Number(numtext2.getValue());
+							}
+							bbar2.pageSize = Number(number2);
 							marketStore.reload({
 										params : {
 											start : 0,
@@ -228,8 +237,14 @@ Ext.onReady(function() {
 	marketStore.on('beforeload', function() {
 				var marketDaysCmp = Ext.getCmp('marketDays');
 				var marketDays = marketDaysCmp.getValue();
+				if (!Ext.isEmpty(numtext2.getValue())) {
+					number2 = Number(numtext2.getValue());
+				}
+				bbar2.pageSize = Number(number2);
 				this.baseParams = {
-					marketDays : marketDays
+					marketDays : marketDays,
+					start : 0,
+					limit : bbar2.pageSize
 				};
 			});
 	var rownums2 = new Ext.grid.RowNumberer({
