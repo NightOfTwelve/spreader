@@ -96,10 +96,10 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 		}
 		appInfo = appDownlodService.parseUrl(dto.getUrl());
 		count = dto.getCount();
-		Integer fourStar = dto.getWgFourStar();
-		Integer oneStar = dto.getWgOneStar();
-		Integer twoStar = dto.getWgTwoStar();
-		Integer threeStar = dto.getWgThreeStar();
+		Integer oneStar = dto.getWg1Star();
+		Integer twoStar = dto.getWg2Star();
+		Integer threeStar = dto.getWg3Star();
+		Integer fourStar = dto.getWg4Star();
 		starOnlyRate = dto.getStarOnly();
 		if (oneStar == null) {
 			oneStar = 0;
@@ -139,13 +139,13 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 		@PropertyDescription("app的url")
 		private String url;
 		@PropertyDescription("一星的比例")
-		private Integer wgOneStar;
+		private Integer wg1Star;
 		@PropertyDescription("二星的比例")
-		private Integer wgTwoStar;
+		private Integer wg2Star;
 		@PropertyDescription("三星的比例")
-		private Integer wgThreeStar;
+		private Integer wg3Star;
 		@PropertyDescription("四星的比例")
-		private Integer wgFourStar;
+		private Integer wg4Star;
 		@PropertyDescription("下载次数")
 		private Integer count;
 		@PropertyDescription("app大小（MB）")
@@ -225,36 +225,36 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 			this.offset = offset;
 		}
 
-		public Integer getWgOneStar() {
-			return wgOneStar;
+		public Integer getWg1Star() {
+			return wg1Star;
 		}
 
-		public void setWgOneStar(Integer wgOneStar) {
-			this.wgOneStar = wgOneStar;
+		public void setWg1Star(Integer wg1Star) {
+			this.wg1Star = wg1Star;
 		}
 
-		public Integer getWgTwoStar() {
-			return wgTwoStar;
+		public Integer getWg2Star() {
+			return wg2Star;
 		}
 
-		public void setWgTwoStar(Integer wgTwoStar) {
-			this.wgTwoStar = wgTwoStar;
+		public void setWg2Star(Integer wg2Star) {
+			this.wg2Star = wg2Star;
 		}
 
-		public Integer getWgThreeStar() {
-			return wgThreeStar;
+		public Integer getWg3Star() {
+			return wg3Star;
 		}
 
-		public void setWgThreeStar(Integer wgThreeStar) {
-			this.wgThreeStar = wgThreeStar;
+		public void setWg3Star(Integer wg3Star) {
+			this.wg3Star = wg3Star;
 		}
 
-		public Integer getWgFourStar() {
-			return wgFourStar;
+		public Integer getWg4Star() {
+			return wg4Star;
 		}
 
-		public void setWgFourStar(Integer wgFourStar) {
-			this.wgFourStar = wgFourStar;
+		public void setWg4Star(Integer wg4Star) {
+			this.wg4Star = wg4Star;
 		}
 	}
 }
