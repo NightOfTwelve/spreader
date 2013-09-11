@@ -96,10 +96,10 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 		}
 		appInfo = appDownlodService.parseUrl(dto.getUrl());
 		count = dto.getCount();
-		Integer fourStar = dto.getFourStar();
-		Integer oneStar = dto.getOneStar();
-		Integer twoStar = dto.getTwoStar();
-		Integer threeStar = dto.getThreeStar();
+		Integer fourStar = dto.getWgFourStar();
+		Integer oneStar = dto.getWgOneStar();
+		Integer twoStar = dto.getWgTwoStar();
+		Integer threeStar = dto.getWgThreeStar();
 		starOnlyRate = dto.getStarOnly();
 		if (oneStar == null) {
 			oneStar = 0;
@@ -138,6 +138,14 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 		private static final long serialVersionUID = 260820349582375781L;
 		@PropertyDescription("app的url")
 		private String url;
+		@PropertyDescription("一星的比例")
+		private Integer wgOneStar;
+		@PropertyDescription("二星的比例")
+		private Integer wgTwoStar;
+		@PropertyDescription("三星的比例")
+		private Integer wgThreeStar;
+		@PropertyDescription("四星的比例")
+		private Integer wgFourStar;
 		@PropertyDescription("下载次数")
 		private Integer count;
 		@PropertyDescription("app大小（MB）")
@@ -148,14 +156,6 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 		private String comments;
 		@PropertyDescription("只评星不做评论的比例")
 		private Integer starOnly;
-		@PropertyDescription("一星的比例")
-		private Integer oneStar;
-		@PropertyDescription("二星的比例")
-		private Integer twoStar;
-		@PropertyDescription("三星的比例")
-		private Integer threeStar;
-		@PropertyDescription("四星的比例")
-		private Integer fourStar;
 		@PropertyDescription("每次回复间隔（秒）")
 		private Integer secondsDelay;
 		@PropertyDescription("跳过多少个帐号")
@@ -193,14 +193,6 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 			this.starOnly = starOnly;
 		}
 
-		public Integer getFourStar() {
-			return fourStar;
-		}
-
-		public void setFourStar(Integer fourStar) {
-			this.fourStar = fourStar;
-		}
-
 		public Integer getSecondsDelay() {
 			return secondsDelay;
 		}
@@ -233,28 +225,36 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 			this.offset = offset;
 		}
 
-		public Integer getOneStar() {
-			return oneStar;
+		public Integer getWgOneStar() {
+			return wgOneStar;
 		}
 
-		public void setOneStar(Integer oneStar) {
-			this.oneStar = oneStar;
+		public void setWgOneStar(Integer wgOneStar) {
+			this.wgOneStar = wgOneStar;
 		}
 
-		public Integer getTwoStar() {
-			return twoStar;
+		public Integer getWgTwoStar() {
+			return wgTwoStar;
 		}
 
-		public void setTwoStar(Integer twoStar) {
-			this.twoStar = twoStar;
+		public void setWgTwoStar(Integer wgTwoStar) {
+			this.wgTwoStar = wgTwoStar;
 		}
 
-		public Integer getThreeStar() {
-			return threeStar;
+		public Integer getWgThreeStar() {
+			return wgThreeStar;
 		}
 
-		public void setThreeStar(Integer threeStar) {
-			this.threeStar = threeStar;
+		public void setWgThreeStar(Integer wgThreeStar) {
+			this.wgThreeStar = wgThreeStar;
+		}
+
+		public Integer getWgFourStar() {
+			return wgFourStar;
+		}
+
+		public void setWgFourStar(Integer wgFourStar) {
+			this.wgFourStar = wgFourStar;
 		}
 	}
 }
