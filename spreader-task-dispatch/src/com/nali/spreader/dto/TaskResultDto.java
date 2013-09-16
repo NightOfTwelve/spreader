@@ -18,9 +18,11 @@ public class TaskResultDto implements Serializable {
 	private Date executedTime;
 
 	private String executeStatus;
-	
+
 	private String errorCode;
-	
+
+	private String errorText;
+
 	public String getErrorCode() {
 		return errorCode;
 	}
@@ -75,5 +77,13 @@ public class TaskResultDto implements Serializable {
 
 	public void setExecuteStatus(String executeStatus) {
 		this.executeStatus = executeStatus;
+	}
+
+	public String getErrorText() {
+		return errorText;
+	}
+
+	public void setErrorText(String errorText) {
+		this.errorText = errorText;
 	}
 }
