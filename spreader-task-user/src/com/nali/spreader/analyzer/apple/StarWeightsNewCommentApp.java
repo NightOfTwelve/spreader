@@ -147,6 +147,9 @@ public class StarWeightsNewCommentApp implements RegularAnalyzer,
 			fourStar = 0;
 		}
 		Integer fiveStar = 100 - oneStar - twoStar - threeStar - fourStar;
+		if (fiveStar < 0 || fiveStar > 100) {
+			throw new IllegalArgumentException("fiveStar:" + fiveStar);
+		}
 		starRandomer = new WeightRandomer<Integer>();
 		starRandomer.add(1, oneStar);
 		starRandomer.add(2, twoStar);
