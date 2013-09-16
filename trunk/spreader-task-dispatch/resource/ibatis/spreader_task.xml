@@ -87,10 +87,12 @@
   		l.error_code as errorCode,
 		ct.uid as uid,
 		ct.task_code as taskCode,
-		ct.id as clientTaskId
+		ct.id as clientTaskId,
+		e.website_error_desc as errorText
 		from tb_task t left join tb_client_task ct on t.id=ct.id 
 		left join tb_task_batch b on b.id=ct.batch_id 
 		left join tb_client_task_log l on t.id=l.task_id
+		left join tb_client_error e on t.id = e.task_id
 		where t.result_id=#resultId# and t.status=#taskStatus#
 		 order by clientTaskId desc
 		<isNotNull property="limit">
@@ -102,6 +104,7 @@
 		from tb_task t left join tb_client_task ct on t.id=ct.id 
 		left join tb_task_batch b on b.id=ct.batch_id 
 		left join tb_client_task_log l on t.id=l.task_id
+		left join tb_client_error e on t.id = e.task_id
 		where t.result_id=#resultId# and t.status=#taskStatus#
 	</select>
 </sqlMap>
