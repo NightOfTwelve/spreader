@@ -298,6 +298,8 @@ var resultStore = new Ext.data.Store({
 								name : 'executeStatus'
 							}, {
 								name : 'errorCode'
+							}, {
+								name : 'errorText'
 							}])
 		});
 
@@ -339,6 +341,11 @@ var resultcm = new Ext.grid.ColumnModel([{
 			header : '错误代码',
 			dataIndex : 'errorCode',
 			renderer : rendErrorCodeMsgFn,
+			width : 100
+		}, {
+			header : '错误信息',
+			dataIndex : 'errorText',
+			renderer : renderBrief,
 			width : 100
 		}]);
 
