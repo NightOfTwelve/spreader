@@ -338,14 +338,14 @@ var resultcm = new Ext.grid.ColumnModel([{
 			renderer : renderAssignTaskResultStatus,
 			width : 100
 		}, {
-			header : '错误代码',
-			dataIndex : 'errorCode',
-			renderer : rendErrorCodeMsgFn,
-			width : 100
-		}, {
 			header : '错误信息',
 			dataIndex : 'errorText',
 			renderer : renderBrief,
+			width : 100
+		}, {
+			header : '错误代码',
+			dataIndex : 'errorCode',
+			renderer : rendErrorCodeMsgFn,
 			width : 100
 		}]);
 
