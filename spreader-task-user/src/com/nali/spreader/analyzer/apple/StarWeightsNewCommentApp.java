@@ -32,7 +32,7 @@ import com.nali.spreader.workshop.apple.DownloadApp;
 import com.nali.spreader.workshop.apple.DownloadApp.AppCommentDto;
 
 @Component
-@ClassDescription("按星级比例的新评论Apple应用")
+@ClassDescription("按星级比例分配的新评论Apple应用")
 public class StarWeightsNewCommentApp implements RegularAnalyzer,
 		Configable<StarWeightsNewCommentAppConfig> {
 	@Autowired
