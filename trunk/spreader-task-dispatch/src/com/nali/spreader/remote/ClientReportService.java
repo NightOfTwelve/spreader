@@ -2,6 +2,7 @@ package com.nali.spreader.remote;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -43,18 +44,32 @@ public class ClientReportService implements IClientReportService {
 		Assert.notNull(taskType, "taskType cannot be null");
 		Assert.notNull(actionId, "actionId cannot be null");
 		Assert.notNull(appName, "appName cannot be null");
-		report.setTaskDate(null);
-		report.setClientSeq(null);
-		report.setActionId(null);
-		report.setAppName(null);
 		ClientReportExample example = new ClientReportExample();
 		example.createCriteria().andClientIdEqualTo(clientId)
 				.andTaskTypeEqualTo(taskType).andTaskDateEqualTo(taskDate)
 				.andClientSeqEqualTo(clientSeq).andActionIdEqualTo(actionId)
 				.andAppNameEqualTo(appName);
-		int updateCount = crudClientReportDao.updateByExampleSelective(report,
-				example);
-		if (updateCount == 0) {
+		// int updateCount =
+		// crudClientReportDao.updateByExampleSelective(report,
+		// example);
+		List<ClientReport> exists = crudClientReportDao
+				.selectByExample(example);
+		if (exists.size() > 0) {
+			ClientReport cr = exists.get(0);
+			// 实际执行数
+			Integer eisact = cr.getActualCount() == null ? 0 : cr
+					.getActualCount();
+			// 成功数
+			Integer eissucc = cr.getSuccessCount() == null ? 0 : cr
+					.getSuccessCount();
+			Integer newact = report.getActualCount() == null ? 0 : report
+					.getActualCount();
+			Integer newsucc = report.getSuccessCount() == null ? 0 : report
+					.getSuccessCount();
+			cr.setActualCount(eisact + newact);
+			cr.setSuccessCount(eissucc + newsucc);
+			crudClientReportDao.updateByExampleSelective(cr, example);
+		} else {
 			report.setTaskDate(taskDate);
 			report.setClientSeq(clientSeq);
 			report.setClientId(clientId);
@@ -65,5 +80,4 @@ public class ClientReportService implements IClientReportService {
 			crudClientReportDao.insertSelective(report);
 		}
 	}
-
 }
