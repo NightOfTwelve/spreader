@@ -98,7 +98,10 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 				if (execuCount + 1 <= execuAddLimit.intValue()) {
 					if (fansLimit == null ? true : fansLimit > fans) {
 						addFans(fromUid, toUid, addTime);
-						logger.debug("fromUid:" + fromUid + ",toUid:" + toUid);
+						if (logger.isDebugEnabled()) {
+							logger.debug("fromUid:" + fromUid + ",toUid:"
+									+ toUid);
+						}
 						// addTime = DateUtils.addMinutes(addTime,
 						// execuInterval);
 						addTime = DateUtils.addSeconds(addTime, execuInterval);
@@ -165,7 +168,7 @@ public class AddFansToXimalaya extends UserGroupExtendedBeanImpl implements
 			execuAddLimit = 1;
 		}
 	}
-
+	
 	public static class AddFansToXimalayaConfig implements Serializable {
 		private static final long serialVersionUID = 8861711636679339664L;
 		@PropertyDescription("机器人执行关注的间隔时间(秒，默认20秒)")
