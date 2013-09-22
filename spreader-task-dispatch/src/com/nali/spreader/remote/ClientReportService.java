@@ -44,40 +44,51 @@ public class ClientReportService implements IClientReportService {
 		Assert.notNull(taskType, "taskType cannot be null");
 		Assert.notNull(actionId, "actionId cannot be null");
 		Assert.notNull(appName, "appName cannot be null");
-		ClientReportExample example = new ClientReportExample();
-		example.createCriteria().andClientIdEqualTo(clientId)
-				.andTaskTypeEqualTo(taskType).andTaskDateEqualTo(taskDate)
-				.andClientSeqEqualTo(clientSeq).andActionIdEqualTo(actionId)
-				.andAppNameEqualTo(appName);
+		Integer newact = report.getActualCount() == null ? 0 : report
+				.getActualCount();
+		Integer newsucc = report.getSuccessCount() == null ? 0 : report
+				.getSuccessCount();
+		ClientReportExample seqExm = new ClientReportExample();
+		seqExm.createCriteria().andClientSeqEqualTo(clientSeq);
+		List<ClientReport> existsSeq = crudClientReportDao
+				.selectByExample(seqExm);
+		if (existsSeq.size() > 0) {
+			ClientReport cr = existsSeq.get(0);
+			cr.setActualCount(newact);
+			cr.setSuccessCount(newsucc);
+			crudClientReportDao.updateByExampleSelective(cr, seqExm);
+		} else {
+			ClientReportExample example = new ClientReportExample();
+			example.createCriteria().andClientIdEqualTo(clientId)
+					.andTaskTypeEqualTo(taskType).andTaskDateEqualTo(taskDate)
+					.andActionIdEqualTo(actionId).andAppNameEqualTo(appName);
+			List<ClientReport> exists = crudClientReportDao
+					.selectByExample(example);
+			if (exists.size() > 0) {
+				ClientReport cr = exists.get(0);
+				// 实际执行数
+				Integer eisact = cr.getActualCount() == null ? 0 : cr
+						.getActualCount();
+				// 成功数
+				Integer eissucc = cr.getSuccessCount() == null ? 0 : cr
+						.getSuccessCount();
+				cr.setClientSeq(clientSeq);
+				cr.setActualCount(eisact + newact);
+				cr.setSuccessCount(eissucc + newsucc);
+				crudClientReportDao.updateByExampleSelective(cr, example);
+			} else {
+				report.setTaskDate(taskDate);
+				report.setClientSeq(clientSeq);
+				report.setClientId(clientId);
+				report.setTaskType(taskType);
+				report.setActionId(actionId);
+				report.setAppName(appName);
+				report.setCreateTime(new Date());
+				crudClientReportDao.insertSelective(report);
+			}
+		}
 		// int updateCount =
 		// crudClientReportDao.updateByExampleSelective(report,
 		// example);
-		List<ClientReport> exists = crudClientReportDao
-				.selectByExample(example);
-		if (exists.size() > 0) {
-			ClientReport cr = exists.get(0);
-			// 实际执行数
-			Integer eisact = cr.getActualCount() == null ? 0 : cr
-					.getActualCount();
-			// 成功数
-			Integer eissucc = cr.getSuccessCount() == null ? 0 : cr
-					.getSuccessCount();
-			Integer newact = report.getActualCount() == null ? 0 : report
-					.getActualCount();
-			Integer newsucc = report.getSuccessCount() == null ? 0 : report
-					.getSuccessCount();
-			cr.setActualCount(eisact + newact);
-			cr.setSuccessCount(eissucc + newsucc);
-			crudClientReportDao.updateByExampleSelective(cr, example);
-		} else {
-			report.setTaskDate(taskDate);
-			report.setClientSeq(clientSeq);
-			report.setClientId(clientId);
-			report.setTaskType(taskType);
-			report.setActionId(actionId);
-			report.setAppName(appName);
-			report.setCreateTime(new Date());
-			crudClientReportDao.insertSelective(report);
-		}
 	}
 }
