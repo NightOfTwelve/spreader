@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.common.util.CollectionUtils;
 import com.nali.log.MessageLogger;
 import com.nali.log.impl.LoggerFactory;
 import com.nali.spreader.constants.Website;
@@ -176,6 +177,15 @@ public class ExtjsComponentsUtilController extends BaseController {
 	@RequestMapping(value = "/dispnames")
 	public String allStrategyDisplayName() {
 		return this.write(this.extjsService.getAllStrategyDisplayName());
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/ximalayatask")
+	public String ximalayaExecu() {
+		String msg = extjsService.ximalayaExecute();
+		Map<String, String> m = CollectionUtils.newHashMap(1);
+		m.put("msg", msg);
+		return write(m);
 	}
 
 	/**

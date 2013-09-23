@@ -24,4 +24,26 @@ public class TaskStatusCountDto implements Serializable {
 	public void setCnt(Integer cnt) {
 		this.cnt = cnt;
 	}
+
+	public String toString() {
+		String stat = getStatusName(status);
+		StringBuilder sb = new StringBuilder(stat);
+		sb.append(":");
+		sb.append(cnt);
+		sb.append("个");
+		return sb.toString();
+	}
+
+	private String getStatusName(Integer status) {
+		if (status == null) {
+			return "未执行";
+		}
+		if (status.equals(Task.STATUS_SUCCESS)) {
+			return "成功";
+		}
+		if (status.equals(Task.STATUS_FAILED)) {
+			return "失败";
+		}
+		return "未知错误";
+	}
 }
