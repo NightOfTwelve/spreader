@@ -103,4 +103,11 @@ public interface IExtjsComponentsUtilService {
 	 * @param id
 	 */
 	void deleteEnum(Long id);
+
+	/**
+	 * 喜马拉雅任务执行情况提醒
+	 * 
+	 * @return
+	 */
+	String ximalayaExecute();
 }
