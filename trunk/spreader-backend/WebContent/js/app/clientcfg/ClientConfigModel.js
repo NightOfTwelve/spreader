@@ -426,7 +426,7 @@ Ext.onReady(function() {
 					return;
 				}
 				var cfgs = sms.data.clientConfig;
-				alert(cfgs);
+				Ext.MessageBox.alert('信息', cfgs);
 				return;
 			});
 
