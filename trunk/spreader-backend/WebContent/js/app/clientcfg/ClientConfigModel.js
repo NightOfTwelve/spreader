@@ -420,6 +420,15 @@ Ext.onReady(function() {
 			});
 	// 注册点击事件
 	cfgGrid.on('cellclick', cfgGrid.onCellClick, cfgGrid);
+	cfgGrid.on('celldblclick', function(grid, rowIndex, columnIndex, e) {
+				var sms = grid.selModel.selections.items[0];
+				if (sms == undefined) {
+					return;
+				}
+				var cfgs = sms.data.clientConfig;
+				alert(cfgs);
+				return;
+			});
 
 	/**
 	 * 删除整条配置
