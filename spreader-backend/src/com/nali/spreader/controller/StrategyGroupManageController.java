@@ -127,7 +127,7 @@ public class StrategyGroupManageController extends BaseController {
 				this.groupService.batRemoveStrategyGroup(gids);
 				result.put("success", true);
 			} catch (Exception e) {
-				logger.debug("删除失败", e);
+				logger.error("删除失败", e);
 			}
 		}
 		return this.write(result);
