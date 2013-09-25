@@ -418,6 +418,21 @@ Ext.onReady(function() {
 					}
 				}
 			});
+	var cfgsWin = new Ext.Window({
+				title : '配置信息',
+				layout : 'fit',
+				width : 400,
+				height : 350,
+				closeAction : 'hide',
+				plain : true,
+				items : [{
+							xtype : 'textarea',
+							autoScroll : true,
+							readOnly : true,
+							id : 'cfginfo',
+							name : 'cfginfo'
+						}]
+			});
 	// 注册点击事件
 	cfgGrid.on('cellclick', cfgGrid.onCellClick, cfgGrid);
 	cfgGrid.on('celldblclick', function(grid, rowIndex, columnIndex, e) {
@@ -426,7 +441,9 @@ Ext.onReady(function() {
 					return;
 				}
 				var cfgs = sms.data.clientConfig;
-				Ext.MessageBox.alert('信息', cfgs);
+				var lab = Ext.getCmp('cfginfo');
+				lab.setValue(cfgs);
+				cfgsWin.show();
 				return;
 			});
 
