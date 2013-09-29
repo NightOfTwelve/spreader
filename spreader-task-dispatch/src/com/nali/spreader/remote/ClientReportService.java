@@ -33,13 +33,14 @@ public class ClientReportService implements IClientReportService {
 		}
 		ClientContext clientContext = ClientContext.getCurrentContext();
 		Date taskDate = report.getTaskDate();
-		Long clientSeq = report.getClientSeq();
+		// Long clientSeq = report.getClientSeq();
 		Long clientId = clientContext.getClientId();
 		Integer taskType = clientContext.getTaskType();
 		Long actionId = report.getActionId();
 		String appName = report.getAppName();
 		Assert.notNull(taskDate, "taskDate cannot be null");
-		Assert.notNull(clientSeq, "clientSeq cannot be null");
+		// 暂时去掉
+		// Assert.notNull(clientSeq, "clientSeq cannot be null");
 		Assert.notNull(clientId, "clientId cannot be null");
 		Assert.notNull(taskType, "taskType cannot be null");
 		Assert.notNull(actionId, "actionId cannot be null");
@@ -49,7 +50,7 @@ public class ClientReportService implements IClientReportService {
 		Integer newsucc = report.getSuccessCount() == null ? 0 : report
 				.getSuccessCount();
 		ClientReportExample seqExm = new ClientReportExample();
-		seqExm.createCriteria().andClientSeqEqualTo(clientSeq);
+		seqExm.createCriteria();
 		List<ClientReport> existsSeq = crudClientReportDao
 				.selectByExample(seqExm);
 		if (existsSeq.size() > 0) {
@@ -58,37 +59,13 @@ public class ClientReportService implements IClientReportService {
 			cr.setSuccessCount(newsucc);
 			crudClientReportDao.updateByExampleSelective(cr, seqExm);
 		} else {
-			ClientReportExample example = new ClientReportExample();
-			example.createCriteria().andClientIdEqualTo(clientId)
-					.andTaskTypeEqualTo(taskType).andTaskDateEqualTo(taskDate)
-					.andActionIdEqualTo(actionId).andAppNameEqualTo(appName);
-			List<ClientReport> exists = crudClientReportDao
-					.selectByExample(example);
-			if (exists.size() > 0) {
-				ClientReport cr = exists.get(0);
-				// 实际执行数
-				Integer eisact = cr.getActualCount() == null ? 0 : cr
-						.getActualCount();
-				// 成功数
-				Integer eissucc = cr.getSuccessCount() == null ? 0 : cr
-						.getSuccessCount();
-				cr.setClientSeq(clientSeq);
-				cr.setActualCount(eisact + newact);
-				cr.setSuccessCount(eissucc + newsucc);
-				crudClientReportDao.updateByExampleSelective(cr, example);
-			} else {
-				report.setTaskDate(taskDate);
-				report.setClientSeq(clientSeq);
-				report.setClientId(clientId);
-				report.setTaskType(taskType);
-				report.setActionId(actionId);
-				report.setAppName(appName);
-				report.setCreateTime(new Date());
-				crudClientReportDao.insertSelective(report);
-			}
+			report.setTaskDate(taskDate);
+			report.setClientId(clientId);
+			report.setTaskType(taskType);
+			report.setActionId(actionId);
+			report.setAppName(appName);
+			report.setCreateTime(new Date());
+			crudClientReportDao.insertSelective(report);
 		}
-		// int updateCount =
-		// crudClientReportDao.updateByExampleSelective(report,
-		// example);
 	}
 }
