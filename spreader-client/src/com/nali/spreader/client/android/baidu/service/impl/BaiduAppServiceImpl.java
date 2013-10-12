@@ -15,7 +15,8 @@ public class BaiduAppServiceImpl implements IBaiduAppService {
 			.getLogger(BaiduAppServiceImpl.class);
 	static {
 		try {
-			System.loadLibrary("base64encoder_v1_4");
+			// System.loadLibrary("base64encoder_v1_4");
+			System.load("/usr/lib/libbase64encoder_v1_4.so");
 		} catch (Exception e) {
 			logger.error(" load lib base64encoder_v1_4 error ", e);
 		}
