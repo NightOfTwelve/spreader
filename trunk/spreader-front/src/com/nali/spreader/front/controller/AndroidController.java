@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
+import com.nali.spreader.client.android.baidu.service.IBaiduAppService;
 import com.nali.spreader.client.android.google.service.IGooglePlayService;
 import com.nali.spreader.client.android.tencent.service.ITencentAppCenterService;
 import com.nali.spreader.client.android.tencent.service.ITencentStatisticsService;
@@ -45,6 +46,8 @@ public class AndroidController extends BaseController {
 	private IGooglePlayService googlePlayService;
 	@Autowired
 	private ITencentStatisticsService tencentStatisticsService;
+	@Autowired
+	private IBaiduAppService baiduAppService;
 
 	@Override
 	public String init() {
@@ -249,5 +252,19 @@ public class AndroidController extends BaseController {
 		PageResult<YybPacketPhoneCount> pages = tencentStatisticsService
 				.getPhoneCount(productId, postDate, clientId, lit);
 		return write(pages);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/baidu/javapath")
+	public String viewJavaPath() {
+		String path = baiduAppService.getJavaLibPath();
+		return write(path);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/baidu/encode")
+	public String baiduEncode(String data) {
+		String encode = baiduAppService.B64Encode(data);
+		return write(encode);
 	}
 }
