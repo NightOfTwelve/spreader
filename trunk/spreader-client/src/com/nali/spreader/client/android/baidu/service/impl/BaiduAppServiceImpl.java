@@ -31,6 +31,10 @@ public class BaiduAppServiceImpl implements IBaiduAppService {
 	@Override
 	public String B64Encode(String data) {
 		Assert.notNull(data, " encode data is null");
+		System.load("/usr/lib/libstdc++.so");
+		System.load("/usr/lib/libm.so");
+		System.load("/usr/lib/libc.so");
+		System.load("/usr/lib/libdl.so");
 		System.load("/usr/lib/libbase64encoder_v1_4.so");
 		byte encode[] = nativeB64Encode(data.getBytes());
 		return urlEncoder(new String(encode));
