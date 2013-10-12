@@ -13,14 +13,15 @@ import com.nali.spreader.client.android.baidu.service.IBaiduAppService;
 public class BaiduAppServiceImpl implements IBaiduAppService {
 	private final static Logger logger = Logger
 			.getLogger(BaiduAppServiceImpl.class);
-	static {
-		try {
-			// System.loadLibrary("base64encoder_v1_4");
-			System.load("/usr/lib/libbase64encoder_v1_4.so");
-		} catch (Exception e) {
-			logger.error(" load lib base64encoder_v1_4 error ", e);
-		}
-	}
+
+	// static {
+	// try {
+	// // System.loadLibrary("base64encoder_v1_4");
+	// System.load("/usr/lib/libbase64encoder_v1_4.so");
+	// } catch (Exception e) {
+	// logger.error(" load lib base64encoder_v1_4 error ", e);
+	// }
+	// }
 
 	@Override
 	public String getJavaLibPath() {
@@ -30,6 +31,7 @@ public class BaiduAppServiceImpl implements IBaiduAppService {
 	@Override
 	public String B64Encode(String data) {
 		Assert.notNull(data, " encode data is null");
+		System.load("/usr/lib/libbase64encoder_v1_4.so");
 		byte encode[] = nativeB64Encode(data.getBytes());
 		return urlEncoder(new String(encode));
 	}
