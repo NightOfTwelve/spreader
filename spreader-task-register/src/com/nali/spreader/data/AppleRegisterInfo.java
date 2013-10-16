@@ -24,6 +24,8 @@ public class AppleRegisterInfo {
 	private String areaCode;
 	private String phone;
 	private String udid;
+	private Boolean isActive;
+	
 	public String getEmail() {
 		return email;
 	}
@@ -161,6 +163,12 @@ public class AppleRegisterInfo {
 	}
 	public void setRegisterId(Long registerId) {
 		this.registerId = registerId;
+	}
+	public Boolean getIsActive() {
+		return isActive;
+	}
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 }

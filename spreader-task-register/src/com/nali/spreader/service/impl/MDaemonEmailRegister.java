@@ -22,11 +22,15 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import com.nali.spreader.service.IEmailRegisterService;
 
-@Service
+/**
+ * 邮箱注册
+ * 
+ * @author xiefei
+ * 
+ */
 public class MDaemonEmailRegister implements IEmailRegisterService {
 	private static final Logger logger = Logger
 			.getLogger(MDaemonEmailRegister.class);

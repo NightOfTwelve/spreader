@@ -17,4 +17,9 @@
 	<!-- for http hessian path -->
 	<bean id="hessianHandler" class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter"/>
 	
+	<bean name="/remoteAppleAccountService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+	    <property name="service" ref="remoteAppleAccountService"/>
+	    <property name="serviceInterface" value="com.nali.spreader.remote.IRemoteAppleAccountService"/>
+	</bean>
+	
 </beans>
