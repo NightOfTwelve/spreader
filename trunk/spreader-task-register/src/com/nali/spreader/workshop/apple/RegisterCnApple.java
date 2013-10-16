@@ -24,17 +24,19 @@ import com.nali.spreader.util.SpecialDateUtil;
 import com.nali.spreader.words.AppleIds;
 
 @Component
-public class RegisterCnApple extends SingleTaskMachineImpl implements ContextedPassiveWorkshop<AppleRegisterInfo, Boolean> {
+public class RegisterCnApple extends SingleTaskMachineImpl implements
+		ContextedPassiveWorkshop<AppleRegisterInfo, Boolean> {
 	@Autowired
 	private IAppRegisterService appRegisterService;
 	@AutowireProductLine
 	private TaskProduceLine<Long> activeApp;
-	
+
 	public RegisterCnApple() {
 		super(SimpleActionConfig.registerCnApple, Website.apple, Channel.normal);
-		setContextMeta(Arrays.asList("registerId", "udid"), "pwd", "q1", "q2", "q3", "a1", "a2", "a3");
+		setContextMeta(Arrays.asList("registerId", "udid"), "pwd", "q1", "q2",
+				"q3", "a1", "a2", "a3", "isActive");
 	}
-	
+
 	@Override
 	public void work(AppleRegisterInfo data, SingleTaskExporter exporter) {
 		exporter.setProperty("email", data.getEmail());
@@ -56,10 +58,12 @@ public class RegisterCnApple extends SingleTaskMachineImpl implements ContextedP
 		exporter.setProperty("province", data.getState());
 		exporter.setProperty("postcode", data.getZip());
 		exporter.setProperty("phone", data.getPhone());
-		
+
 		exporter.setProperty("udid", data.getUdid());
 		exporter.setProperty("registerId", data.getRegisterId());
-		
+		// 加上是否激活
+		exporter.setProperty("isActive", data.getIsActive());
+
 		RegAddress address = new RegAddress();
 		address.setCity(data.getCity());
 		address.setNationality(RegAddress.NATIONALITY_CN);
@@ -71,15 +75,17 @@ public class RegisterCnApple extends SingleTaskMachineImpl implements ContextedP
 		address.setStreet(data.getStreet());
 		address.setSuite(data.getSuite());
 		appRegisterService.saveRegAddress(address);
-		
+
 		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterNow(30));
 	}
 
 	@Override
-	public void handleResult(Date updateTime, Boolean resultObject, Map<String, Object> contextContents, Long uid) {
+	public void handleResult(Date updateTime, Boolean resultObject,
+			Map<String, Object> contextContents, Long uid) {
 		String udid = (String) contextContents.get("udid");
 		String pwd = (String) contextContents.get("pwd");
 		Long registerId = (Long) contextContents.get("registerId");
+		Boolean isActive = (Boolean) contextContents.get("isActive");
 		AppUdid appUdid = new AppUdid();
 		appUdid.setUdid(udid);
 		appUdid.setPwd(pwd);
@@ -94,7 +100,9 @@ public class RegisterCnApple extends SingleTaskMachineImpl implements ContextedP
 		appUdid.setA2((String) contextContents.get("a2"));
 		appUdid.setA3((String) contextContents.get("a3"));
 		appRegisterService.saveAppUdid(appUdid);
-		activeApp.send(registerId);
+		// 是否激活
+		if (isActive) {
+			activeApp.send(registerId);
+		}
 	}
-
 }
