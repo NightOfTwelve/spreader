@@ -49,14 +49,23 @@ public class ClientReportService implements IClientReportService {
 				.getActualCount();
 		Integer newsucc = report.getSuccessCount() == null ? 0 : report
 				.getSuccessCount();
+		Integer newec = report.getExpectCount() == null ? 0 :report
+				.getExpectCount();
 		ClientReportExample seqExm = new ClientReportExample();
-		seqExm.createCriteria();
+		seqExm.createCriteria()
+			.andClientIdEqualTo(clientId)
+			.andTaskTypeEqualTo(taskType)
+			.andTaskDateEqualTo(taskDate)
+			.andActionIdEqualTo(actionId)
+			.andAppNameEqualTo(appName)
+			;
 		List<ClientReport> existsSeq = crudClientReportDao
 				.selectByExample(seqExm);
 		if (existsSeq.size() > 0) {
 			ClientReport cr = existsSeq.get(0);
 			cr.setActualCount(newact);
 			cr.setSuccessCount(newsucc);
+			cr.setExpectCount(newec);
 			crudClientReportDao.updateByExampleSelective(cr, seqExm);
 		} else {
 			report.setTaskDate(taskDate);
