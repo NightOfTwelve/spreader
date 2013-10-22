@@ -207,18 +207,19 @@ public class ExtjsComponentsUtilServiceImpl implements
 
 	@Override
 	public String ximalayaExecute() {
-		int threeAgo = grouppedUserDao.queryAllGroupUids(562L).size();
-		int twoAgo = grouppedUserDao.queryAllGroupUids(561L).size();
-		int yest = grouppedUserDao.queryAllGroupUids(542L).size();
+		int threeAgo = grouppedUserDao.countGroupUidsSize(562L);
+		int twoAgo = grouppedUserDao.countGroupUidsSize(561L);
+		int yest = grouppedUserDao.countGroupUidsSize(542L);
 		Date createTime = DateUtils.truncateTime(DateUtils.addDays(new Date(),
 				-1));
 		Date today = DateUtils.truncateTime(new Date());
 		UserExample ex = new UserExample();
-		ex.createCriteria().andWebsiteIdEqualTo(Website.ximalaya.getId())
+		ex.createCriteria()
+				.andWebsiteIdEqualTo(Website.ximalaya.getId())
 				.andIsRobotEqualTo(false)
 				.andCreateTimeGreaterThanOrEqualTo(createTime)
 				.andCreateTimeLessThan(today);
-		int impUsers = crudUserDao.selectByExample(ex).size();
+		int impUsers = crudUserDao.countByExample(ex);
 		List<TaskStatusCountDto> addFans1240 = taskDao
 				.selectTaskStatusCount(getResultId(1240L));
 		List<TaskStatusCountDto> addFans1390 = taskDao
