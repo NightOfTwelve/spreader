@@ -34,7 +34,7 @@
 		sumExpectCount,if(sum(actual_count) is
 		null,0,sum(actual_count)) as
 		sumActualCount,if(round(sum(actual_count)/sum(expect_count)*100,2) is
-		null,0.0,round(sum(actual_count)/sum(expect_count)*100,2))
+		null,0.0,round(sum(success_count)/sum(expect_count)*100,2))
 		as
 		actualScale,sum(success_count) as
 		sumSuccessCount,if(round(sum(success_count)/sum(actual_count)*100,2)
