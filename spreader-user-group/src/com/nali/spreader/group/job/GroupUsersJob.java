@@ -36,8 +36,7 @@ public class GroupUsersJob {
 
 	private void refreshAllGroupUsers() {
 		List<Long> queryGroups = this.userGroupInfoService.queryAllUserGroup();
-		List<Long> dependGroups = this.userGroupInfoService
-				.getAllGroupDependData(null);
+		List<Long> dependGroups = this.userGroupInfoService.getAllGroupDependData(null);
 		refreshDependGroupUsers(dependGroups);
 		refreshQueryGroupUsers(queryGroups, dependGroups);
 	}
