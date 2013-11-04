@@ -46,7 +46,7 @@ import com.nali.spreader.util.random.RandomUtil;
 public class UserGroupInfoService implements IUserGroupInfoService {
 	private IJsonSerializer jsonSerializer = new JackSonSerializer();
 	private static final Logger logger = Logger.getLogger(UserGroupInfoService.class);
-	private static final int GROUP_USER_LIMIT = 1000;
+	private static final int GROUP_USER_LIMIT = 1000000;
 	@Autowired
 	private ICrudUserGroupDao crudUserGroupDao;
 	@Autowired
@@ -132,8 +132,7 @@ public class UserGroupInfoService implements IUserGroupInfoService {
 								batchSaveDynamicUser(dto, manualUsers, gid);
 								Long[] excludeArr = new Long[excludeUsers.size()];
 								this.removeManualUsers(gid, excludeUsers.toArray(excludeArr));
-								grouppedUserDao.deleteTmpGroupUidsByGid(gid, new ArrayList<Long>(
-										excludeUsers));
+								grouppedUserDao.deleteTmpGroupUidsByGid(gid, new ArrayList<Long>(excludeUsers));
 							}
 							grouppedUserDao.replaceUserList(gid);
 							result = true;

@@ -33,8 +33,7 @@ public class UserGroupDao implements IUserGroupDao {
 		if (limit != null) {
 			parameterMap.put("limit", limit);
 		}
-		return this.sqlMap.queryForList("spreader_user_group.queryUserGroupByCriteria",
-				parameterMap);
+		return this.sqlMap.queryForList("spreader_user_group.queryUserGroupByCriteria", parameterMap);
 	}
 
 	@Override
