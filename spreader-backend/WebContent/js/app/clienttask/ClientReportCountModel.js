@@ -406,6 +406,54 @@ Ext.onReady(function() {
 		if (value == '4022') {
 			return '安智桌面端';
 		}
+		if (value == '4023') {
+			return '360手机端更新';
+		}
+		if (value == '4024') {
+			return '百度web下载';
+		}
+		if (value == '4025') {
+			return '百度二维码图片下载';
+		}
+		if (value == '4026') {
+			return '腾讯应用宝更新';
+		}
+		if (value == '4027') {
+			return '安智二维码下载';
+		}
+		if (value == '4028') {
+			return '豌豆荚二维码下载';
+		}
+		if (value == '4029') {
+			return '豌豆荚网页下载';
+		}
+		if (value == '4030') {
+			return '安卓市场二维码';
+		}
+		if (value == '4031') {
+			return '安卓市场Web';
+		}
+		if (value == '4032') {
+			return '应用宝二维码';
+		}
+		if (value == '4033') {
+			return '应用宝Web';
+		}
+		if (value == '4034') {
+			return '百度Web iOS';
+		}
+		if (value == '4035') {
+			return '联想乐市场';
+		}
+		if (value == '4036') {
+			return '应用宝桌面';
+		}
+		if (value == '4037') {
+			return '豌豆荚更新';
+		}
+		if (value == '4038') {
+			return '小米Web';
+		}
 		return '新增市场';
 	}
 });
