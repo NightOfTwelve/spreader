@@ -178,12 +178,12 @@ Ext.onReady(function() {
 				}), '-', new Ext.form.TextField({
 					id : 'actionId',
 					name : 'actionId',
-					emptyText : '请输入市场代码',
-					width : 130
+					emptyText : '请输入市场代码,如多个请用英文逗号隔开',
+					width : 220
 				}), '-', new Ext.form.TextField({
 					id : 'appName',
-					emptyText : '请输入AppName,如多个请用英文逗号隔开',
-					width : 220
+					emptyText : '请输入AppName',
+					width : 130
 				}), '-', {
 					text : '查询',
 					iconCls : 'previewIcon',

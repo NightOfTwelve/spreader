@@ -8,19 +8,17 @@
 		client_seq as clientSeq,task_date as taskDate,update_time as updateTime,create_time as createTime
 		from tb_client_report
 		<!-- where task_date=date_sub(curdate(),interval #days# day) -->
-		<isNotEmpty property="taskDate">
-			where task_date = #taskDate#
-		</isNotEmpty> 
+		where task_date = #taskDate#
 		<isNotEmpty property="clientId">
 			and client_id = #clientId# 
 		</isNotEmpty>
 		<isNotEmpty property="actionId">
-			and action_id = #actionId#
+			    <iterate property="actionId" prepend="and action_id in" open="(" close=")" conjunction="," > 
+                    #actionId[]# 
+                </iterate>
 		</isNotEmpty>
 		<isNotEmpty property="appName">
-			    <iterate property="appName" prepend="and app_name in" open="(" close=")" conjunction="," > 
-                    #appName[]# 
-                </iterate>
+			and app_name = #appName#
 		</isNotEmpty>
 		order by client_id,client_seq,task_type,action_id,app_name
 		<isNotNull property="limit">
@@ -32,19 +30,17 @@
 		count(*) cnt
 		from tb_client_report 
 		<!-- where task_date=date_sub(curdate(),interval #days# day) -->
-		<isNotEmpty property="taskDate">
-			where task_date=#taskDate#
-		</isNotEmpty> 
+		where task_date=#taskDate#
 		<isNotEmpty property="clientId">
 			and client_id=#clientId# 
 		</isNotEmpty>
 		<isNotEmpty property="actionId">
-			and action_id=#actionId#
+			    <iterate property="actionId" prepend="and action_id in" open="(" close=")" conjunction="," > 
+                    #actionId[]# 
+                </iterate>
 		</isNotEmpty>
 		<isNotEmpty property="appName">
-			    <iterate property="appName" prepend="and app_name in" open="(" close=")" conjunction="," > 
-                    #appName[]# 
-                </iterate>
+			and app_name = #appName#
 		</isNotEmpty>
 	</select>
 	<select id="queryMarketTaskCount" parameterClass="java.util.Map"
