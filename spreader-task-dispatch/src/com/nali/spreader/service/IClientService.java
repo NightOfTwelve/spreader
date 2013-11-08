@@ -52,8 +52,17 @@ public interface IClientService {
 
 	PageResult<ClientReport> findClientReportByTaskDate(Date taskDate,
 			Long clientId, Long actionId, String appName, Limit lit);
-
-	PageResult<ClientReport> countClientTask(int days, Limit lit);
+	
+	/**
+	 * 按客户端统计打榜情况
+	 * @param taskDate
+	 * @param clientId
+	 * @param actionId
+	 * @param appName
+	 * @param lit
+	 * @return
+	 */
+	PageResult<ClientReport> countClientTask(Date taskDate, Long clientId, Long actionId, String appName, Limit lit);
 
 	PageResult<MarketTaskCount> countMarketTask(int days, Limit lit);
 }

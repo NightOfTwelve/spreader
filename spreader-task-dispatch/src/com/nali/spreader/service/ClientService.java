@@ -198,8 +198,7 @@ public class ClientService implements IClientService {
 		 * 删除过期的记录
 		 */
 		private void removeIpRecord() {
-			Date thisTime = DateUtils.addMinutes(new Date(), -1
-					* EFFECTIVE_TIME_MINUTE);
+			Date thisTime = DateUtils.addMinutes(new Date(), -1 * EFFECTIVE_TIME_MINUTE);
 			Iterator<ClientInfo> iter = recordMap.values().iterator();
 			while (iter.hasNext()) {
 				ClientInfo clientInfo = iter.next();
@@ -232,8 +231,7 @@ public class ClientService implements IClientService {
 	}
 
 	@Override
-	public PageResult<IpRecord> getIpRecordPageData(Long clientId,
-			Date startTime, Date endTime, Limit lit) {
+	public PageResult<IpRecord> getIpRecordPageData(Long clientId, Date startTime, Date endTime, Limit lit) {
 		IpRecordExample exp = new IpRecordExample();
 		Criteria c = exp.createCriteria();
 		if (clientId != null) {
@@ -253,9 +251,7 @@ public class ClientService implements IClientService {
 	}
 
 	@Override
-	public PageResult<ClientReport> findClientReportByCreateTime(
-			Date startCreateTime, Date endCreateTime, Long clientId,
-			Integer taskType, Limit lit) {
+	public PageResult<ClientReport> findClientReportByCreateTime(Date startCreateTime, Date endCreateTime, Long clientId, Integer taskType, Limit lit) {
 		ClientReportExample cre = new ClientReportExample();
 		ClientReportExample.Criteria c = cre.createCriteria();
 		if (startCreateTime != null) {
@@ -278,8 +274,7 @@ public class ClientService implements IClientService {
 	}
 
 	@Override
-	public PageResult<ClientReport> findClientReportByTaskDate(Date taskDate,
-			Long clientId, Long actionId, String appName, Limit lit) {
+	public PageResult<ClientReport> findClientReportByTaskDate(Date taskDate, Long clientId, Long actionId, String appName, Limit lit) {
 		ClientReportExample cre = new ClientReportExample();
 		ClientReportExample.Criteria c = cre.createCriteria();
 		if (taskDate != null) {
@@ -302,17 +297,15 @@ public class ClientService implements IClientService {
 	}
 
 	@Override
-	public PageResult<ClientReport> countClientTask(int days, Limit lit) {
-		List<ClientReport> list = clientReportDao.queryClientTaskCount(days,
-				lit);
-		int count = clientReportDao.countClientTaskCount(days);
+	public PageResult<ClientReport> countClientTask(Date taskDate, Long clientId, Long actionId, String appName, Limit lit) {
+		List<ClientReport> list = clientReportDao.queryClientTaskCount(taskDate, clientId, actionId, appName, lit);
+		int count = clientReportDao.countClientTaskCount(taskDate, clientId, actionId, appName);
 		return new PageResult<ClientReport>(list, lit, count);
 	}
 
 	@Override
 	public PageResult<MarketTaskCount> countMarketTask(int days, Limit lit) {
-		List<MarketTaskCount> list = clientReportDao.queryMarketTaskCount(days,
-				lit);
+		List<MarketTaskCount> list = clientReportDao.queryMarketTaskCount(days, lit);
 		int count = clientReportDao.countMarketTaskCount(days);
 		return new PageResult<MarketTaskCount>(list, lit, count);
 	}
