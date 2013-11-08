@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ibatis.SqlMapClientTemplate;
 import org.springframework.stereotype.Repository;
@@ -26,11 +25,11 @@ public class ClientReportDaoImpl implements IClientReportDao {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("taskDate", taskDate);
 		params.put("clientId", clientId);
-		params.put("actionId", actionId);
-		if (StringUtils.isNotEmpty(appName)) {
-			String[] appNameArr = appName.split(",");
-			params.put("appName", appNameArr);
+		if (actionId != null) {
+			String[] actionIdArr = actionId.toString().split(",");
+			params.put("actionId", actionIdArr);
 		}
+		params.put("appName", appName);
 		params.put("limit", limit);
 		return sqlMap.queryForList("spreader_client_report.queryClientTaskCount", params);
 	}
@@ -40,11 +39,11 @@ public class ClientReportDaoImpl implements IClientReportDao {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("taskDate", taskDate);
 		params.put("clientId", clientId);
-		params.put("actionId", actionId);
-		if (StringUtils.isNotEmpty(appName)) {
-			String[] appNameArr = appName.split(",");
-			params.put("appName", appNameArr);
+		if (actionId != null) {
+			String[] actionIdArr = actionId.toString().split(",");
+			params.put("actionId", actionIdArr);
 		}
+		params.put("appName", appName);
 		Integer cnt = (Integer) sqlMap.queryForObject("spreader_client_report.countClientTaskCount", params);
 		if (cnt == null) {
 			cnt = 0;
