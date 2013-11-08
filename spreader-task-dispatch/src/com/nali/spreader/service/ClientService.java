@@ -297,7 +297,7 @@ public class ClientService implements IClientService {
 	}
 
 	@Override
-	public PageResult<ClientReport> countClientTask(Date taskDate, Long clientId, Long actionId, String appName, Limit lit) {
+	public PageResult<ClientReport> countClientTask(Date taskDate, Long clientId, String actionId, String appName, Limit lit) {
 		List<ClientReport> list = clientReportDao.queryClientTaskCount(taskDate, clientId, actionId, appName, lit);
 		int count = clientReportDao.countClientTaskCount(taskDate, clientId, actionId, appName);
 		return new PageResult<ClientReport>(list, lit, count);

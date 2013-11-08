@@ -54,7 +54,7 @@ public class ClientReportController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "/clientStore")
-	public String clientStore(Date taskDate, Long clientId, Long actionId, String appName, Integer start, Integer limit) {
+	public String clientStore(Date taskDate, Long clientId, String actionId, String appName, Integer start, Integer limit) {
 		if (taskDate == null) {
 			try {
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd 00:00:00");

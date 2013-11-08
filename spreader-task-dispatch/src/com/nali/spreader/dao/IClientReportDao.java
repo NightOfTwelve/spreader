@@ -18,7 +18,7 @@ public interface IClientReportDao {
 	 * @param limit
 	 * @return
 	 */
-	List<ClientReport> queryClientTaskCount(Date taskDate, Long clientId, Long actionId, String appName, Limit limit);
+	List<ClientReport> queryClientTaskCount(Date taskDate, Long clientId, String actionId, String appName, Limit limit);
 	
 	/**
 	 * 查询几天前的客户端任务执行数量_count
@@ -28,7 +28,7 @@ public interface IClientReportDao {
 	 * @param appName
 	 * @return
 	 */
-	int countClientTaskCount(Date taskDate, Long clientId, Long actionId, String appName);
+	int countClientTaskCount(Date taskDate, Long clientId, String actionId, String appName);
 
 	/**
 	 * 查询所有市场执行情况
