@@ -4,28 +4,48 @@
 	<select id="queryClientTaskCount" parameterClass="java.util.Map"
 		resultClass="com.nali.spreader.model.ClientReport">
 		select
-		client_id as clientId,action_id as actionId,app_name as
-		appName,expect_count as expectCount,actual_count as
-		actualCount,success_count as successCount,client_seq as
-		clientSeq,task_date as taskDate,update_time
-		as updateTime,create_time
-		as createTime
-		from tb_client_report where
-		task_date=date_sub(curdate(),interval
-		#days#
-		day) order by
-		client_id,client_seq,task_type,action_id,app_name
+		client_id as clientId,action_id as actionId,app_name as appName,expect_count as expectCount,actual_count as actualCount,success_count as successCount,
+		client_seq as clientSeq,task_date as taskDate,update_time as updateTime,create_time as createTime
+		from tb_client_report
+		<!-- where task_date=date_sub(curdate(),interval #days# day) -->
+		<isNotEmpty property="taskDate">
+			where task_date = #taskDate#
+		</isNotEmpty> 
+		<isNotEmpty property="clientId">
+			and client_id = #clientId# 
+		</isNotEmpty>
+		<isNotEmpty property="actionId">
+			and action_id = #actionId#
+		</isNotEmpty>
+		<isNotEmpty property="appName">
+			    <iterate property="appName" prepend="and app_name in" open="(" close=")" conjunction="," > 
+                    #appName[]# 
+                </iterate>
+		</isNotEmpty>
+		order by client_id,client_seq,task_type,action_id,app_name
 		<isNotNull property="limit">
 			limit $limit.offset$,$limit.maxRows$
 		</isNotNull>
 	</select>
-	<select id="countClientTaskCount" parameterClass="java.lang.Integer"
-		resultClass="java.lang.Integer">
+	<select id="countClientTaskCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
 		select
 		count(*) cnt
-		from tb_client_report where
-		task_date=date_sub(curdate(),interval
-		#days# day)
+		from tb_client_report 
+		<!-- where task_date=date_sub(curdate(),interval #days# day) -->
+		<isNotEmpty property="taskDate">
+			where task_date=#taskDate#
+		</isNotEmpty> 
+		<isNotEmpty property="clientId">
+			and client_id=#clientId# 
+		</isNotEmpty>
+		<isNotEmpty property="actionId">
+			and action_id=#actionId#
+		</isNotEmpty>
+		<isNotEmpty property="appName">
+			    <iterate property="appName" prepend="and app_name in" open="(" close=")" conjunction="," > 
+                    #appName[]# 
+                </iterate>
+		</isNotEmpty>
 	</select>
 	<select id="queryMarketTaskCount" parameterClass="java.util.Map"
 		resultClass="com.nali.spreader.dto.MarketTaskCount">

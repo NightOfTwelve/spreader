@@ -61,14 +61,15 @@ Ext.onReady(function() {
 
 	// 分页带上查询条件
 	clientStore.on('beforeload', function() {
-				var clientDaysCmp = Ext.getCmp('clientDays');
-				var clientDays = clientDaysCmp.getValue();
 				if (!Ext.isEmpty(numtext.getValue())) {
 					number = Number(numtext.getValue());
 				}
 				bbar.pageSize = Number(number);
 				this.baseParams = {
-					clientDays : clientDays,
+					taskDate : Ext.getCmp('taskDate').getValue(),
+					clientId : Ext.getCmp('clientId').getValue(),
+					actionId : Ext.getCmp('actionId').getValue(),
+					appName : Ext.getCmp('appName').getValue(),
 					start : 0,
 					limit : bbar.pageSize
 				};
@@ -162,22 +163,38 @@ Ext.onReady(function() {
 				},
 				bbar : bbar,
 				cm : cm,
-				tbar : [new Ext.form.TextField({
-									id : 'clientDays',
-									name : 'clientDays',
-									emptyText : '输入天数',
-									width : 130
-								}), '-', {
-							text : '查询',
-							iconCls : 'previewIcon',
-							handler : function() {
-								var clientDaysCmp = Ext.getCmp('clientDays');
-								var clientDays = clientDaysCmp.getValue();
-								clientStore.setBaseParam('clientDays',
-										clientDays);
-								clientStore.load();
-							}
-						}]
+				tbar : [{
+					xtype : "datefield",
+					fieldLabel : "创建时间",
+					emptyText : '请输入任务日期',
+					id : 'taskDate',
+					name : 'taskDate',
+					width : 150
+				},'-', new Ext.form.TextField({
+					id : 'clientId',
+					name : 'clientId',
+					emptyText : '请输入客户端ID',
+					width : 130
+				}), '-', new Ext.form.TextField({
+					id : 'actionId',
+					name : 'actionId',
+					emptyText : '请输入市场代码',
+					width : 130
+				}), '-', new Ext.form.TextField({
+					id : 'appName',
+					emptyText : '请输入AppName,如多个请用英文逗号隔开',
+					width : 220
+				}), '-', {
+					text : '查询',
+					iconCls : 'previewIcon',
+					handler : function() {
+						clientStore.setBaseParam('taskDate', Ext.getCmp('taskDate').getValue());
+						clientStore.setBaseParam('clientId', Ext.getCmp('clientId').getValue());
+						clientStore.setBaseParam('actionId', Ext.getCmp('actionId').getValue());
+						clientStore.setBaseParam('appName', Ext.getCmp('appName').getValue());
+						clientStore.load();
+					}
+				} ]
 			});
 
 	// Market
