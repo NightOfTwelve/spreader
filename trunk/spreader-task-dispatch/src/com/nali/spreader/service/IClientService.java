@@ -62,7 +62,7 @@ public interface IClientService {
 	 * @param lit
 	 * @return
 	 */
-	PageResult<ClientReport> countClientTask(Date taskDate, Long clientId, Long actionId, String appName, Limit lit);
+	PageResult<ClientReport> countClientTask(Date taskDate, Long clientId, String actionId, String appName, Limit lit);
 
 	PageResult<MarketTaskCount> countMarketTask(int days, Limit lit);
 }
