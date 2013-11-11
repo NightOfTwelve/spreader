@@ -3,7 +3,7 @@ Ext.onReady(function() {
 				name : 'colsHidden'
 			});
 	// 页数
-	var number = 200;
+	var number = 20;
 	var numtext = new Ext.form.TextField({
 				id : 'maxpage',
 				name : 'maxpage',
@@ -60,18 +60,6 @@ Ext.onReady(function() {
 								}, {
 									name : 'updateTime'
 								}])
-			});
-			// 分页带上查询条件
-			store.on('beforeload', function() {
-				if (!Ext.isEmpty(numtext.getValue())) {
-					number = Number(numtext.getValue());
-				}
-				bbar.pageSize = Number(number);
-				this.baseParams = {
-					clientId : Ext.getCmp('clientIdQuery').getValue(),
-					start : 0,
-					limit : bbar.pageSize
-				};
 			});
 	var cfgcm = new Ext.grid.ColumnModel([{
 				header : '编号',
