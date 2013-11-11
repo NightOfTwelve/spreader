@@ -44,17 +44,15 @@ public interface IClientService {
 	 * @param endTime
 	 * @return
 	 */
-	PageResult<IpRecord> getIpRecordPageData(Long clientId, Date startTime,
-			Date endTime, Limit lit);
+	PageResult<IpRecord> getIpRecordPageData(Long clientId, Date startTime, Date endTime, Limit lit);
 
-	PageResult<ClientReport> findClientReportByCreateTime(Date startCreateTime,
-			Date endCreateTime, Long clientId, Integer taskType, Limit lit);
+	PageResult<ClientReport> findClientReportByCreateTime(Date startCreateTime, Date endCreateTime, Long clientId, Integer taskType, Limit lit);
 
-	PageResult<ClientReport> findClientReportByTaskDate(Date taskDate,
-			Long clientId, Long actionId, String appName, Limit lit);
-	
+	PageResult<ClientReport> findClientReportByTaskDate(Date taskDate, Long clientId, Long actionId, String appName, Limit lit);
+
 	/**
 	 * 按客户端统计打榜情况
+	 * 
 	 * @param taskDate
 	 * @param clientId
 	 * @param actionId
@@ -64,5 +62,5 @@ public interface IClientService {
 	 */
 	PageResult<ClientReport> countClientTask(Date taskDate, Long clientId, String actionId, String appName, Limit lit);
 
-	PageResult<MarketTaskCount> countMarketTask(int days, Limit lit);
+	PageResult<MarketTaskCount> countMarketTask(Date days, String actionId, String appName, Limit lit);
 }

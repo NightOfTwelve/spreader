@@ -304,9 +304,9 @@ public class ClientService implements IClientService {
 	}
 
 	@Override
-	public PageResult<MarketTaskCount> countMarketTask(int days, Limit lit) {
-		List<MarketTaskCount> list = clientReportDao.queryMarketTaskCount(days, lit);
-		int count = clientReportDao.countMarketTaskCount(days);
+	public PageResult<MarketTaskCount> countMarketTask(Date days, String actionId, String appName, Limit lit) {
+		List<MarketTaskCount> list = clientReportDao.queryMarketTaskCount(days, actionId, appName, lit);
+		int count = clientReportDao.countMarketTaskCount(days, actionId, appName);
 		return new PageResult<MarketTaskCount>(list, lit, count);
 	}
 }

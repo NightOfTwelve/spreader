@@ -194,6 +194,15 @@ Ext.onReady(function() {
 						clientStore.setBaseParam('appName', Ext.getCmp('appName').getValue());
 						clientStore.load();
 					}
+				},'-',{
+					text : '清除',
+					iconCls : 'configIcon',
+					handler : function() {
+						Ext.getCmp('taskDate').reset();
+						Ext.getCmp('clientId').reset();
+						Ext.getCmp('actionId').reset();
+						Ext.getCmp('appName').reset();
+					}
 				} ]
 			});
 
@@ -252,14 +261,14 @@ Ext.onReady(function() {
 
 	// 分页带上查询条件
 	marketStore.on('beforeload', function() {
-				var marketDaysCmp = Ext.getCmp('marketDays');
-				var marketDays = marketDaysCmp.getValue();
 				if (!Ext.isEmpty(numtext2.getValue())) {
 					number2 = Number(numtext2.getValue());
 				}
 				bbar2.pageSize = Number(number2);
 				this.baseParams = {
-					marketDays : marketDays,
+					marketDays : Ext.getCmp('marketDays').getValue(),
+					actionId : Ext.getCmp('actionId').getValue(),
+					appName : Ext.getCmp('appName').getValue(),
 					start : 0,
 					limit : bbar2.pageSize
 				};
@@ -335,22 +344,40 @@ Ext.onReady(function() {
 				},
 				bbar : bbar2,
 				cm : cm2,
-				tbar : [new Ext.form.TextField({
-									id : 'marketDays',
-									name : 'marketDays',
-									emptyText : '输入天数',
-									width : 130
-								}), '-', {
-							text : '查询',
-							iconCls : 'previewIcon',
-							handler : function() {
-								var marketDaysCmp = Ext.getCmp('marketDays');
-								var marketDays = marketDaysCmp.getValue();
-								marketStore.setBaseParam('marketDays',
-										marketDays);
-								marketStore.load();
-							}
-						}]
+				tbar : [ {
+					xtype : "datefield",
+					fieldLabel : "创建时间",
+					emptyText : '请输入任务日期',
+					id : 'marketDays',
+					name : 'marketDays',
+					width : 150
+				}, '-', new Ext.form.TextField({
+					id : 'actionId',
+					name : 'actionId',
+					emptyText : '请输入市场代码,如多个请用英文逗号隔开',
+					width : 220
+				}), '-', new Ext.form.TextField({
+					id : 'appName',
+					emptyText : '请输入AppName',
+					width : 130
+				}), '-', {
+					text : '查询',
+					iconCls : 'previewIcon',
+					handler : function() {
+						marketStore.setBaseParam('marketDays', Ext.getCmp('marketDays').getValue());
+						marketStore.setBaseParam('actionId', Ext.getCmp('actionId').getValue());
+						marketStore.setBaseParam('appName', Ext.getCmp('appName').getValue());
+						marketStore.load();
+					}
+				}, '-',{
+					text : '清除',
+					iconCls : 'configIcon',
+					handler : function() {
+						Ext.getCmp('marketDays').reset();
+						Ext.getCmp('actionId').reset();
+						Ext.getCmp('appName').reset();
+					}
+				} ]
 			});
 	// Market
 	var tabs = new Ext.TabPanel({
