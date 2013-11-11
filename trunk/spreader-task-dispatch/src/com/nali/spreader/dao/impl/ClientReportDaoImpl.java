@@ -53,16 +53,28 @@ public class ClientReportDaoImpl implements IClientReportDao {
 	}
 
 	@Override
-	public List<MarketTaskCount> queryMarketTaskCount(int days, Limit limit) {
-		Map<String, Object> params = CollectionUtils.newHashMap(2);
+	public List<MarketTaskCount> queryMarketTaskCount(Date days, String actionId, String appName, Limit limit) {
+		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("days", days);
+		if (StringUtils.isNotEmpty(actionId)) {
+			String[] actionIdArr = actionId.split(",");
+			params.put("actionId", actionIdArr);
+		}
+		params.put("appName", appName);
 		params.put("limit", limit);
 		return sqlMap.queryForList("spreader_client_report.queryMarketTaskCount", params);
 	}
 
 	@Override
-	public int countMarketTaskCount(int days) {
-		Integer cnt = (Integer) sqlMap.queryForObject("spreader_client_report.countMarketTaskCount", days);
+	public int countMarketTaskCount(Date days, String actionId, String appName) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("days", days);
+		if (StringUtils.isNotEmpty(actionId)) {
+			String[] actionIdArr = actionId.split(",");
+			params.put("actionId", actionIdArr);
+		}
+		params.put("appName", appName);
+		Integer cnt = (Integer) sqlMap.queryForObject("spreader_client_report.countMarketTaskCount", params);
 		if (cnt == null) {
 			cnt = 0;
 		}

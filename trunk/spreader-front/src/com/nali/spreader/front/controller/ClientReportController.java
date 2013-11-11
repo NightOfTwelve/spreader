@@ -60,7 +60,7 @@ public class ClientReportController extends BaseController {
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
 				taskDate = sdf.parse(sdf.format(new Date()));
 			} catch (ParseException e) {
-				logger.error(e.getMessage(),e);
+				logger.error(e.getMessage(), e);
 			}
 		}
 		Limit lit = initLimit(start, limit);
@@ -70,12 +70,17 @@ public class ClientReportController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "/marketStore")
-	public String marketStore(Integer marketDays, Integer start, Integer limit) {
-		Limit lit = initLimit(start, limit);
+	public String marketStore(Date marketDays, String actionId, String appName, Integer start, Integer limit) {
 		if (marketDays == null) {
-			marketDays = 0;
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+				marketDays = sdf.parse(sdf.format(new Date()));
+			} catch (ParseException e) {
+				logger.error(e.getMessage(), e);
+			}
 		}
-		PageResult<MarketTaskCount> page = clientService.countMarketTask(marketDays, lit);
+		Limit lit = initLimit(start, limit);
+		PageResult<MarketTaskCount> page = clientService.countMarketTask(marketDays, actionId, appName, lit);
 		return write(page);
 	}
 }

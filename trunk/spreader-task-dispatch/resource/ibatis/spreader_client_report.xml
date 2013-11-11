@@ -43,8 +43,7 @@
 			and app_name = #appName#
 		</isNotEmpty>
 	</select>
-	<select id="queryMarketTaskCount" parameterClass="java.util.Map"
-		resultClass="com.nali.spreader.dto.MarketTaskCount">
+	<select id="queryMarketTaskCount" parameterClass="java.util.Map" resultClass="com.nali.spreader.dto.MarketTaskCount">
 		select action_id as actionId,app_name as appName,if(sum(expect_count)
 		is null,0,sum(expect_count)) as
 		sumExpectCount,if(sum(actual_count) is
@@ -58,24 +57,34 @@
 		as
 		successScale
 		from
-		tb_client_report where
-		task_date=date_sub(curdate(),interval #days#
-		day)
-		group by
-		task_type,action_id,app_name
+		tb_client_report 
+		where task_date= #days#
+		<isNotEmpty property="actionId">
+			<iterate property="actionId" prepend="and action_id in" open="(" close=")" conjunction="," > 
+            	#actionId[]# 
+        	</iterate>
+		</isNotEmpty>
+		<isNotEmpty property="appName">
+			and app_name = #appName#
+		</isNotEmpty>
+		group by task_type,action_id,app_name
 		<isNotNull property="limit">
 			limit $limit.offset$,$limit.maxRows$
 		</isNotNull>
 	</select>
-	<select id="countMarketTaskCount" parameterClass="java.lang.Integer"
-		resultClass="java.lang.Integer">
+	<select id="countMarketTaskCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
 		select count(*) cnt from (
 		select * from
 		tb_client_report
-		where
-		task_date=date_sub(curdate(),interval #days#
-		day)
-		group by
-		task_type,action_id,app_name) as t
+		where task_date = #days#
+		<isNotEmpty property="actionId">
+			<iterate property="actionId" prepend="and action_id in" open="(" close=")" conjunction="," > 
+            	#actionId[]# 
+        	</iterate>
+		</isNotEmpty>
+		<isNotEmpty property="appName">
+			and app_name = #appName#
+		</isNotEmpty>
+		group by task_type,action_id,app_name) as t
 	</select>
 </sqlMap>
