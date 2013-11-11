@@ -68,8 +68,8 @@ Ext.onReady(function() {
 				this.baseParams = {
 					taskDate : Ext.getCmp('taskDate').getValue(),
 					clientId : Ext.getCmp('clientId').getValue(),
-					actionId : Ext.getCmp('actionId').getValue(),
-					appName : Ext.getCmp('appName').getValue(),
+					actionId : Ext.getCmp('actionIdVal').getValue(),
+					appName : Ext.getCmp('appNameVal').getValue(),
 					start : 0,
 					limit : bbar.pageSize
 				};
@@ -176,12 +176,13 @@ Ext.onReady(function() {
 					emptyText : '请输入客户端ID',
 					width : 130
 				}), '-', new Ext.form.TextField({
-					id : 'actionId',
-					name : 'actionId',
+					id : 'actionIdVal',
+					name : 'actionIdVal',
 					emptyText : '请输入市场代码,如多个请用英文逗号隔开',
 					width : 220
 				}), '-', new Ext.form.TextField({
-					id : 'appName',
+					id : 'appNameVal',
+					name: 'appNameVal',
 					emptyText : '请输入AppName',
 					width : 130
 				}), '-', {
@@ -190,8 +191,8 @@ Ext.onReady(function() {
 					handler : function() {
 						clientStore.setBaseParam('taskDate', Ext.getCmp('taskDate').getValue());
 						clientStore.setBaseParam('clientId', Ext.getCmp('clientId').getValue());
-						clientStore.setBaseParam('actionId', Ext.getCmp('actionId').getValue());
-						clientStore.setBaseParam('appName', Ext.getCmp('appName').getValue());
+						clientStore.setBaseParam('actionId', Ext.getCmp('actionIdVal').getValue());
+						clientStore.setBaseParam('appName', Ext.getCmp('appNameVal').getValue());
 						clientStore.load();
 					}
 				},'-',{
@@ -200,8 +201,8 @@ Ext.onReady(function() {
 					handler : function() {
 						Ext.getCmp('taskDate').reset();
 						Ext.getCmp('clientId').reset();
-						Ext.getCmp('actionId').reset();
-						Ext.getCmp('appName').reset();
+						Ext.getCmp('actionIdVal').reset();
+						Ext.getCmp('appNameVal').reset();
 					}
 				} ]
 			});
