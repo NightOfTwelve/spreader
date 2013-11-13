@@ -359,4 +359,33 @@ public class ClientReport extends BaseModel implements Serializable {
     public void setSuccessCount(Integer successCount) {
         this.successCount = successCount;
     }
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ClientReport [clientId=");
+		builder.append(clientId);
+		builder.append(", clientSeq=");
+		builder.append(clientSeq);
+		builder.append(", taskDate=");
+		builder.append(taskDate);
+		builder.append(", taskType=");
+		builder.append(taskType);
+		builder.append(", updateTime=");
+		builder.append(updateTime);
+		builder.append(", createTime=");
+		builder.append(createTime);
+		builder.append(", expectCount=");
+		builder.append(expectCount);
+		builder.append(", actualCount=");
+		builder.append(actualCount);
+		builder.append(", actionId=");
+		builder.append(actionId);
+		builder.append(", appName=");
+		builder.append(appName);
+		builder.append(", successCount=");
+		builder.append(successCount);
+		builder.append("]");
+		return builder.toString();
+	}
 }

@@ -13,6 +13,9 @@ Ext.onReady(function() {
 									name : 'taskType'
 								}, {
 									name : 'taskDate'
+								},{
+									name : 'marketName',
+									type : 'string'
 								}, {
 									name : 'clientSeq'
 								}, {
@@ -91,8 +94,8 @@ Ext.onReady(function() {
 				width : 90
 			}, {
 				header : '市场',
-				dataIndex : 'actionId',
-				renderer : renderMarketName,
+				dataIndex : 'marketName',
+//				renderer : renderMarketName,
 				sortable : true,
 				width : 100
 			}, {
@@ -207,30 +210,40 @@ Ext.onReady(function() {
 				} ]
 			});
 
-	// Market
-	var marketStore = new Ext.data.Store({
+			// Market
+			var marketStore = new Ext.data.Store({
 				proxy : new Ext.data.HttpProxy({
-							url : '/spreader-front/clientreport/marketStore?_time='
-									+ new Date().getTime()
-						}),
+					url : '/spreader-front/clientreport/marketStore?_time='
+							+ new Date().getTime()
+				}),
 				reader : new Ext.data.JsonReader({
-							totalProperty : 'totalCount',
-							root : 'list'
-						}, [{
-									name : 'actionId'
-								}, {
-									name : 'appName'
-								}, {
-									name : 'sumExpectCount'
-								}, {
-									name : 'sumActualCount'
-								}, {
-									name : 'actualScale'
-								}, {
-									name : 'sumSuccessCount'
-								}, {
-									name : 'successScale'
-								}]),
+					totalProperty : 'totalCount',
+					root : 'list'
+				}, [ {
+					name : 'actionId',
+					type : 'int'
+				}, {
+					name : 'marketName',
+					type : 'string'
+				},{
+					name : 'appName',
+					type : 'string'
+				}, {
+					name : 'sumExpectCount',
+					type : 'int'
+				}, {
+					name : 'sumActualCount',
+					type : 'int'
+				}, {
+					name : 'actualScale',
+					type : 'float'
+				}, {
+					name : 'sumSuccessCount',
+					type : 'int'
+				}, {
+					name : 'successScale',
+					type : 'float'
+				} ]),
 				autoLoad : true
 			});
 	// 页数
@@ -286,8 +299,8 @@ Ext.onReady(function() {
 				width : 100
 			}, {
 				header : '市场',
-				dataIndex : 'actionId',
-				renderer : renderMarketName,
+				dataIndex : 'marketName',
+//				renderer : renderMarketName,
 				sortable : true,
 				width : 100
 			}, {
@@ -408,97 +421,97 @@ Ext.onReady(function() {
 				items : [tabs]
 			});
 
-	function renderMarketName(value) {
-		if (value == '4009') {
-			return '360手机助手';
-		}
-		if (value == '4010') {
-			return '安卓市场';
-		}
-		if (value == '4011') {
-			return '应用汇';
-		}
-		if (value == '4012') {
-			return '91助手';
-		}
-		if (value == '4013') {
-			return '安智市场';
-		}
-		if (value == '4014') {
-			return '机锋市场';
-		}
-		if (value == '4015') {
-			return '百度手机助手';
-		}
-		if (value == '4016') {
-			return '搜狐应用中心';
-		}
-		if (value == '4017') {
-			return '网易应用中心';
-		}
-		if (value == '4018') {
-			return '腾讯应用宝';
-		}
-		if (value == '4019') {
-			return '360桌面端';
-		}
-		if (value == '4020') {
-			return '小米市场';
-		}
-		if (value == '4021') {
-			return '豌豆荚';
-		}
-		if (value == '4022') {
-			return '安智桌面端';
-		}
-		if (value == '4023') {
-			return '360手机端更新';
-		}
-		if (value == '4024') {
-			return '百度web下载';
-		}
-		if (value == '4025') {
-			return '百度二维码图片下载';
-		}
-		if (value == '4026') {
-			return '腾讯应用宝更新';
-		}
-		if (value == '4027') {
-			return '安智二维码下载';
-		}
-		if (value == '4028') {
-			return '豌豆荚二维码下载';
-		}
-		if (value == '4029') {
-			return '豌豆荚网页下载';
-		}
-		if (value == '4030') {
-			return '安卓市场二维码';
-		}
-		if (value == '4031') {
-			return '安卓市场Web';
-		}
-		if (value == '4032') {
-			return '应用宝二维码';
-		}
-		if (value == '4033') {
-			return '应用宝Web';
-		}
-		if (value == '4034') {
-			return '百度Web iOS';
-		}
-		if (value == '4035') {
-			return '联想乐市场';
-		}
-		if (value == '4036') {
-			return '应用宝桌面';
-		}
-		if (value == '4037') {
-			return '豌豆荚更新';
-		}
-		if (value == '4038') {
-			return '小米Web';
-		}
-		return '新增市场';
-	}
+//	function renderMarketName(value) {
+//		if (value == '4009') {
+//			return '360手机助手';
+//		}
+//		if (value == '4010') {
+//			return '安卓市场';
+//		}
+//		if (value == '4011') {
+//			return '应用汇';
+//		}
+//		if (value == '4012') {
+//			return '91助手';
+//		}
+//		if (value == '4013') {
+//			return '安智市场';
+//		}
+//		if (value == '4014') {
+//			return '机锋市场';
+//		}
+//		if (value == '4015') {
+//			return '百度手机助手';
+//		}
+//		if (value == '4016') {
+//			return '搜狐应用中心';
+//		}
+//		if (value == '4017') {
+//			return '网易应用中心';
+//		}
+//		if (value == '4018') {
+//			return '腾讯应用宝';
+//		}
+//		if (value == '4019') {
+//			return '360桌面端';
+//		}
+//		if (value == '4020') {
+//			return '小米市场';
+//		}
+//		if (value == '4021') {
+//			return '豌豆荚';
+//		}
+//		if (value == '4022') {
+//			return '安智桌面端';
+//		}
+//		if (value == '4023') {
+//			return '360手机端更新';
+//		}
+//		if (value == '4024') {
+//			return '百度web下载';
+//		}
+//		if (value == '4025') {
+//			return '百度二维码图片下载';
+//		}
+//		if (value == '4026') {
+//			return '腾讯应用宝更新';
+//		}
+//		if (value == '4027') {
+//			return '安智二维码下载';
+//		}
+//		if (value == '4028') {
+//			return '豌豆荚二维码下载';
+//		}
+//		if (value == '4029') {
+//			return '豌豆荚网页下载';
+//		}
+//		if (value == '4030') {
+//			return '安卓市场二维码';
+//		}
+//		if (value == '4031') {
+//			return '安卓市场Web';
+//		}
+//		if (value == '4032') {
+//			return '应用宝二维码';
+//		}
+//		if (value == '4033') {
+//			return '应用宝Web';
+//		}
+//		if (value == '4034') {
+//			return '百度Web iOS';
+//		}
+//		if (value == '4035') {
+//			return '联想乐市场';
+//		}
+//		if (value == '4036') {
+//			return '应用宝桌面';
+//		}
+//		if (value == '4037') {
+//			return '豌豆荚更新';
+//		}
+//		if (value == '4038') {
+//			return '小米Web';
+//		}
+//		return '新增市场';
+//	}
 });
