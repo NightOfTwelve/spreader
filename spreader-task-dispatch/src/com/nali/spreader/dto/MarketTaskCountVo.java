@@ -2,9 +2,16 @@ package com.nali.spreader.dto;
 
 import java.io.Serializable;
 
-public class MarketTaskCount implements Serializable {
-	private static final long serialVersionUID = 6465109457845934509L;
+/**
+ * 相比MarketTaskCount增加marketName属性（为解决前台市场排序问题）
+ * @author zfang
+ *
+ */
+public class MarketTaskCountVo implements Serializable {
+	private static final long serialVersionUID = 4879010919454923179L;
+	
 	private Long actionId;
+	private String marketName;
 	private String appName;
 	private int sumExpectCount;
 	private int sumActualCount;
@@ -18,6 +25,14 @@ public class MarketTaskCount implements Serializable {
 
 	public void setActionId(Long actionId) {
 		this.actionId = actionId;
+	}
+
+	public String getMarketName() {
+		return marketName;
+	}
+
+	public void setMarketName(String marketName) {
+		this.marketName = marketName;
 	}
 
 	public String getAppName() {
@@ -71,8 +86,10 @@ public class MarketTaskCount implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("MarketTaskCount [actionId=");
+		builder.append("MarketTaskCountVo [actionId=");
 		builder.append(actionId);
+		builder.append(", marketName=");
+		builder.append(marketName);
 		builder.append(", appName=");
 		builder.append(appName);
 		builder.append(", sumExpectCount=");

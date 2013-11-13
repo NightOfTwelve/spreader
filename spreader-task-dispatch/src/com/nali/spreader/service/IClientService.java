@@ -6,8 +6,9 @@ import java.util.List;
 import com.nali.common.model.Limit;
 import com.nali.common.pagination.PageResult;
 import com.nali.spreader.dto.CurrentClientIpRecordDto;
-import com.nali.spreader.dto.MarketTaskCount;
+import com.nali.spreader.dto.MarketTaskCountVo;
 import com.nali.spreader.model.ClientReport;
+import com.nali.spreader.model.ClientReportVo;
 import com.nali.spreader.model.IpRecord;
 
 public interface IClientService {
@@ -60,7 +61,7 @@ public interface IClientService {
 	 * @param lit
 	 * @return
 	 */
-	PageResult<ClientReport> countClientTask(Date taskDate, Long clientId, String actionId, String appName, Limit lit);
+	PageResult<ClientReportVo> countClientTask(Date taskDate, Long clientId, String actionId, String appName, Limit lit);
 
-	PageResult<MarketTaskCount> countMarketTask(Date days, String actionId, String appName, Limit lit);
+	PageResult<MarketTaskCountVo> countMarketTask(Date days, String actionId, String appName, Limit lit);
 }
