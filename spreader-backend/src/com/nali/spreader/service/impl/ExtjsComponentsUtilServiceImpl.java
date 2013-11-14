@@ -227,7 +227,7 @@ public class ExtjsComponentsUtilServiceImpl implements
 		List<TaskStatusCountDto> addFans1391 = taskDao
 				.selectTaskStatusCount(getResultId(1391L));
 		StringBuilder sb = new StringBuilder();
-		sb.append("<html><body>").append("<h4>用户分组导入情况</h4>").append("<ul>")
+		sb.append("<h4>用户分组导入情况</h4>").append("<ul>")
 				.append("<li>").append("562三天前的用户分组人数:").append(threeAgo)
 				.append("</li>").append("<li>").append("561前天用户分组人数:")
 				.append(twoAgo).append("</li>").append("<li>")
@@ -240,7 +240,7 @@ public class ExtjsComponentsUtilServiceImpl implements
 				.append("执行加前天用户粉丝的任务情况(1390):").append(addFans1390)
 				.append("</li>").append("<li>")
 				.append("执行加三天前用户粉丝的任务情况(1391):").append(addFans1391)
-				.append("</li>").append("</ul>").append("</body></html>");
+				.append("</li>").append("</ul>");
 		return sb.toString();
 	}
 
