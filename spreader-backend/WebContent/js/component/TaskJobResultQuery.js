@@ -58,27 +58,27 @@ var resultgridcm = new Ext.grid.ColumnModel([new Ext.grid.RowNumberer(),
 		}, {
 			header : '名称',
 			dataIndex : 'jobName',
-			width : 80
+			width : 180
 		}, {
 			header : '任务状态',
 			dataIndex : 'status',
 			renderer : renderJobResultStatus,
-			width : 100
+			width : 60
 		}, {
 			header : '执行结果',
 			dataIndex : 'result',
 			renderer : renderHtmlBrief,
-			width : 100
+			width : 150
 		}, {
 			header : '发起时间',
 			dataIndex : 'startTime',
 			renderer : renderDateHis,
-			width : 100
+			width : 120
 		}, {
 			header : '结束时间',
 			dataIndex : 'endTime',
 			renderer : renderDateHis,
-			width : 100
+			width : 120
 		}]);
 
 var jobResultNumber = 20;
