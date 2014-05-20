@@ -18,7 +18,7 @@
 	<bean id="iRobotRemoteService"
 		class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
 		<property name="serviceUrl"
-			value="${ximalaya.hessian}/passport/hessian/robotRemoteService" />
+			value="${ximalaya.hessian}/robot/hessian/robotRemoteService" />
 		<property name="serviceInterface"
 			value="com.nali.spreader.client.ximalaya.service.IRobotRemoteService" />
 	</bean> 
