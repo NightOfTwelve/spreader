@@ -331,7 +331,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.nali</groupId>
-			<artifactId>servercenter-api</artifactId>
+			<artifactId>servercenter-spreader-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

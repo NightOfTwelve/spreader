@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nali</groupId>
-	<artifactId>servercenter-api</artifactId>
+	<artifactId>servercenter-spreader-api</artifactId>
 	<packaging>jar</packaging>
 	<name>servercenter interface</name>
 	<version>0.9.1</version>
