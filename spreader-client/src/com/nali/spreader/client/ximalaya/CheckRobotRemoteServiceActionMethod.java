@@ -44,22 +44,36 @@ public class CheckRobotRemoteServiceActionMethod implements ActionMethod {
 			byte[] md = interfaceCheckService.getParamsMD5(new Object[] { null, 0, 10, null, null, null, sd1, ed1, null, null });
 			List<Map<String, Object>> list = robotRemoteService.queryUser(null, 0, 10, null, null, null, sd1, ed1, null, null, md);
 			if (list == null || list.size() == 0) {
-				logger.info("----->robotRemoteService.queryUser:null");
-				SimpleMailMessage msg = new SimpleMailMessage();
-				msg.setFrom("spreader@ximalaya.com");
-				msg.setTo(mail);
-				msg.setSubject("robotRemoteService	queryUser接口调用失败");
-				msg.setText("http://robot.ximalaya.com/robot/hessian/robotRemoteService	queryUser接口调用失败");
-				sender.send(msg);
+				logger.info("----->robotRemoteService.queryUser:null or size 0");
+				sendMail(mail, "http://robot.ximalaya.com/robot/hessian/robotRemoteService	queryUser接口返回集合为空");
+			} else {
+				logger.info("----->robotRemoteService.queryUser list.size:" + list.size());
 			}
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			sendMail(mail, "http://robot.ximalaya.com/robot/hessian/robotRemoteService	queryUser接口错误 异常：NoSuchAlgorithmException");
+			logger.error(e, e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			sendMail(mail, "http://robot.ximalaya.com/robot/hessian/robotRemoteService	queryUser接口错误 异常：IOException");
+			logger.error(e, e);
 		} catch (AuthenticationException e) {
-			e.printStackTrace();
+			sendMail(mail, "http://robot.ximalaya.com/robot/hessian/robotRemoteService	queryUser接口错误 异常：AuthenticationException");
+			logger.error(e, e);
 		}
 		return null;
+	}
+
+	/**
+	 * 发送邮件
+	 * 
+	 * @param mail
+	 */
+	private void sendMail(String mail, String text) {
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setFrom("spreader@ximalaya.com");
+		msg.setTo(mail);
+		msg.setSubject("robotRemoteService queryUser接口调用警报");
+		msg.setText(text);
+		sender.send(msg);
 	}
 
 	@Override
