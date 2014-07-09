@@ -40,7 +40,9 @@ public enum SimpleActionConfig {
 	importXimalaya(3004L),
 	recordXimalayaByNickName(3005L),
 	recordXimalayaByUid(3006L),
-	;
+	//自动检查IRobotRemoteService的queryUser接口
+	checkRobotRemote(3007L);
+	
 	private Long actionId;
 	private String taskCode;
 	private SimpleActionConfig(String taskCode, Long actionId) {
