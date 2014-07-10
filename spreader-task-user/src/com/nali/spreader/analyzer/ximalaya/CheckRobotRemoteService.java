@@ -2,6 +2,7 @@ package com.nali.spreader.analyzer.ximalaya;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +34,10 @@ public class CheckRobotRemoteService implements RegularAnalyzer, Configable<Chec
 	public void init(CheckRobotRemoteServiceConfig config) {
 		logger.info("CheckRobotRemoteService init()...");
 		this.config = config;
+		String mail = config.getMail();
+		if (StringUtils.isEmpty(mail)) {
+			throw new IllegalArgumentException(" mail is null ");
+		}
 	}
 
 	@Override
