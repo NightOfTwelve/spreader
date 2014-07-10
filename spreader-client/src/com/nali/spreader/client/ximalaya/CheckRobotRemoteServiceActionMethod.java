@@ -37,7 +37,7 @@ public class CheckRobotRemoteServiceActionMethod implements ActionMethod {
 	@Override
 	public Object execute(Map<String, Object> params, Map<String, Object> userContext, Long uid) {
 		String mail = (String) params.get("mail");
-		logger.info("----->" + mail);
+		logger.info("----->CheckRobotRemoteService mail:" + mail);
 		Date sd1 = DateUtils.addDays(new Date(), -100);
 		Date ed1 = new Date();
 		try {
