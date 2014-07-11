@@ -32,11 +32,13 @@ public class RobotRemoteServiceCheck extends SingleTaskMachineImpl implements Pa
 	@Override
 	public void work(CheckRobotRemoteServiceConfig data, SingleTaskExporter exporter) {
 		String mail = data.getMail();
-		work(mail, exporter);
+		boolean sendEmail = data.isSendEmail();
+		work(mail, sendEmail, exporter);
 	}
 
-	private void work(String mail, SingleTaskExporter exporter) {
+	private void work(String mail, boolean sendEmail, SingleTaskExporter exporter) {
 		exporter.setProperty("mail", mail);
+		exporter.setProperty("sendEmail", sendEmail);
 		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterNow(30));
 	}
 
