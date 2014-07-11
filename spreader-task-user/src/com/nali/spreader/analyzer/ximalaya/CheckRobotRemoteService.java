@@ -33,9 +33,10 @@ public class CheckRobotRemoteService implements RegularAnalyzer, Configable<Chec
 	@Override
 	public void init(CheckRobotRemoteServiceConfig config) {
 		logger.info("CheckRobotRemoteService init()...");
+		logger.info("Whether to send e-mail:" + config.isSendEmail());
+		logger.info("E-mail address:" + config.getMail());
 		this.config = config;
-		String mail = config.getMail();
-		if (StringUtils.isEmpty(mail)) {
+		if (StringUtils.isEmpty(config.getMail())) {
 			throw new IllegalArgumentException(" mail is null ");
 		}
 	}
@@ -53,6 +54,17 @@ public class CheckRobotRemoteService implements RegularAnalyzer, Configable<Chec
 
 		@PropertyDescription("收件人")
 		private String mail;
+
+		@PropertyDescription("接口正常是否发送邮件")
+		private boolean sendEmail = false;
+
+		public boolean isSendEmail() {
+			return sendEmail;
+		}
+
+		public void setSendEmail(boolean sendEmail) {
+			this.sendEmail = sendEmail;
+		}
 
 		public String getMail() {
 			return mail;
