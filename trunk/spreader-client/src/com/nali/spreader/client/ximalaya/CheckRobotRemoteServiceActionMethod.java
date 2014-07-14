@@ -68,9 +68,10 @@ public class CheckRobotRemoteServiceActionMethod implements ActionMethod {
 	 */
 	private void sendMail(String mail, String title, String text) {
 		logger.info("sendMail() start...");
+		String[] eMail = mail.split(",");
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setFrom("spreader@ximalaya.com");
-		msg.setTo(mail);
+		msg.setTo(eMail);
 		msg.setSubject(title);
 		msg.setText(text);
 		sender.send(msg);
