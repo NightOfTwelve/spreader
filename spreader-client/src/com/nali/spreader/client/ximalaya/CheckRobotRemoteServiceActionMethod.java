@@ -52,9 +52,11 @@ public class CheckRobotRemoteServiceActionMethod implements ActionMethod {
 		} catch (AuthenticationException e) {
 			sendMail(mail, "[错误]调用robotRemoteService接口错误", "http://robot.ximalaya.com/robot/hessian/robotRemoteService queryUser接口错误 异常：AuthenticationException\n" + e);
 			logger.error(e, e);
+			throw new RuntimeException(e);
 		} catch (Exception e) {
 			sendMail(mail, "[错误]调用robotRemoteService接口错误", "http://robot.ximalaya.com/robot/hessian/robotRemoteService queryUser接口错误 异常：Exception\n" + e);
 			logger.error(e, e);
+			throw new RuntimeException(e);
 		}
 		return false;
 	}
