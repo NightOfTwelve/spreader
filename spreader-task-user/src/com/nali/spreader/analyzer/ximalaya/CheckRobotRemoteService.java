@@ -20,7 +20,7 @@ import com.nali.spreader.factory.regular.RegularAnalyzer;
  * 
  */
 @Component
-@ClassDescription("自动检查IRobotRemoteService的queryUser接口")
+@ClassDescription("喜马拉雅·检查接口")
 public class CheckRobotRemoteService implements RegularAnalyzer, Configable<CheckRobotRemoteService.CheckRobotRemoteServiceConfig> {
 
 	private static final Logger logger = Logger.getLogger(CheckRobotRemoteService.class);
