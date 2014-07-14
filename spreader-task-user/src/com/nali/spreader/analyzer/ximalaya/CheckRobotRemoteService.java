@@ -31,7 +31,7 @@ public class CheckRobotRemoteService implements RegularAnalyzer, Configable<Chec
 	@Override
 	public void init(CheckRobotRemoteServiceConfig config) {
 		logger.info("CheckRobotRemoteService init()...");
-		logger.info("Whether to send e-mail:" + config.isSendSuccessEmail());
+		logger.info("Whether to send success e-mail:" + config.isSendSuccessEmail());
 		logger.info("E-mail address:" + config.getMail());
 		this.config = config;
 		if (StringUtils.isEmpty(config.getMail())) {
