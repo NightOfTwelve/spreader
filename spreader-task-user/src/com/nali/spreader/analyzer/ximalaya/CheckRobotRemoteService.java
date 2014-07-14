@@ -16,8 +16,6 @@ import com.nali.spreader.factory.regular.RegularAnalyzer;
 /**
  * 主动策略
  * 
- * @author zfang
- * 
  */
 @Component
 @ClassDescription("喜马拉雅·检查接口")
@@ -33,7 +31,7 @@ public class CheckRobotRemoteService implements RegularAnalyzer, Configable<Chec
 	@Override
 	public void init(CheckRobotRemoteServiceConfig config) {
 		logger.info("CheckRobotRemoteService init()...");
-		logger.info("Whether to send e-mail:" + config.isSendEmail());
+		logger.info("Whether to send e-mail:" + config.isSendSuccessEmail());
 		logger.info("E-mail address:" + config.getMail());
 		this.config = config;
 		if (StringUtils.isEmpty(config.getMail())) {
@@ -56,14 +54,15 @@ public class CheckRobotRemoteService implements RegularAnalyzer, Configable<Chec
 		private String mail;
 
 		@PropertyDescription("接口正常是否发送邮件")
-		private boolean sendEmail = false;
+		private boolean sendSuccessEmail = false;
 
-		public boolean isSendEmail() {
-			return sendEmail;
+	
+		public boolean isSendSuccessEmail() {
+			return sendSuccessEmail;
 		}
 
-		public void setSendEmail(boolean sendEmail) {
-			this.sendEmail = sendEmail;
+		public void setSendSuccessEmail(boolean sendSuccessEmail) {
+			this.sendSuccessEmail = sendSuccessEmail;
 		}
 
 		public String getMail() {
