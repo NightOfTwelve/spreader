@@ -1,7 +1,6 @@
 package com.nali.spreader.workshop.ximalaya;
 
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.stereotype.Component;
 
@@ -19,11 +18,9 @@ import com.nali.spreader.util.SpecialDateUtil;
 /**
  * 被动策略
  * 
- * @author zfang
- * 
  */
 @Component
-public class RobotRemoteServiceCheck extends SingleTaskMachineImpl implements PassiveWorkshop<CheckRobotRemoteService.CheckRobotRemoteServiceConfig, List<User>> {
+public class RobotRemoteServiceCheck extends SingleTaskMachineImpl implements PassiveWorkshop<CheckRobotRemoteService.CheckRobotRemoteServiceConfig, Boolean> {
 
 	public RobotRemoteServiceCheck() {
 		super(SimpleActionConfig.checkRobotRemote, Website.ximalaya, Channel.normal);
@@ -32,18 +29,18 @@ public class RobotRemoteServiceCheck extends SingleTaskMachineImpl implements Pa
 	@Override
 	public void work(CheckRobotRemoteServiceConfig data, SingleTaskExporter exporter) {
 		String mail = data.getMail();
-		boolean sendEmail = data.isSendEmail();
-		work(mail, sendEmail, exporter);
+		boolean sendSuccessEmail = data.isSendSuccessEmail();
+		work(mail, sendSuccessEmail, exporter);
 	}
 
 	private void work(String mail, boolean sendEmail, SingleTaskExporter exporter) {
 		exporter.setProperty("mail", mail);
-		exporter.setProperty("sendEmail", sendEmail);
+		exporter.setProperty("sendSuccessEmail", sendEmail);
 		exporter.send(User.UID_NOT_LOGIN, SpecialDateUtil.afterNow(30));
 	}
 
 	@Override
-	public void handleResult(Date updateTime, List<User> resultObject) {
+	public void handleResult(Date updateTime, Boolean resultObject) {
 
 	}
 }

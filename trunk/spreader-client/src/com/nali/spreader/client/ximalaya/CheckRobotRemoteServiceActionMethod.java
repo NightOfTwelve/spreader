@@ -1,7 +1,5 @@
 package com.nali.spreader.client.ximalaya;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +19,6 @@ import com.nali.spreader.client.ximalaya.service.IXimalayInterfaceCheckService;
 /**
  * 客户端实际执行
  * 
- * @author zfang
- * 
  */
 @Component
 public class CheckRobotRemoteServiceActionMethod implements ActionMethod {
@@ -37,31 +33,30 @@ public class CheckRobotRemoteServiceActionMethod implements ActionMethod {
 	@Override
 	public Object execute(Map<String, Object> params, Map<String, Object> userContext, Long uid) {
 		String mail = (String) params.get("mail");
-		boolean sendEmail = (Boolean) params.get("sendEmail");
+		boolean sendSuccessEmail = (Boolean) params.get("sendSuccessEmail");
 		Date sd1 = DateUtils.addDays(new Date(), -100);
 		Date ed1 = new Date();
 		try {
 			byte[] md = interfaceCheckService.getParamsMD5(new Object[] { null, 0, 10, null, null, null, sd1, ed1, null, null });
 			List<Map<String, Object>> list = robotRemoteService.queryUser(null, 0, 10, null, null, null, sd1, ed1, null, null, md);
 			logger.info("robotRemoteService.queryUser list.size:" + list.size());
-			System.out.println("------------------>" + sendEmail);
-			if (sendEmail) {
-				sendMail(mail, "http://robot.ximalaya.com/robot/hessian/robotRemoteService	queryUser接口调用正常  list.size:" + list.size());
-			}
+
 			if (list == null || list.size() == 0) {
-				sendMail(mail, "http://robot.ximalaya.com/robot/hessian/robotRemoteService	queryUser接口返回集合为空");
+				sendMail(mail, "[警告]调用robotRemoteService接口报警", "http://robot.ximalaya.com/robot/hessian/robotRemoteService queryUser接口返回数据为空");
+			} else {
+				if (sendSuccessEmail) {
+					sendMail(mail, "[正常]调用robotRemoteService接口正常", "http://robot.ximalaya.com/robot/hessian/robotRemoteService queryUser接口调用正常  list.size:" + list.size());
+				}
+				return true;
 			}
-		} catch (NoSuchAlgorithmException e) {
-			sendMail(mail, "http://robot.ximalaya.com/robot/hessian/robotRemoteService	queryUser接口错误 异常：NoSuchAlgorithmException");
-			logger.error(e, e);
-		} catch (IOException e) {
-			sendMail(mail, "http://robot.ximalaya.com/robot/hessian/robotRemoteService	queryUser接口错误 异常：IOException");
-			logger.error(e, e);
 		} catch (AuthenticationException e) {
-			sendMail(mail, "http://robot.ximalaya.com/robot/hessian/robotRemoteService	queryUser接口错误 异常：AuthenticationException");
+			sendMail(mail, "[错误]调用robotRemoteService接口错误", "http://robot.ximalaya.com/robot/hessian/robotRemoteService queryUser接口错误 异常：AuthenticationException\n" + e.getMessage());
+			logger.error(e, e);
+		} catch (Exception e) {
+			sendMail(mail, "[错误]调用robotRemoteService接口错误", "http://robot.ximalaya.com/robot/hessian/robotRemoteService queryUser接口错误 异常：Exception\n" + e.getMessage());
 			logger.error(e, e);
 		}
-		return null;
+		return false;
 	}
 
 	/**
@@ -69,12 +64,12 @@ public class CheckRobotRemoteServiceActionMethod implements ActionMethod {
 	 * 
 	 * @param mail
 	 */
-	private void sendMail(String mail, String text) {
+	private void sendMail(String mail, String title, String text) {
 		logger.info("sendMail() start...");
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setFrom("spreader@ximalaya.com");
 		msg.setTo(mail);
-		msg.setSubject("robotRemoteService queryUser接口调用警报");
+		msg.setSubject(title);
 		msg.setText(text);
 		sender.send(msg);
 		logger.info("sendMail() end...");
