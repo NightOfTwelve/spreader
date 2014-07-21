@@ -18,6 +18,15 @@ public class UrlDownloadCount implements Serializable {
 	private boolean waitToEnd = true;
 	@PropertyDescription("是否进入app")
 	private boolean runApp = true;
+	@PropertyDescription("关键字")
+	private String keyWord;
+	
+	public String getKeyWord() {
+		return keyWord;
+	}
+	public void setKeyWord(String keyWord) {
+		this.keyWord = keyWord;
+	}
 	public String getUrl() {
 		return url;
 	}
