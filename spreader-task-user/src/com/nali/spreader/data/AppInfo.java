@@ -8,6 +8,14 @@ public class AppInfo {
 	private Double millionBite;
 	private boolean waitToEnd;
 	private boolean runApp;
+	private String keyWord;
+	
+	public String getKeyWord() {
+		return keyWord;
+	}
+	public void setKeyWord(String keyWord) {
+		this.keyWord = keyWord;
+	}
 	public String getAppSource() {
 		return appSource;
 	}

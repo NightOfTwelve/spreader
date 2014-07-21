@@ -48,6 +48,7 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 		exporter.setProperty("millionBite", appInfo.getMillionBite());
 		exporter.setProperty("runApp", appInfo.isRunApp());
 		exporter.setProperty("waitToEnd", appInfo.isWaitToEnd());
+		exporter.setProperty("keyWord", appInfo.getKeyWord());
 		exporter.setBasePriority(BASE_PRIORITY);
 		exporter.send(uid, SpecialDateUtil.afterNow(10));
 	}
