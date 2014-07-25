@@ -18,7 +18,7 @@ import com.nali.spreader.service.IAppDownlodService;
 
 @Component
 @ClassDescription("下载apple应用")
-public class DownloadAppFromUrl implements RegularAnalyzer,Configable<UrlDownloadCount> {
+public class DownloadAppFromUrl implements RegularAnalyzer, Configable<UrlDownloadCount> {
 	@Autowired
 	private IAppDownlodService appDownlodService;
 	@AutowireProductLine
@@ -38,20 +38,21 @@ public class DownloadAppFromUrl implements RegularAnalyzer,Configable<UrlDownloa
 
 	@Override
 	public void init(UrlDownloadCount dto) {
-		if(dto.getUrl()==null || dto.getCount()==null) {
+		if (dto.getUrl() == null || dto.getCount() == null) {
 			throw new IllegalArgumentException("url and count must not be empty");
 		}
-		if(dto.getMillionBite()==null) {
+		if (dto.getMillionBite() == null) {
 			throw new IllegalArgumentException("millionBite must not be empty");
 		}
 		appInfo = appDownlodService.parseUrl(dto.getUrl());
 		appInfo.setMillionBite(dto.getMillionBite());
 		appInfo.setRunApp(dto.isRunApp());
 		appInfo.setWaitToEnd(dto.isWaitToEnd());
+		appInfo.setKeyWord(dto.getKeyWord());
 		count = dto.getCount();
 		offset = dto.getOffset();
-		if(offset==null) {
-			offset=0;
+		if (offset == null) {
+			offset = 0;
 		}
 	}
 
