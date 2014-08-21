@@ -440,6 +440,27 @@ public class ClientService implements IClientService {
 			if (value == 4038) {
 				return "小米Web";
 			}
+			if (value == 4039) {
+				return "华为智汇云下载";
+			}
+			if (value == 4040) {
+				return "oppo网页下载";
+			}
+			if (value == 4041) {
+				return "oppo二维码下载";
+			}
+			if (value == 4042) {
+				return "应用宝点击详情页";
+			}
+			if (value == 4043) {
+				return "91网页下载";
+			}
+			if (value == 4044) {
+				return "安智移动web下载";
+			}
+			if (value == 4045) {
+				return "联通Wo商店下载";
+			}
 			return "新增市场";
 		} else {
 			return null;
