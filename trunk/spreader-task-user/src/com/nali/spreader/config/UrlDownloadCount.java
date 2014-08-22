@@ -20,47 +20,70 @@ public class UrlDownloadCount implements Serializable {
 	private boolean runApp = true;
 	@PropertyDescription("关键字")
 	private String keyWord;
-	
+	@PropertyDescription("是否为付费账号")
+	private boolean payingTag = false;
+
 	public String getKeyWord() {
 		return keyWord;
 	}
+
 	public void setKeyWord(String keyWord) {
 		this.keyWord = keyWord;
 	}
+
 	public String getUrl() {
 		return url;
 	}
+
 	public void setUrl(String url) {
 		this.url = url;
 	}
+
 	public Integer getCount() {
 		return count;
 	}
+
 	public void setCount(Integer count) {
 		this.count = count;
 	}
+
 	public Double getMillionBite() {
 		return millionBite;
 	}
+
 	public void setMillionBite(Double millionBite) {
 		this.millionBite = millionBite;
 	}
+
 	public boolean isWaitToEnd() {
 		return waitToEnd;
 	}
+
 	public void setWaitToEnd(boolean waitToEnd) {
 		this.waitToEnd = waitToEnd;
 	}
+
 	public boolean isRunApp() {
 		return runApp;
 	}
+
 	public void setRunApp(boolean runApp) {
 		this.runApp = runApp;
 	}
+
 	public Integer getOffset() {
 		return offset;
 	}
+
 	public void setOffset(Integer offset) {
 		this.offset = offset;
+	}
+
+	public boolean isPayingTag() {
+		return payingTag;
+	}
+
+	public void setPayingTag(boolean payingTag) {
+		this.payingTag = payingTag;
 	}
 }

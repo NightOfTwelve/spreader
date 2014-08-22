@@ -29,7 +29,7 @@ public class DownloadAppFromUrl implements RegularAnalyzer, Configable<UrlDownlo
 
 	@Override
 	public String work() {
-		List<Long> assignUids = appDownlodService.assignUids(Website.apple.getId(), appInfo.getAppSource(), appInfo.getAppId(), count, offset);
+		List<Long> assignUids = appDownlodService.assignUidsIsPay(Website.apple.getId(), appInfo.getAppSource(), appInfo.getAppId(), appInfo.isPayingTag(), count, offset);
 		for (Long uid : assignUids) {
 			downloadApp.send(new KeyValue<Long, AppInfo>(uid, appInfo));
 		}
@@ -49,6 +49,7 @@ public class DownloadAppFromUrl implements RegularAnalyzer, Configable<UrlDownlo
 		appInfo.setRunApp(dto.isRunApp());
 		appInfo.setWaitToEnd(dto.isWaitToEnd());
 		appInfo.setKeyWord(dto.getKeyWord());
+		appInfo.setPayingTag(dto.isPayingTag());
 		count = dto.getCount();
 		offset = dto.getOffset();
 		if (offset == null) {
