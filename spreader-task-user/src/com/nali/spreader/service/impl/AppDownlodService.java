@@ -32,11 +32,13 @@ public class AppDownlodService implements IAppDownlodService {
 	
 	private Lock endPointOperateLock = new ReentrantLock();
 	
+	
 	@Override
 	public List<Long> assignUids(Integer websiteId, String appSource, Long appId, int count) {
 		return assignUids(websiteId, appSource, appId, count, 0);
 	}
 	
+	// 原始没有是否为付费账号的筛选条件的实现	
 	@Override
 	public List<Long> assignUids(Integer websiteId, String appSource, Long appId, int count, int offset) {
 		List<RobotUser> robots;
@@ -76,6 +78,46 @@ public class AppDownlodService implements IAppDownlodService {
 		}
 		return rlts;
 	}
+	
+	@Override
+	public List<Long> assignUidsIsPay(Integer websiteId, String appSource, Long appId, boolean payingTag, int count, int offset) {
+		List<RobotUser> robots;
+		endPointOperateLock.lock();
+		try {
+			Long lastUid = appDownloadDao.getLastEndpoint(appSource, appId);
+
+			RobotUserExample example = new RobotUserExample();
+			example.setOrderByClause("uid");
+			example.setLimit(Limit.newInstanceForLimit(offset, count));
+			if (payingTag) {
+				example.createCriteria().andPayingTagEqualTo(1);// 0:非付费 1:付费
+			} else {
+				example.createCriteria().andPayingTagEqualTo(0);// 0:非付费 1:付费
+			}
+			if (lastUid != null) {
+				example.createCriteria().andAccountStateEqualTo(RobotUser.ACCOUNT_STATE_NORMAL).andWebsiteIdEqualTo(websiteId).andUidGreaterThan(lastUid);
+			} else {
+				example.createCriteria().andAccountStateEqualTo(RobotUser.ACCOUNT_STATE_NORMAL).andWebsiteIdEqualTo(websiteId);
+			}
+			robots = crudRobotUserDao.selectByExample(example);
+			if (robots.size() == 0) {
+				return Collections.emptyList();
+			}
+			RobotUser last = robots.get(robots.size() - 1);
+			appDownloadDao.saveEndpoint(appSource, appId, last.getUid());
+			if (logger.isInfoEnabled()) {
+				logger.info("saveEndPoint <" + last.getUid() + ">");
+			}
+		} finally {
+			endPointOperateLock.unlock();
+		}
+		List<Long> rlts = new ArrayList<Long>(robots.size());
+		for (RobotUser robotUser : robots) {
+			rlts.add(robotUser.getUid());
+			appDownloadDao.setStatus(appSource, appId, robotUser.getUid(), STATUS_START_DOWNLOAD);
+		}
+		return rlts;
+	}
 
 	@Override
 	public void finishDownload(String appSource, Long appId, Long uid) {
@@ -96,5 +138,4 @@ public class AppDownlodService implements IAppDownlodService {
 		appInfo.setAppSource("itunes/"+area);
 		return appInfo;
 	}
-
 }
