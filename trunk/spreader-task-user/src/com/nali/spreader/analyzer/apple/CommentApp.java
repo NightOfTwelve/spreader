@@ -41,9 +41,7 @@ public class CommentApp implements RegularAnalyzer,
 	
 	@Override
 	public String work() {
-		List<Long> assignUids = appDownlodService.assignUids(
-				Website.apple.getId(), appInfo.getAppSource(),
-				appInfo.getAppId(), count);
+		List<Long> assignUids = appDownlodService.assignUidsIsPay(Website.apple.getId(), appInfo.getAppSource(), appInfo.getAppId(), appInfo.isPayingTag(), count);
 		int startOnlyCount = starOnlyRate * assignUids.size() / 100;
 		int normalCount = assignUids.size() - startOnlyCount;
 		List<String> titles = RandomUtil.fakeRandomItems(this.titles, normalCount);
@@ -62,6 +60,7 @@ public class CommentApp implements RegularAnalyzer,
 			dto.setAppSource(appInfo.getAppSource());
 			dto.setMillionBite(appInfo.getMillionBite());
 			dto.setUrl(appInfo.getUrl());
+			dto.setPayingTag(appInfo.isPayingTag());
 			dto.setStars(starRandomer.get());
 			if (i < startOnlyCount) {
 				dto.setTitle(StringUtils.EMPTY);
@@ -86,6 +85,7 @@ public class CommentApp implements RegularAnalyzer,
 					"url and count must not be empty");
 		}
 		appInfo = appDownlodService.parseUrl(dto.getUrl());
+		appInfo.setPayingTag(dto.isPayingTag());
 		count = dto.getCount();
 		Integer fourStar = dto.getFourStar();
 		starOnlyRate = dto.getStarOnly();

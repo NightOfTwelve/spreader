@@ -65,9 +65,7 @@ public class StarWeightsNewCommentApp implements RegularAnalyzer,
 			}
 		}
 		int count = normalCount + starOnlyCount;
-		List<Long> assignUids = appDownlodService.assignUids(
-				Website.apple.getId(), appInfo.getAppSource(),
-				appInfo.getAppId(), count, offset);
+		List<Long> assignUids = appDownlodService.assignUidsIsPay(Website.apple.getId(), appInfo.getAppSource(), appInfo.getAppId(), appInfo.isPayingTag(), count, offset);
 		Collections.shuffle(assignUids);
 		List<String[]> comments = new ArrayList<String[]>(
 				this.comments.subList(commentOffset, this.comments.size()));
@@ -85,6 +83,7 @@ public class StarWeightsNewCommentApp implements RegularAnalyzer,
 			dto.setAppId(appInfo.getAppId());
 			dto.setAppSource(appInfo.getAppSource());
 			dto.setUrl(appInfo.getUrl());
+			dto.setPayingTag(appInfo.isPayingTag());
 			dto.setStars(starRandomer.get());
 			if (i < normalCount) {
 				String[] comment = comments.get(i);
@@ -126,6 +125,7 @@ public class StarWeightsNewCommentApp implements RegularAnalyzer,
 			throw new IllegalArgumentException("url must not be empty");
 		}
 		appInfo = appDownlodService.parseUrl(dto.getUrl());
+		appInfo.setPayingTag(dto.isPayingTag());
 		starOnlyCount = dto.getStarOnly();
 		if (starOnlyCount == null) {
 			starOnlyCount = 0;
@@ -204,6 +204,8 @@ public class StarWeightsNewCommentApp implements RegularAnalyzer,
 		private Integer offset;
 		@PropertyDescription("每次评论间隔（秒）")
 		private Integer secondsDelay;
+		@PropertyDescription("是否为付费账号")
+		private boolean payingTag = false;
 
 		@PropertyDescription("每次评论数，不填就以评论条数作为评论数")
 		private Integer dailyComment;
@@ -296,6 +298,14 @@ public class StarWeightsNewCommentApp implements RegularAnalyzer,
 
 		public void setWg4Star(Integer wg4Star) {
 			this.wg4Star = wg4Star;
+		}
+
+		public boolean isPayingTag() {
+			return payingTag;
+		}
+
+		public void setPayingTag(boolean payingTag) {
+			this.payingTag = payingTag;
 		}
 	}
 }

@@ -46,9 +46,7 @@ public class RandomCommentApp implements RegularAnalyzer,
 
 	@Override
 	public String work() {
-		List<Long> assignUids = appDownlodService.assignUids(
-				Website.apple.getId(), appInfo.getAppSource(),
-				appInfo.getAppId(), count, offset);
+		List<Long> assignUids = appDownlodService.assignUidsIsPay(Website.apple.getId(), appInfo.getAppSource(), appInfo.getAppId(), appInfo.isPayingTag(), count, offset);
 		int startOnlyCount = starOnlyRate * assignUids.size() / 100;
 		int normalCount = assignUids.size() - startOnlyCount;
 		List<String> titles = RandomUtil.fakeRandomItems(this.titles,
@@ -69,6 +67,7 @@ public class RandomCommentApp implements RegularAnalyzer,
 			dto.setAppSource(appInfo.getAppSource());
 			dto.setMillionBite(appInfo.getMillionBite());
 			dto.setUrl(appInfo.getUrl());
+			dto.setPayingTag(appInfo.isPayingTag());
 			dto.setStars(starRandomer.get());
 			if (i < startOnlyCount) {
 				dto.setTitle(StringUtils.EMPTY);
@@ -95,6 +94,7 @@ public class RandomCommentApp implements RegularAnalyzer,
 					"url and count must not be empty");
 		}
 		appInfo = appDownlodService.parseUrl(dto.getUrl());
+		appInfo.setPayingTag(dto.isPayingTag());
 		count = dto.getCount();
 		Integer fourStar = dto.getFourStar();
 		starOnlyRate = dto.getStarOnly();
@@ -135,6 +135,8 @@ public class RandomCommentApp implements RegularAnalyzer,
 		private Integer secondsDelay;
 		@PropertyDescription("跳过多少个帐号")
 		private Integer offset;
+		@PropertyDescription("是否为付费账号")
+		private boolean payingTag = false;
 
 		public String getUrl() {
 			return url;
@@ -206,6 +208,14 @@ public class RandomCommentApp implements RegularAnalyzer,
 
 		public void setOffset(Integer offset) {
 			this.offset = offset;
+		}
+
+		public boolean isPayingTag() {
+			return payingTag;
+		}
+
+		public void setPayingTag(boolean payingTag) {
+			this.payingTag = payingTag;
 		}
 	}
 }

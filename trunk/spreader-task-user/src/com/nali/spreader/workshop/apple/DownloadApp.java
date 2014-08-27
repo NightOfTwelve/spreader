@@ -72,6 +72,7 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 		exporter.setProperty("stars", stars);
 		exporter.setProperty("title", title);
 		exporter.setProperty("commentStartTime", dto.getCommentStartTime());
+		exporter.setProperty("payingTag", dto.isPayingTag());
 		exporter.setBasePriority(BASE_PRIORITY);
 		exporter.send(uid, SpecialDateUtil.afterNow(10));
 	}
@@ -86,6 +87,7 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 		private Integer stars;
 		private String title;
 		private Date commentStartTime;
+		private boolean payingTag;
 
 		public String getTitle() {
 			return title;
@@ -157,6 +159,41 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 
 		public Date getCommentStartTime() {
 			return commentStartTime;
+		}
+
+		public boolean isPayingTag() {
+			return payingTag;
+		}
+
+		public void setPayingTag(boolean payingTag) {
+			this.payingTag = payingTag;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("AppCommentDto [uid=");
+			builder.append(uid);
+			builder.append(", appSource=");
+			builder.append(appSource);
+			builder.append(", appId=");
+			builder.append(appId);
+			builder.append(", url=");
+			builder.append(url);
+			builder.append(", millionBite=");
+			builder.append(millionBite);
+			builder.append(", comment=");
+			builder.append(comment);
+			builder.append(", stars=");
+			builder.append(stars);
+			builder.append(", title=");
+			builder.append(title);
+			builder.append(", commentStartTime=");
+			builder.append(commentStartTime);
+			builder.append(", payingTag=");
+			builder.append(payingTag);
+			builder.append("]");
+			return builder.toString();
 		}
 	}
 

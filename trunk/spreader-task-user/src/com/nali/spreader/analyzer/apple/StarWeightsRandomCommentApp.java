@@ -46,9 +46,7 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 
 	@Override
 	public String work() {
-		List<Long> assignUids = appDownlodService.assignUids(
-				Website.apple.getId(), appInfo.getAppSource(),
-				appInfo.getAppId(), count, offset);
+		List<Long> assignUids = appDownlodService.assignUidsIsPay(Website.apple.getId(), appInfo.getAppSource(), appInfo.getAppId(), appInfo.isPayingTag(), count, offset);
 		int startOnlyCount = starOnlyRate * assignUids.size() / 100;
 		int normalCount = assignUids.size() - startOnlyCount;
 		List<String> titles = RandomUtil.fakeRandomItems(this.titles,
@@ -69,6 +67,7 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 			dto.setAppSource(appInfo.getAppSource());
 			dto.setMillionBite(appInfo.getMillionBite());
 			dto.setUrl(appInfo.getUrl());
+			dto.setPayingTag(appInfo.isPayingTag());
 			dto.setStars(starRandomer.get());
 			if (i < startOnlyCount) {
 				dto.setTitle(StringUtils.EMPTY);
@@ -95,6 +94,7 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 					"url and count must not be empty");
 		}
 		appInfo = appDownlodService.parseUrl(dto.getUrl());
+		appInfo.setPayingTag(dto.isPayingTag());
 		count = dto.getCount();
 		Integer oneStar = dto.getWg1Star();
 		Integer twoStar = dto.getWg2Star();
@@ -160,6 +160,8 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 		private Integer secondsDelay;
 		@PropertyDescription("跳过多少个帐号")
 		private Integer offset;
+		@PropertyDescription("是否为付费账号")
+		private boolean payingTag = false;
 
 		public String getUrl() {
 			return url;
@@ -255,6 +257,14 @@ public class StarWeightsRandomCommentApp implements RegularAnalyzer,
 
 		public void setWg4Star(Integer wg4Star) {
 			this.wg4Star = wg4Star;
+		}
+
+		public boolean isPayingTag() {
+			return payingTag;
+		}
+
+		public void setPayingTag(boolean payingTag) {
+			this.payingTag = payingTag;
 		}
 	}
 }
