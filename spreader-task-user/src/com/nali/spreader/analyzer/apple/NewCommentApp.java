@@ -63,8 +63,7 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 			}
 		}
 		int count = normalCount + starOnlyCount;
-		List<Long> assignUids = appDownlodService.assignUids(Website.apple.getId(), appInfo.getAppSource(),
-				appInfo.getAppId(), count, offset);
+		List<Long> assignUids = appDownlodService.assignUidsIsPay(Website.apple.getId(), appInfo.getAppSource(), appInfo.getAppId(), appInfo.isPayingTag(), count, offset);
 		Collections.shuffle(assignUids);
 		List<String[]> comments = new ArrayList<String[]>(this.comments.subList(commentOffset, this.comments.size()));
 		Collections.shuffle(comments);
@@ -81,6 +80,7 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 			dto.setAppId(appInfo.getAppId());
 			dto.setAppSource(appInfo.getAppSource());
 			dto.setUrl(appInfo.getUrl());
+			dto.setPayingTag(appInfo.isPayingTag());
 			dto.setStars(starRandomer.get());
 			if (i < normalCount) {
 				String[] comment = comments.get(i);
@@ -121,6 +121,7 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 			throw new IllegalArgumentException("url must not be empty");
 		}
 		appInfo = appDownlodService.parseUrl(dto.getUrl());
+		appInfo.setPayingTag(dto.isPayingTag());
 		Integer fourStar = dto.getFourStar();
 		starOnlyCount = dto.getStarOnly();
 		if (fourStar == null) {
@@ -173,6 +174,8 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 		private Integer offset;
 		@PropertyDescription("每次评论间隔（秒）")
 		private Integer secondsDelay;
+		@PropertyDescription("是否为付费账号")
+		private boolean payingTag = false;
 		
 		@PropertyDescription("每次评论数，不填就以评论条数作为评论数")
 		private Integer dailyComment;
@@ -241,6 +244,14 @@ public class NewCommentApp implements RegularAnalyzer, Configable<NewCommentAppC
 
 		public void setOffsetDate(Date offsetDate) {
 			this.offsetDate = offsetDate;
+		}
+
+		public boolean isPayingTag() {
+			return payingTag;
+		}
+
+		public void setPayingTag(boolean payingTag) {
+			this.payingTag = payingTag;
 		}
 	}
 }

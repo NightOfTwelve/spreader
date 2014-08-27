@@ -73,5 +73,27 @@ public class AppInfo {
 	public void setPayingTag(boolean payingTag) {
 		this.payingTag = payingTag;
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("AppInfo [appSource=");
+		builder.append(appSource);
+		builder.append(", appId=");
+		builder.append(appId);
+		builder.append(", url=");
+		builder.append(url);
+		builder.append(", millionBite=");
+		builder.append(millionBite);
+		builder.append(", waitToEnd=");
+		builder.append(waitToEnd);
+		builder.append(", runApp=");
+		builder.append(runApp);
+		builder.append(", keyWord=");
+		builder.append(keyWord);
+		builder.append(", payingTag=");
+		builder.append(payingTag);
+		builder.append("]");
+		return builder.toString();
+	}
 }

@@ -23,6 +23,8 @@ public class CommentAppConfig implements Serializable {
 	private Integer fourStar;
 	@PropertyDescription("每次回复间隔（秒）")
 	private Integer secondsDelay;
+	@PropertyDescription("是否为付费账号")
+	private boolean payingTag = false;
 
 	public String getUrl() {
 		return url;
@@ -87,4 +89,13 @@ public class CommentAppConfig implements Serializable {
 	public void setSecondsDelay(Integer secondsDelay) {
 		this.secondsDelay = secondsDelay;
 	}
+
+	public boolean isPayingTag() {
+		return payingTag;
+	}
+
+	public void setPayingTag(boolean payingTag) {
+		this.payingTag = payingTag;
+	}
+	
 }
