@@ -49,7 +49,7 @@ public class DownloadApp extends SingleTaskMachineImpl implements
 		exporter.setProperty("runApp", appInfo.isRunApp());
 		exporter.setProperty("waitToEnd", appInfo.isWaitToEnd());
 		exporter.setProperty("keyWord", appInfo.getKeyWord());
-		exporter.setProperty("paying", appInfo.isPayingTag());		
+		exporter.setProperty("payingTag", appInfo.isPayingTag());		
 		exporter.setBasePriority(BASE_PRIORITY);
 		exporter.send(uid, SpecialDateUtil.afterNow(10));
 	}
