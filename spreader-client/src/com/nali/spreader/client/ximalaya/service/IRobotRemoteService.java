@@ -36,7 +36,17 @@ public interface IRobotRemoteService {
 	 */
 	Boolean follow(Long fromWebsiteUid, Long toWebsiteUid, byte[] md5)
 			throws AuthenticationException;
-
+	
+	/**
+	 * 喜马拉雅账号减粉
+	 * 
+	 * @param fromWebsiteUid
+	 * @param toWebsiteUid
+	 * @return
+	 * */
+	Boolean unfollow(Long fromWebsiteUid, Long toWebsiteUid, byte[] signature)
+            throws AuthenticationException;
+	
 	/**
 	 * 按条件筛选喜马拉雅帐号
 	 * 
