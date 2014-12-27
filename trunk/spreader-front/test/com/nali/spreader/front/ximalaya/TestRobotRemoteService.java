@@ -1,5 +1,8 @@
 package com.nali.spreader.front.ximalaya;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -51,8 +54,40 @@ public class TestRobotRemoteService {
 	}
 
 	@Test
-	public void test2() throws AuthenticationException {
-
+	public void test2() throws AuthenticationException, NoSuchAlgorithmException, IOException {
+//			Long fromWebsiteUid = 18222244L;
+		
+			Long toWebsiteUid = 15107843L;
+	       File file = new File("D:/222.txt");
+	        BufferedReader reader = null;
+	        try {
+	            System.out.println("以行为单位读取文件内容，一次读一整行：");
+	            reader = new BufferedReader(new FileReader(file));
+	            String tempString = null;
+	            int line = 1;
+	            // 一次读入一行，直到读入null为文件结束
+	            while ((tempString = reader.readLine()) != null) {
+	            	
+	            	Long fromUid = Long.parseLong(tempString);
+					byte[] md5 = interfaceCheckService.getParamsMD5(new Object[] { fromUid, toWebsiteUid });
+					robotRemoteService.follow(fromUid, toWebsiteUid, md5);
+					
+	                System.out.println("line " + line + ": " + tempString);
+	                line++;
+	            }
+	            reader.close();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        } finally {
+	            if (reader != null) {
+	                try {
+	                    reader.close();
+	                } catch (IOException e1) {
+	                }
+	            }
+	        }
+		
+	
 	}
 
 }
